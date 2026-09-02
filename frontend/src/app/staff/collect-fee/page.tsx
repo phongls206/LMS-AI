@@ -26,12 +26,15 @@ export default function StaffCollectFeePage() {
     try {
       const [stuRes, classList, invoiceList] = await Promise.all([
         usersService.getStudents(1, 100),
-        classesService.getAll(undefined, 'DANG_MO_DANG_KY'),
+        classesService.getAll(), // Lấy tất cả lớp học trên hệ thống
         enrollmentsService.getInvoices(),
       ]);
       setStudents(stuRes.data);
-      setClasses(classList);
-      setInvoices(invoiceList);
+      // Lọc các lớp còn hoạt động (không bao gồm lớp đã hủy/đã kết thúc)
+      const activeClasses = (classList || []).filter(
+        (c: LopHoc) => c.trangThai !== 'DA_HUY' && c.trangThai !== 'DA_KET_THUC'
+      );
+      setClasses(activeClasses.length > 0 ? activeClasses : classList);
       if (stuRes.data.length > 0) setSelectedStudentId(stuRes.data[0].id);
       if (classList.length > 0) setSelectedClassId(classList[0].id);
     } catch (err) {
@@ -152,7 +155,7 @@ export default function StaffCollectFeePage() {
               >
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>
-                    [{c.maLopHoc}] {c.tenLopHoc} — CEFR {c.khoaHoc?.trinhDoYeuCau} ({c.siSoHienTai}/{c.siSoToiDa} HV)
+                    [{c.maLopHoc}] {c.tenLopHoc} — {c.trangThai} ({c.siSoHienTai}/{c.siSoToiDa} HV)
                   </option>
                 ))}
               </select>
