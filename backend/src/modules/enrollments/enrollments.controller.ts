@@ -25,10 +25,10 @@ export class EnrollmentsController {
   constructor(private readonly enrollmentsService: EnrollmentsService) {}
 
   /**
-   * POST /api/v1/enrollments — UC006 (Tư vấn viên, Học viên)
+   * POST /api/v1/enrollments — UC006 (Quản lý, Tư vấn viên, Học viên)
    */
   @Post('enrollments')
-  @Roles(VaiTro.TU_VAN_VIEN, VaiTro.HOC_VIEN)
+  @Roles(VaiTro.QUAN_LY, VaiTro.TU_VAN_VIEN, VaiTro.HOC_VIEN)
   @ApiOperation({
     summary: 'Đăng ký lớp học (Kiểm tra 4 điều kiện: sĩ số, trùng lặp, CEFR, lịch học + tự tạo hóa đơn)',
   })
