@@ -1,0 +1,45 @@
+{
+  "File 01: 01_GenAI_SoftwareDevelopment_project-plan.docx": {
+    "Kế hoạch thực hiện 9 tuần": true,
+    "Bảng phân công công việc chi tiết (47 mục)": true,
+    "Thành viên thực hiện & Ghi chú (Lê Hồng Phong, Lưu Thanh Nguyên)": true
+  },
+  "File 02: 02_GenAI_SoftwareDevelopment_requirements-qa.docx": {
+    "20 câu hỏi khảo sát nghiệp vụ (Q&A)": true,
+    "Yêu cầu chức năng (FR) đầy đủ": true,
+    "Yêu cầu phi chức năng (NFR) đầy đủ": true,
+    "Sơ đồ phân cấp chức năng (FDD)": true
+  },
+  "File 03: 03_GenAI_SoftwareDevelopment_requirements-specification.docx": {
+    "Mục đích & Phạm vi ứng dụng": true,
+    "Bảng thuật ngữ & từ viết tắt": true,
+    "Tài liệu tham khảo": true,
+    "Danh sách Tác nhân (4 Actors: Quản lý, GV, TVV, HV)": true,
+    "Danh sách 14 Use Cases (UC001 - UC014)": true,
+    "Biểu đồ Use Case tổng quát & phân rã 4 Actor": true,
+    "Đặc tả Use Case chi tiết (14 Use Case)": true,
+    "Activity Diagram & Sequence Diagram cho từng UC": true,
+    "Chương 4: Dữ liệu I/O, Prompt mẫu AI, Xử lý lỗi & Fallback": true
+  },
+  "File 04: 04_GenAI_SoftwareDevelopment_object-oriented-design.docx": {
+    "Sơ đồ lớp tổng thể (Class Diagram)": true,
+    "Đặc tả chi tiết 12 Lớp đối tượng": true,
+    "Thuộc tính (kiểu dữ liệu, kích thước) & Phương thức từng lớp": true
+  },
+  "File 05: 05_GenAI_SoftwareDevelopment_functional-testing.docx": {
+    "Yêu cầu phần cứng & phần mềm kiểm thử": true,
+    "Danh sách Test Cases (Test ID, Chức năng, Preconditions, Test Data, Expected)": false,
+    "Báo cáo kết quả Test Report (Pass/Fail, Độ nghiêm trọng)": true
+  },
+  "File 06: 06_GenAI_SoftwareDevelopment_screenflow_db.docx": {
+    "Screen Flow phân luồng màn hình theo 4 Actor": true,
+    "Sơ đồ thực thể quan hệ (ERD)": true,
+    "Lược đồ CSDL quan hệ 3NF (14 bảng)": true,
+    "Mô tả chi tiết các bảng CSDL (Khóa chính, Khóa ngoại, Kiểu dữ liệu)": true,
+    "Các ràng buộc toàn vẹn CSDL": true
+  },
+  "File 07: 07_GenAI_SoftwareDevelopment_user-guide.docx": {
+    "Giới thiệu ứng dụng & Cấu hình phần cứng/phần mềm": true,
+    "Hướng dẫn sử dụng chi tiết theo 4 Actor (Admin, Teacher, Staff, Student)": true
+  }
+}

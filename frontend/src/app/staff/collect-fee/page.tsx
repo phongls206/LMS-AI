@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService, classesService, enrollmentsService } from '../../../services/api';
 import { HocVien, LopHoc, HoaDon } from '../../../types';
-import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck, Calendar } from 'lucide-react';
+import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck, Calendar, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 export default function StaffCollectFeePage() {
   const [students, setStudents] = useState<HocVien[]>([]);
@@ -16,11 +16,35 @@ export default function StaffCollectFeePage() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // Search & Pagination cho Invoices
+  const [searchInvoice, setSearchInvoice] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(8);
+
   // Modal Thu Tiền
   const [selectedInvoice, setSelectedInvoice] = useState<HoaDon | null>(null);
   const [paymentAmount, setPaymentAmount] = useState<number>(0);
   const [paymentMethod, setPaymentMethod] = useState<'TIEN_MAT' | 'CHUYEN_KHOAN'>('TIEN_MAT');
   const [note, setNote] = useState('');
+
+  // Lọc và phân trang hóa đơn
+  const filteredInvoices = invoices.filter((inv) => {
+    const q = searchInvoice.toLowerCase();
+    return (
+      inv.maHoaDon.toLowerCase().includes(q) ||
+      (inv.hocVien?.hoTen && inv.hocVien.hoTen.toLowerCase().includes(q)) ||
+      (inv.hocVien?.maHocVien && inv.hocVien.maHocVien.toLowerCase().includes(q)) ||
+      (inv.dangKyHoc?.lopHoc?.tenLopHoc && inv.dangKyHoc.lopHoc.tenLopHoc.toLowerCase().includes(q))
+    );
+  });
+
+  const totalInvoices = filteredInvoices.length;
+  const totalPages = Math.max(1, Math.ceil(totalInvoices / limit));
+  const displayedInvoices = filteredInvoices.slice((page - 1) * limit, page * limit);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchInvoice]);
 
   const fetchData = async () => {
     try {
@@ -176,16 +200,29 @@ export default function StaffCollectFeePage() {
 
         {/* 2. Quầy thu tiền & Danh sách Hóa đơn */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-4">
-          <div className="flex justify-between items-center pb-3 border-b border-slate-800">
-            <div className="flex items-center space-x-2">
-              <CreditCard className="w-5 h-5 text-emerald-400" />
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pb-3 border-b border-slate-800">
+            <div className="flex items-center space-x-2 w-full sm:w-auto">
+              <CreditCard className="w-5 h-5 text-emerald-400 shrink-0" />
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">
                 2. Quầy Thu Học Phí & Lập Phiếu Thu
               </h3>
             </div>
-            <span className="text-xs text-slate-400 font-semibold">
-              {invoices.length} hóa đơn trong hệ thống
-            </span>
+            
+            <div className="flex items-center space-x-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-60">
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchInvoice}
+                  onChange={(e) => setSearchInvoice(e.target.value)}
+                  placeholder="Tìm mã HĐ, học viên, lớp..."
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 pl-9 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+              <span className="text-xs text-slate-400 font-semibold whitespace-nowrap">
+                {totalInvoices} hóa đơn
+              </span>
+            </div>
           </div>
 
           {loading ? (
@@ -208,61 +245,97 @@ export default function StaffCollectFeePage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/80">
-                  {invoices.map((inv) => {
-                    const remaining = Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra);
-                    return (
-                      <tr key={inv.id} className="hover:bg-slate-800/40 transition">
-                        <td className="px-4 py-3 font-mono font-bold text-indigo-400">{inv.maHoaDon}</td>
-                        <td className="px-4 py-3">
-                          <p className="font-semibold text-white">{inv.hocVien?.hoTen}</p>
-                          <p className="text-[11px] font-mono text-slate-500">{inv.hocVien?.maHocVien}</p>
-                        </td>
-                        <td className="px-4 py-3 text-slate-300">
-                          {inv.dangKyHoc?.lopHoc?.tenLopHoc || 'N/A'}
-                        </td>
-                        <td className="px-4 py-3 font-mono font-semibold text-white">
-                          {Number(inv.soTienPhaiTra).toLocaleString()} đ
-                        </td>
-                        <td className="px-4 py-3 font-mono font-semibold text-emerald-400">
-                          {Number(inv.soTienDaTra).toLocaleString()} đ
-                        </td>
-                        <td className="px-4 py-3 font-mono font-bold text-rose-400">
-                          {remaining.toLocaleString()} đ
-                        </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
-                              inv.trangThai === 'DA_HOAN_THANH'
-                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
-                                : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
-                                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                                : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
-                            }`}
-                          >
-                            {inv.trangThai}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          {remaining > 0 ? (
-                            <button
-                              onClick={() => handleOpenPayment(inv)}
-                              className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition text-xs flex items-center space-x-1 ml-auto shadow-sm"
+                  {displayedInvoices.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
+                        Không tìm thấy hóa đơn nào phù hợp.
+                      </td>
+                    </tr>
+                  ) : (
+                    displayedInvoices.map((inv) => {
+                      const remaining = Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra);
+                      return (
+                        <tr key={inv.id} className="hover:bg-slate-800/40 transition">
+                          <td className="px-4 py-3 font-mono font-bold text-indigo-400">{inv.maHoaDon}</td>
+                          <td className="px-4 py-3">
+                            <p className="font-semibold text-white">{inv.hocVien?.hoTen}</p>
+                            <p className="text-[11px] font-mono text-slate-500">{inv.hocVien?.maHocVien}</p>
+                          </td>
+                          <td className="px-4 py-3 text-slate-300">
+                            {inv.dangKyHoc?.lopHoc?.tenLopHoc || 'N/A'}
+                          </td>
+                          <td className="px-4 py-3 font-mono font-semibold text-white">
+                            {Number(inv.soTienPhaiTra).toLocaleString()} đ
+                          </td>
+                          <td className="px-4 py-3 font-mono font-semibold text-emerald-400">
+                            {Number(inv.soTienDaTra).toLocaleString()} đ
+                          </td>
+                          <td className="px-4 py-3 font-mono font-bold text-rose-400">
+                            {remaining.toLocaleString()} đ
+                          </td>
+                          <td className="px-4 py-3">
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+                                inv.trangThai === 'DA_HOAN_THANH'
+                                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                  : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
+                                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                                  : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
+                              }`}
                             >
-                              <DollarSign className="w-3.5 h-3.5" />
-                              <span>Thu Tiền</span>
-                            </button>
-                          ) : (
-                            <span className="text-emerald-400 font-semibold text-xs flex items-center justify-end">
-                              <CheckCircle className="w-3.5 h-3.5 mr-1" />
-                              Đã Hoàn Tất
+                              {inv.trangThai}
                             </span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            {remaining > 0 ? (
+                              <button
+                                onClick={() => handleOpenPayment(inv)}
+                                className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition text-xs flex items-center space-x-1 ml-auto shadow-sm"
+                              >
+                                <DollarSign className="w-3.5 h-3.5" />
+                                <span>Thu Tiền</span>
+                              </button>
+                            ) : (
+                              <span className="text-emerald-400 font-semibold text-xs flex items-center justify-end">
+                                <CheckCircle className="w-3.5 h-3.5 mr-1" />
+                                Đã Hoàn Tất
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="px-4 py-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                  <span>
+                    Hiển thị {(page - 1) * limit + 1} - {Math.min(page * limit, totalInvoices)} / {totalInvoices} hóa đơn
+                  </span>
+                  <div className="flex items-center space-x-1.5">
+                    <button
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                      className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 transition"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="px-2 font-semibold text-white">
+                      {page} / {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={page >= totalPages}
+                      className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 transition"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

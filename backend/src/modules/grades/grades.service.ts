@@ -48,13 +48,14 @@ export class GradesService {
       const teacher = await this.prisma.hoSoGiaoVien.findUnique({
         where: { nguoiDungId: BigInt(user.id) },
       });
-      if (!teacher) throw new NotFoundException('Hồ sơ giáo viên không tồn tại.');
+      if (!teacher) {
+        throw new ForbiddenException('Hồ sơ giáo viên không tồn tại hoặc chưa được liên kết.');
+      }
 
       const isAssigned = await this.prisma.phanCongGiaoVien.findFirst({
         where: {
           lopHocId: BigInt(classId),
           giaoVienId: teacher.id,
-          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
         },
       });
       if (!isAssigned) {
@@ -62,68 +63,80 @@ export class GradesService {
       }
     }
 
-    const results = [];
+    const results = await this.prisma.$transaction(
+      async (tx) => {
+        const promises = dto.bangDiem.map((item) => {
+          const cc =
+            item.diemChuyenCan !== undefined &&
+            item.diemChuyenCan !== null &&
+            !isNaN(Number(item.diemChuyenCan))
+              ? Number(item.diemChuyenCan)
+              : null;
 
-    await this.prisma.$transaction(async (tx) => {
-      for (const item of dto.bangDiem) {
-        let diemTongKet: number | null = null;
-        let trangThaiHoanThanh: TrangThaiHoanThanh = TrangThaiHoanThanh.CHUA_XEP_LOAI;
+          const gk =
+            item.diemGiuaKy !== undefined &&
+            item.diemGiuaKy !== null &&
+            !isNaN(Number(item.diemGiuaKy))
+              ? Number(item.diemGiuaKy)
+              : null;
 
-        // Tính điểm tổng kết nếu có đủ 3 đầu điểm
-        if (
-          item.diemChuyenCan !== undefined &&
-          item.diemChuyenCan !== null &&
-          item.diemGiuaKy !== undefined &&
-          item.diemGiuaKy !== null &&
-          item.diemCuoiKy !== undefined &&
-          item.diemCuoiKy !== null
-        ) {
-          diemTongKet = Number(
-            (
-              item.diemChuyenCan * 0.2 +
-              item.diemGiuaKy * 0.3 +
-              item.diemCuoiKy * 0.5
-            ).toFixed(2),
-          );
+          const ck =
+            item.diemCuoiKy !== undefined &&
+            item.diemCuoiKy !== null &&
+            !isNaN(Number(item.diemCuoiKy))
+              ? Number(item.diemCuoiKy)
+              : null;
 
-          // Quy tắc xếp loại: ĐẠT khi diemTongKet >= 50.00 VÀ diemChuyenCan >= 80.00
-          if (diemTongKet >= 50.0 && item.diemChuyenCan >= 80.0) {
-            trangThaiHoanThanh = TrangThaiHoanThanh.DAT;
-          } else {
-            trangThaiHoanThanh = TrangThaiHoanThanh.KHONG_DAT;
+          let diemTongKet: number | null = null;
+          let trangThaiHoanThanh: TrangThaiHoanThanh = TrangThaiHoanThanh.CHUA_XEP_LOAI;
+
+          // Tính điểm tổng kết nếu có đủ 3 đầu điểm
+          if (cc !== null && gk !== null && ck !== null) {
+            diemTongKet = Number((cc * 0.2 + gk * 0.3 + ck * 0.5).toFixed(2));
+
+            // Quy tắc xếp loại: ĐẠT khi diemTongKet >= 50.00 VÀ diemChuyenCan >= 80.00
+            if (diemTongKet >= 50.0 && cc >= 80.0) {
+              trangThaiHoanThanh = TrangThaiHoanThanh.DAT;
+            } else {
+              trangThaiHoanThanh = TrangThaiHoanThanh.KHONG_DAT;
+            }
           }
-        }
 
-        const saved = await tx.ketQuaHocTap.upsert({
-          where: {
-            lopHocId_hocVienId: {
+          return tx.ketQuaHocTap.upsert({
+            where: {
+              lopHocId_hocVienId: {
+                lopHocId: BigInt(classId),
+                hocVienId: BigInt(item.hocVienId),
+              },
+            },
+            update: {
+              diemChuyenCan: cc,
+              diemGiuaKy: gk,
+              diemCuoiKy: ck,
+              diemTongKet,
+              nhanXet: item.nhanXet || null,
+              trangThaiHoanThanh,
+            },
+            create: {
               lopHocId: BigInt(classId),
               hocVienId: BigInt(item.hocVienId),
+              diemChuyenCan: cc,
+              diemGiuaKy: gk,
+              diemCuoiKy: ck,
+              diemTongKet,
+              nhanXet: item.nhanXet || null,
+              trangThaiHoanThanh,
             },
-          },
-          update: {
-            diemChuyenCan: item.diemChuyenCan,
-            diemGiuaKy: item.diemGiuaKy,
-            diemCuoiKy: item.diemCuoiKy,
-            diemTongKet,
-            nhanXet: item.nhanXet,
-            trangThaiHoanThanh,
-          },
-          create: {
-            lopHocId: BigInt(classId),
-            hocVienId: BigInt(item.hocVienId),
-            diemChuyenCan: item.diemChuyenCan,
-            diemGiuaKy: item.diemGiuaKy,
-            diemCuoiKy: item.diemCuoiKy,
-            diemTongKet,
-            nhanXet: item.nhanXet,
-            trangThaiHoanThanh,
-          },
+          });
         });
 
-        results.push(saved);
-      }
-    });
+        return Promise.all(promises);
+      },
+      {
+        maxWait: 15000,
+        timeout: 30000,
+      },
+    );
 
     return {
       message: 'Cập nhật bảng điểm và tính điểm tổng kết thành công.',

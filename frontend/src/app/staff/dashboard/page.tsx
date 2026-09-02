@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { enrollmentsService, authService } from '../../../services/api';
-import { UserPlus, Receipt, Sparkles, DollarSign, Clock, CheckCircle, AlertCircle, ArrowRight, UserCheck } from 'lucide-react';
+import { UserPlus, Receipt, Sparkles, DollarSign, Clock, CheckCircle, AlertCircle, ArrowRight, UserCheck, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import Link from 'next/link';
 
 export default function StaffDashboardPage() {
@@ -12,6 +12,12 @@ export default function StaffDashboardPage() {
   const [pendingInvoices, setPendingInvoices] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'my_payments' | 'pending_invoices'>('my_payments');
   const [loading, setLoading] = useState(true);
+
+  // Pagination states
+  const [pagePayments, setPagePayments] = useState(1);
+  const limitPayments = 8;
+  const [pageInvoices, setPageInvoices] = useState(1);
+  const limitInvoices = 8;
 
   useEffect(() => {
     const fetch = async () => {
@@ -41,6 +47,18 @@ export default function StaffDashboardPage() {
   const totalCollectedByMe = myPayments.reduce(
     (sum, p) => sum + Number(p.soTien || 0),
     0
+  );
+
+  const totalPaymentsPages = Math.max(1, Math.ceil(myPayments.length / limitPayments));
+  const displayedPayments = myPayments.slice(
+    (pagePayments - 1) * limitPayments,
+    pagePayments * limitPayments
+  );
+
+  const totalInvoicesPages = Math.max(1, Math.ceil(pendingInvoices.length / limitInvoices));
+  const displayedInvoices = pendingInvoices.slice(
+    (pageInvoices - 1) * limitInvoices,
+    pageInvoices * limitInvoices
   );
 
   return (
@@ -211,7 +229,7 @@ export default function StaffDashboardPage() {
                       </td>
                     </tr>
                   ) : (
-                    myPayments.map((p) => (
+                    displayedPayments.map((p) => (
                       <tr key={p.id} className="hover:bg-slate-800/40 transition">
                         <td className="px-4 py-3.5 font-mono font-bold text-emerald-400">{p.maGiaoDich}</td>
                         <td className="px-4 py-3.5 font-mono text-indigo-400">{p.hoaDon?.maHoaDon}</td>
@@ -238,6 +256,34 @@ export default function StaffDashboardPage() {
                   )}
                 </tbody>
               </table>
+
+              {/* Pagination cho Phiếu Thu */}
+              {totalPaymentsPages > 1 && (
+                <div className="px-4 py-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                  <span>
+                    Hiển thị {(pagePayments - 1) * limitPayments + 1} - {Math.min(pagePayments * limitPayments, myPayments.length)} / {myPayments.length} phiếu thu
+                  </span>
+                  <div className="flex items-center space-x-1.5">
+                    <button
+                      onClick={() => setPagePayments((p) => Math.max(1, p - 1))}
+                      disabled={pagePayments === 1}
+                      className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 transition"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="px-2 font-semibold text-white">
+                      {pagePayments} / {totalPaymentsPages}
+                    </span>
+                    <button
+                      onClick={() => setPagePayments((p) => Math.min(totalPaymentsPages, p + 1))}
+                      disabled={pagePayments >= totalPaymentsPages}
+                      className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 transition"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -265,7 +311,7 @@ export default function StaffDashboardPage() {
                       </td>
                     </tr>
                   ) : (
-                    pendingInvoices.map((inv) => (
+                    displayedInvoices.map((inv) => (
                       <tr key={inv.id} className="hover:bg-slate-800/40 transition">
                         <td className="px-4 py-3.5 font-mono font-bold text-indigo-400">{inv.maHoaDon}</td>
                         <td className="px-4 py-3.5 font-semibold text-white">{inv.hocVien?.hoTen}</td>
@@ -293,6 +339,34 @@ export default function StaffDashboardPage() {
                   )}
                 </tbody>
               </table>
+
+              {/* Pagination cho Hóa Đơn Chờ Thu */}
+              {totalInvoicesPages > 1 && (
+                <div className="px-4 py-3 bg-slate-950/60 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                  <span>
+                    Hiển thị {(pageInvoices - 1) * limitInvoices + 1} - {Math.min(pageInvoices * limitInvoices, pendingInvoices.length)} / {pendingInvoices.length} hóa đơn
+                  </span>
+                  <div className="flex items-center space-x-1.5">
+                    <button
+                      onClick={() => setPageInvoices((p) => Math.max(1, p - 1))}
+                      disabled={pageInvoices === 1}
+                      className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 transition"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="px-2 font-semibold text-white">
+                      {pageInvoices} / {totalInvoicesPages}
+                    </span>
+                    <button
+                      onClick={() => setPageInvoices((p) => Math.min(totalInvoicesPages, p + 1))}
+                      disabled={pageInvoices >= totalInvoicesPages}
+                      className="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white disabled:opacity-30 transition"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

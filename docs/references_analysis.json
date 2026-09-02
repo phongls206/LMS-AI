@@ -1,0 +1,174 @@
+{
+  "01_GenAI_SoftwareDevelopment_project-plan.docx": {
+    "total_paragraphs": 7,
+    "total_tables": 1,
+    "headings": [],
+    "sample_text": [
+      "KẾ HOẠCH THỰC HIỆN – PHÁT TRIỂN ỨNG DỤNG CHUYÊN SÂU",
+      "Nhóm XX - Thành viên nhóm (XX là số thứ tự của nhóm theo từng lớp - Nhóm 2 SV)",
+      "Nguyễn Văn A (Trưởng nhóm)",
+      "Nguyễn Thị B",
+      "Tên ứng dụng: Hệ thống quản lý bán hàng có tích hợp AI",
+      "Thời gian thực hiện: Từ 27/07/2026 đến 27/09/2026 (9 tuần)",
+      "Kế hoạch chi tiết"
+    ],
+    "tables_summary": [
+      "Table 1 (47 rows x 4 cols): ['', 'Công việc', 'Thành viên thực hiện', 'Ghi chú']"
+    ]
+  },
+  "02_GenAI_SoftwareDevelopment_requirements-qa.docx": {
+    "total_paragraphs": 10,
+    "total_tables": 1,
+    "headings": [],
+    "sample_text": [
+      "THU THẬP, LÀM RÕ YÊU CẦU CỦA ỨNG DỤNG",
+      "Nhóm XX - Thành viên nhóm (XX là số thứ tự của nhóm theo từng lớp - Nhóm 2 SV)",
+      "Nguyễn Văn A (Trưởng nhóm)",
+      "Nguyễn Thị B",
+      "Tên ứng dụng: Hệ thống quản lý bán hàng có tích hợp AI",
+      "Thời gian thực hiện: Từ 27/07/2026 đến 27/09/2026 (9 tuần)",
+      "Yêu cầu chức năng của một hệ thống là quan trọng vì yêu cầu cung cấp các cơ sở cho tất cả công việc phát triển hệ thống sau đó.",
+      "Danh sách các câu hỏi khi thu thập và làm rõ yêu cầu của ứng dụng",
+      "Yêu cầu chức năng/phi chức năng của ứng dụng",
+      "Sơ đồ phân cấp chức năng của ứng dụng"
+    ],
+    "tables_summary": [
+      "Table 1 (21 rows x 4 cols): ['STT', 'Câu hỏi (Questions)', 'Trả lời (Answers)', 'Ghi chú']"
+    ]
+  },
+  "03_GenAI_SoftwareDevelopment_requirements-specification.docx": {
+    "total_paragraphs": 31,
+    "total_tables": 6,
+    "headings": [
+      "GIỚI THIỆU CHUNG",
+      "Mục đích",
+      "Phạm vi",
+      "Các định nghĩa, thuật ngữ, từ viết tắt",
+      "Tài liệu tham khảo",
+      "MÔ TẢ TỔNG QUAN ỨNG DỤNG",
+      "Mô hình Use case",
+      "Danh sách các tác nhân và mô tả",
+      "Danh sách Use case và mô tả",
+      "Các điều kiện phụ thuộc",
+      "ĐẶC TẢ CÁC YÊU CẦU CHỨC NĂNG (FUNCTIONAL)",
+      "UC001_Tên use case",
+      "Mô tả use case UC001",
+      "Biểu đồ",
+      "UC002_Tên use case",
+      "Mô tả use case UC002",
+      "Biểu đồ",
+      "CÁC THÔNG TIN HỖ TRỢ KHÁC"
+    ],
+    "sample_text": [
+      "GIỚI THIỆU CHUNG",
+      "Mục đích",
+      "<Mục đích của tài liệu SRS: Tài liệu mô tả một cách đầy đủ, toàn diện các yêu cầu của ứng dụng – đó là  các yêu cầu chức năng, phi chức năng, các ràng buộc về mặt thiết kế...>",
+      "Phạm vi",
+      "<Mô tả ngắn gọn đặc điểm của ứng dụng; phạm vi, đối tượng phục vụ của ứng dụng; nhóm các hệ thống con>",
+      "[Chỉ ra được tài liệu này dùng cho đối tượng nào?]",
+      "Các định nghĩa, thuật ngữ, từ viết tắt",
+      "<Giải thích cho các  thuật ngữ và từ viết tắt dùng trong tài liệu, các định nghĩa sử dụng trong tài liệu>.",
+      "Tài liệu tham khảo",
+      "MÔ TẢ TỔNG QUAN ỨNG DỤNG"
+    ],
+    "tables_summary": [
+      "Table 1 (4 rows x 4 cols): ['STT', 'Thuật ngữ, từ viết tắt', 'Giải thích', 'Ghi chú']",
+      "Table 2 (4 rows x 3 cols): ['STT', 'Tên tài liệu', 'Ghi chú']",
+      "Table 3 (4 rows x 3 cols): ['Tác nhân', 'Mô tả tác nhân', 'Ghi chú']",
+      "Table 4 (4 rows x 5 cols): ['ID', 'Tên Use case', 'Mô tả ngắn gọn Use case', 'Chức năng', 'Ghi chú']",
+      "Table 5 (9 rows x 2 cols): ['Use case: {Mã use case_Tên use case}', 'Use case: {Mã use case_Tên use case}']"
+    ]
+  },
+  "04_GenAI_SoftwareDevelopment_object-oriented-design.docx": {
+    "total_paragraphs": 17,
+    "total_tables": 0,
+    "headings": [],
+    "sample_text": [
+      "TÀI LIỆU THIẾT KẾ HƯỚNG ĐỐI TƯỢNG (MÔ HÌNH LỚP)",
+      "Nhóm XX - Thành viên nhóm (XX là số thứ tự của nhóm theo từng lớp - Nhóm 2 SV)",
+      "Nguyễn Văn A (Trưởng nhóm)",
+      "Nguyễn Thị B",
+      "Tên ứng dụng: Hệ thống quản lý bán hàng có tích hợp AI",
+      "Thời gian thực hiện: Từ 27/07/2026 đến 27/09/2026 (9 tuần)",
+      "Mô hình lớp (Class Diagram)",
+      "Đặc tả Class",
+      "Các thuộc tính: Tên, kiểu dữ liệu, kích thước",
+      "Các phương thức:"
+    ],
+    "tables_summary": []
+  },
+  "05_GenAI_SoftwareDevelopment_functional-testing.docx": {
+    "total_paragraphs": 11,
+    "total_tables": 4,
+    "headings": [
+      "3. Báo cáo kết quả test (Test report)"
+    ],
+    "sample_text": [
+      "KIỂM THỬ CHỨC NĂNG ỨNG DỤNG",
+      "Nhóm XX - Thành viên nhóm (XX là số thứ tự của nhóm theo từng lớp - Nhóm 2 SV)",
+      "Nguyễn Văn A (Trưởng nhóm)",
+      "Nguyễn Thị B",
+      "Tên ứng dụng: Hệ thống quản lý bán hàng có tích hợp AI",
+      "Thời gian thực hiện: Từ 27/07/2026 đến 27/09/2026 (9 tuần)",
+      "Những yêu cầu về tài nguyên cho kiểm thử ứng dụng",
+      "Phần cứng: Máy tính cá nhân có kết nối mạng LAN.",
+      "Phần mềm",
+      "Danh sách các tình huống để kiểm tra ứng dụng."
+    ],
+    "tables_summary": [
+      "Table 1 (2 rows x 4 cols): ['CPU', 'RAM', 'HDD', 'Architecture']",
+      "Table 2 (5 rows x 3 cols): ['Tên phần mềm', 'Phiên bản', 'Loại']",
+      "Table 3 (6 rows x 7 cols): ['Test ID', 'Chức năng', 'Mô tả', 'Điều kiện trước', 'Dữ liệu Test', 'Kết quả mong muốn', 'Ghi chú']",
+      "Table 4 (5 rows x 7 cols): ['Test ID', 'Ngày testing', 'Người tham gia Test', 'Pass/Fail', 'Độ nghiêm trọng', 'Tóm tắt lỗi', 'Ghi chú']"
+    ]
+  },
+  "06_GenAI_SoftwareDevelopment_screenflow_db.docx": {
+    "total_paragraphs": 10,
+    "total_tables": 0,
+    "headings": [
+      "1. Screen Flow: Phân luồng màn hình của ứng dụng",
+      "2. Cơ sở dữ liệu",
+      "2.1. Cơ sở dữ liệu quan hệ",
+      "2.2. Các ràng buộc toàn vẹn trong CSDL"
+    ],
+    "sample_text": [
+      "SCREEN FLOW & TÀI LIỆU THIẾT KẾ CƠ SỞ DỮ LIỆU",
+      "Nhóm XX - Thành viên nhóm (XX là số thứ tự của nhóm theo từng lớp - Nhóm 2 SV)",
+      "Nguyễn Văn A (Trưởng nhóm)",
+      "Nguyễn Thị B",
+      "Tên ứng dụng: Hệ thống quản lý bán hàng có tích hợp AI",
+      "Thời gian thực hiện: Từ 27/07/2026 đến 27/09/2026 (9 tuần)",
+      "1. Screen Flow: Phân luồng màn hình của ứng dụng",
+      "2. Cơ sở dữ liệu",
+      "2.1. Cơ sở dữ liệu quan hệ",
+      "2.2. Các ràng buộc toàn vẹn trong CSDL"
+    ],
+    "tables_summary": []
+  },
+  "07_GenAI_SoftwareDevelopment_user-guide.docx": {
+    "total_paragraphs": 9,
+    "total_tables": 0,
+    "headings": [
+      "GIỚI THIỆU ỨNG DỤNG",
+      "CẤU HÌNH PHẦN CỨNG - PHẦN MỀM",
+      "Phần cứng",
+      "Phần mềm",
+      "CÁC CHỨC NĂNG CHÍNH",
+      "Chức năng của <Tên Actor 1>",
+      "Chức năng của <Tên Actor 2>",
+      "Chức năng của <Tên Actor 3>"
+    ],
+    "sample_text": [
+      "GIỚI THIỆU ỨNG DỤNG",
+      "CẤU HÌNH PHẦN CỨNG - PHẦN MỀM",
+      "Phần cứng",
+      "Phần mềm",
+      "CÁC CHỨC NĂNG CHÍNH",
+      "< Các chức năng chính nên chia theo danh sách tác nhân (Actors) đã được xác định trong tài liệu SRS. >.",
+      "Chức năng của <Tên Actor 1>",
+      "Chức năng của <Tên Actor 2>",
+      "Chức năng của <Tên Actor 3>"
+    ],
+    "tables_summary": []
+  }
+}

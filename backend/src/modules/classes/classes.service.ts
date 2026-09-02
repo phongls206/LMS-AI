@@ -38,8 +38,10 @@ export class ClassesService {
         khoaHoc: { select: { tenKhoaHoc: true, hocPhi: true, trinhDoYeuCau: true } },
         lichHoc: true,
         phanCong: {
+          where: { trangThai: 'DANG_PHU_TRACH' },
+          orderBy: { id: 'desc' },
           include: {
-            giaoVien: { select: { maGiaoVien: true, hoTen: true } },
+            giaoVien: { select: { id: true, maGiaoVien: true, hoTen: true } },
           },
         },
       },
@@ -59,6 +61,8 @@ export class ClassesService {
         khoaHoc: true,
         lichHoc: true,
         phanCong: {
+          where: { trangThai: 'DANG_PHU_TRACH' },
+          orderBy: { id: 'desc' },
           include: {
             giaoVien: { select: { id: true, maGiaoVien: true, hoTen: true, chuyenMon: true } },
           },
@@ -199,21 +203,47 @@ export class ClassesService {
       }
     }
 
-    const assignment = await this.prisma.phanCongGiaoVien.upsert({
-      where: {
-        lopHocId_giaoVienId: {
+    const role = dto.vaiTroPhanCong || VaiTroPhanCong.CHINH;
+
+    const assignment = await this.prisma.$transaction(async (tx) => {
+      // Nếu phân công giáo viên chính -> Hủy trạng thái phụ trách của giáo viên chính cũ để tránh chồng lấn
+      if (role === VaiTroPhanCong.CHINH) {
+        await tx.phanCongGiaoVien.updateMany({
+          where: {
+            lopHocId: BigInt(classId),
+            giaoVienId: { not: BigInt(dto.giaoVienId) },
+            vaiTroPhanCong: VaiTroPhanCong.CHINH,
+            trangThai: 'DANG_PHU_TRACH',
+          },
+          data: {
+            trangThai: 'DA_HUY',
+          },
+        });
+      }
+
+      return tx.phanCongGiaoVien.upsert({
+        where: {
+          lopHocId_giaoVienId: {
+            lopHocId: BigInt(classId),
+            giaoVienId: BigInt(dto.giaoVienId),
+          },
+        },
+        update: {
+          vaiTroPhanCong: role,
+          trangThai: 'DANG_PHU_TRACH',
+          thoiGianPhanCong: new Date(),
+        },
+        create: {
           lopHocId: BigInt(classId),
           giaoVienId: BigInt(dto.giaoVienId),
+          vaiTroPhanCong: role,
+          trangThai: 'DANG_PHU_TRACH',
         },
-      },
-      update: {
-        vaiTroPhanCong: dto.vaiTroPhanCong || VaiTroPhanCong.CHINH,
-      },
-      create: {
-        lopHocId: BigInt(classId),
-        giaoVienId: BigInt(dto.giaoVienId),
-        vaiTroPhanCong: dto.vaiTroPhanCong || VaiTroPhanCong.CHINH,
-      },
+        include: {
+          giaoVien: { select: { id: true, maGiaoVien: true, hoTen: true } },
+          lopHoc: { select: { id: true, maLopHoc: true, tenLopHoc: true } },
+        },
+      });
     });
 
     return this.serializeBigInt(assignment);

@@ -4,16 +4,47 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
 import { GiaoVien } from '../../../types';
-import { Plus, Award, Mail, Phone, Edit3, X, CheckCircle, UserCheck, Clock, UserX, KeyRound, User, Lock, BookOpen } from 'lucide-react';
+import {
+  Plus,
+  Search,
+  CheckCircle,
+  Edit3,
+  Trash2,
+  X,
+  AlertTriangle,
+  KeyRound,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Eye,
+  Award,
+  GraduationCap,
+  BookOpen,
+  Mail,
+  Phone,
+  UserCheck,
+  Clock,
+  UserX,
+  User,
+} from 'lucide-react';
 
 export default function AdminTeachersPage() {
   const [teachers, setTeachers] = useState<GiaoVien[]>([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+
+  // Pagination
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   // Modals
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState<any | null>(null);
+  const [detailTeacher, setDetailTeacher] = useState<any | null>(null);
+  const [deletingTeacher, setDeletingTeacher] = useState<any | null>(null);
 
   const [createFormData, setCreateFormData] = useState({
     tenDangNhap: '',
@@ -37,8 +68,9 @@ export default function AdminTeachersPage() {
 
   const fetchTeachers = async () => {
     try {
+      setLoading(true);
       const list = await usersService.getTeachers();
-      setTeachers(list);
+      setTeachers(list || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -50,11 +82,35 @@ export default function AdminTeachersPage() {
     fetchTeachers();
   }, []);
 
+  // Filtered & Paginated list
+  const filteredTeachers = teachers.filter((t: any) => {
+    const q = search.toLowerCase();
+    const matchQuery =
+      t.hoTen.toLowerCase().includes(q) ||
+      t.maGiaoVien.toLowerCase().includes(q) ||
+      (t.chuyenMon && t.chuyenMon.toLowerCase().includes(q)) ||
+      (t.nguoiDung?.email && t.nguoiDung.email.toLowerCase().includes(q)) ||
+      (t.nguoiDung?.tenDangNhap && t.nguoiDung.tenDangNhap.toLowerCase().includes(q));
+
+    const matchStatus = !statusFilter || (t.trangThai || 'DANG_LAM_VIEC') === statusFilter;
+
+    return matchQuery && matchStatus;
+  });
+
+  const totalTeachers = filteredTeachers.length;
+  const totalPages = Math.max(1, Math.ceil(totalTeachers / limit));
+  const displayedTeachers = filteredTeachers.slice((page - 1) * limit, page * limit);
+
+  // Reset page when search or filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [search, statusFilter]);
+
   const handleCreateTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await usersService.createTeacher(createFormData);
-      setMessage('Thêm mới giáo viên thành công!');
+      setMessage('Thêm mới hồ sơ giáo viên thành công!');
       setShowCreateModal(false);
       setCreateFormData({
         tenDangNhap: '',
@@ -90,10 +146,14 @@ export default function AdminTeachersPage() {
     if (!editingTeacher) return;
     try {
       await usersService.updateTeacher(Number(editingTeacher.id), editFormData);
-      setMessage('Cập nhật thông tin và trạng thái giáo viên thành công!');
+      setMessage(
+        editFormData.matKhauMoi
+          ? `Cập nhật thông tin và ĐÃ RESET MẬT KHẨU về "${editFormData.matKhauMoi}" thành công!`
+          : 'Cập nhật thông tin và trạng thái giáo viên thành công!'
+      );
       setEditingTeacher(null);
       fetchTeachers();
-      setTimeout(() => setMessage(null), 3000);
+      setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
       alert(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật giáo viên.');
     }
@@ -103,28 +163,28 @@ export default function AdminTeachersPage() {
     switch (status) {
       case 'DANG_LAM_VIEC':
         return (
-          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold">
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold whitespace-nowrap">
             <UserCheck className="w-3 h-3" />
             <span>Đang Làm Việc</span>
           </span>
         );
       case 'TAM_NGHI':
         return (
-          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-semibold">
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-semibold whitespace-nowrap">
             <Clock className="w-3 h-3" />
             <span>Tạm Nghỉ</span>
           </span>
         );
       case 'DA_NGHI_VIEC':
         return (
-          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[11px] font-semibold">
+          <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[11px] font-semibold whitespace-nowrap">
             <UserX className="w-3 h-3" />
             <span>Đã Nghỉ Việc</span>
           </span>
         );
       default:
         return (
-          <span className="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[11px] font-semibold">
+          <span className="inline-block px-2.5 py-1 rounded-full bg-slate-800 text-slate-400 text-[11px] font-semibold whitespace-nowrap">
             {status}
           </span>
         );
@@ -135,18 +195,38 @@ export default function AdminTeachersPage() {
     <AppLayout
       allowedRoles={['QUAN_LY']}
       title="Đội Ngũ Giáo Viên & Giảng Viên"
-      subtitle="Quản lý hồ sơ giảng viên, phân công chuyên môn, trình độ bằng cấp và điều chỉnh trạng thái công tác"
+      subtitle="Quản lý chi tiết hồ sơ giáo viên, chuyên môn giảng dạy, lớp phụ trách và điều chỉnh trạng thái công tác"
     >
       <div className="space-y-6">
-        {/* Header toolbar */}
-        <div className="flex justify-between items-center">
-          <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            {teachers.length} giáo viên trong hệ thống
-          </span>
+        {/* Filters and Actions */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center space-x-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-64">
+              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Tìm họ tên, mã GV, chuyên môn..."
+                className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2 pl-9 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              />
+            </div>
+
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+            >
+              <option value="">Tất cả trạng thái</option>
+              <option value="DANG_LAM_VIEC">Đang làm việc</option>
+              <option value="TAM_NGHI">Tạm nghỉ</option>
+              <option value="DA_NGHI_VIEC">Đã nghỉ việc</option>
+            </select>
+          </div>
 
           <button
             onClick={() => setShowCreateModal(true)}
-            className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition"
+            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition"
           >
             <Plus className="w-4 h-4" />
             <span>Thêm Giáo Viên Mới</span>
@@ -155,84 +235,341 @@ export default function AdminTeachersPage() {
 
         {message && (
           <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center space-x-2">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>{message}</span>
           </div>
         )}
 
+        {/* Table */}
         {loading ? (
           <div className="py-20 flex justify-center items-center">
             <div className="w-8 h-8 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teachers.map((t: any) => (
-              <div
-                key={t.id}
-                className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm flex flex-col justify-between hover:border-slate-700 transition"
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-bold text-indigo-400 text-lg">
-                      {t.hoTen.split(' ').slice(-1)[0][0]}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300">
+                <thead className="bg-slate-950/80 text-slate-400 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Mã GV</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Họ Và Tên</th>
+                    <th className="px-5 py-3.5 min-w-[200px]">Lớp Đang Phụ Trách</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Email & SĐT</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap text-center">Trạng Thái</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap text-right">Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/80">
+                  {displayedTeachers.map((t: any) => {
+                    const classes = t.phanCong || [];
+
+                    return (
+                      <tr key={t.id} className="hover:bg-slate-800/40 transition">
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className="font-mono font-bold text-indigo-400 block">{t.maGiaoVien}</span>
+                          <span className="font-mono text-[11px] text-slate-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800/80 inline-block mt-0.5">
+                            {t.nguoiDung?.tenDangNhap || t.maGiaoVien.toLowerCase()}
+                          </span>
+                        </td>
+
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-bold text-indigo-400 text-xs shrink-0">
+                              {t.hoTen?.split(' ').slice(-1)[0][0] || 'G'}
+                            </div>
+                            <div>
+                              <button
+                                onClick={() => setDetailTeacher(t)}
+                                className="font-semibold text-white hover:text-indigo-400 text-left transition block whitespace-nowrap"
+                                title="Bấm để xem hồ sơ chuyên môn & chứng chỉ"
+                              >
+                                <span>{t.hoTen}</span>
+                              </button>
+                              <span className="text-[11px] text-slate-500 block mt-0.5">
+                                Giảng viên cơ hữu
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td className="px-5 py-4 min-w-[200px]">
+                          {classes.length > 0 ? (
+                            <div className="space-y-1">
+                              {classes.map((pc: any) => (
+                                <div key={pc.id || pc.lopHoc?.id} className="flex flex-col">
+                                  <span className="font-mono font-bold text-emerald-400 text-xs block whitespace-nowrap">
+                                    [{pc.lopHoc?.maLopHoc}]
+                                  </span>
+                                  <span className="text-slate-200 text-xs font-medium block" title={pc.lopHoc?.tenLopHoc}>
+                                    {pc.lopHoc?.tenLopHoc}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="inline-block whitespace-nowrap text-slate-500 italic text-[11px] bg-slate-950 px-2.5 py-1 rounded border border-slate-800">
+                              Chưa phân công
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <p className="text-slate-300 font-medium">{t.nguoiDung?.email}</p>
+                          <p className="text-[11px] text-slate-500 mt-0.5">{t.nguoiDung?.soDienThoai || 'Chưa cập nhật'}</p>
+                        </td>
+
+                        <td className="px-5 py-4 whitespace-nowrap text-center">
+                          {getStatusBadge(t.trangThai || 'DANG_LAM_VIEC')}
+                        </td>
+
+                        <td className="px-5 py-4 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end space-x-1.5">
+                            <button
+                              onClick={() => setDetailTeacher(t)}
+                              title="Xem hồ sơ chi tiết & bằng cấp"
+                              className="p-1.5 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/60 text-indigo-300 border border-indigo-500/30 transition"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => openEditModal(t, '123456')}
+                              title="Reset mật khẩu về 123456"
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-amber-950/50 text-amber-400 hover:text-amber-300 transition"
+                            >
+                              <KeyRound className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => openEditModal(t)}
+                              title="Sửa thông tin & Trạng thái"
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="px-5 py-4 bg-slate-950/60 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-slate-400">
+                <span>Hiển thị</span>
+                <span className="font-semibold text-white">
+                  {totalTeachers > 0 ? (page - 1) * limit + 1 : 0} - {Math.min(page * limit, totalTeachers)}
+                </span>
+                <span>trên tổng số</span>
+                <span className="font-bold text-indigo-400">{totalTeachers}</span>
+                <span>giáo viên</span>
+
+                <span className="text-slate-600">|</span>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-400">Số dòng:</span>
+                  <select
+                    value={limit}
+                    onChange={(e) => {
+                      setLimit(Number(e.target.value));
+                      setPage(1);
+                    }}
+                    className="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                  >
+                    <option value={10}>10 / trang</option>
+                    <option value={20}>20 / trang</option>
+                    <option value={50}>50 / trang</option>
+                  </select>
+                </div>
+              </div>
+
+              {totalPages > 1 && (
+                <div className="flex items-center space-x-1.5">
+                  <button
+                    onClick={() => setPage(1)}
+                    disabled={page === 1}
+                    title="Trang đầu"
+                    className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  >
+                    <ChevronsLeft className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    title="Trang trước"
+                    className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  <div className="flex items-center space-x-1 px-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                      <button
+                        key={p}
+                        onClick={() => setPage(p)}
+                        className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-semibold transition ${
+                          page === p
+                            ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/30'
+                            : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page >= totalPages}
+                    title="Trang kế tiếp"
+                    className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={() => setPage(totalPages)}
+                    disabled={page >= totalPages}
+                    title="Trang cuối"
+                    className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                  >
+                    <ChevronsRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Modal Hồ Sơ Chi Tiết Giáo Viên */}
+        {detailTeacher && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl p-6 shadow-2xl space-y-5 my-8">
+              {/* Header */}
+              <div className="flex justify-between items-start pb-4 border-b border-slate-800">
+                <div className="flex items-center space-x-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-indigo-500/20">
+                    {detailTeacher.hoTen?.charAt(0) || 'G'}
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-lg font-bold text-white">{detailTeacher.hoTen}</h3>
+                      {getStatusBadge(detailTeacher.trangThai || 'DANG_LAM_VIEC')}
                     </div>
-                    <div className="flex flex-col items-end space-y-1">
-                      <div className="flex items-center space-x-1.5">
-                        <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 font-mono text-xs font-bold">
-                          {t.maGiaoVien}
-                        </span>
-                        {getStatusBadge(t.trangThai || 'DANG_LAM_VIEC')}
-                      </div>
-                      <span className="font-mono text-[11px] text-indigo-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
-                        {t.nguoiDung?.tenDangNhap || t.maGiaoVien.toLowerCase()}
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Mã GV: <span className="font-mono font-bold text-indigo-400">{detailTeacher.maGiaoVien}</span> • Tài khoản:{' '}
+                      <span className="font-mono text-slate-300">@{detailTeacher.nguoiDung?.tenDangNhap}</span>
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setDetailTeacher(null)}
+                  className="p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Grid Thông Tin Chuyên Môn, Bằng Cấp & Liên Hệ */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
+                {/* Chuyên môn & Chứng chỉ */}
+                <div className="p-4 rounded-2xl bg-slate-950/80 border border-indigo-500/20 space-y-3">
+                  <span className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider flex items-center space-x-1.5">
+                    <Award className="w-4 h-4 text-indigo-400" />
+                    <span>Hồ Sơ Năng Lực & Bằng Cấp</span>
+                  </span>
+                  
+                  <div className="space-y-2">
+                    <div>
+                      <span className="text-slate-500 text-[11px] block">Chuyên môn giảng dạy:</span>
+                      <span className="inline-block mt-1 px-2.5 py-1 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 font-semibold text-xs">
+                        {detailTeacher.chuyenMon}
                       </span>
                     </div>
-                  </div>
 
-                  <h3 className="text-base font-bold text-white mb-1">{t.hoTen}</h3>
-                  <div className="flex items-center text-xs text-indigo-400 font-medium mb-3">
-                    <Award className="w-3.5 h-3.5 mr-1.5 shrink-0" />
-                    <span>Chuyên môn: {t.chuyenMon}</span>
+                    <div>
+                      <span className="text-slate-500 text-[11px] block">Bằng cấp & Chứng chỉ quốc tế:</span>
+                      <div className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 mt-1 font-medium leading-relaxed">
+                        🎓 {detailTeacher.bangCap || 'Cử nhân Sư phạm Tiếng Anh'}
+                      </div>
+                    </div>
                   </div>
-
-                  <p className="text-xs text-slate-400 mb-4 bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 leading-relaxed">
-                    🎓 <span className="text-slate-300 font-semibold">Bằng cấp:</span>{' '}
-                    {t.bangCap || 'Cử nhân Sư phạm Tiếng Anh'}
-                  </p>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="pt-3 border-t border-slate-800/80 space-y-1.5 text-xs text-slate-400">
-                    <div className="flex items-center">
-                      <Mail className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
-                      <span className="truncate">{t.nguoiDung?.email}</span>
+                {/* Thông tin liên hệ & Vị trí */}
+                <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-3">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+                    <Mail className="w-4 h-4 text-indigo-400" />
+                    <span>Thông Tin Liên Hệ & Phân Quyền</span>
+                  </span>
+                  
+                  <div className="space-y-2.5 text-slate-300">
+                    <div className="flex justify-between items-center py-1 border-b border-slate-800/60">
+                      <span className="text-slate-500">Email công vụ:</span>
+                      <span className="font-medium text-white">{detailTeacher.nguoiDung?.email || 'Chưa cập nhật'}</span>
                     </div>
-                    <div className="flex items-center">
-                      <Phone className="w-3.5 h-3.5 mr-2 text-slate-500 shrink-0" />
-                      <span>{t.nguoiDung?.soDienThoai || 'Chưa cập nhật SĐT'}</span>
+                    <div className="flex justify-between items-center py-1 border-b border-slate-800/60">
+                      <span className="text-slate-500">Số điện thoại:</span>
+                      <span className="font-medium text-white">{detailTeacher.nguoiDung?.soDienThoai || 'Chưa cập nhật'}</span>
                     </div>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="pt-2 border-t border-slate-800/60 flex items-center space-x-2">
-                    <button
-                      onClick={() => openEditModal(t)}
-                      className="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300 text-xs font-semibold flex items-center justify-center space-x-1.5 border border-indigo-500/20 transition"
-                    >
-                      <Edit3 className="w-3.5 h-3.5" />
-                      <span>Sửa & Trạng Thái</span>
-                    </button>
-                    <button
-                      onClick={() => openEditModal(t, '123456')}
-                      title="Khôi phục / Reset mật khẩu về 123456"
-                      className="p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-white border border-amber-500/30 transition"
-                    >
-                      <KeyRound className="w-3.5 h-3.5" />
-                    </button>
+                    <div className="flex justify-between items-center py-1">
+                      <span className="text-slate-500">Vị trí công tác:</span>
+                      <span className="text-emerald-400 font-semibold">Giảng viên cơ hữu</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
+
+              {/* Danh Sách Lớp Đang Giảng Dạy */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+                    <BookOpen className="w-4 h-4 text-emerald-400" />
+                    <span>Lớp Học Đang Phụ Trách Giảng Dạy</span>
+                  </h4>
+                  <span className="text-[11px] text-slate-500 font-semibold">
+                    {detailTeacher.phanCong?.length || 0} Lớp đang phụ trách
+                  </span>
+                </div>
+
+                {detailTeacher.phanCong && detailTeacher.phanCong.length > 0 ? (
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {detailTeacher.phanCong.map((pc: any) => (
+                      <div
+                        key={pc.id || pc.lopHoc?.id}
+                        className="p-3 rounded-2xl bg-slate-950 border border-slate-800 flex justify-between items-center text-xs hover:border-slate-700 transition"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <span className="font-mono font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                            [{pc.lopHoc?.maLopHoc}]
+                          </span>
+                          <span className="font-semibold text-white">{pc.lopHoc?.tenLopHoc}</span>
+                        </div>
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          Đang Phụ Trách
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-center text-slate-500 text-xs italic">
+                    Giảng viên hiện đang ở trạng thái sẵn sàng (chưa phân công lớp nào).
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex justify-end pt-3 border-t border-slate-800">
+                <button
+                  onClick={() => setDetailTeacher(null)}
+                  className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition"
+                >
+                  Đóng Hồ Sơ
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

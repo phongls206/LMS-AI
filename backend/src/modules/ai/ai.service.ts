@@ -65,9 +65,9 @@ export class AiService {
   }
 
   /**
-   * Wrapper gọi Gemini API có timeout và bắt lỗi
+   * Wrapper gọi Gemini API có timeout và hỗ trợ Structured JSON Mode
    */
-  private async callGeminiWithTimeout(model: string, prompt: string): Promise<string> {
+  private async callGeminiWithTimeout(model: string, prompt: string, isJson: boolean = true): Promise<string> {
     if (!this.ai) {
       throw new Error('GEMINI_API_KEY chưa được cấu hình hoặc không hợp lệ.');
     }
@@ -79,6 +79,7 @@ export class AiService {
     const apiCallPromise = this.ai.models.generateContent({
       model,
       contents: prompt,
+      ...(isJson ? { config: { responseMimeType: 'application/json' } } : {}),
     });
 
     const response = await Promise.race([apiCallPromise, timeoutPromise]);
@@ -462,14 +463,63 @@ Trả về định dạng JSON hợp lệ:
 }
 `;
 
+    // 1. SMART DB CACHE LOOKUP: Trả về kết quả tức thì nếu dữ liệu học tập chưa thay đổi
+    try {
+      const cachedRecord = await this.prisma.yeuCauAI.findFirst({
+        where: {
+          loaiChucNang: LoaiChucNangAI.TOM_TAT_TIEN_DO,
+          trangThai: TrangThaiYeuCauAI.THANH_CONG,
+          promptInput: {
+            contains: student.maHocVien,
+          },
+        },
+        orderBy: { id: 'desc' },
+      });
+
+      if (cachedRecord && cachedRecord.validatedOutputJson) {
+        const cached = cachedRecord.validatedOutputJson as any;
+        const cachedGroundTruth = cached.duLieuGoc;
+        if (
+          cachedGroundTruth &&
+          cachedGroundTruth.tyLeChuyenCan === `${attendanceRate}%` &&
+          cachedGroundTruth.diemTongKet === duLieuGoc.diemTongKet &&
+          cachedGroundTruth.diemGiuaKy === duLieuGoc.diemGiuaKy
+        ) {
+          return {
+            success: true,
+            mode: 'AI_GEMINI_CACHED',
+            data: {
+              hocVien: {
+                id: Number(student.id),
+                maHocVien: student.maHocVien,
+                hoTen: student.hoTen,
+                trinhDoCEFR: student.trinhDoCEFR,
+              },
+              lopHoc: {
+                id: Number(lopHoc.id),
+                maLopHoc: lopHoc.maLopHoc,
+                tenLopHoc: lopHoc.tenLopHoc,
+                tenKhoaHoc: lopHoc.khoaHoc?.tenKhoaHoc || '',
+              },
+              duLieuGoc,
+              aiPhanTich: cached.aiInsights || cached.aiPhanTich,
+            },
+          };
+        }
+      }
+    } catch (cacheErr) {
+      this.logger.debug('Smart cache lookup skipped:', cacheErr);
+    }
+
     let rawOutput: string | null = null;
     let aiInsights: any = null;
     let status: TrangThaiYeuCauAI = TrangThaiYeuCauAI.THANH_CONG;
 
     try {
       rawOutput = await this.callGeminiWithTimeout(
-        this.configService.get('GEMINI_PRO_MODEL') || 'gemini-3.6-flash',
+        this.configService.get('GEMINI_FLASH_MODEL') || 'gemini-3.7-flash',
         prompt,
+        true,
       );
 
       const cleaned = rawOutput.replace(/```json/g, '').replace(/```/g, '').trim();

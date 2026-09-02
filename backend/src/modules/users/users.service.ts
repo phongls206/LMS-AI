@@ -57,6 +57,36 @@ export class UsersService {
           nguoiDung: {
             select: { id: true, tenDangNhap: true, email: true, soDienThoai: true, dangHoatDong: true },
           },
+          dangKyHoc: {
+            include: {
+              lopHoc: {
+                select: {
+                  id: true,
+                  maLopHoc: true,
+                  tenLopHoc: true,
+                  trangThai: true,
+                  khoaHoc: {
+                    select: { id: true, maKhoaHoc: true, tenKhoaHoc: true },
+                  },
+                },
+              },
+            },
+          },
+          hoaDon: {
+            select: {
+              id: true,
+              maHoaDon: true,
+              soTienPhaiTra: true,
+              soTienDaTra: true,
+              trangThai: true,
+            },
+          },
+          ketQua: {
+            select: {
+              diemTongKet: true,
+              trangThaiHoanThanh: true,
+            },
+          },
         },
         orderBy: { id: 'desc' },
       }),
@@ -83,9 +113,26 @@ export class UsersService {
         },
         dangKyHoc: {
           include: {
-            lopHoc: { select: { maLopHoc: true, tenLopHoc: true, trangThai: true } },
+            lopHoc: {
+              include: {
+                khoaHoc: true,
+                lichHoc: true,
+              },
+            },
+            hoaDon: true,
           },
         },
+        hoaDon: {
+          include: {
+            thanhToan: true,
+          },
+        },
+        ketQua: {
+          include: {
+            lopHoc: true,
+          },
+        },
+        diemDanh: true,
       },
     });
 

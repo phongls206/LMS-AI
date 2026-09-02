@@ -73,7 +73,7 @@ export class AuthService {
    * UC001 — Lấy thông tin người dùng hiện tại từ JWT
    */
   async getMe(userId: number) {
-    const user = await this.prisma.nguoiDung.findUnique({
+    let user = await this.prisma.nguoiDung.findUnique({
       where: { id: BigInt(userId) },
       select: {
         id: true,
@@ -92,6 +92,47 @@ export class AuthService {
     });
 
     if (!user) throw new NotFoundException('Không tìm thấy tài khoản.');
+
+    // Tự động khởi tạo hồ sơ học viên nếu tài khoản học viên chưa liên kết hồ sơ
+    if (user.vaiTro === 'HOC_VIEN' && !user.hoSoHocVien) {
+      const nextNum = (await this.prisma.hoSoHocVien.count()) + 1;
+      const maHV = `HV${String(nextNum).padStart(3, '0')}`;
+      const newProfile = await this.prisma.hoSoHocVien.create({
+        data: {
+          nguoiDung: { connect: { id: user.id } },
+          maHocVien: maHV,
+          hoTen: user.tenDangNhap,
+          trinhDoCEFR: 'B1',
+          nguonDanhGia: 'Tài khoản đăng ký trực tiếp',
+        },
+      });
+      user.hoSoHocVien = {
+        id: newProfile.id,
+        maHocVien: newProfile.maHocVien,
+        hoTen: newProfile.hoTen,
+        trinhDoCEFR: newProfile.trinhDoCEFR,
+      };
+    }
+
+    // Tự động khởi tạo hồ sơ giảng viên nếu tài khoản giáo viên chưa liên kết hồ sơ
+    if (user.vaiTro === 'GIAO_VIEN' && !user.hoSoGiaoVien) {
+      const nextNum = (await this.prisma.hoSoGiaoVien.count()) + 1;
+      const maGV = `GV${String(nextNum).padStart(3, '0')}`;
+      const newProfile = await this.prisma.hoSoGiaoVien.create({
+        data: {
+          nguoiDung: { connect: { id: user.id } },
+          maGiaoVien: maGV,
+          hoTen: user.tenDangNhap,
+          chuyenMon: 'Tiếng Anh Tổng Quát',
+        },
+      });
+      user.hoSoGiaoVien = {
+        id: newProfile.id,
+        maGiaoVien: newProfile.maGiaoVien,
+        hoTen: newProfile.hoTen,
+        chuyenMon: newProfile.chuyenMon,
+      };
+    }
 
     return this.serializeBigInt(user);
   }

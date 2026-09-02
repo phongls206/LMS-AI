@@ -425,39 +425,73 @@ export default function AdminClassesPage() {
         {/* Modal Phân Công Giáo Viên */}
         {showAssignTeacher && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl">
-              <h3 className="text-lg font-bold text-white mb-2">Phân Công Giáo Viên Giảng Dạy</h3>
-              <p className="text-xs text-amber-400 mb-4">⚠️ Hệ thống tự động kiểm tra chống trùng giờ dạy của giáo viên.</p>
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-800">
+                <h3 className="text-base font-bold text-white">Phân Công Giáo Viên Giảng Dạy</h3>
+                <button onClick={() => setShowAssignTeacher(null)} className="text-slate-500 hover:text-white">
+                  ✕
+                </button>
+              </div>
 
-              <form onSubmit={handleAssignTeacher} className="space-y-4 text-xs">
-                <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Chọn Giáo Viên</label>
-                  <select
-                    value={assignForm.giaoVienId}
-                    onChange={(e) => setAssignForm({ giaoVienId: +e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
-                  >
-                    {teachers.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        [{t.maGiaoVien}] {t.hoTen} ({t.chuyenMon})
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              {(() => {
+                const targetClass = classes.find((c) => c.id === showAssignTeacher);
+                const currentTeacher = targetClass?.phanCong?.[0]?.giaoVien;
 
-                <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
-                  <button
-                    type="button"
-                    onClick={() => setShowAssignTeacher(null)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold"
-                  >
-                    Hủy
-                  </button>
-                  <button type="submit" className="px-5 py-2 rounded-xl bg-emerald-600 text-white font-semibold">
-                    Phân Công Giảng Dạy
-                  </button>
-                </div>
-              </form>
+                return (
+                  <form onSubmit={handleAssignTeacher} className="space-y-3.5 text-xs">
+                    <div className="p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                      <p className="text-slate-400">
+                        Lớp học:{' '}
+                        <span className="font-bold text-white font-mono">
+                          [{targetClass?.maLopHoc}] {targetClass?.tenLopHoc}
+                        </span>
+                      </p>
+                      <p className="text-slate-400">
+                        Giáo viên hiện tại:{' '}
+                        {currentTeacher ? (
+                          <span className="text-emerald-400 font-semibold">{currentTeacher.hoTen}</span>
+                        ) : (
+                          <span className="text-slate-500 italic">Chưa phân công</span>
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <label className="block text-slate-300 font-semibold mb-1">Chọn Giáo Viên Mới Phụ Trách</label>
+                      <select
+                        value={assignForm.giaoVienId}
+                        onChange={(e) => setAssignForm({ giaoVienId: +e.target.value })}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white font-medium focus:outline-none focus:border-indigo-500"
+                      >
+                        {teachers.map((t) => (
+                          <option key={t.id} value={t.id}>
+                            [{t.maGiaoVien}] {t.hoTen} — {t.chuyenMon} ({t.trangThai === 'DANG_LAM_VIEC' ? '🟢 Sẵn sàng' : '🟡 Tạm nghỉ'})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-slate-300 space-y-1 text-[11px] leading-relaxed">
+                      <p className="text-indigo-300 font-semibold">ℹ️ Quy chế phân công & bảo toàn dữ liệu:</p>
+                      <p>• Hệ thống tự động kiểm tra chống trùng giờ dạy của giáo viên với các lớp khác.</p>
+                      <p>• Toàn bộ lịch sử điểm danh, chuyên cần và bảng điểm do giáo viên cũ đã nhập trước đó vẫn được lưu trữ nguyên vẹn 100%.</p>
+                    </div>
+
+                    <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+                      <button
+                        type="button"
+                        onClick={() => setShowAssignTeacher(null)}
+                        className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold"
+                      >
+                        Hủy
+                      </button>
+                      <button type="submit" className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold">
+                        Xác Nhận Phân Công
+                      </button>
+                    </div>
+                  </form>
+                );
+              })()}
             </div>
           </div>
         )}

@@ -270,15 +270,15 @@ export default function StudentAiProgressPage() {
 
               {/* Badge Mode */}
               <div className="flex items-center space-x-2">
-                {summary.mode === 'AI_GEMINI' ? (
-                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold">
+                {summary.mode === 'AI_GEMINI' || summary.mode === 'AI_GEMINI_CACHED' ? (
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold shadow-sm shadow-indigo-500/10">
                     <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>✨ Phân Tích Gemini AI (Zero-Trust Verified)</span>
+                    <span>✨ Phân Tích Gemini AI {summary.mode === 'AI_GEMINI_CACHED' ? '(Tức Thì • Smart Cache)' : '(Zero-Trust Verified)'}</span>
                   </span>
                 ) : (
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold">
                     <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-                    <span>📋 Tóm Tắt Quy Tắc (Rule-Based Fallback)</span>
+                    <span>📋 Phân Tích Sư Phạm (Hệ Thống Quy Tắc)</span>
                   </span>
                 )}
               </div>

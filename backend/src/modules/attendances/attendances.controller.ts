@@ -34,6 +34,16 @@ export class AttendancesController {
   }
 
   /**
+   * GET /api/v1/classes/:id/attendance-matrix — UC008 (Quản lý, Giáo viên)
+   */
+  @Get('classes/:id/attendance-matrix')
+  @Roles(VaiTro.QUAN_LY, VaiTro.GIAO_VIEN)
+  @ApiOperation({ summary: 'Lấy ma trận điểm danh toàn bộ buổi học của lớp' })
+  getClassAttendanceMatrix(@Param('id', ParseIntPipe) id: number) {
+    return this.attendancesService.getClassAttendanceMatrix(id);
+  }
+
+  /**
    * GET /api/v1/sessions/:id — UC008 (Quản lý, Giáo viên)
    */
   @Get('sessions/:id')

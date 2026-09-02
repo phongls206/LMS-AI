@@ -4,7 +4,30 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
 import { HocVien, TrinhDoCEFR } from '../../../types';
-import { Plus, Search, CheckCircle, Edit3, Trash2, X, AlertTriangle, KeyRound } from 'lucide-react';
+import {
+  Plus,
+  Search,
+  CheckCircle,
+  Edit3,
+  Trash2,
+  X,
+  AlertTriangle,
+  KeyRound,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Eye,
+  BookOpen,
+  CreditCard,
+  GraduationCap,
+  Calendar,
+  Phone,
+  Mail,
+  MapPin,
+  DollarSign,
+  UserCheck,
+} from 'lucide-react';
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<HocVien[]>([]);
@@ -13,10 +36,17 @@ export default function AdminStudentsPage() {
   const [cefrFilter, setCefrFilter] = useState<string>('');
   const [message, setMessage] = useState<string | null>(null);
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
   // Modals state
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState<any | null>(null);
   const [deletingStudent, setDeletingStudent] = useState<any | null>(null);
+  const [detailStudent, setDetailStudent] = useState<any | null>(null);
 
   const [createFormData, setCreateFormData] = useState({
     tenDangNhap: '',
@@ -42,8 +72,13 @@ export default function AdminStudentsPage() {
 
   const fetchStudents = async () => {
     try {
-      const res = await usersService.getStudents(1, 50, search || undefined, cefrFilter || undefined);
-      setStudents(res.data);
+      setLoading(true);
+      const res = await usersService.getStudents(page, limit, search || undefined, cefrFilter || undefined);
+      setStudents(res.data || []);
+      if (res.meta) {
+        setTotal(res.meta.total || 0);
+        setTotalPages(res.meta.totalPages || 1);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -53,6 +88,11 @@ export default function AdminStudentsPage() {
 
   useEffect(() => {
     fetchStudents();
+  }, [page, limit, search, cefrFilter]);
+
+  // Reset to page 1 when search or filter changes
+  useEffect(() => {
+    setPage(1);
   }, [search, cefrFilter]);
 
   const handleCreateStudent = async (e: React.FormEvent) => {
@@ -130,7 +170,7 @@ export default function AdminStudentsPage() {
     <AppLayout
       allowedRoles={['QUAN_LY', 'TU_VAN_VIEN']}
       title="Hồ Sơ & Quản Lý Học Viên"
-      subtitle="Tiếp nhận học viên mới, chỉnh sửa thông tin, phân loại CEFR và hỗ trợ khôi phục mật khẩu"
+      subtitle="Quản lý chi tiết học viên, khóa học tham gia, phân loại CEFR và công nợ học phí"
     >
       <div className="space-y-6">
         {/* Filters and Actions */}
@@ -189,76 +229,239 @@ export default function AdminStudentsPage() {
               <table className="w-full text-left text-xs text-slate-300">
                 <thead className="bg-slate-950/80 text-slate-400 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-800">
                   <tr>
-                    <th className="px-5 py-3.5">Mã HV</th>
-                    <th className="px-5 py-3.5">Họ Và Tên</th>
-                    <th className="px-5 py-3.5">Trình Độ CEFR</th>
-                    <th className="px-5 py-3.5">Email & SĐT</th>
-                    <th className="px-5 py-3.5">Nguồn Đánh Giá</th>
-                    <th className="px-5 py-3.5">Trạng Thái</th>
-                    <th className="px-5 py-3.5 text-right">Thao Tác</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Mã HV</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Họ Và Tên</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap text-center">Trình Độ</th>
+                    <th className="px-5 py-3.5 min-w-[220px]">Lớp & Khóa Đang Học</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap">Email & SĐT</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap text-center">Học Phí</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap text-center">Trạng Thái</th>
+                    <th className="px-5 py-3.5 whitespace-nowrap text-right">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/80">
-                  {students.map((s) => (
-                    <tr key={s.id} className="hover:bg-slate-800/40 transition">
-                      <td className="px-5 py-4">
-                        <span className="font-mono font-bold text-indigo-400 block">{s.maHocVien}</span>
-                        <span className="font-mono text-[11px] text-slate-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800/80">
-                          {s.nguoiDung?.tenDangNhap || s.maHocVien.toLowerCase()}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <p className="font-semibold text-white">{s.hoTen}</p>
-                        <p className="text-[11px] text-slate-400">{s.gioiTinh === 'NAM' ? 'Nam' : 'Nữ'}</p>
-                      </td>
-                      <td className="px-5 py-4">
-                        <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 font-semibold font-mono">
-                          {s.trinhDoCEFR}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4">
-                        <p className="text-slate-300">{s.nguoiDung?.email}</p>
-                        <p className="text-[11px] text-slate-500">{s.nguoiDung?.soDienThoai || 'Chưa cập nhật'}</p>
-                      </td>
-                      <td className="px-5 py-4 text-slate-400 text-[11px]">{s.nguonDanhGia || 'Test đầu vào'}</td>
-                      <td className="px-5 py-4">
-                        <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
-                          s.trangThai === 'DANG_HOC' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
-                          s.trangThai === 'DA_TOT_NGHIEP' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
-                          'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                        }`}>
-                          {s.trangThai}
-                        </span>
-                      </td>
-                      <td className="px-5 py-4 text-right">
-                        <div className="flex items-center justify-end space-x-2">
+                  {students.map((s: any) => {
+                    const enrollments = s.dangKyHoc || [];
+                    const invoices = s.hoaDon || [];
+                    const totalFee = invoices.reduce((sum: number, inv: any) => sum + Number(inv.soTienPhaiTra || 0), 0);
+                    const paidFee = invoices.reduce((sum: number, inv: any) => sum + Number(inv.soTienDaTra || 0), 0);
+                    const isFullyPaid = invoices.length > 0 && paidFee >= totalFee;
+
+                    return (
+                      <tr key={s.id} className="hover:bg-slate-800/40 transition">
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <span className="font-mono font-bold text-indigo-400 block">{s.maHocVien}</span>
+                          <span className="font-mono text-[11px] text-slate-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800/80 inline-block mt-0.5">
+                            {s.nguoiDung?.tenDangNhap || s.maHocVien.toLowerCase()}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
                           <button
-                            onClick={() => openEditModal(s, true)}
-                            title="Reset mật khẩu về 123456"
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-amber-950/50 text-amber-400 hover:text-amber-300 transition"
+                            onClick={() => setDetailStudent(s)}
+                            className="font-semibold text-white hover:text-indigo-400 text-left transition block whitespace-nowrap"
+                            title="Bấm để xem hồ sơ chi tiết"
                           >
-                            <KeyRound className="w-3.5 h-3.5" />
+                            <span>{s.hoTen}</span>
                           </button>
-                          <button
-                            onClick={() => openEditModal(s, false)}
-                            title="Sửa thông tin"
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300 transition"
+                          <span className="text-[11px] text-slate-400 block mt-0.5">
+                            {s.gioiTinh === 'NAM' || s.gioiTinh === 'Nam' ? 'Nam' : 'Nữ'}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap text-center">
+                          <span className="inline-block whitespace-nowrap px-2.5 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 font-semibold font-mono text-xs">
+                            {s.trinhDoCEFR}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 min-w-[220px]">
+                          {enrollments.length > 0 ? (
+                            <div className="space-y-1.5">
+                              {enrollments.map((dk: any) => (
+                                <div key={dk.id || dk.lopHoc?.id} className="flex flex-col">
+                                  <span className="font-semibold text-emerald-400 font-mono text-xs block whitespace-nowrap">
+                                    [{dk.lopHoc?.maLopHoc}]
+                                  </span>
+                                  <span className="text-slate-200 text-xs font-medium block">
+                                    {dk.lopHoc?.tenLopHoc}
+                                  </span>
+                                  {dk.lopHoc?.khoaHoc && (
+                                    <span className="text-[11px] text-slate-400 block mt-0.5">
+                                      Khóa: {dk.lopHoc?.khoaHoc?.tenKhoaHoc}
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="inline-block whitespace-nowrap text-slate-500 italic text-[11px] bg-slate-950 px-2.5 py-1 rounded border border-slate-800">
+                              Chưa xếp lớp
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap">
+                          <p className="text-slate-300 font-medium">{s.nguoiDung?.email}</p>
+                          <p className="text-[11px] text-slate-500 mt-0.5">{s.nguoiDung?.soDienThoai || 'Chưa cập nhật'}</p>
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap text-center">
+                          {invoices.length > 0 ? (
+                            <span
+                              className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-semibold border ${
+                                isFullyPaid
+                                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                  : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                              }`}
+                            >
+                              {isFullyPaid ? 'Đã Hoàn Tất' : 'Chờ Thu'}
+                            </span>
+                          ) : (
+                            <span className="text-slate-500 text-xs">-</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4 whitespace-nowrap text-center">
+                          <span
+                            className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-semibold ${
+                              s.trangThai === 'DANG_HOC'
+                                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                : s.trangThai === 'DA_TOT_NGHIEP'
+                                ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
+                                : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                            }`}
                           >
-                            <Edit3 className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => setDeletingStudent(s)}
-                            title="Xóa học viên"
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/50 text-rose-400 hover:text-rose-300 transition"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            {s.trangThai}
+                          </span>
+                        </td>
+                        <td className="px-5 py-4 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end space-x-1.5">
+                            <button
+                              onClick={() => setDetailStudent(s)}
+                              title="Xem hồ sơ chi tiết"
+                              className="p-1.5 rounded-lg bg-indigo-950/40 hover:bg-indigo-900/60 text-indigo-300 border border-indigo-500/30 transition"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => openEditModal(s, true)}
+                              title="Reset mật khẩu về 123456"
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-amber-950/50 text-amber-400 hover:text-amber-300 transition"
+                            >
+                              <KeyRound className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => openEditModal(s, false)}
+                              title="Sửa thông tin"
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition"
+                            >
+                              <Edit3 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => setDeletingStudent(s)}
+                              title="Xóa học viên"
+                              className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/50 text-rose-400 hover:text-rose-300 transition"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="px-5 py-4 bg-slate-950/60 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-slate-400">
+                <span>Hiển thị</span>
+                <span className="font-semibold text-white">
+                  {total > 0 ? (page - 1) * limit + 1 : 0} - {Math.min(page * limit, total)}
+                </span>
+                <span>trên tổng số</span>
+                <span className="font-bold text-indigo-400">{total}</span>
+                <span>học viên</span>
+
+                <span className="text-slate-600">|</span>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-400">Số dòng:</span>
+                  <select
+                    value={limit}
+                    onChange={(e) => {
+                      setLimit(Number(e.target.value));
+                      setPage(1);
+                    }}
+                    className="bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-indigo-500 cursor-pointer"
+                  >
+                    <option value={10}>10 / trang</option>
+                    <option value={15}>15 / trang</option>
+                    <option value={25}>25 / trang</option>
+                    <option value={50}>50 / trang</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-1.5">
+                <button
+                  onClick={() => setPage(1)}
+                  disabled={page === 1}
+                  title="Trang đầu"
+                  className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronsLeft className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  title="Trang trước"
+                  className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <div className="flex items-center space-x-1 px-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((p) => {
+                      if (totalPages <= 5) return true;
+                      if (p === 1 || p === totalPages) return true;
+                      return Math.abs(p - page) <= 1;
+                    })
+                    .map((p, idx, arr) => (
+                      <React.Fragment key={p}>
+                        {idx > 0 && arr[idx - 1] !== p - 1 && (
+                          <span className="px-1 text-slate-600 text-[11px]">...</span>
+                        )}
+                        <button
+                          onClick={() => setPage(p)}
+                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-semibold transition ${
+                            page === p
+                              ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/30'
+                              : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      </React.Fragment>
+                    ))}
+                </div>
+
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                  title="Trang kế tiếp"
+                  className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => setPage(totalPages)}
+                  disabled={page >= totalPages}
+                  title="Trang cuối"
+                  className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  <ChevronsRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -537,7 +740,216 @@ export default function AdminStudentsPage() {
             </div>
           </div>
         )}
+
+        {/* Modal Hồ Sơ Chi Tiết Học Viên */}
+        {detailStudent && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-2xl p-6 shadow-2xl space-y-5 my-8">
+              {/* Header */}
+              <div className="flex justify-between items-start pb-4 border-b border-slate-800">
+                <div className="flex items-center space-x-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-indigo-500/20">
+                    {detailStudent.hoTen?.charAt(0) || 'H'}
+                  </div>
+                  <div>
+                    <div className="flex items-center space-x-2">
+                      <h3 className="text-lg font-bold text-white">{detailStudent.hoTen}</h3>
+                      <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 font-mono text-xs font-bold">
+                        CEFR {detailStudent.trinhDoCEFR}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Mã HV: <span className="font-mono font-bold text-indigo-400">{detailStudent.maHocVien}</span> • Username:{' '}
+                      <span className="font-mono text-slate-300">{detailStudent.nguoiDung?.tenDangNhap}</span>
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setDetailStudent(null)}
+                  className="p-1.5 rounded-xl bg-slate-800 text-slate-400 hover:text-white transition"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Grid Thông Tin Cá Nhân & Liên Hệ */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 space-y-2">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+                    <UserCheck className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Thông Tin Nhân Khẩu</span>
+                  </span>
+                  <div className="space-y-1.5 text-slate-300">
+                    <p className="flex justify-between">
+                      <span className="text-slate-500">Giới tính:</span>
+                      <span className="font-medium text-white">{detailStudent.gioiTinh || 'Nam'}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-slate-500">Ngày sinh:</span>
+                      <span className="font-medium text-white">
+                        {detailStudent.ngaySinh
+                          ? new Date(detailStudent.ngaySinh).toLocaleDateString('vi-VN')
+                          : 'Chưa cập nhật'}
+                      </span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-slate-500">Nguồn đánh giá:</span>
+                      <span className="font-medium text-white">{detailStudent.nguonDanhGia || 'Placement Test'}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-slate-500">Trạng thái:</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        {detailStudent.trangThai || 'DANG_HOC'}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 space-y-2">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
+                    <Mail className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Liên Hệ & Địa Chỉ</span>
+                  </span>
+                  <div className="space-y-1.5 text-slate-300">
+                    <p className="flex justify-between">
+                      <span className="text-slate-500">Email:</span>
+                      <span className="font-medium text-white">{detailStudent.nguoiDung?.email || 'Chưa có'}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-slate-500">Số điện thoại:</span>
+                      <span className="font-medium text-white">{detailStudent.nguoiDung?.soDienThoai || 'Chưa có'}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-slate-500">Địa chỉ:</span>
+                      <span className="font-medium text-white truncate max-w-[150px]">{detailStudent.diaChi || 'Hà Nội'}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-slate-500">Tài khoản:</span>
+                      <span className="text-emerald-400 font-semibold">Đang hoạt động</span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Danh Sách Lớp & Khóa Học Đang Theo Học */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+                    <BookOpen className="w-4 h-4 text-emerald-400" />
+                    <span>Khóa Học & Lớp Học Tham Gia</span>
+                  </h4>
+                  <span className="text-[11px] text-slate-500">
+                    {detailStudent.dangKyHoc?.length || 0} Lớp đã đăng ký
+                  </span>
+                </div>
+
+                {detailStudent.dangKyHoc && detailStudent.dangKyHoc.length > 0 ? (
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {detailStudent.dangKyHoc.map((dk: any) => (
+                      <div
+                        key={dk.id || dk.lopHoc?.id}
+                        className="p-3 rounded-2xl bg-slate-950 border border-slate-800/90 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs"
+                      >
+                        <div className="space-y-0.5">
+                          <div className="flex items-center space-x-2">
+                            <span className="font-mono font-bold text-emerald-400">[{dk.lopHoc?.maLopHoc}]</span>
+                            <span className="font-semibold text-white">{dk.lopHoc?.tenLopHoc}</span>
+                          </div>
+                          {dk.lopHoc?.khoaHoc && (
+                            <p className="text-[11px] text-slate-400">
+                              Khóa: <span className="text-indigo-300">{dk.lopHoc?.khoaHoc?.tenKhoaHoc}</span> (Mã:{' '}
+                              {dk.lopHoc?.khoaHoc?.maKhoaHoc})
+                            </p>
+                          )}
+                        </div>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          {dk.trangThai || 'Đã Xác Nhận'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 text-center text-slate-500 text-xs italic">
+                    Học viên chưa được xếp vào lớp học nào.
+                  </div>
+                )}
+              </div>
+
+              {/* Tình Trạng Học Phí & Hóa Đơn */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center space-x-2">
+                    <CreditCard className="w-4 h-4 text-indigo-400" />
+                    <span>Tình Trạng Học Phí & Hóa Đơn</span>
+                  </h4>
+                </div>
+
+                {detailStudent.hoaDon && detailStudent.hoaDon.length > 0 ? (
+                  <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                    {detailStudent.hoaDon.map((inv: any) => {
+                      const phaiTra = Number(inv.soTienPhaiTra || 0);
+                      const daTra = Number(inv.soTienDaTra || 0);
+                      const conNo = Math.max(0, phaiTra - daTra);
+                      const isDone = daTra >= phaiTra;
+
+                      return (
+                        <div
+                          key={inv.id}
+                          className="p-3 rounded-2xl bg-slate-950 border border-slate-800 flex justify-between items-center text-xs"
+                        >
+                          <div>
+                            <span className="font-mono font-bold text-indigo-400">{inv.maHoaDon}</span>
+                            <div className="flex space-x-3 text-[11px] text-slate-400 mt-0.5">
+                              <span>
+                                Phải nộp:{' '}
+                                <strong className="text-white">{phaiTra.toLocaleString('vi-VN')} đ</strong>
+                              </span>
+                              <span>
+                                Đã nộp:{' '}
+                                <strong className="text-emerald-400">{daTra.toLocaleString('vi-VN')} đ</strong>
+                              </span>
+                              {conNo > 0 && (
+                                <span>
+                                  Còn nợ:{' '}
+                                  <strong className="text-rose-400">{conNo.toLocaleString('vi-VN')} đ</strong>
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <span
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+                              isDone
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                            }`}
+                          >
+                            {isDone ? 'Đã Thanh Toán' : 'Chưa Hoàn Tất'}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 text-center text-slate-500 text-xs italic">
+                    Chưa có dữ liệu hóa đơn học phí.
+                  </div>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex justify-end pt-3 border-t border-slate-800">
+                <button
+                  onClick={() => setDetailStudent(null)}
+                  className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition"
+                >
+                  Đóng Hồ Sơ
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AppLayout>
   );
 }
+

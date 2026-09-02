@@ -109,6 +109,7 @@ export const enrollmentsService = {
 export const attendancesService = {
   getClassSessions: async (classId: number) => (await api.get(`/classes/${classId}/sessions`)).data,
   getSessionAttendance: async (sessionId: number) => (await api.get(`/sessions/${sessionId}`)).data,
+  getClassAttendanceMatrix: async (classId: number) => (await api.get(`/classes/${classId}/attendance-matrix`)).data,
   submitAttendance: async (sessionId: number, danhSach: any[]) =>
     (await api.post(`/sessions/${sessionId}/attendance`, { danhSach })).data,
 };

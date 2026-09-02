@@ -44,3 +44,7 @@ coverage/
 
 # Docker
 postgres_data/
+
+# Temporary files
+~$*
+*.tmp

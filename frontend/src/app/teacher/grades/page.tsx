@@ -19,11 +19,23 @@ export default function TeacherGradesPage() {
   useEffect(() => {
     const fetchAssignedClasses = async () => {
       try {
-        // Chỉ lấy các lớp được phân công cho giáo viên hiện tại
-        const schedule = await classesService.getTeacherSchedule();
-        const assignedClasses = (schedule || [])
-          .map((item: any) => item.lopHoc)
-          .filter(Boolean);
+        let assignedClasses: any[] = [];
+        try {
+          // Lấy các lớp được phân công cho giáo viên hiện tại
+          const schedule = await classesService.getTeacherSchedule();
+          assignedClasses = (schedule || [])
+            .map((item: any) => item.lopHoc)
+            .filter(Boolean);
+        } catch {
+          // Nếu là Quản trị viên (Admin), lấy toàn bộ danh sách lớp
+          const all = await classesService.getAll();
+          assignedClasses = all || [];
+        }
+
+        if (assignedClasses.length === 0) {
+          const all = await classesService.getAll();
+          assignedClasses = all || [];
+        }
 
         setClasses(assignedClasses);
         if (assignedClasses.length > 0) {
@@ -55,7 +67,7 @@ export default function TeacherGradesPage() {
 
         const initial: Record<number, { cc: number; gk: number; ck: number; nhanXet: string }> = {};
         detail.dangKyHoc?.forEach((dk: any) => {
-          const g = existingGrades.find((item: any) => item.hocVienId === dk.hocVien.id);
+          const g = (existingGrades || []).find((item: any) => Number(item.hocVienId) === Number(dk.hocVien.id));
           initial[dk.hocVien.id] = {
             cc: g?.diemChuyenCan !== null && g?.diemChuyenCan !== undefined ? Number(g.diemChuyenCan) : 90,
             gk: g?.diemGiuaKy !== null && g?.diemGiuaKy !== undefined ? Number(g.diemGiuaKy) : 75,
@@ -100,17 +112,17 @@ export default function TeacherGradesPage() {
     try {
       const payload = Object.entries(gradesMap).map(([studentId, val]) => ({
         hocVienId: +studentId,
-        diemChuyenCan: +val.cc,
-        diemGiuaKy: +val.gk,
-        diemCuoiKy: +val.ck,
-        nhanXet: val.nhanXet,
+        diemChuyenCan: val.cc !== undefined && val.cc !== null && !isNaN(+val.cc) ? +val.cc : 0,
+        diemGiuaKy: val.gk !== undefined && val.gk !== null && !isNaN(+val.gk) ? +val.gk : 0,
+        diemCuoiKy: val.ck !== undefined && val.ck !== null && !isNaN(+val.ck) ? +val.ck : 0,
+        nhanXet: val.nhanXet || '',
       }));
 
       await gradesService.submitGrades(selectedClassId, payload);
       setMessage('Lưu bảng điểm & tự động tính điểm tổng kết 20/30/50 thành công!');
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra.');
+      alert(err.response?.data?.message || 'Có lỗi xảy ra khi lưu bảng điểm.');
     } finally {
       setSaving(false);
     }

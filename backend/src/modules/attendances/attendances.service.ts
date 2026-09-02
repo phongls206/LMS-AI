@@ -55,6 +55,30 @@ export class AttendancesService {
   }
 
   /**
+   * Lấy toàn bộ ma trận điểm danh của cả lớp (tất cả các buổi học và bản ghi điểm danh)
+   */
+  async getClassAttendanceMatrix(classId: number) {
+    const classRecord = await this.prisma.lopHoc.findUnique({
+      where: { id: BigInt(classId) },
+      include: {
+        dangKyHoc: {
+          include: {
+            hocVien: { select: { id: true, maHocVien: true, hoTen: true, trinhDoCEFR: true } },
+          },
+        },
+        buoiHoc: {
+          include: {
+            diemDanh: true,
+          },
+          orderBy: { soThuTu: 'asc' },
+        },
+      },
+    });
+    if (!classRecord) throw new NotFoundException('Lớp học không tồn tại.');
+    return this.serializeBigInt(classRecord);
+  }
+
+  /**
    * UC008 — Ghi nhận / Cập nhật điểm danh buổi học
    */
   async submitAttendance(sessionId: number, dto: SubmitAttendanceDto, teacherUserId: number) {
@@ -73,7 +97,6 @@ export class AttendancesService {
         where: {
           lopHocId: session.lopHocId,
           giaoVienId: teacher.id,
-          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
         },
       });
       if (!isAssigned) {
@@ -81,39 +104,60 @@ export class AttendancesService {
       }
     }
 
-    // Transaction cập nhật tất cả bản ghi điểm danh
-    await this.prisma.$transaction(async (tx) => {
-      for (const item of dto.danhSach) {
-        await tx.banGhiDiemDanh.upsert({
-          where: {
-            buoiHocId_hocVienId: {
+    // Xác định ID giáo viên ghi nhận điểm danh
+    let recordTeacherId = teacher?.id;
+    if (!recordTeacherId) {
+      const assigned = await this.prisma.phanCongGiaoVien.findFirst({
+        where: { lopHocId: session.lopHocId },
+      });
+      recordTeacherId = assigned?.giaoVienId;
+    }
+    if (!recordTeacherId) {
+      const firstTeacher = await this.prisma.hoSoGiaoVien.findFirst();
+      recordTeacherId = firstTeacher?.id || 1n;
+    }
+
+    // Transaction cập nhật tất cả bản ghi điểm danh song song
+    await this.prisma.$transaction(
+      async (tx) => {
+        const promises = dto.danhSach.map((item) =>
+          tx.banGhiDiemDanh.upsert({
+            where: {
+              buoiHocId_hocVienId: {
+                buoiHocId: BigInt(sessionId),
+                hocVienId: BigInt(item.hocVienId),
+              },
+            },
+            update: {
+              trangThai: item.trangThai,
+              ghiChu: item.ghiChu || null,
+              giaoVienDiemDanhId: recordTeacherId,
+              thoiGianDiemDanh: new Date(),
+            },
+            create: {
               buoiHocId: BigInt(sessionId),
               hocVienId: BigInt(item.hocVienId),
+              trangThai: item.trangThai,
+              ghiChu: item.ghiChu || null,
+              giaoVienDiemDanhId: recordTeacherId,
             },
-          },
-          update: {
-            trangThai: item.trangThai,
-            ghiChu: item.ghiChu,
-            giaoVienDiemDanhId: teacher.id,
-            thoiGianDiemDanh: new Date(),
-          },
-          create: {
-            buoiHocId: BigInt(sessionId),
-            hocVienId: BigInt(item.hocVienId),
-            trangThai: item.trangThai,
-            ghiChu: item.ghiChu,
-            giaoVienDiemDanhId: teacher.id,
-          },
+          }),
+        );
+
+        await Promise.all(promises);
+
+        // Cập nhật trạng thái buổi học thành ĐÃ KẾT THÚC
+        await tx.buoiHoc.update({
+          where: { id: BigInt(sessionId) },
+          data: { trangThai: TrangThaiBuoiHoc.DA_KET_THUC },
         });
-      }
+      },
+      {
+        maxWait: 15000,
+        timeout: 30000,
+      },
+    );
 
-      // Cập nhật trạng thái buổi học thành ĐÃ KẾT THÚC
-      await tx.buoiHoc.update({
-        where: { id: BigInt(sessionId) },
-        data: { trangThai: TrangThaiBuoiHoc.DA_KET_THUC },
-      });
-    });
-
-    return { message: 'Ghi nhận điểm danh thành công.' };
+    return { message: 'Ghi nhận và lưu điểm danh thành công.' };
   }
 }
