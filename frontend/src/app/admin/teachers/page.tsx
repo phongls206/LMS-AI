@@ -176,11 +176,16 @@ export default function AdminTeachersPage() {
                     <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-bold text-indigo-400 text-lg">
                       {t.hoTen.split(' ').slice(-1)[0][0]}
                     </div>
-                    <div className="flex flex-col items-end space-y-1.5">
-                      <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 font-mono text-xs font-bold">
-                        {t.maGiaoVien}
+                    <div className="flex flex-col items-end space-y-1">
+                      <div className="flex items-center space-x-1.5">
+                        <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 font-mono text-xs font-bold">
+                          {t.maGiaoVien}
+                        </span>
+                        {getStatusBadge(t.trangThai || 'DANG_LAM_VIEC')}
+                      </div>
+                      <span className="font-mono text-[11px] text-indigo-300 bg-slate-950 px-2 py-0.5 rounded border border-slate-800">
+                        {t.nguoiDung?.tenDangNhap || t.maGiaoVien.toLowerCase()}
                       </span>
-                      {getStatusBadge(t.trangThai || 'DANG_LAM_VIEC')}
                     </div>
                   </div>
 
@@ -190,27 +195,7 @@ export default function AdminTeachersPage() {
                     <span>Chuyên môn: {t.chuyenMon}</span>
                   </div>
 
-                  {/* Thông tin tài khoản đăng nhập */}
-                  <div className="mb-3 p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 space-y-1.5">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-400 flex items-center space-x-1.5">
-                        <User className="w-3.5 h-3.5 text-indigo-400" />
-                        <span>Tài khoản:</span>
-                      </span>
-                      <span className="font-mono font-bold text-indigo-300 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">
-                        {t.nguoiDung?.tenDangNhap || t.maGiaoVien.toLowerCase()}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-400 flex items-center space-x-1.5">
-                        <Lock className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Mật khẩu:</span>
-                      </span>
-                      <span className="font-mono text-slate-300 text-[11px]">123456 (Mặc định)</span>
-                    </div>
-                  </div>
-
-                  <p className="text-xs text-slate-400 mb-4 bg-slate-950/40 p-2.5 rounded-xl border border-slate-800/40 leading-relaxed">
+                  <p className="text-xs text-slate-400 mb-4 bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 leading-relaxed">
                     🎓 <span className="text-slate-300 font-semibold">Bằng cấp:</span>{' '}
                     {t.bangCap || 'Cử nhân Sư phạm Tiếng Anh'}
                   </p>
