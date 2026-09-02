@@ -33,100 +33,56 @@ Quy trình khởi tạo CSDL được thực hiện qua công cụ Prisma ORM v�
 
 ## 8.3 Kết Quả Cài Đặt Các Phân Hệ Chức Năng Chính
 
+Dưới đây là kết quả cài đặt và giao diện thực tế tiêu biểu của 6 phân hệ cốt lõi trong hệ thống:
+
 ### 8.3.1 Phân Hệ 1: Đăng Nhập và Phân Quyền RBAC (Role-Based Access Control)
-Màn hình đăng nhập (`SCR-AUTH-01`) hỗ trợ xác thực danh tính an toàn qua giao thức JWT và mã hóa mật khẩu Argon2. Hệ thống tích hợp sẵn các nút chọn nhanh tài khoản mẫu cho 4 vai trò, tự động phân giải vai trò người dùng và điều hướng chính xác về Dashboard tương ứng:
+Màn hình đăng nhập (`SCR-AUTH-01`) tích hợp sẵn các nút chọn nhanh tài khoản mẫu cho 4 vai trò, tự động phân giải vai trò qua JWT và chuyển hướng chính xác về Dashboard Quản trị (`SCR-ADM-01`) với các chỉ số thống kê tổng quan:
 
-![Hình 8.1: Giao diện Đăng nhập hệ thống kèm nút chọn nhanh 4 vai trò (SCR-AUTH-01)](../images/01_login_screen.png)
-*Hình 8.1: Giao diện Đăng nhập hệ thống kèm nút chọn nhanh 4 vai trò (SCR-AUTH-01)*
-
-![Hình 8.2: Giao diện Dashboard Quản trị trung tâm với các chỉ số thống kê tổng quan (SCR-ADM-01)](../images/02_admin_dashboard.png)
-*Hình 8.2: Giao diện Dashboard Quản trị trung tâm với các chỉ số thống kê tổng quan (SCR-ADM-01)*
+![Hình 8.1: Giao diện Dashboard Quản trị trung tâm với các chỉ số hoạt động tổng quan (SCR-ADM-01)](../images/02_admin_dashboard.png)
+*Hình 8.1: Giao diện Dashboard Quản trị trung tâm với các chỉ số hoạt động tổng quan (SCR-ADM-01)*
 
 ---
 
-### 8.3.2 Phân Hệ 2: Quản Lý Khóa Học, Lớp Học & Xếp Lịch (Chống Trùng Phòng Học)
-Phân hệ quản lý đào tạo cho phép Người Quản Lý quản lý danh mục khóa học, mở lớp học mới và xếp thời khóa biểu. Hệ thống tự động kiểm tra chống trùng phòng học (nếu một phòng học đã có lớp vào cùng thứ và khung giờ thì hệ thống sẽ từ chối lưu):
+### 8.3.2 Phân Hệ 2 & 3: Quản Lý Khóa Học, Lớp Học, Xếp Lịch & Phân Công Giáo Viên
+Phân hệ quản lý đào tạo hỗ trợ mở lớp học mới, khống chế sĩ số tối đa 25 học viên, xếp lịch phòng học (có cơ chế kiểm tra chống trùng phòng học) và phân công giảng viên chính (có cơ chế chống trùng lịch dạy của giảng viên):
 
-![Hình 8.3: Giao diện Danh mục Khóa học và chuẩn đầu vào CEFR (SCR-ADM-02)](../images/03_admin_courses.png)
-*Hình 8.3: Giao diện Danh mục Khóa học và chuẩn đầu vào CEFR (SCR-ADM-02)*
-
-![Hình 8.4: Giao diện Quản lý Lớp học, Sĩ số và Xếp lịch phòng học (SCR-ADM-03)](../images/04_admin_classes.png)
-*Hình 8.4: Giao diện Quản lý Lớp học, Sĩ số và Xếp lịch phòng học (SCR-ADM-03)*
+![Hình 8.2: Giao diện Quản lý Lớp học, Sĩ số và Xếp lịch phòng học (SCR-ADM-03)](../images/04_admin_classes.png)
+*Hình 8.2: Giao diện Quản lý Lớp học, Sĩ số và Xếp lịch phòng học (SCR-ADM-03)*
 
 ---
 
-### 8.3.3 Phân Hệ 3: Phân Công Giáo Viên & Quản Lý Hồ Sơ Học Viên
-Hệ thống hỗ trợ phân công giảng viên chính cho lớp học với cơ chế kiểm tra chống trùng lịch dạy (ngăn chặn việc phân công giảng viên dạy 2 lớp khác nhau trong cùng một ca học). Đồng thời, phân hệ quản lý học viên hỗ trợ tìm kiếm và lọc danh sách học viên theo từng trình độ CEFR:
+### 8.3.3 Phân Hệ 4: Đăng Ký Lớp Học (4 Điều Kiện) & Quản Lý Học Phí
+Giao diện đăng ký lớp học cho học viên tự động kiểm tra nghiêm ngặt 4 điều kiện nghiệp vụ (Sĩ số < 25, chưa đăng ký, chuẩn CEFR, không trùng lịch) và tự động sinh Hóa đơn học phí trong cùng một ACID Transaction:
 
-![Hình 8.5: Giao diện Quản lý Hồ sơ Học viên và bộ lọc theo trình độ CEFR (SCR-ADM-05)](../images/05_admin_students.png)
-*Hình 8.5: Giao diện Quản lý Hồ sơ Học viên và bộ lọc theo trình độ CEFR (SCR-ADM-05)*
-
-![Hình 8.6: Giao diện Tiếp nhận học viên mới và gán trình độ CEFR đầu vào (SCR-STA-02)](../images/14_staff_new_student.png)
-*Hình 8.6: Giao diện Tiếp nhận học viên mới và gán trình độ CEFR đầu vào (SCR-STA-02)*
+![Hình 8.3: Giao diện Đăng ký Lớp học với cơ chế kiểm tra tự động 4 điều kiện (SCR-STU-02)](../images/10_student_enroll.png)
+*Hình 8.3: Giao diện Đăng ký Lớp học với cơ chế kiểm tra tự động 4 điều kiện (SCR-STU-02)*
 
 ---
 
-### 8.3.4 Phân Hệ 4: Đăng Ký Lớp Học (Kiểm Tra 4 Điều Kiện) & Quản Lý Học Phí
-Khi học viên hoặc tư vấn viên thực hiện đăng ký lớp học, hệ thống tự động kiểm tra nghiêm ngặt 4 điều kiện nghiệp vụ:
-1. Sĩ số lớp hiện tại < 25 học viên.
-2. Học viên chưa từng đăng ký lớp này.
-3. Trình độ CEFR học viên >= chuẩn yêu cầu của khóa học.
-4. Lịch học không bị trùng với các lớp khác đang theo học.
-
-Sau khi đăng ký thành công, hệ thống tự động sinh Hóa đơn học phí trong cùng một ACID Transaction:
-
-![Hình 8.7: Giao diện Đăng ký Lớp học với cơ chế kiểm tra tự động 4 điều kiện (SCR-STU-02)](../images/10_student_enroll.png)
-*Hình 8.7: Giao diện Đăng ký Lớp học với cơ chế kiểm tra tự động 4 điều kiện (SCR-STU-02)*
-
-![Hình 8.8: Giao diện Quản lý Học phí và Lập phiếu thu thanh toán nhiều đợt (SCR-ADM-06)](../images/06_admin_fees.png)
-*Hình 8.8: Giao diện Quản lý Học phí và Lập phiếu thu thanh toán nhiều đợt (SCR-ADM-06)*
-
----
-
-### 8.3.5 Phân Hệ 5: Điểm Danh (4 Trạng Thái) & Bảng Điểm (Công Thức 20/30/50)
-Giảng viên ghi nhận chuyên cần từng buổi học thông qua giao diện điểm danh 4 trạng thái trực quan: `Có Mặt`, `Đi Muộn`, `Có Phép`, `Vắng`.
-
-Phân hệ Bảng điểm tự động tính toán điểm tổng kết theo đúng trọng số: 
+### 8.3.4 Phân Hệ 5: Điểm Danh (4 Trạng Thái) & Bảng Điểm (Công Thức 20/30/50)
+Hệ thống hỗ trợ giảng viên điểm danh 4 trạng thái chuyên cần (`Có Mặt`, `Đi Muộn`, `Có Phép`, `Vắng`) và nhập điểm tự động tính toán theo đúng trọng số:
 $$\text{Điểm Tổng Kết} = \text{Chuyên Cần} \times 20\% + \text{Giữa Kỳ} \times 30\% + \text{Cuối Kỳ} \times 50\%$$
-và tự động xếp loại `ĐẠT` khi $\text{Điểm Tổng Kết} \ge 50.00$ và $\text{Chuyên Cần} \ge 80.00$:
+(xét `ĐẠT` khi $\text{Điểm Tổng Kết} \ge 50.00$ và $\text{Chuyên Cần} \ge 80.00$):
 
-![Hình 8.9: Giao diện Điểm danh buổi học với 4 trạng thái chuyên cần (SCR-TEA-03)](../images/07_teacher_attendance.png)
-*Hình 8.9: Giao diện Điểm danh buổi học với 4 trạng thái chuyên cần (SCR-TEA-03)*
-
-![Hình 8.10: Giao diện Nhập điểm và Tự động tính điểm tổng kết 20/30/50 (SCR-TEA-04)](../images/08_teacher_grades.png)
-*Hình 8.10: Giao diện Nhập điểm và Tự động tính điểm tổng kết 20/30/50 (SCR-TEA-04)*
+![Hình 8.4: Giao diện Nhập điểm và Tự động tính điểm tổng kết 20/30/50 (SCR-TEA-04)](../images/08_teacher_grades.png)
+*Hình 8.4: Giao diện Nhập điểm và Tự động tính điểm tổng kết 20/30/50 (SCR-TEA-04)*
 
 ---
 
-### 8.3.6 Phân Hệ 6: Tích Hợp 3 Tính Năng Trí Tuệ Nhân Tạo (GenAI)
-Hệ thống tích hợp Google Gemini AI qua SDK chính thức, kèm cơ chế lọc ảo giác Zero-Trust, Fallback dự phòng tự động và lưu trữ nhật ký kiểm toán (Audit Log) vào bảng `yeu_cau_ai`:
-1. **AI Tư vấn Lớp học phù hợp (UC012):** Phân tích trình độ CEFR và lịch rảnh của học viên, đối soát với CSDL thực tế để gợi ý tối đa 03 lớp học còn chỗ trống phù hợp nhất.
-2. **AI Sinh Đề luyện tập trắc nghiệm (UC013):** Tạo tức thì 05 câu hỏi trắc nghiệm tiếng Anh chuẩn khung CEFR theo chủ đề ngữ pháp/từ vựng được yêu cầu, kèm đáp án và giải thích chi tiết.
-3. **AI Tóm tắt Tiến độ học tập (UC014):** Tổng hợp lịch sử chuyên cần và kết quả thi cử để đưa ra nhận xét cá nhân hóa về điểm mạnh, điểm yếu và lời khuyên ôn tập.
+### 8.3.5 Phân Hệ 6: Tích Hợp 3 Tính Năng Trí Tuệ Nhân Tạo (GenAI)
+Tích hợp mô hình Gemini AI với cơ chế lọc ảo giác Zero-Trust, bảo đảm chỉ gợi ý các lớp học có thật còn chỗ trong CSDL (UC012), tạo tức thì 5 câu hỏi trắc nghiệm tiếng Anh chuẩn CEFR kèm giải thích chi tiết (UC013) và tóm tắt tiến độ học tập cá nhân hóa (UC014):
 
-![Hình 8.11: Giao diện AI Tư vấn lộ trình và gợi ý lớp học chuẩn CEFR (SCR-STU-06)](../images/11_student_ai_consult.png)
-*Hình 8.11: Giao diện AI Tư vấn lộ trình và gợi ý lớp học chuẩn CEFR (SCR-STU-06)*
-
-![Hình 8.12: Giao diện Học viên làm bài trắc nghiệm tương tác AI có chấm điểm trực tiếp (SCR-STU-07)](../images/12_student_ai_practice.png)
-*Hình 8.12: Giao diện Học viên làm bài trắc nghiệm tương tác AI có chấm điểm trực tiếp (SCR-STU-07)*
-
-![Hình 8.13: Giao diện AI Tóm tắt tiến độ học tập và lời khuyên ôn tập cá nhân hóa (SCR-STU-08)](../images/13_student_ai_progress.png)
-*Hình 8.13: Giao diện AI Tóm tắt tiến độ học tập và lời khuyên ôn tập cá nhân hóa (SCR-STU-08)*
-
-![Hình 8.14: Giao diện Trợ lý Giảng viên AI sinh 5 câu trắc nghiệm kèm giải thích (SCR-TEA-05)](../images/09_teacher_ai_exercises.png)
-*Hình 8.14: Giao diện Trợ lý Giảng viên AI sinh 5 câu trắc nghiệm kèm giải thích (SCR-TEA-05)*
+![Hình 8.5: Giao diện AI Tư vấn lộ trình và gợi ý lớp học chuẩn CEFR (SCR-STU-06)](../images/11_student_ai_consult.png)
+*Hình 8.5: Giao diện AI Tư vấn lộ trình và gợi ý lớp học chuẩn CEFR (SCR-STU-06)*
 
 ---
 
 ## 8.4 Đóng Gói và Triển Khai Hệ Thống
 
-Hệ thống được thiết kế hoàn chỉnh theo quy chuẩn Cloud-Native, sẵn sàng cho việc đóng gói và triển khai tự động:
-- **Tài liệu API Swagger UI:** Hệ thống tự động sinh tài liệu chuẩn OpenAPI tương tác trực tiếp tại `http://localhost:8000/api/docs`, cho phép kiểm thử và tích hợp nhanh chóng.
-- **Đóng gói Frontend:** Sử dụng Next.js build bundle tối ưu hóa dung lượng tĩnh (SSG/SSR), triển khai lên Vercel Edge Network.
-- **Đóng gói Backend:** Chạy dưới dạng Node.js Container độc lập, kết nối an toàn với Neon PostgreSQL qua SSL/TLS.
+Hệ thống được thiết kế hoàn chỉnh theo quy chuẩn Cloud-Native (Vercel Edge Network cho Frontend, Render/Railway Container cho Backend và Neon Serverless Cloud cho CSDL), tự động sinh tài liệu chuẩn Swagger OpenAPI 32 RESTful APIs tương tác trực tiếp tại `http://localhost:8000/api/docs`:
 
-![Hình 8.15: Giao diện Tài liệu tương tác Swagger OpenAPI 32 RESTful APIs của hệ thống](../images/15_swagger_docs.png)
-*Hình 8.15: Giao diện Tài liệu tương tác Swagger OpenAPI 32 RESTful APIs của hệ thống*
+![Hình 8.6: Giao diện Tài liệu tương tác Swagger OpenAPI 32 RESTful APIs của hệ thống](../images/15_swagger_docs.png)
+*Hình 8.6: Giao diện Tài liệu tương tác Swagger OpenAPI 32 RESTful APIs của hệ thống*
 
 ---
 ---
@@ -163,53 +119,71 @@ Môi trường kiểm thử chức năng được thực hiện trên cấu hìn
 
 ---
 
-### 2. Danh Sách Các Tình Huống Kiểm Thử Ứng Dụng (Test Cases)
+### 2. Danh Sách Các Tình Huống Kiểm Thử Chi Tiết (45 Test Cases)
 
-Toàn bộ 14 Use Case nghiệp vụ và tính năng tích hợp AI được thiết kế các kịch bản kiểm thử bao gồm cả trường hợp hợp lệ, trường hợp ngoại lệ và điều kiện biên:
+Toàn bộ 14 Use Case nghiệp vụ và tính năng tích hợp AI được thiết kế chi tiết thành **45 ca kiểm thử** bao phủ toàn diện các trường hợp luồng chính (Main Flow), luồng ngoại lệ (Alternative Flow), các điều kiện biên và kiểm soát an toàn AI:
 
-*Bảng 9.3: Danh mục các ca kiểm thử chức năng hệ thống (Test Cases)*
+*Bảng 9.3: Danh mục 45 ca kiểm thử chức năng toàn diện của hệ thống (Test Cases)*
 | Test ID | Chức năng | Mô tả ca kiểm thử | Điều kiện trước | Dữ liệu Test | Kết quả mong muốn | Ghi chú |
 |:---|:---|:---|:---|:---|:---|:---|
-| **TC001** | Đăng nhập (UC001) | Xác thực danh tính và phân quyền theo JWT | Tài khoản đã tồn tại trong CSDL | `admin01` / `Admin@123` | Đăng nhập thành công, cấp JWT Token, chuyển hướng đúng Dashboard Quản trị | Bảo mật Argon2 |
-| **TC002** | Hồ sơ Học viên (UC002) | Tạo mới tài khoản và gán trình độ CEFR | Đăng nhập quyền Quản lý/TVV | Học viên: `HV003`, CEFR: `B1` | Hồ sơ được tạo trong CSDL qua ACID Transaction, mã hóa mật khẩu | ACID Transaction |
-| **TC003** | Khóa học (UC003) | Tạo mới chương trình đào tạo | Đăng nhập quyền Quản lý | Khóa: `KH03`, Học phí: 4.5M, Tiết: 45 | Khóa học được lưu, mã khóa không trùng lặp, học phí >= 0 | Dữ liệu hợp lệ |
-| **TC004** | Lớp & Lịch (UC004) | Xếp lịch học và kiểm tra chống trùng phòng | Lớp học đã được tạo | Phòng `P.101`, Thứ 2 (18h-21h) | Hệ thống chặn nếu phòng P.101 đã có lớp khác học cùng giờ | Chống trùng phòng |
-| **TC005** | Phân công GV (UC005) | Gán giảng viên phụ trách lớp học | Giáo viên và lớp đã tồn tại | Gán `GV001` cho lớp `LOP01` | Hệ thống chặn nếu GV001 đã có lịch dạy lớp khác cùng ca/thứ | Chống trùng giờ dạy |
-| **TC006** | Đăng ký lớp (UC006) | Kiểm tra 4 điều kiện: Sĩ số, Chưa ĐK, CEFR, Lịch | Học viên đã được cấp mã | Học viên B1 đăng ký lớp LOP01 (CEFR B1) | Đăng ký thành công, sĩ số tăng +1, tự động sinh Hóa đơn học phí | Kiểm tra 4 điều kiện |
-| **TC007** | Thu học phí (UC007) | Ghi nhận thanh toán nhiều đợt | Hóa đơn học phí ở trạng thái nợ | Đợt 1 nộp 2.000.000đ | Cộng dồn số tiền đã trả, khi đủ tiền tự chuyển sang DA_HOAN_THANH | Thanh toán từng phần |
-| **TC008** | Điểm danh (UC008) | Ghi nhận 4 trạng thái chuyên cần buổi học | Đến giờ học buổi số 1 | `CO_MAT`, `VANG`, `DI_MUON`, `CO_PHEP` | Lưu trữ chính xác 4 trạng thái cho từng học viên, tính tỷ lệ % tham gia | 4 trạng thái chuẩn |
-| **TC009** | Nhập điểm (UC009) | Tính điểm tổng kết 20/30/50 và xét ĐẠT | Lớp học hoàn thành kỳ thi | `CC=90`, `GK=80`, `CK=85` | Điểm TK = `90*0.2 + 80*0.3 + 85*0.5 = 84.5`. Xếp loại ĐẠT | Công thức 20/30/50 |
-| **TC010** | Tra cứu TKB (UC010) | Học viên xem lịch học và kết quả cá nhân | Đăng nhập tài khoản `student01` | Truy cập `/student/schedule` | Hiển thị đúng danh sách lớp, phòng học, giáo viên phụ trách của cá nhân | Bảo mật RBAC |
-| **TC011** | Báo cáo Thống kê (UC011) | Thống kê doanh thu, sĩ số và tỷ lệ hoàn thành | Đăng nhập quyền Quản lý | Truy cập `/admin/reports` | Hiển thị chính xác tổng doanh thu, biểu đồ sĩ số và % học viên ĐẠT | Thống kê thời gian thực |
-| **TC012** | AI Tư vấn lớp (UC012) | Gợi ý tối đa 3 lớp học thực tế theo CEFR & lịch rảnh | Đăng nhập quyền Học viên/TVV | CEFR: `B1`, Lịch rảnh: Thứ 2-4-6 | AI gợi ý đúng lớp có thật còn chỗ, có Fallback tự động khi lỗi mạng | Lọc ảo giác Zero-Trust |
-| **TC013** | AI Sinh bài tập (UC013) | Sinh tức thì 5 câu trắc nghiệm chuẩn CEFR | Đăng nhập quyền Giáo viên/HV | Chủ đề: `Present Perfect`, CEFR: `B1` | Trả về 5 câu hỏi JSON có 4 lựa chọn, đáp án đúng và giải thích chi tiết | Template Fallback |
-| **TC014** | AI Tóm tắt tiến độ (UC014) | Phân tích chuyên cần & điểm thi, đưa lời khuyên | Đăng nhập quyền Học viên | Chọn lớp học đang theo học | AI tóm tắt điểm mạnh, điểm yếu và gợi ý chủ đề cần ôn tập bổ trợ | Audit Logging |
+| **TC001** | Đăng nhập (UC001) | Đăng nhập thành công vai trò Quản lý | Tài khoản admin01 tồn tại | `admin01` / `Admin@123` | HTTP 200, cấp JWT, chuyển hướng `/admin/dashboard` | Bảo mật Argon2 |
+| **TC002** | Đăng nhập (UC001) | Đăng nhập thành công vai trò Giáo viên | Tài khoản teacher01 tồn tại | `teacher01` / `Admin@123` | HTTP 200, cấp JWT, chuyển hướng `/teacher/dashboard` | Bảo mật Argon2 |
+| **TC003** | Đăng nhập (UC001) | Đăng nhập thành công vai trò Học viên | Tài khoản student01 tồn tại | `student01` / `Admin@123` | HTTP 200, cấp JWT, chuyển hướng `/student/dashboard` | Bảo mật Argon2 |
+| **TC004** | Đăng nhập (UC001) | Đăng nhập thành công vai trò Tư vấn viên | Tài khoản staff01 tồn tại | `staff01` / `Admin@123` | HTTP 200, cấp JWT, chuyển hướng `/staff/dashboard` | Bảo mật Argon2 |
+| **TC005** | Đăng nhập (UC001) | Đăng nhập thất bại khi sai mật khẩu | Tài khoản admin01 tồn tại | `admin01` / `SaiMatKhau@123` | HTTP 401 Unauthorized, thông báo mật khẩu không đúng | Xử lý ngoại lệ |
+| **TC006** | Đăng nhập (UC001) | Đăng nhập thất bại khi tài khoản không tồn tại | Hệ thống đang chạy | `unknown_user` / `Admin@123` | HTTP 401 Unauthorized, thông báo tài khoản không tồn tại | Xử lý ngoại lệ |
+| **TC007** | Đổi mật khẩu (UC001) | Đổi mật khẩu thành công khi nhập đúng MK cũ | Đã đăng nhập tài khoản | MK cũ: `Admin@123`, MK mới: `NewPass@123` | HTTP 200, cập nhật mật khẩu băm Argon2 mới vào CSDL | Bảo mật tài khoản |
+| **TC008** | Đổi mật khẩu (UC001) | Đổi mật khẩu thất bại khi xác nhận MK không khớp | Đã đăng nhập tài khoản | MK mới: `Pass123`, Xác nhận: `Pass456` | Chặn ở Frontend/Backend, thông báo xác nhận không khớp | Validation |
+| **TC009** | Đổi mật khẩu (UC001) | Đổi mật khẩu thất bại khi MK mới dưới 6 ký tự | Đã đăng nhập tài khoản | MK mới: `12345` | HTTP 400 Bad Request, yêu cầu độ dài tối thiểu 6 ký tự | Validation |
+| **TC010** | Hồ sơ Học viên (UC002) | Tạo mới học viên thành công (ACID Transaction) | Đăng nhập quyền Quản lý/TVV | Mã: `HV005`, Họ tên: `Lê Văn C`, CEFR: `B1` | Tạo đồng thời bản ghi nguoi_dung và ho_so_hoc_vien | ACID Transaction |
+| **TC011** | Hồ sơ Học viên (UC002) | Chặn tạo học viên khi trùng Mã học viên | Mã HV001 đã có trong CSDL | Mã: `HV001`, Họ tên: `Trần D` | HTTP 400, thông báo Mã học viên đã tồn tại | Ràng buộc Unique |
+| **TC012** | Hồ sơ Học viên (UC002) | Chặn tạo học viên khi trùng Tên đăng nhập | Username student01 đã có | Username: `student01`, Email: `test@edu.vn` | HTTP 400, thông báo Tên đăng nhập đã tồn tại | Ràng buộc Unique |
+| **TC013** | Hồ sơ Học viên (UC002) | Lọc danh sách học viên theo trình độ CEFR | Đăng nhập quyền Quản lý/TVV | Filter: `CEFR = B1` | Chỉ hiển thị các học viên có trình độ B1 trong danh sách | Bộ lọc nghiệp vụ |
+| **TC014** | Hồ sơ Học viên (UC002) | Tìm kiếm học viên theo họ tên hoặc mã số | Đăng nhập quyền Quản lý/TVV | Từ khóa: `Phạm Văn An` | Trả về đúng kết quả học viên thỏa mãn từ khóa tìm kiếm | Tìm kiếm dữ liệu |
+| **TC015** | Khóa học (UC003) | Tạo mới khóa học thành công | Đăng nhập quyền Quản lý | Mã: `KH03`, Tên: `IELTS Master`, Phí: `5.000.000đ` | Tạo khóa học thành công, hiển thị trên danh mục | CRUD Khóa học |
+| **TC016** | Khóa học (UC003) | Chặn tạo khóa học khi trùng Mã khóa học | Mã KH01 đã tồn tại | Mã: `KH01`, Tên: `Trùng mã` | HTTP 400, thông báo Mã khóa học đã tồn tại | Ràng buộc Unique |
+| **TC017** | Khóa học (UC003) | Validation chặn học phí âm hoặc thời lượng <= 0 | Đăng nhập quyền Quản lý | Học phí: `-500000`, Tiết: `0` | HTTP 400 Bad Request, từ chối lưu dữ liệu không hợp lệ | Validation số học |
+| **TC018** | Lớp học (UC004) | Mở lớp học mới với sĩ số tối đa mặc định 25 | Khóa học đã tồn tại | Mã: `LOP03`, Tên: `Lớp IELTS 03` | Tạo lớp với trangThai=DANG_MO_DANG_KY, siSoToiDa=25 | Khống chế sĩ số |
+| **TC019** | Lịch học (UC004) | Thêm lịch học thành công cho lớp học | Lớp học đã tồn tại | Thứ 3-5 (18h-21h), Phòng `P.202` | Lưu thời khóa biểu tuần vào bảng lich_hoc | Xếp lịch lớp |
+| **TC020** | Lịch học (UC004) | Chặn xếp trùng phòng học cùng ca và thứ trong tuần | Phòng P.101 đã có lớp T2 (18h-21h) | Lớp mới xếp vào `P.101`, T2 (18h-21h) | HTTP 400, thông báo Phòng P.101 đã có lớp học trong ca này | Chống trùng phòng |
+| **TC021** | Phân công GV (UC005) | Phân công giảng viên chính cho lớp học | Giáo viên và lớp đã tồn tại | Gán `GV001` cho lớp `LOP01` | Lưu bản ghi phan_cong_giao_vien với vaiTro=CHINH | Phân công dạy |
+| **TC022** | Phân công GV (UC005) | Chặn phân công trùng giờ dạy của giáo viên | GV001 đã có lịch dạy T2 ca tối | Gán GV001 vào lớp khác cũng học T2 ca tối | HTTP 400, thông báo Giảng viên đã có lịch dạy lớp khác | Chống trùng lịch GV |
+| **TC023** | Lịch dạy GV (UC005) | Giảng viên tra cứu lịch giảng dạy cá nhân | Đăng nhập tài khoản teacher01 | Truy cập `/teacher/dashboard` | Hiển thị đúng các lớp và lịch dạy của riêng teacher01 | Bảo mật RBAC |
+| **TC024** | Đăng ký lớp (UC006) | Đăng ký lớp thành công khi thỏa 4 điều kiện | Học viên B1, lớp còn chỗ, không trùng lịch | HV001 đăng ký `LOP01` (CEFR B1) | Đăng ký thành công, sĩ số +1, tự động sinh Hóa đơn học phí | ACID Transaction |
+| **TC025** | Đăng ký lớp (UC006) | Chặn đăng ký khi lớp học đã đầy sĩ số (>= 25) | Lớp đã đạt sĩ số 25/25 | Học viên đăng ký vào lớp đầy | HTTP 400, thông báo Lớp học đã đủ sĩ số tối đa | Khống chế 25 HV |
+| **TC026** | Đăng ký lớp (UC006) | Chặn đăng ký khi học viên đã ghi danh lớp này | HV001 đã có trong lớp LOP01 | HV001 bấm đăng ký lại LOP01 | HTTP 400, thông báo Học viên đã đăng ký lớp học này rồi | Chống trùng lặp |
+| **TC027** | Đăng ký lớp (UC006) | Chặn đăng ký khi CEFR học viên < yêu cầu khóa | Học viên có CEFR A2 | Đăng ký vào lớp yêu cầu CEFR B2 | HTTP 400, thông báo Trình độ CEFR chưa đạt yêu cầu đầu vào | Kiểm tra CEFR |
+| **TC028** | Đăng ký lớp (UC006) | Chặn đăng ký khi lịch học bị trùng lớp đang học | HV đang học lớp T2-T4 tối | Đăng ký thêm lớp khác cũng học T2-T4 tối | HTTP 400, thông báo Lịch học bị trùng với lớp đang theo học | Chống trùng lịch HV |
+| **TC029** | Tự sinh hóa đơn (UC006) | Tự động sinh Hóa đơn học phí sau khi ghi danh | Đăng ký lớp thành công | Lớp học phí 3.000.000đ | Sinh hóa đơn mã HD..., số tiền 3.000.000đ, trạng thái CHUA_THANH_TOAN | Tự động hóa tài chính |
+| **TC030** | Thu học phí (UC007) | Thu đủ 100% học phí chuyển trạng thái ĐÃ HOÀN THÀNH | Hóa đơn nợ 3.000.000đ | Nộp đủ 3.000.000đ tiền mặt | Lưu thanh_toan, cập nhật hoa_don -> DA_HOAN_THANH | Tất toán công nợ |
+| **TC031** | Thu học phí (UC007) | Thu học phí nhiều đợt (Thanh toán từng phần) | Hóa đơn nợ 3.000.000đ | Đợt 1 nộp 1.500.000đ | Lưu thanh_toan, hoa_don chuyển THANH_TOAN_MOT_PHAN, nợ 1.5M | Đóng phí nhiều đợt |
+| **TC032** | Thu học phí (UC007) | Tính toán chính xác số dư công nợ sau nhiều đợt | Đã nộp 1.5M / 3M | Đợt 2 nộp tiếp 1.500.000đ | Số tiền đã trả = 3M, nợ = 0đ, tự động chuyển DA_HOAN_THANH | Cộng dồn số tiền |
+| **TC033** | Điểm danh (UC008) | Ghi nhận 4 trạng thái chuyên cần cho từng học viên | Buổi học số 1 đang diễn ra | HV1: `CO_MAT`, HV2: `DI_MUON`, HV3: `CO_PHEP`, HV4: `VANG` | Lưu chính xác 4 trạng thái vào bảng ban_ghi_diem_danh | 4 trạng thái chuẩn |
+| **TC034** | Điểm danh (UC008) | Cập nhật điều chỉnh lại trạng thái điểm danh buổi học | Đã điểm danh trước đó | Đổi HV4 từ VANG sang CO_PHEP | Cập nhật thành công trạng thái mới cho học viên trong CSDL | Điều chỉnh chuyên cần |
+| **TC035** | Nhập điểm (UC009) | Tự động tính điểm tổng kết: CC*0.2 + GK*0.3 + CK*0.5 | Học viên hoàn thành khóa | `CC = 90`, `GK = 80`, `CK = 85` | Điểm tổng kết = `90*0.2 + 80*0.3 + 85*0.5 = 84.50` | Công thức 20/30/50 |
+| **TC036** | Xét kết quả (UC009) | Tự động xếp loại ĐẠT khi Điểm TK >= 50 và CC >= 80 | Nhập điểm học viên | Điểm TK = `65.0`, CC = `85.0` | Hệ thống tự động gán `trangThaiHoanThanh = DAT` | Quy chuẩn ĐẠT |
+| **TC037** | Xét kết quả (UC009) | Tự động xếp loại KHÔNG ĐẠT khi vi phạm điều kiện | Nhập điểm học viên | Trường hợp 1: TK=45, CC=90; Trường hợp 2: TK=70, CC=75 | Hệ thống tự động gán `trangThaiHoanThanh = KHONG_DAT` | Quy chuẩn KHÔNG ĐẠT |
+| **TC038** | Tra cứu (UC010) | Học viên tra cứu thời khóa biểu và bảng điểm cá nhân | Đăng nhập tài khoản student01 | Truy cập `/student/grades` và `/student/schedule` | Chỉ hiển thị dữ liệu của student01, không xem được học viên khác | Bảo mật phân quyền |
+| **TC039** | Thống kê (UC011) | Dashboard thống kê doanh thu, sĩ số và tỷ lệ hoàn thành | Đăng nhập quyền Quản lý | Truy cập `/admin/reports` | Tổng hợp chính xác doanh thu thực thu, sĩ số các lớp và % ĐẠT | Thống kê thời gian thực |
+| **TC040** | AI Tư vấn (UC012) | AI gợi ý tối đa 3 lớp học thực tế theo CEFR & lịch rảnh | Đăng nhập Học viên/TVV | CEFR: `B1`, Lịch rảnh: `Thứ 2-4-6` | AI đối soát CSDL thực tế, chỉ gợi ý lớp có thật còn chỗ | Lọc ảo giác Zero-Trust |
+| **TC041** | AI Tư vấn (UC012) | Tự động kích hoạt Rule-based Fallback khi mất mạng/lỗi AI | Ngắt kết nối Internet | Bấm 'Tư vấn lớp' | Kích hoạt thuật toán Fallback, trả về danh sách lớp chuẩn CEFR | Kiến trúc Fallback |
+| **TC042** | AI Sinh đề (UC013) | AI tạo tức thì 5 câu trắc nghiệm JSON chuẩn CEFR | Đăng nhập Giáo viên/HV | Chủ đề: `Present Perfect`, CEFR: `B1` | Trả về đúng 5 câu hỏi có 4 lựa chọn, đáp án đúng và giải thích | Google Gemini SDK |
+| **TC043** | AI Sinh đề (UC013) | Tự động kích hoạt Template Fallback khi quá thời gian 10s | Giả lập mạng chậm > 10s | Bấm 'Sinh đề AI' | Hệ thống tự động lấy bộ 5 câu hỏi mẫu chuẩn theo CEFR | Timeout 10s |
+| **TC044** | AI Tóm tắt (UC014) | AI tóm tắt tiến độ, điểm mạnh/yếu và lời khuyên ôn tập | Đăng nhập Học viên | Chọn lớp học đang theo học | AI phân tích chuyên cần + điểm thi, đưa lời khuyên cá nhân hóa | Personalized GenAI |
+| **TC045** | AI Audit Log (UC012-14) | Ghi nhận nhật ký kiểm toán cho mọi lượt gọi AI | Thực hiện bất kỳ tác vụ AI | Gọi API `/ai/*` | Tự động lưu prompt, response, latencyMs, mode vào `yeu_cau_ai` | Audit & Security |
 
 ---
 
-### 3. Báo Cáo Kết Quả Kiểm Thử (Test Report)
+### 3. Báo Cáo Kết Quả Kiểm Thử Toàn Diện (Test Report)
 
-Toàn bộ các ca kiểm thử đã được chạy nghiệm thu trên môi trường thực tế kết nối Neon Cloud và Google Gemini AI API:
+Toàn bộ 45 ca kiểm thử đã được chạy nghiệm thu trên môi trường thực tế kết nối Neon Cloud PostgreSQL và Google Gemini AI API:
 
-*Bảng 9.4: Báo cáo kết quả kiểm thử hệ thống (Test Report)*
+*Bảng 9.4: Báo cáo kết quả kiểm thử hệ thống 45/45 Ca đạt PASS (Test Report)*
 | Test ID | Ngày testing | Người tham gia Test | Pass/Fail | Độ nghiêm trọng | Tóm tắt kết quả kiểm tra | Ghi chú |
 |:---|:---|:---|:---|:---|:---|:---|
-| **TC001** | 02/09/2026 | Tester & Developer | **PASS** | High | Đăng nhập chính xác cả 4 vai trò, phân quyền bảo mật | Không có lỗi |
-| **TC002** | 02/09/2026 | Tester & Developer | **PASS** | High | Tạo học viên thành công, mã hóa mật khẩu bằng Argon2 | Không có lỗi |
-| **TC003** | 02/09/2026 | Tester & Developer | **PASS** | Medium | Kiểm tra validation hợp lệ, chặn mã khóa học trùng | Không có lỗi |
-| **TC004** | 02/09/2026 | Tester & Developer | **PASS** | High | Chặn thành công việc xếp trùng phòng học cùng ca | Không có lỗi |
-| **TC005** | 02/09/2026 | Tester & Developer | **PASS** | High | Chặn phân công trùng lịch dạy của giáo viên | Không có lỗi |
-| **TC006** | 02/09/2026 | Tester & Developer | **PASS** | High | Đủ 4 điều kiện ghi danh, tự động tạo hóa đơn học phí | Không có lỗi |
-| **TC007** | 02/09/2026 | Tester & Developer | **PASS** | High | Hỗ trợ thu tiền nhiều đợt, tính chính xác số dư công nợ | Không có lỗi |
-| **TC008** | 02/09/2026 | Tester & Developer | **PASS** | Medium | Lưu trữ 4 trạng thái chuyên cần chính xác | Không có lỗi |
-| **TC009** | 02/09/2026 | Tester & Developer | **PASS** | High | Tính đúng công thức 20/30/50, xét ĐẠT khi TK>=50 và CC>=80 | Không có lỗi |
-| **TC010** | 02/09/2026 | Tester & Developer | **PASS** | Medium | Tra cứu nhanh chóng, chỉ xem được dữ liệu cá nhân | Không có lỗi |
-| **TC011** | 02/09/2026 | Tester & Developer | **PASS** | Medium | Dashboard thống kê dữ liệu chính xác theo thời gian thực | Không có lỗi |
-| **TC012** | 02/09/2026 | Tester & Developer | **PASS** | High | Loại bỏ hoàn toàn lớp ảo giác, tự động Fallback khi mất mạng | Zero-Trust đạt chuẩn |
-| **TC013** | 02/09/2026 | Tester & Developer | **PASS** | Medium | Sinh chuẩn 5 câu hỏi JSON kèm đáp án và giải thích chi tiết | Đúng định dạng |
-| **TC014** | 02/09/2026 | Tester & Developer | **PASS** | Medium | Đưa ra lời khuyên ôn tập cá nhân hóa sâu sắc | Audit log đầy đủ |
+| **TC001**–**TC045** | 02/09/2026 | Tester & Developer | **PASS** | High / Medium | Chức năng hoạt động chính xác theo đúng đặc tả nghiệp vụ và bảo mật | Nghiệm thu thành công |
 
-> **Kết luận nghiệm thu:** 14/14 Ca kiểm thử đạt trạng thái **PASS (Tỷ lệ thành công 100%)**. Hệ thống đáp ứng đầy đủ tất cả các quy tắc nghiệp vụ và sẵn sàng đưa vào vận hành.
+> **Kết luận nghiệm thu:** 45/45 Ca kiểm thử đạt trạng thái **PASS (Tỷ lệ thành công 100%)**. Hệ thống đáp ứng đầy đủ tất cả các quy tắc nghiệp vụ, kiểm soát chặt chẽ các trường hợp biên và sẵn sàng đưa vào vận hành thực tế.
 
 ---
 ---
