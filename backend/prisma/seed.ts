@@ -23,7 +23,7 @@ import * as argon2 from 'argon2';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Bắt đầu nạp Siêu Dữ Liệu Mẫu (Rich Seed Data) cho ETC English Center...\n');
+  console.log('🌱 Bắt đầu nạp SIÊU DỮ LIỆU MẪU TOÀN DIỆN (Comprehensive Rich Seed Data) cho ETC English Center...\n');
 
   // Mật khẩu mặc định cho toàn bộ tài khoản: 123456
   const defaultPassword = await argon2.hash('123456');
@@ -46,7 +46,7 @@ async function main() {
   });
   console.log(`✅ Admin: ${adminUser.tenDangNhap}`);
 
-  // 1.2 Giáo viên (3 Giảng viên)
+  // 1.2 Giáo viên (4 Giảng viên chuyên môn sâu)
   const teacherUser1 = await prisma.nguoiDung.upsert({
     where: { tenDangNhap: 'teacher01' },
     update: { matKhauMaHoa: defaultPassword },
@@ -60,13 +60,14 @@ async function main() {
   });
   const gv1 = await prisma.hoSoGiaoVien.upsert({
     where: { maGiaoVien: 'GV001' },
-    update: { nguoiDungId: teacherUser1.id },
+    update: { nguoiDungId: teacherUser1.id, trangThai: TrangThaiGiaoVien.DANG_LAM_VIEC },
     create: {
       nguoiDungId: teacherUser1.id,
       maGiaoVien: 'GV001',
       hoTen: 'Cô Nguyễn Thị Lan',
       chuyenMon: 'IELTS Academic, Ngữ Pháp Nâng Cao',
       bangCap: 'Thạc sĩ Ngôn ngữ Anh - ĐH Ngoại ngữ Hà Nội (IELTS 8.5)',
+      trangThai: TrangThaiGiaoVien.DANG_LAM_VIEC,
     },
   });
 
@@ -83,13 +84,14 @@ async function main() {
   });
   const gv2 = await prisma.hoSoGiaoVien.upsert({
     where: { maGiaoVien: 'GV002' },
-    update: { nguoiDungId: teacherUser2.id },
+    update: { nguoiDungId: teacherUser2.id, trangThai: TrangThaiGiaoVien.DANG_LAM_VIEC },
     create: {
       nguoiDungId: teacherUser2.id,
       maGiaoVien: 'GV002',
       hoTen: 'Thầy Trần Văn Minh',
       chuyenMon: 'TOEIC L&R, Tiếng Anh Giao Tiếp Thực Chiến',
       bangCap: 'Cử nhân Sư phạm Tiếng Anh - ĐH Sư phạm TP.HCM (TOEIC 985)',
+      trangThai: TrangThaiGiaoVien.DANG_LAM_VIEC,
     },
   });
 
@@ -106,16 +108,41 @@ async function main() {
   });
   const gv3 = await prisma.hoSoGiaoVien.upsert({
     where: { maGiaoVien: 'GV003' },
-    update: { nguoiDungId: teacherUser3.id },
+    update: { nguoiDungId: teacherUser3.id, trangThai: TrangThaiGiaoVien.DANG_LAM_VIEC },
     create: {
       nguoiDungId: teacherUser3.id,
       maGiaoVien: 'GV003',
       hoTen: 'Thầy Vũ Hoàng Nam',
       chuyenMon: 'Business English, Phản Xạ & Phát Âm IPA',
       bangCap: 'Chứng chỉ CELTA Cambridge, Tốt nghiệp ĐH Ngoại Thương',
+      trangThai: TrangThaiGiaoVien.DANG_LAM_VIEC,
     },
   });
-  console.log('✅ Đã nạp 3 Giảng viên: GV001, GV002, GV003');
+
+  const teacherUser4 = await prisma.nguoiDung.upsert({
+    where: { tenDangNhap: 'teacher04' },
+    update: { matKhauMaHoa: defaultPassword },
+    create: {
+      tenDangNhap: 'teacher04',
+      matKhauMaHoa: defaultPassword,
+      vaiTro: VaiTro.GIAO_VIEN,
+      email: 'emily.brown@etc-english.vn',
+      soDienThoai: '0902222004',
+    },
+  });
+  const gv4 = await prisma.hoSoGiaoVien.upsert({
+    where: { maGiaoVien: 'GV004' },
+    update: { nguoiDungId: teacherUser4.id, trangThai: TrangThaiGiaoVien.DANG_LAM_VIEC },
+    create: {
+      nguoiDungId: teacherUser4.id,
+      maGiaoVien: 'GV004',
+      hoTen: 'Cô Emily Brown',
+      chuyenMon: 'Native English Speaking, Pronunciation & Presentation',
+      bangCap: 'Master of Arts in TESOL - University of Sydney',
+      trangThai: TrangThaiGiaoVien.DANG_LAM_VIEC,
+    },
+  });
+  console.log('✅ Đã nạp 4 Giảng viên: GV001 → GV004');
 
   // 1.3 Tư vấn viên (2 Nhân viên Tuyển sinh / Thu ngân)
   const staffUser1 = await prisma.nguoiDung.upsert({
@@ -143,7 +170,7 @@ async function main() {
   });
   console.log('✅ Đã nạp 2 Tư vấn viên: staff01, staff02');
 
-  // 1.4 Học viên (6 Học viên với nhiều trình độ & lịch rảnh khác nhau)
+  // 1.4 Học viên (10 Học viên với nhiều trình độ & lịch rảnh khác nhau)
   const studentData = [
     {
       user: 'student01',
@@ -217,6 +244,54 @@ async function main() {
       source: 'IELTS 7.5 BC Certificate',
       schedule: { thu: [2, 4, 6], gio: '18:30-21:30' },
     },
+    {
+      user: 'student07',
+      ma: 'HV007',
+      ten: 'Bùi Đức Thắng',
+      cefr: TrinhDoCEFR.A2,
+      dob: '2004-01-12',
+      gender: 'Nam',
+      phone: '0904444007',
+      email: 'thang.bui@gmail.com',
+      source: 'Kiểm tra đầu vào TOEIC 400',
+      schedule: { thu: [3, 5, 7], gio: '19:00-21:00' },
+    },
+    {
+      user: 'student08',
+      ma: 'HV008',
+      ten: 'Hoàng Mai Linh',
+      cefr: TrinhDoCEFR.B1,
+      dob: '2001-09-30',
+      gender: 'Nữ',
+      phone: '0904444008',
+      email: 'mailinh.hoang@gmail.com',
+      source: 'Đánh giá năng lực tiếng Anh B1',
+      schedule: { thu: [2, 4, 6], gio: '19:00-21:00' },
+    },
+    {
+      user: 'student09',
+      ma: 'HV009',
+      ten: 'Phạm Quốc Cường',
+      cefr: TrinhDoCEFR.B2,
+      dob: '2000-06-22',
+      gender: 'Nam',
+      phone: '0904444009',
+      email: 'cuong.pham@gmail.com',
+      source: 'Bảng điểm IELTS 6.5 British Council',
+      schedule: { thu: [2, 4, 6], gio: '18:00-21:00' },
+    },
+    {
+      user: 'student10',
+      ma: 'HV010',
+      ten: 'Trần Phương Anh',
+      cefr: TrinhDoCEFR.C1,
+      dob: '1998-04-14',
+      gender: 'Nữ',
+      phone: '0904444010',
+      email: 'phuonganh.tran@gmail.com',
+      source: 'Cử nhân ngôn ngữ Anh',
+      schedule: { thu: [7, 8], gio: '08:30-11:30' },
+    },
   ];
 
   const studentProfiles: Record<string, any> = {};
@@ -251,7 +326,7 @@ async function main() {
     });
     studentProfiles[s.user] = p;
   }
-  console.log('✅ Đã nạp 6 Học viên: HV001 → HV006');
+  console.log('✅ Đã nạp 10 Học viên: HV001 → HV010');
 
   // ============================================================================
   // 2. KHÓA HỌC (6 Khóa học chuẩn CEFR A1 → C1)
@@ -346,7 +421,7 @@ async function main() {
   // ============================================================================
   const class1 = await prisma.lopHoc.upsert({
     where: { maLopHoc: 'IELTS-B1-01' },
-    update: { siSoHienTai: 2 },
+    update: { siSoHienTai: 2, trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY },
     create: {
       khoaHocId: course3.id,
       maLopHoc: 'IELTS-B1-01',
@@ -362,29 +437,29 @@ async function main() {
 
   const class2 = await prisma.lopHoc.upsert({
     where: { maLopHoc: 'TOEIC-A2-01' },
-    update: { siSoHienTai: 1 },
+    update: { siSoHienTai: 2, trangThai: TrangThaiLopHoc.DANG_HOC },
     create: {
       khoaHocId: course2.id,
       maLopHoc: 'TOEIC-A2-01',
       tenLopHoc: 'TOEIC Starter Thứ 3-5-7',
       siSoToiDa: 25,
-      siSoHienTai: 1,
+      siSoHienTai: 2,
       ngayBatDau: new Date('2024-09-17'),
       ngayKetThuc: new Date('2024-12-10'),
       phongHoc: 'Phòng B202',
-      trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY,
+      trangThai: TrangThaiLopHoc.DANG_HOC,
     },
   });
 
   const class3 = await prisma.lopHoc.upsert({
     where: { maLopHoc: 'COMM-B1-01' },
-    update: { siSoHienTai: 1 },
+    update: { siSoHienTai: 2, trangThai: TrangThaiLopHoc.DANG_HOC },
     create: {
       khoaHocId: course5.id,
       maLopHoc: 'COMM-B1-01',
       tenLopHoc: 'Giao Tiếp Doanh Nghiệp Tối T2-4-6',
       siSoToiDa: 20,
-      siSoHienTai: 1,
+      siSoHienTai: 2,
       ngayBatDau: new Date('2024-08-01'),
       ngayKetThuc: new Date('2024-11-01'),
       phongHoc: 'Phòng C301',
@@ -394,7 +469,7 @@ async function main() {
 
   const class4 = await prisma.lopHoc.upsert({
     where: { maLopHoc: 'ENG-A1-01' },
-    update: { siSoHienTai: 1 },
+    update: { siSoHienTai: 1, trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY },
     create: {
       khoaHocId: course1.id,
       maLopHoc: 'ENG-A1-01',
@@ -410,13 +485,13 @@ async function main() {
 
   const class5 = await prisma.lopHoc.upsert({
     where: { maLopHoc: 'IELTS-B2-01' },
-    update: { siSoHienTai: 1 },
+    update: { siSoHienTai: 2, trangThai: TrangThaiLopHoc.DANG_HOC },
     create: {
       khoaHocId: course4.id,
       maLopHoc: 'IELTS-B2-01',
       tenLopHoc: 'IELTS Master 6.5+ Chuyên Sâu Tối T2-4-6',
       siSoToiDa: 20,
-      siSoHienTai: 1,
+      siSoHienTai: 2,
       ngayBatDau: new Date('2024-08-15'),
       ngayKetThuc: new Date('2024-11-30'),
       phongHoc: 'Phòng A103',
@@ -426,13 +501,13 @@ async function main() {
 
   const class6 = await prisma.lopHoc.upsert({
     where: { maLopHoc: 'IELTS-B1-02' },
-    update: { siSoHienTai: 0 },
+    update: { siSoHienTai: 1, trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY },
     create: {
       khoaHocId: course3.id,
       maLopHoc: 'IELTS-B1-02',
       tenLopHoc: 'IELTS B1 Cuối Tuần (Thứ 7 - CN)',
       siSoToiDa: 25,
-      siSoHienTai: 0,
+      siSoHienTai: 1,
       ngayBatDau: new Date('2024-10-05'),
       ngayKetThuc: new Date('2025-01-05'),
       phongHoc: 'Phòng A102',
@@ -490,7 +565,7 @@ async function main() {
     { lopId: class2.id, gvId: gv2.id, vaitro: VaiTroPhanCong.CHINH },
     { lopId: class3.id, gvId: gv2.id, vaitro: VaiTroPhanCong.CHINH },
     { lopId: class4.id, gvId: gv3.id, vaitro: VaiTroPhanCong.CHINH },
-    { lopId: class5.id, gvId: gv3.id, vaitro: VaiTroPhanCong.CHINH },
+    { lopId: class5.id, gvId: gv4.id, vaitro: VaiTroPhanCong.CHINH },
   ];
 
   for (const asg of assignments) {
@@ -515,192 +590,231 @@ async function main() {
   // ============================================================================
   // 5. ĐĂNG KÝ HỌC, HÓA ĐƠN & THANH TOÁN (Enrollments, Invoices, Payments)
   // ============================================================================
-  // 5.1 HV001 (Lê Thị Hoa) -> Lớp IELTS-B1-01 (Đã đóng đủ 3.500.000đ)
-  const dk1 = await prisma.dangKyHoc.upsert({
-    where: { lopHocId_hocVienId: { lopHocId: class1.id, hocVienId: studentProfiles['student01'].id } },
-    update: {},
-    create: {
-      lopHocId: class1.id,
-      hocVienId: studentProfiles['student01'].id,
-      trangThai: TrangThaiDangKy.DA_XAC_NHAN,
-    },
-  });
-  const hd1 = await prisma.hoaDon.upsert({
-    where: { maHoaDon: 'HD-2026-0001' },
-    update: {},
-    create: {
-      maHoaDon: 'HD-2026-0001',
-      dangKyHocId: dk1.id,
-      hocVienId: studentProfiles['student01'].id,
-      soTienPhaiTra: 3500000,
-      soTienDaTra: 3500000,
-      hanThanhToan: new Date('2024-09-15'),
-      trangThai: TrangThaiHoaDon.DA_HOAN_THANH,
-    },
-  });
-  await prisma.thanhToan.upsert({
-    where: { maGiaoDich: 'TXN-20260901-0001' },
-    update: {},
-    create: {
-      hoaDonId: hd1.id,
-      maGiaoDich: 'TXN-20260901-0001',
-      soTien: 3500000,
-      phuongThuc: PhuongThucThanhToan.CHUYEN_KHOAN,
-      nguoiThuId: staffUser1.id,
-      trangThai: TrangThaiThanhToan.THANH_CONG,
-      ghiChu: 'Chuyển khoản qua Vietcombank QR',
-    },
+
+  // Helper upsert enroll + invoice + payment
+  const enrollAndPay = async (params: {
+    lopId: bigint;
+    studentId: bigint;
+    enrollStatus: TrangThaiDangKy;
+    invoiceCode: string;
+    amountDue: number;
+    amountPaid: number;
+    invoiceStatus: TrangThaiHoaDon;
+    dueDate: string;
+    txnCode?: string;
+    method?: PhuongThucThanhToan;
+    staffId?: bigint;
+    note?: string;
+  }) => {
+    const dk = await prisma.dangKyHoc.upsert({
+      where: { lopHocId_hocVienId: { lopHocId: params.lopId, hocVienId: params.studentId } },
+      update: { trangThai: params.enrollStatus },
+      create: {
+        lopHocId: params.lopId,
+        hocVienId: params.studentId,
+        trangThai: params.enrollStatus,
+      },
+    });
+
+    const hd = await prisma.hoaDon.upsert({
+      where: { dangKyHocId: dk.id },
+      update: {
+        maHoaDon: params.invoiceCode,
+        soTienPhaiTra: params.amountDue,
+        soTienDaTra: params.amountPaid,
+        trangThai: params.invoiceStatus,
+        hanThanhToan: new Date(params.dueDate),
+      },
+      create: {
+        maHoaDon: params.invoiceCode,
+        dangKyHocId: dk.id,
+        hocVienId: params.studentId,
+        soTienPhaiTra: params.amountDue,
+        soTienDaTra: params.amountPaid,
+        hanThanhToan: new Date(params.dueDate),
+        trangThai: params.invoiceStatus,
+      },
+    });
+
+    if (params.txnCode && params.amountPaid > 0 && params.staffId && params.method) {
+      await prisma.thanhToan.upsert({
+        where: { maGiaoDich: params.txnCode },
+        update: {},
+        create: {
+          hoaDonId: hd.id,
+          maGiaoDich: params.txnCode,
+          soTien: params.amountPaid,
+          phuongThuc: params.method,
+          nguoiThuId: params.staffId,
+          trangThai: TrangThaiThanhToan.THANH_CONG,
+          ghiChu: params.note || 'Thanh toán học phí',
+        },
+      });
+    }
+  };
+
+  // 5.1 HV001 (Lê Thị Hoa) -> Lớp IELTS-B1-01 (Đã hoàn thành 3.500.000đ)
+  await enrollAndPay({
+    lopId: class1.id,
+    studentId: studentProfiles['student01'].id,
+    enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+    invoiceCode: 'HD-2026-0001',
+    amountDue: 3500000,
+    amountPaid: 3500000,
+    invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+    dueDate: '2024-09-15',
+    txnCode: 'TXN-20260901-0001',
+    method: PhuongThucThanhToan.CHUYEN_KHOAN,
+    staffId: staffUser1.id,
+    note: 'Chuyển khoản Vietcombank QR',
   });
 
-  // 5.2 HV002 (Phạm Văn Hùng) -> Lớp TOEIC-A2-01 (Đóng trước 1.500.000đ, còn nợ 1.300.000đ)
-  const dk2 = await prisma.dangKyHoc.upsert({
-    where: { lopHocId_hocVienId: { lopHocId: class2.id, hocVienId: studentProfiles['student02'].id } },
-    update: {},
-    create: {
-      lopHocId: class2.id,
-      hocVienId: studentProfiles['student02'].id,
-      trangThai: TrangThaiDangKy.CHO_THANH_TOAN,
-    },
-  });
-  const hd2 = await prisma.hoaDon.upsert({
-    where: { maHoaDon: 'HD-2026-0002' },
-    update: {},
-    create: {
-      maHoaDon: 'HD-2026-0002',
-      dangKyHocId: dk2.id,
-      hocVienId: studentProfiles['student02'].id,
-      soTienPhaiTra: 2800000,
-      soTienDaTra: 1500000,
-      hanThanhToan: new Date('2024-09-20'),
-      trangThai: TrangThaiHoaDon.THANH_TOAN_MOT_PHAN,
-    },
-  });
-  await prisma.thanhToan.upsert({
-    where: { maGiaoDich: 'TXN-20260902-0002' },
-    update: {},
-    create: {
-      hoaDonId: hd2.id,
-      maGiaoDich: 'TXN-20260902-0002',
-      soTien: 1500000,
-      phuongThuc: PhuongThucThanhToan.TIEN_MAT,
-      nguoiThuId: staffUser2.id,
-      trangThai: TrangThaiThanhToan.THANH_CONG,
-      ghiChu: 'Thu tiền mặt tại quầy lễ tân',
-    },
+  // 5.2 HV002 (Phạm Văn Hùng) -> Lớp TOEIC-A2-01 (Đóng 1.500.000đ, nợ 1.300.000đ)
+  await enrollAndPay({
+    lopId: class2.id,
+    studentId: studentProfiles['student02'].id,
+    enrollStatus: TrangThaiDangKy.CHO_THANH_TOAN,
+    invoiceCode: 'HD-2026-0002',
+    amountDue: 2800000,
+    amountPaid: 1500000,
+    invoiceStatus: TrangThaiHoaDon.THANH_TOAN_MOT_PHAN,
+    dueDate: '2024-09-20',
+    txnCode: 'TXN-20260902-0002',
+    method: PhuongThucThanhToan.TIEN_MAT,
+    staffId: staffUser2.id,
+    note: 'Thu tiền mặt tại quầy',
   });
 
-  // 5.3 HV003 (Nguyễn Hoàng Long) -> Lớp COMM-B1-01 (Đã đóng đủ 3.200.000đ)
-  const dk3 = await prisma.dangKyHoc.upsert({
-    where: { lopHocId_hocVienId: { lopHocId: class3.id, hocVienId: studentProfiles['student03'].id } },
-    update: {},
-    create: {
-      lopHocId: class3.id,
-      hocVienId: studentProfiles['student03'].id,
-      trangThai: TrangThaiDangKy.DA_XAC_NHAN,
-    },
-  });
-  const hd3 = await prisma.hoaDon.upsert({
-    where: { maHoaDon: 'HD-2026-0003' },
-    update: {},
-    create: {
-      maHoaDon: 'HD-2026-0003',
-      dangKyHocId: dk3.id,
-      hocVienId: studentProfiles['student03'].id,
-      soTienPhaiTra: 3200000,
-      soTienDaTra: 3200000,
-      hanThanhToan: new Date('2024-08-01'),
-      trangThai: TrangThaiHoaDon.DA_HOAN_THANH,
-    },
-  });
-  await prisma.thanhToan.upsert({
-    where: { maGiaoDich: 'TXN-20260801-0003' },
-    update: {},
-    create: {
-      hoaDonId: hd3.id,
-      maGiaoDich: 'TXN-20260801-0003',
-      soTien: 3200000,
-      phuongThuc: PhuongThucThanhToan.CHUYEN_KHOAN,
-      nguoiThuId: staffUser1.id,
-      trangThai: TrangThaiThanhToan.THANH_CONG,
-      ghiChu: 'Chuyển khoản thanh toán toàn phần',
-    },
+  // 5.3 HV003 (Nguyễn Hoàng Long) -> Lớp COMM-B1-01 (Đã đóng 3.200.000đ)
+  await enrollAndPay({
+    lopId: class3.id,
+    studentId: studentProfiles['student03'].id,
+    enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+    invoiceCode: 'HD-2026-0003',
+    amountDue: 3200000,
+    amountPaid: 3200000,
+    invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+    dueDate: '2024-08-01',
+    txnCode: 'TXN-20260801-0003',
+    method: PhuongThucThanhToan.CHUYEN_KHOAN,
+    staffId: staffUser1.id,
+    note: 'Chuyển khoản toàn phần',
   });
 
   // 5.4 HV004 (Đỗ Minh Châu) -> Lớp ENG-A1-01 (Chưa đóng tiền)
-  const dk4 = await prisma.dangKyHoc.upsert({
-    where: { lopHocId_hocVienId: { lopHocId: class4.id, hocVienId: studentProfiles['student04'].id } },
-    update: {},
-    create: {
-      lopHocId: class4.id,
-      hocVienId: studentProfiles['student04'].id,
-      trangThai: TrangThaiDangKy.CHO_THANH_TOAN,
-    },
-  });
-  await prisma.hoaDon.upsert({
-    where: { maHoaDon: 'HD-2026-0004' },
-    update: {},
-    create: {
-      maHoaDon: 'HD-2026-0004',
-      dangKyHocId: dk4.id,
-      hocVienId: studentProfiles['student04'].id,
-      soTienPhaiTra: 2200000,
-      soTienDaTra: 0,
-      hanThanhToan: new Date('2024-09-25'),
-      trangThai: TrangThaiHoaDon.CHUA_THANH_TOAN,
-    },
+  await enrollAndPay({
+    lopId: class4.id,
+    studentId: studentProfiles['student04'].id,
+    enrollStatus: TrangThaiDangKy.CHO_THANH_TOAN,
+    invoiceCode: 'HD-2026-0004',
+    amountDue: 2200000,
+    amountPaid: 0,
+    invoiceStatus: TrangThaiHoaDon.CHUA_THANH_TOAN,
+    dueDate: '2024-09-25',
   });
 
   // 5.5 HV005 (Vũ Bảo Ngọc) -> Lớp IELTS-B1-01 (Đã hoàn thành 3.500.000đ)
-  const dk5 = await prisma.dangKyHoc.upsert({
-    where: { lopHocId_hocVienId: { lopHocId: class1.id, hocVienId: studentProfiles['student05'].id } },
-    update: {},
-    create: {
-      lopHocId: class1.id,
-      hocVienId: studentProfiles['student05'].id,
-      trangThai: TrangThaiDangKy.DA_XAC_NHAN,
-    },
-  });
-  const hd5 = await prisma.hoaDon.upsert({
-    where: { maHoaDon: 'HD-2026-0005' },
-    update: {},
-    create: {
-      maHoaDon: 'HD-2026-0005',
-      dangKyHocId: dk5.id,
-      hocVienId: studentProfiles['student05'].id,
-      soTienPhaiTra: 3500000,
-      soTienDaTra: 3500000,
-      hanThanhToan: new Date('2024-09-18'),
-      trangThai: TrangThaiHoaDon.DA_HOAN_THANH,
-    },
-  });
-  await prisma.thanhToan.upsert({
-    where: { maGiaoDich: 'TXN-20260905-0005' },
-    update: {},
-    create: {
-      hoaDonId: hd5.id,
-      maGiaoDich: 'TXN-20260905-0005',
-      soTien: 3500000,
-      phuongThuc: PhuongThucThanhToan.CHUYEN_KHOAN,
-      nguoiThuId: staffUser1.id,
-      trangThai: TrangThaiThanhToan.THANH_CONG,
-      ghiChu: 'Thanh toán trực tuyến VNPay',
-    },
-  });
-  console.log('✅ Đã nạp Đăng ký học, Hóa đơn & Lịch sử giao dịch thu ngân');
-
-  // ============================================================================
-  // 6. BUỔI HỌC & ĐIỂM DANH (BuoiHoc, BanGhiDiemDanh)
-  // ============================================================================
-  // Xóa các buổi học cũ nếu có để tránh duplicate key
-  await prisma.banGhiDiemDanh.deleteMany({
-    where: { buoiHoc: { lopHocId: class1.id } },
-  });
-  await prisma.buoiHoc.deleteMany({
-    where: { lopHocId: class1.id },
+  await enrollAndPay({
+    lopId: class1.id,
+    studentId: studentProfiles['student05'].id,
+    enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+    invoiceCode: 'HD-2026-0005',
+    amountDue: 3500000,
+    amountPaid: 3500000,
+    invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+    dueDate: '2024-09-18',
+    txnCode: 'TXN-20260905-0005',
+    method: PhuongThucThanhToan.CHUYEN_KHOAN,
+    staffId: staffUser1.id,
+    note: 'Thanh toán trực tuyến VNPay',
   });
 
-  const sessionDates = ['2024-09-16', '2024-09-18', '2024-09-20', '2024-09-23', '2024-09-25', '2024-09-27'];
-  const sessionTopics = [
+  // 5.6 HV006 (Trịnh Đình Quang) -> Lớp IELTS-B2-01 (Đã đóng 4.800.000đ)
+  await enrollAndPay({
+    lopId: class5.id,
+    studentId: studentProfiles['student06'].id,
+    enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+    invoiceCode: 'HD-2026-0006',
+    amountDue: 4800000,
+    amountPaid: 4800000,
+    invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+    dueDate: '2024-08-15',
+    txnCode: 'TXN-20260815-0006',
+    method: PhuongThucThanhToan.CHUYEN_KHOAN,
+    staffId: staffUser2.id,
+    note: 'Chuyển khoản toàn phần',
+  });
+
+  // 5.7 HV007 (Bùi Đức Thắng) -> Lớp TOEIC-A2-01 (Đã đóng 2.800.000đ)
+  await enrollAndPay({
+    lopId: class2.id,
+    studentId: studentProfiles['student07'].id,
+    enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+    invoiceCode: 'HD-2026-0007',
+    amountDue: 2800000,
+    amountPaid: 2800000,
+    invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+    dueDate: '2024-09-17',
+    txnCode: 'TXN-20260917-0007',
+    method: PhuongThucThanhToan.TIEN_MAT,
+    staffId: staffUser1.id,
+    note: 'Thu tiền mặt tại quầy',
+  });
+
+  // 5.8 HV008 (Hoàng Mai Linh) -> Lớp COMM-B1-01 (Đã đóng 3.200.000đ)
+  await enrollAndPay({
+    lopId: class3.id,
+    studentId: studentProfiles['student08'].id,
+    enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+    invoiceCode: 'HD-2026-0008',
+    amountDue: 3200000,
+    amountPaid: 3200000,
+    invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+    dueDate: '2024-08-01',
+    txnCode: 'TXN-20260801-0008',
+    method: PhuongThucThanhToan.CHUYEN_KHOAN,
+    staffId: staffUser2.id,
+    note: 'Chuyển khoản ngân hàng',
+  });
+
+  // 5.9 HV009 (Phạm Quốc Cường) -> Lớp IELTS-B2-01 (Đã đóng 4.800.000đ)
+  await enrollAndPay({
+    lopId: class5.id,
+    studentId: studentProfiles['student09'].id,
+    enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+    invoiceCode: 'HD-2026-0009',
+    amountDue: 4800000,
+    amountPaid: 4800000,
+    invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+    dueDate: '2024-08-15',
+    txnCode: 'TXN-20260815-0009',
+    method: PhuongThucThanhToan.CHUYEN_KHOAN,
+    staffId: staffUser1.id,
+    note: 'Chuyển khoản qua App Banking',
+  });
+
+  // 5.10 HV010 (Trần Phương Anh) -> Lớp IELTS-B1-02 (Chưa đóng học phí)
+  await enrollAndPay({
+    lopId: class6.id,
+    studentId: studentProfiles['student10'].id,
+    enrollStatus: TrangThaiDangKy.CHO_THANH_TOAN,
+    invoiceCode: 'HD-2026-0010',
+    amountDue: 3500000,
+    amountPaid: 0,
+    invoiceStatus: TrangThaiHoaDon.CHUA_THANH_TOAN,
+    dueDate: '2024-10-04',
+  });
+  console.log('✅ Đã nạp 10 Đăng ký học, Hóa đơn & Lịch sử giao dịch thu ngân đa dạng');
+
+  // ============================================================================
+  // 6. BUỔI HỌC & ĐIỂM DANH (BuoiHoc, BanGhiDiemDanh cho các lớp)
+  // ============================================================================
+  await prisma.banGhiDiemDanh.deleteMany({});
+  await prisma.buoiHoc.deleteMany({});
+
+  // 6.1 Buổi học lớp class1 (IELTS-B1-01) - 6 buổi
+  const sessionDates1 = ['2024-09-16', '2024-09-18', '2024-09-20', '2024-09-23', '2024-09-25', '2024-09-27'];
+  const sessionTopics1 = [
     'Unit 1: Introduction to IELTS & Present Perfect Tense',
     'Unit 2: Listening Section 1 & Note Taking Strategies',
     'Unit 3: Reading Skimming & Scanning Techniques',
@@ -709,54 +823,188 @@ async function main() {
     'Unit 6: Midterm Review & Mini Mock Test',
   ];
 
-  for (let i = 0; i < sessionDates.length; i++) {
+  for (let i = 0; i < sessionDates1.length; i++) {
     const session = await prisma.buoiHoc.create({
       data: {
         lopHocId: class1.id,
         soThuTu: i + 1,
-        ngayHoc: new Date(sessionDates[i]),
+        ngayHoc: new Date(sessionDates1[i]),
         gioBatDau: new Date('1970-01-01T17:30:00'),
         gioKetThuc: new Date('1970-01-01T20:30:00'),
-        chuDe: sessionTopics[i],
+        chuDe: sessionTopics1[i],
         trangThai: TrangThaiBuoiHoc.DA_KET_THUC,
       },
     });
 
-    // Điểm danh cho học viên 1 (Lê Thị Hoa) — 5 buổi có mặt, 1 buổi đi muộn
+    // Điểm danh HV001 (Lê Thị Hoa)
     await prisma.banGhiDiemDanh.create({
       data: {
         buoiHocId: session.id,
         hocVienId: studentProfiles['student01'].id,
         trangThai: i === 3 ? TrangThaiDiemDanh.DI_MUON : TrangThaiDiemDanh.CO_MAT,
-        ghiChu: i === 3 ? 'Đến muộn 10 phút do kẹt xe' : 'Tham gia tích cực, phát biểu nhiều',
+        ghiChu: i === 3 ? 'Đến muộn 10 phút' : 'Tham gia tích cực',
         giaoVienDiemDanhId: gv1.id,
       },
     });
 
-    // Điểm danh cho học viên 5 (Vũ Bảo Ngọc) — 5 buổi có mặt, 1 buổi có phép
+    // Điểm danh HV005 (Vũ Bảo Ngọc)
     await prisma.banGhiDiemDanh.create({
       data: {
         buoiHocId: session.id,
         hocVienId: studentProfiles['student05'].id,
         trangThai: i === 4 ? TrangThaiDiemDanh.CO_PHEP : TrangThaiDiemDanh.CO_MAT,
-        ghiChu: i === 4 ? 'Có gửi đơn xin nghỉ ốm' : 'Hoàn thành bài tập về nhà đầy đủ',
+        ghiChu: i === 4 ? 'Nghỉ ốm có phép' : 'Làm bài tập đầy đủ',
         giaoVienDiemDanhId: gv1.id,
       },
     });
   }
-  console.log('✅ Đã nạp 6 Buổi học & Bảng điểm danh chuyên cần');
+
+  // 6.2 Buổi học lớp class2 (TOEIC-A2-01) - 4 buổi
+  const sessionDates2 = ['2024-09-17', '2024-09-19', '2024-09-21', '2024-09-24'];
+  const sessionTopics2 = [
+    'Unit 1: TOEIC Listening Part 1 - Photographs',
+    'Unit 2: TOEIC Listening Part 2 - Question & Response',
+    'Unit 3: TOEIC Reading Part 5 - Incomplete Sentences',
+    'Unit 4: Grammar Focus: Modals & Conditionals',
+  ];
+
+  for (let i = 0; i < sessionDates2.length; i++) {
+    const session = await prisma.buoiHoc.create({
+      data: {
+        lopHocId: class2.id,
+        soThuTu: i + 1,
+        ngayHoc: new Date(sessionDates2[i]),
+        gioBatDau: new Date('1970-01-01T19:00:00'),
+        gioKetThuc: new Date('1970-01-01T21:00:00'),
+        chuDe: sessionTopics2[i],
+        trangThai: TrangThaiBuoiHoc.DA_KET_THUC,
+      },
+    });
+
+    // Điểm danh HV002 (Phạm Văn Hùng)
+    await prisma.banGhiDiemDanh.create({
+      data: {
+        buoiHocId: session.id,
+        hocVienId: studentProfiles['student02'].id,
+        trangThai: i === 2 ? TrangThaiDiemDanh.VANG : TrangThaiDiemDanh.CO_MAT,
+        ghiChu: i === 2 ? 'Vắng không phép' : 'Học tập chuyên cần',
+        giaoVienDiemDanhId: gv2.id,
+      },
+    });
+
+    // Điểm danh HV007 (Bùi Đức Thắng)
+    await prisma.banGhiDiemDanh.create({
+      data: {
+        buoiHocId: session.id,
+        hocVienId: studentProfiles['student07'].id,
+        trangThai: TrangThaiDiemDanh.CO_MAT,
+        ghiChu: 'Tiếp thu bài nhanh',
+        giaoVienDiemDanhId: gv2.id,
+      },
+    });
+  }
+
+  // 6.3 Buổi học lớp class3 (COMM-B1-01) - 6 buổi
+  const sessionDates3 = ['2024-08-05', '2024-08-07', '2024-08-09', '2024-08-12', '2024-08-14', '2024-08-16'];
+  const sessionTopics3 = [
+    'Unit 1: Business Networking & Small Talk',
+    'Unit 2: Professional Email Etiquette',
+    'Unit 3: Leading & Participating in Meetings',
+    'Unit 4: Negotiation Strategies & Compromise',
+    'Unit 5: Presentation Skills & Slide Deck Delivery',
+    'Unit 6: Final Business Pitch Project',
+  ];
+
+  for (let i = 0; i < sessionDates3.length; i++) {
+    const session = await prisma.buoiHoc.create({
+      data: {
+        lopHocId: class3.id,
+        soThuTu: i + 1,
+        ngayHoc: new Date(sessionDates3[i]),
+        gioBatDau: new Date('1970-01-01T19:00:00'),
+        gioKetThuc: new Date('1970-01-01T21:00:00'),
+        chuDe: sessionTopics3[i],
+        trangThai: TrangThaiBuoiHoc.DA_KET_THUC,
+      },
+    });
+
+    // Điểm danh HV003 (Nguyễn Hoàng Long)
+    await prisma.banGhiDiemDanh.create({
+      data: {
+        buoiHocId: session.id,
+        hocVienId: studentProfiles['student03'].id,
+        trangThai: TrangThaiDiemDanh.CO_MAT,
+        ghiChu: 'Thuyết trình rất ấn tượng',
+        giaoVienDiemDanhId: gv2.id,
+      },
+    });
+
+    // Điểm danh HV008 (Hoàng Mai Linh)
+    await prisma.banGhiDiemDanh.create({
+      data: {
+        buoiHocId: session.id,
+        hocVienId: studentProfiles['student08'].id,
+        trangThai: i === 1 ? TrangThaiDiemDanh.DI_MUON : TrangThaiDiemDanh.CO_MAT,
+        ghiChu: i === 1 ? 'Muộn 5p' : 'Phát âm tự nhiên',
+        giaoVienDiemDanhId: gv2.id,
+      },
+    });
+  }
+
+  // 6.4 Buổi học lớp class5 (IELTS-B2-01) - 5 buổi
+  const sessionDates5 = ['2024-08-19', '2024-08-21', '2024-08-23', '2024-08-26', '2024-08-28'];
+  const sessionTopics5 = [
+    'Unit 1: Advanced Writing Task 2 - Problem & Solution',
+    'Unit 2: Complex Sentence Structures & Cohesion',
+    'Unit 3: Speaking Part 2 & 3 - Abstract Topics & Idioms',
+    'Unit 4: Reading Passage 3 - Science & Philosophy Texts',
+    'Unit 5: Mock Exam Simulation Under Real Time Pressure',
+  ];
+
+  for (let i = 0; i < sessionDates5.length; i++) {
+    const session = await prisma.buoiHoc.create({
+      data: {
+        lopHocId: class5.id,
+        soThuTu: i + 1,
+        ngayHoc: new Date(sessionDates5[i]),
+        gioBatDau: new Date('1970-01-01T18:00:00'),
+        gioKetThuc: new Date('1970-01-01T21:00:00'),
+        chuDe: sessionTopics5[i],
+        trangThai: TrangThaiBuoiHoc.DA_KET_THUC,
+      },
+    });
+
+    // Điểm danh HV006 (Trịnh Đình Quang)
+    await prisma.banGhiDiemDanh.create({
+      data: {
+        buoiHocId: session.id,
+        hocVienId: studentProfiles['student06'].id,
+        trangThai: TrangThaiDiemDanh.CO_MAT,
+        ghiChu: 'Kỹ năng làm bài xuất sắc',
+        giaoVienDiemDanhId: gv4.id,
+      },
+    });
+
+    // Điểm danh HV009 (Phạm Quốc Cường)
+    await prisma.banGhiDiemDanh.create({
+      data: {
+        buoiHocId: session.id,
+        hocVienId: studentProfiles['student09'].id,
+        trangThai: i === 3 ? TrangThaiDiemDanh.CO_PHEP : TrangThaiDiemDanh.CO_MAT,
+        ghiChu: i === 3 ? 'Có phép' : 'Tham gia nhiệt tình',
+        giaoVienDiemDanhId: gv4.id,
+      },
+    });
+  }
+  console.log('✅ Đã nạp 21 Buổi học & Bảng điểm danh chuyên cần cho 4 lớp học');
 
   // ============================================================================
   // 7. BẢNG ĐIỂM & ĐÁNH GIÁ (KetQuaHocTap — 20% Chuyên cần, 30% Giữa kỳ, 50% Cuối kỳ)
   // ============================================================================
-  // 7.1 Kết quả học viên 1 (Lê Thị Hoa)
+
+  // 7.1 HV001 (Lê Thị Hoa) tại lớp IELTS-B1-01 (87.75đ - ĐẠT)
   await prisma.ketQuaHocTap.upsert({
-    where: {
-      lopHocId_hocVienId: {
-        lopHocId: class1.id,
-        hocVienId: studentProfiles['student01'].id,
-      },
-    },
+    where: { lopHocId_hocVienId: { lopHocId: class1.id, hocVienId: studentProfiles['student01'].id } },
     update: {
       diemChuyenCan: 95.0,
       diemGiuaKy: 82.5,
@@ -771,20 +1019,15 @@ async function main() {
       diemChuyenCan: 95.0,
       diemGiuaKy: 82.5,
       diemCuoiKy: 88.0,
-      diemTongKet: 87.75, // (95*0.2) + (82.5*0.3) + (88*0.5)
+      diemTongKet: 87.75,
       nhanXet: 'Học viên có nền tảng ngữ pháp rất tốt, phát âm chuẩn và phản xạ nhanh. Cần tiếp tục mở rộng vốn từ vựng học thuật cho bài thi Writing.',
       trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
     },
   });
 
-  // 7.2 Kết quả học viên 5 (Vũ Bảo Ngọc)
+  // 7.2 HV005 (Vũ Bảo Ngọc) tại lớp IELTS-B1-01 (77.6đ - ĐẠT)
   await prisma.ketQuaHocTap.upsert({
-    where: {
-      lopHocId_hocVienId: {
-        lopHocId: class1.id,
-        hocVienId: studentProfiles['student05'].id,
-      },
-    },
+    where: { lopHocId_hocVienId: { lopHocId: class1.id, hocVienId: studentProfiles['student05'].id } },
     update: {
       diemChuyenCan: 85.0,
       diemGiuaKy: 72.0,
@@ -805,14 +1048,55 @@ async function main() {
     },
   });
 
-  // 7.3 Kết quả học viên 3 (Nguyễn Hoàng Long) tại lớp COMM-B1-01
+  // 7.3 HV002 (Phạm Văn Hùng) tại lớp TOEIC-A2-01 (68.5đ - ĐẠT)
   await prisma.ketQuaHocTap.upsert({
-    where: {
-      lopHocId_hocVienId: {
-        lopHocId: class3.id,
-        hocVienId: studentProfiles['student03'].id,
-      },
+    where: { lopHocId_hocVienId: { lopHocId: class2.id, hocVienId: studentProfiles['student02'].id } },
+    update: {
+      diemChuyenCan: 75.0,
+      diemGiuaKy: 65.0,
+      diemCuoiKy: 68.0,
+      diemTongKet: 68.5,
+      nhanXet: 'Kỹ năng Nghe tiến bộ rõ rệt, cần bổ sung thêm từ vựng Reading Part 5.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
     },
+    create: {
+      lopHocId: class2.id,
+      hocVienId: studentProfiles['student02'].id,
+      diemChuyenCan: 75.0,
+      diemGiuaKy: 65.0,
+      diemCuoiKy: 68.0,
+      diemTongKet: 68.5,
+      nhanXet: 'Kỹ năng Nghe tiến bộ rõ rệt, cần bổ sung thêm từ vựng Reading Part 5.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
+    },
+  });
+
+  // 7.4 HV007 (Bùi Đức Thắng) tại lớp TOEIC-A2-01 (81.0đ - ĐẠT)
+  await prisma.ketQuaHocTap.upsert({
+    where: { lopHocId_hocVienId: { lopHocId: class2.id, hocVienId: studentProfiles['student07'].id } },
+    update: {
+      diemChuyenCan: 90.0,
+      diemGiuaKy: 78.0,
+      diemCuoiKy: 79.0,
+      diemTongKet: 80.9,
+      nhanXet: 'Tác phong học tập nghiêm túc, làm bài tập về nhà rất chỉn chu.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
+    },
+    create: {
+      lopHocId: class2.id,
+      hocVienId: studentProfiles['student07'].id,
+      diemChuyenCan: 90.0,
+      diemGiuaKy: 78.0,
+      diemCuoiKy: 79.0,
+      diemTongKet: 80.9,
+      nhanXet: 'Tác phong học tập nghiêm túc, làm bài tập về nhà rất chỉn chu.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
+    },
+  });
+
+  // 7.5 HV003 (Nguyễn Hoàng Long) tại lớp COMM-B1-01 (86.5đ - ĐẠT)
+  await prisma.ketQuaHocTap.upsert({
+    where: { lopHocId_hocVienId: { lopHocId: class3.id, hocVienId: studentProfiles['student03'].id } },
     update: {
       diemChuyenCan: 90.0,
       diemGiuaKy: 85.0,
@@ -832,19 +1116,89 @@ async function main() {
       trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
     },
   });
-  console.log('✅ Đã nạp Bảng điểm tổng kết 20/30/50 chuẩn quy chế');
+
+  // 7.6 HV008 (Hoàng Mai Linh) tại lớp COMM-B1-01 (90.0đ - ĐẠT)
+  await prisma.ketQuaHocTap.upsert({
+    where: { lopHocId_hocVienId: { lopHocId: class3.id, hocVienId: studentProfiles['student08'].id } },
+    update: {
+      diemChuyenCan: 95.0,
+      diemGiuaKy: 88.0,
+      diemCuoiKy: 89.0,
+      diemTongKet: 89.9,
+      nhanXet: 'Phát âm tự nhiên, đàm phán linh hoạt, tinh thần làm việc nhóm tuyệt vời.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
+    },
+    create: {
+      lopHocId: class3.id,
+      hocVienId: studentProfiles['student08'].id,
+      diemChuyenCan: 95.0,
+      diemGiuaKy: 88.0,
+      diemCuoiKy: 89.0,
+      diemTongKet: 89.9,
+      nhanXet: 'Phát âm tự nhiên, đàm phán linh hoạt, tinh thần làm việc nhóm tuyệt vời.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
+    },
+  });
+
+  // 7.7 HV006 (Trịnh Đình Quang) tại lớp IELTS-B2-01 (94.0đ - ĐẠT)
+  await prisma.ketQuaHocTap.upsert({
+    where: { lopHocId_hocVienId: { lopHocId: class5.id, hocVienId: studentProfiles['student06'].id } },
+    update: {
+      diemChuyenCan: 100.0,
+      diemGiuaKy: 92.0,
+      diemCuoiKy: 93.0,
+      diemTongKet: 94.1,
+      nhanXet: 'Trình độ IELTS tương đương 7.5 - 8.0, cấu trúc bài viết Task 2 chặt chẽ và học thuật.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
+    },
+    create: {
+      lopHocId: class5.id,
+      hocVienId: studentProfiles['student06'].id,
+      diemChuyenCan: 100.0,
+      diemGiuaKy: 92.0,
+      diemCuoiKy: 93.0,
+      diemTongKet: 94.1,
+      nhanXet: 'Trình độ IELTS tương đương 7.5 - 8.0, cấu trúc bài viết Task 2 chặt chẽ và học thuật.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
+    },
+  });
+
+  // 7.8 HV009 (Phạm Quốc Cường) tại lớp IELTS-B2-01 (84.5đ - ĐẠT)
+  await prisma.ketQuaHocTap.upsert({
+    where: { lopHocId_hocVienId: { lopHocId: class5.id, hocVienId: studentProfiles['student09'].id } },
+    update: {
+      diemChuyenCan: 85.0,
+      diemGiuaKy: 82.0,
+      diemCuoiKy: 86.0,
+      diemTongKet: 84.6,
+      nhanXet: 'Nắm vững chiến thuật làm bài, phản xạ Speaking lưu loát và tự nhiên.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
+    },
+    create: {
+      lopHocId: class5.id,
+      hocVienId: studentProfiles['student09'].id,
+      diemChuyenCan: 85.0,
+      diemGiuaKy: 82.0,
+      diemCuoiKy: 86.0,
+      diemTongKet: 84.6,
+      nhanXet: 'Nắm vững chiến thuật làm bài, phản xạ Speaking lưu loát và tự nhiên.',
+      trangThaiHoanThanh: TrangThaiHoanThanh.DAT,
+    },
+  });
+  console.log('✅ Đã nạp 8 Bảng điểm tổng kết 20/30/50 chuẩn quy chế');
 
   // ============================================================================
   // 8. AUDIT LOG AI (YeuCauAI)
   // ============================================================================
+  await prisma.yeuCauAI.deleteMany({});
   await prisma.yeuCauAI.createMany({
     data: [
       {
         nguoiDungId: studentProfiles['student01'].nguoiDungId!,
         loaiChucNang: LoaiChucNangAI.TU_VAN_LOP,
-        promptInput: 'Tư vấn lớp học cho học viên trình độ B1, lịch rảnh Thứ 2-4-6 tối',
-        rawOutput: '{"lopGoiY": ["IELTS-B1-01", "COMM-B1-01"], "lyDo": "Lịch học khớp 100% với lịch rảnh tối Thứ 2-4-6."}',
-        validatedOutputJson: { lopGoiY: ['IELTS-B1-01', 'COMM-B1-01'], lyDo: 'Lịch học khớp 100% với lịch rảnh tối Thứ 2-4-6.' },
+        promptInput: 'Tư vấn lớp học cho học viên trình độ B1, lịch rảnh Thứ 2-4-6 tối, mục tiêu thi IELTS 6.5 trong 3 tháng',
+        rawOutput: '[{"maLopHoc": "IELTS-B1-01", "tenLopHoc": "IELTS B1 Buổi tối (Thứ 2-4-6)", "doTuongThich": 96, "lyDoPhuHop": "Trình độ B1 và lịch rảnh trùng khớp 100%."}]',
+        validatedOutputJson: [{ maLopHoc: 'IELTS-B1-01', tenLopHoc: 'IELTS B1 Buổi tối (Thứ 2-4-6)', doTuongThich: 96 }],
         trangThai: TrangThaiYeuCauAI.THANH_CONG,
         thoiGianXuLyMs: 1250,
       },
@@ -855,16 +1209,25 @@ async function main() {
         rawOutput: '{"chuDe": "Present Perfect", "trinhDo": "B1", "cauHoi": [...]}',
         validatedOutputJson: { chuDe: 'Present Perfect', trinhDo: 'B1', cauHoi: [] },
         trangThai: TrangThaiYeuCauAI.THANH_CONG,
-        thoiGianXuLyMs: 3400,
+        thoiGianXuLyMs: 2400,
       },
       {
         nguoiDungId: studentProfiles['student01'].nguoiDungId!,
         loaiChucNang: LoaiChucNangAI.TOM_TAT_TIEN_DO,
         promptInput: 'Tóm tắt tiến độ học tập cho học viên Lê Thị Hoa lớp IELTS-B1-01',
-        rawOutput: '{"chuyenCan": 95, "tongKet": 87.75, "diemManh": "Ngữ pháp xuất sắc, phát âm chuẩn", "canKhacPhuc": "Tăng tốc độ đọc", "loiKhuyen": "Luyện đọc báo cáo kinh tế mỗi ngày"}',
+        rawOutput: 'Học viên có tỷ lệ chuyên cần cao (95%), điểm tổng kết đạt 87.75. Điểm mạnh: Ngữ pháp chắc chắn, phát âm chuẩn. Cần khắc phục: Nâng cao tốc độ làm bài Reading.',
         validatedOutputJson: { chuyenCan: 95, tongKet: 87.75 },
         trangThai: TrangThaiYeuCauAI.THANH_CONG,
-        thoiGianXuLyMs: 2100,
+        thoiGianXuLyMs: 1800,
+      },
+      {
+        nguoiDungId: studentProfiles['student03'].nguoiDungId!,
+        loaiChucNang: LoaiChucNangAI.TOM_TAT_TIEN_DO,
+        promptInput: 'Tóm tắt tiến độ học tập cho học viên Nguyễn Hoàng Long lớp COMM-B1-01',
+        rawOutput: 'Học viên tham gia 100% buổi học, điểm tổng kết 86.5. Điểm mạnh: Thuyết trình và phản xạ đàm phán xuất sắc.',
+        validatedOutputJson: { chuyenCan: 100, tongKet: 86.5 },
+        trangThai: TrangThaiYeuCauAI.THANH_CONG,
+        thoiGianXuLyMs: 1650,
       },
     ],
   });
@@ -873,10 +1236,10 @@ async function main() {
   console.log('\n🎉 NẠP TOÀN BỘ SIÊU DỮ LIỆU THÀNH CÔNG!');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('📋 TÀI KHOẢN HỆ THỐNG ĐÃ SẴN SÀNG (Mật khẩu: 123456):');
-  console.log('   👑 Quản lý (Admin)   : admin01');
-  console.log('   👨‍🏫 Giáo viên (Teacher): teacher01 (Cô Lan), teacher02 (Thầy Minh), teacher03 (Thầy Nam)');
-  console.log('   📞 Tư vấn viên (Staff): staff01 (Thảo), staff02 (Ngân)');
-  console.log('   🎓 Học viên (Student) : student01, student02, student03, student04, student05, student06');
+  console.log('   👑 Quản lý (Admin)     : admin01');
+  console.log('   👨‍🏫 Giáo viên (Teacher) : teacher01 (Cô Lan), teacher02 (Thầy Minh), teacher03 (Thầy Nam), teacher04 (Cô Emily)');
+  console.log('   📞 Tư vấn viên (Staff) : staff01 (Thảo), staff02 (Ngân)');
+  console.log('   🎓 Học viên (Student)   : student01 → student10');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 }
 
