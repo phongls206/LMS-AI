@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ConsultClassDto, GenerateExercisesDto, SummarizeProgressDto } from './dto/ai.dto';
 import { GoogleGenAI } from '@google/genai';
+import { getFallbackExercises } from './fallback-data';
 import {
   LoaiChucNangAI,
   TrangThaiYeuCauAI,
@@ -251,48 +252,8 @@ RÀNG BUỘC:
       this.logger.warn('AI Sinh bài tập thất bại, áp dụng Đề mẫu Fallback:', error?.message);
       status = error?.message === 'TIMEOUT' ? TrangThaiYeuCauAI.TIMEOUT : TrangThaiYeuCauAI.FALLBACK_APPLIED;
 
-      // FALLBACK ĐỀ MẪU TĨNH
-      validatedJson = {
-        chuDe: dto.chuDe,
-        trinhDo: dto.trinhDo,
-        cauHoi: [
-          {
-            id: 1,
-            noiDung: `She ________ to London three times this year. (Chủ đề: ${dto.chuDe})`,
-            luaChon: { A: 'has been', B: 'went', C: 'goes', D: 'is going' },
-            dapAnDung: 'A',
-            giaiThich: 'Dùng thì hiện tại hoàn thành diễn tả trải nghiệm lặp lại nhiều lần.',
-          },
-          {
-            id: 2,
-            noiDung: 'They haven\'t finished their homework ________.',
-            luaChon: { A: 'already', B: 'yet', C: 'since', D: 'just' },
-            dapAnDung: 'B',
-            giaiThich: '"Yet" dùng ở cuối câu phủ định của thì hiện tại hoàn thành.',
-          },
-          {
-            id: 3,
-            noiDung: 'When I ________ home, my mother was cooking dinner.',
-            luaChon: { A: 'arrived', B: 'was arriving', C: 'have arrived', D: 'arrive' },
-            dapAnDung: 'A',
-            giaiThich: 'Hành động ngắn xen vào hành động đang diễn ra trong quá khứ dùng Quá khứ đơn.',
-          },
-          {
-            id: 4,
-            noiDung: 'He ________ English since 2020.',
-            luaChon: { A: 'studies', B: 'has studied', C: 'studied', D: 'is studying' },
-            dapAnDung: 'B',
-            giaiThich: 'Dấu hiệu "since + mốc thời gian" dùng thì Hiện tại hoàn thành.',
-          },
-          {
-            id: 5,
-            noiDung: 'Look! The bus ________.',
-            luaChon: { A: 'comes', B: 'is coming', C: 'came', D: 'has come' },
-            dapAnDung: 'B',
-            giaiThich: 'Dấu hiệu "Look!" diễn tả hành động đang xảy ra dùng Hiện tại tiếp diễn.',
-          },
-        ],
-      };
+      // FALLBACK ĐỀ MẪU TĨNH ĐA DẠNG THEO CHỦ ĐỀ & KHUNG CEFR
+      validatedJson = getFallbackExercises(dto.chuDe, dto.trinhDo);
     }
 
     const duration = Date.now() - startTime;

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService } from '../../../services/api';
-import { Sparkles, CheckCircle2, HelpCircle, ArrowRight, BookOpen, Layers } from 'lucide-react';
+import { Sparkles, CheckCircle2, XCircle, RotateCcw, BookOpen, Layers, Eye, PlayCircle } from 'lucide-react';
 
 const PREDEFINED_TOPICS = [
   'Thì Hiện Tại Hoàn Thành (Present Perfect Tense)',
@@ -27,7 +27,11 @@ export default function TeacherAiExercisesPage() {
   const [cefr, setCefr] = useState('B1');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
-  const [showExplanation, setShowExplanation] = useState<Record<number, boolean>>({});
+
+  // Interactive quiz state
+  const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+  const [teacherViewKey, setTeacherViewKey] = useState(false);
 
   const activeTopic = selectedTopic === 'CUSTOM' ? customTopic.trim() : selectedTopic;
 
@@ -40,7 +44,8 @@ export default function TeacherAiExercisesPage() {
 
     setLoading(true);
     setResult(null);
-    setShowExplanation({});
+    setUserAnswers({});
+    setSubmitted(false);
 
     try {
       const res = await aiService.generateExercises(activeTopic, cefr);
@@ -52,8 +57,18 @@ export default function TeacherAiExercisesPage() {
     }
   };
 
-  const toggleExplanation = (id: number) => {
-    setShowExplanation((prev) => ({ ...prev, [id]: !prev[id] }));
+  const handleSelectOption = (qIdx: number, optionKey: string) => {
+    if (submitted) return;
+    setUserAnswers((prev) => ({ ...prev, [qIdx]: optionKey }));
+  };
+
+  const calculateScore = () => {
+    if (!result?.data?.cauHoi) return 0;
+    let correct = 0;
+    result.data.cauHoi.forEach((q: any, idx: number) => {
+      if (userAnswers[idx] === q.dapAnDung) correct++;
+    });
+    return correct;
   };
 
   return (
@@ -146,70 +161,152 @@ export default function TeacherAiExercisesPage() {
           </div>
         )}
 
-        {result && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 rounded-xl bg-purple-950/30 border border-purple-800/40">
+        {result?.data?.cauHoi && (
+          <div className="space-y-6">
+            {/* Header info & view toggle */}
+            <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center space-x-2 text-purple-300 text-xs">
-                <BookOpen className="w-4 h-4 text-purple-400" />
+                <BookOpen className="w-4 h-4 text-purple-400 shrink-0" />
                 <span>
-                  Chủ đề: <strong>{result.data?.chuDe}</strong> — Trình độ: <strong>CEFR {result.data?.trinhDo}</strong>
+                  Chủ đề: <strong>{result.data.chuDe}</strong> — Trình độ: <strong>CEFR {result.data.trinhDo}</strong>
                 </span>
               </div>
-              <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                Mode: {result.mode}
-              </span>
+              <div className="flex items-center space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setTeacherViewKey(!teacherViewKey)}
+                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-semibold flex items-center space-x-1.5 border border-indigo-500/30 transition"
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                  <span>{teacherViewKey ? 'Ẩn Đáp Án Mẫu' : 'Xem Nhanh Đáp Án (Teacher Mode)'}</span>
+                </button>
+                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                  Mode: {result.mode}
+                </span>
+              </div>
             </div>
 
+            {/* Questions List */}
             <div className="space-y-4">
-              {result.data?.cauHoi?.map((q: any, idx: number) => (
-                <div key={q.id || idx} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-xs flex items-center justify-center shrink-0">
-                      {idx + 1}
-                    </span>
-                    <p className="text-sm font-semibold text-white leading-relaxed">{q.noiDung}</p>
-                  </div>
+              {result.data.cauHoi.map((q: any, idx: number) => {
+                const selected = userAnswers[idx];
+                const isCorrect = selected === q.dapAnDung;
+                const revealMode = submitted || teacherViewKey;
 
-                  {/* Options */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pl-9">
-                    {q.luaChon &&
-                      Object.entries(q.luaChon).map(([key, val]: [string, any]) => (
-                        <div
-                          key={key}
-                          className={`p-3 rounded-xl border text-xs font-medium transition ${
-                            key === q.dapAnDung
-                              ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300'
-                              : 'bg-slate-950/60 border-slate-800 text-slate-300'
-                          }`}
-                        >
-                          <span className="font-bold mr-2">[{key}]</span>
-                          <span>{val}</span>
+                return (
+                  <div key={q.id || idx} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-xs flex items-center justify-center shrink-0">
+                        {idx + 1}
+                      </span>
+                      <p className="text-sm font-semibold text-white leading-relaxed">{q.noiDung}</p>
+                    </div>
+
+                    {/* Options */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pl-9">
+                      {q.luaChon &&
+                        Object.entries(q.luaChon).map(([optKey, optVal]: [string, any]) => {
+                          const isChosen = selected === optKey;
+                          let btnClass = 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700';
+
+                          if (revealMode) {
+                            if (optKey === q.dapAnDung) {
+                              btnClass = 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-semibold';
+                            } else if (isChosen && !isCorrect && submitted) {
+                              btnClass = 'bg-rose-500/20 border-rose-500 text-rose-300 font-semibold';
+                            } else {
+                              btnClass = 'bg-slate-950/40 border-slate-900 text-slate-600 opacity-60';
+                            }
+                          } else if (isChosen) {
+                            btnClass = 'bg-purple-600 border-purple-500 text-white font-semibold shadow-md shadow-purple-500/30';
+                          }
+
+                          return (
+                            <button
+                              key={optKey}
+                              type="button"
+                              onClick={() => handleSelectOption(idx, optKey)}
+                              className={`p-3 rounded-xl border text-xs text-left transition flex items-center space-x-2 ${btnClass}`}
+                            >
+                              <span className="font-bold opacity-80">[{optKey}]</span>
+                              <span>{optVal}</span>
+                            </button>
+                          );
+                        })}
+                    </div>
+
+                    {/* Explanation after submit or in teacher mode */}
+                    {revealMode && (
+                      <div
+                        className={`ml-9 p-3.5 rounded-xl border text-xs ${
+                          isCorrect || teacherViewKey
+                            ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-300'
+                            : 'bg-rose-950/30 border-rose-800/50 text-rose-300'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-1.5 font-bold mb-1">
+                          {isCorrect || teacherViewKey ? (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-rose-400" />
+                          )}
+                          <span>
+                            {teacherViewKey
+                              ? `Đáp án đúng: [${q.dapAnDung}]`
+                              : isCorrect
+                              ? 'Chính xác!'
+                              : `Chưa đúng. Đáp án là [${q.dapAnDung}]`}
+                          </span>
                         </div>
-                      ))}
-                  </div>
-
-                  {/* Explanation toggle */}
-                  <div className="pl-9 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleExplanation(q.id || idx)}
-                      className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center space-x-1"
-                    >
-                      <HelpCircle className="w-3.5 h-3.5" />
-                      <span>{showExplanation[q.id || idx] ? 'Ẩn Giải Thích' : 'Xem Đáp Án & Giải Thích Chi Tiết'}</span>
-                    </button>
-
-                    {showExplanation[q.id || idx] && (
-                      <div className="mt-2.5 p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 text-xs text-slate-300 space-y-1">
-                        <p className="text-emerald-400 font-semibold">
-                          ✅ Đáp án đúng: <span className="font-bold font-mono">[{q.dapAnDung}]</span>
-                        </p>
-                        <p className="text-slate-400">{q.giaiThich}</p>
+                        <p className="text-slate-300 text-[11px]">{q.giaiThich}</p>
                       </div>
                     )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
+            </div>
+
+            {/* Bottom action panel */}
+            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+              {submitted ? (
+                <>
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xs text-slate-400">Kết quả làm thử:</span>
+                    <span className="text-xl font-black text-indigo-400">
+                      {calculateScore()} / {result.data.cauHoi.length} Câu Đúng
+                    </span>
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300">
+                      ({((calculateScore() / result.data.cauHoi.length) * 100).toFixed(0)}%)
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSubmitted(false);
+                      setUserAnswers({});
+                    }}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Làm Lại</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <span className="text-xs text-slate-400">
+                    Đã chọn đáp án: <strong className="text-white">{Object.keys(userAnswers).length}</strong> /{' '}
+                    {result.data.cauHoi.length} câu
+                  </span>
+                  <button
+                    type="button"
+                    disabled={Object.keys(userAnswers).length < result.data.cauHoi.length}
+                    onClick={() => setSubmitted(true)}
+                    className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition disabled:opacity-40"
+                  >
+                    Nộp Bài & Chấm Điểm
+                  </button>
+                </>
+              )}
             </div>
           </div>
         )}
