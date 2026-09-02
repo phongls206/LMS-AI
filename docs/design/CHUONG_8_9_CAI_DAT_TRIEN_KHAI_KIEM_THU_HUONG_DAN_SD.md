@@ -12,10 +12,11 @@ Toàn bộ các thông số kết nối cơ sở dữ liệu, khóa bảo mật 
 - `JWT_SECRET` & `JWT_EXPIRES_IN`: Khóa bí mật dùng để ký chữ ký số HMAC-SHA256 cho mã Token xác thực của 4 vai trò (thời hạn 24 giờ).
 - `GEMINI_API_KEY`: Khóa truy cập Google AI Studio để gọi mô hình ngôn ngữ lớn Google Gemini.
 
-### 8.1.2 Cấu trúc Thư mục Dự án Monorepo
-Mã nguồn dự án được tổ chức khoa học theo mô hình Monorepo gồm 2 phân hệ chính:
-- `backend/`: Chứa 8 module nghiệp vụ NestJS (`auth`, `users`, `courses`, `classes`, `enrollments`, `attendances`, `grades`, `stats`, `ai`) cùng thư mục `prisma/` quản lý Database Schema.
-- `frontend/`: Chứa 23 màn hình giao diện Next.js App Router (thư mục `app/admin`, `app/teacher`, `app/student`, `app/staff`), tích hợp TailwindCSS và bộ điều hướng Axios client.
+### 8.1.2 Cấu trúc Tổ chức Mã nguồn Dự án
+Mã nguồn hệ thống được phân rã khoa học thành các thư mục chức năng chuyên biệt:
+- `backend/`: Chứa toàn bộ mã nguồn xử lý nghiệp vụ Backend xây dựng bằng NestJS gồm 8 module (`auth`, `users`, `courses`, `classes`, `enrollments`, `attendances`, `grades`, `stats`, `ai`) cùng thư mục `prisma/` quản lý Database Schema 3NF.
+- `frontend/`: Chứa 23 màn hình giao diện người dùng Next.js App Router (thư mục `app/admin`, `app/teacher`, `app/student`, `app/staff`), tích hợp TailwindCSS và hệ thống định tuyến RBAC.
+- `docs/`: Chứa toàn bộ tài liệu thiết kế hệ thống, sơ đồ kỹ thuật UML/ERD và cẩm nang hướng dẫn vận hành.
 
 ---
 
