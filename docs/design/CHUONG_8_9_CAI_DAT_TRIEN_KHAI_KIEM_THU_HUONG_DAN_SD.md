@@ -2,41 +2,39 @@
 
 ---
 
-## 8.1 Môi Trường và Công Nghệ Sử Dụng
+## 8.1 Cấu Hình Môi Trường Thực Thi & Cấu Trúc Mã Nguồn
 
-Hệ thống Quản lý Trung tâm Ngoại ngữ tích hợp Trí tuệ Nhân tạo (ETC English LMS AI) được thiết kế và xây dựng theo mô hình phân tán hiện đại (Multi-tier Cloud-Native Architecture), tách biệt hoàn toàn giữa tầng Trình diễn (Frontend), tầng Xử lý nghiệp vụ (Backend), tầng Dữ liệu (Database Tier) và tầng Trí tuệ nhân tạo (GenAI Engine).
+Hệ thống LMS AI được xây dựng theo kiến trúc tách biệt giữa tầng Giao diện (Next.js 14 App Router) và tầng Xử lý nghiệp vụ (NestJS 12 Framework). Dưới đây là các cấu hình môi trường cần thiết để triển khai thực tế:
 
-*Bảng 8.1: Bảng tổng hợp danh mục công nghệ và phần mềm sử dụng trong dự án*
-| Thành phần kiến trúc | Công nghệ / Framework | Phiên bản | Vai trò và Mục đích sử dụng |
-|:---|:---|:---|:---|
-| **Runtime Môi trường** | Node.js (LTS) | `v20.x / v22.x` | Môi trường thực thi JavaScript/TypeScript hiệu năng cao phía máy chủ |
-| **Quản lý Gói (Package Manager)** | npm | `v10.x+` | Quản lý và đồng bộ toàn bộ thư viện phụ thuộc của dự án |
-| **Tầng Xử lý Nghiệp vụ (Backend)** | NestJS Framework | `v11.x / v12.x` | Xây dựng 32 RESTful APIs theo kiến trúc Modular, Dependency Injection |
-| **Tầng Truy xuất Dữ liệu (ORM)** | Prisma ORM | `v6.4.1 (Stable)` | Quản lý Schema 14 bảng 3NF, Migration và Type-safe Client |
-| **Tầng Giao diện Người dùng (Frontend)** | Next.js (App Router) | `v14.x / v16.x` | Xây dựng 23 màn hình SPA/SSR với TypeScript, Routing linh hoạt |
-| **Thiết kế Giao diện & Trực quan** | TailwindCSS + Lucide Icons | `v3.4.x / v4.x` | Hệ thống Design System hiện đại, Glassmorphism và Responsive đa thiết bị |
-| **Hệ Quản trị Cơ sở Dữ liệu** | PostgreSQL (Neon.tech) | `v15+ / v16+` | CSDL quan hệ Serverless Cloud Database hoạt động 24/7 |
-| **Động cơ Trí tuệ Nhân tạo (GenAI)** | Google Gemini SDK | `@google/genai` | Tích hợp mô hình ngôn ngữ lớn (Gemini 2.5 Flash/Pro) vào 3 tính năng trợ giảng |
-| **Bảo mật & Mã hóa Danh tính** | Argon2 + JWT | `argon2`, `@nestjs/jwt` | Băm mật khẩu chống brute-force và cấp phát Token xác thực Stateless |
+### 8.1.1 Cấu hình Biến Môi trường (.env)
+Toàn bộ các thông số kết nối cơ sở dữ liệu, khóa bảo mật JWT và API Key dịch vụ AI được cô lập trong file `.env` phía máy chủ để đảm bảo an toàn thông tin:
+- `DATABASE_URL`: Chuỗi kết nối bảo mật SSL tới hệ quản trị CSDL Neon Serverless PostgreSQL qua kênh Pooling tự động.
+- `JWT_SECRET` & `JWT_EXPIRES_IN`: Khóa bí mật dùng để ký chữ ký số HMAC-SHA256 cho mã Token xác thực của 4 vai trò (thời hạn 24 giờ).
+- `GEMINI_API_KEY`: Khóa truy cập Google AI Studio để gọi mô hình ngôn ngữ lớn Google Gemini.
+
+### 8.1.2 Cấu trúc Thư mục Dự án Monorepo
+Mã nguồn dự án được tổ chức khoa học theo mô hình Monorepo gồm 2 phân hệ chính:
+- `backend/`: Chứa 8 module nghiệp vụ NestJS (`auth`, `users`, `courses`, `classes`, `enrollments`, `attendances`, `grades`, `stats`, `ai`) cùng thư mục `prisma/` quản lý Database Schema.
+- `frontend/`: Chứa 23 màn hình giao diện Next.js App Router (thư mục `app/admin`, `app/teacher`, `app/student`, `app/staff`), tích hợp TailwindCSS và bộ điều hướng Axios client.
 
 ---
 
-## 8.2 Cài Đặt và Khởi Tạo Cơ Sở Dữ Liệu
+## 8.2 Khởi Tạo Cơ Sở Dữ Liệu & Nạp Dữ Liệu Mẫu (Database Seeding)
 
 Cơ sở dữ liệu của hệ thống được lưu trữ trực tiếp trên hạ tầng đám mây Neon Serverless PostgreSQL (đặt tại cụm máy chủ AWS), đảm bảo tính khả dụng 24/7 và hỗ trợ mở rộng tài nguyên tự động.
 
-Quy trình khởi tạo CSDL được thực hiện qua công cụ Prisma ORM với 14 bảng quan hệ chuẩn 3NF (`nguoi_dung`, `ho_so_hoc_vien`, `ho_so_giao_vien`, `khoa_hoc`, `lop_hoc`, `lich_hoc`, `phan_cong_giao_vien`, `dang_ky_hoc`, `hoa_don`, `thanh_toan`, `buoi_hoc`, `ban_ghi_diem_danh`, `ket_qua_hoc_tap`, `yeu_cau_ai`):
-- **Đồng bộ Schema:** Chạy lệnh `npx prisma db push` để tạo toàn bộ bảng, khóa chính, khóa ngoại và ràng buộc toàn vẹn trên Neon Cloud.
-- **Nạp dữ liệu mẫu ban đầu:** Chạy script `npm run db:seed` để nạp sẵn tài khoản cho 4 vai trò (`admin01`, `teacher01`, `teacher02`, `staff01`, `student01`, `student02`), các khóa học và lớp học ban đầu.
+Quy trình khởi tạo CSDL được thực hiện hoàn toàn tự động qua công cụ Prisma ORM:
+- **Bước 1 — Đồng bộ Schema:** Thực thi lệnh `npx prisma db push` để khởi tạo 14 bảng quan hệ chuẩn 3NF, thiết lập đầy đủ khóa chính (PK), khóa ngoại (FK) và các ràng buộc toàn vẹn.
+- **Bước 2 — Nạp dữ liệu mẫu:** Thực thi lệnh `npm run db:seed` để nạp sẵn danh mục 6 tài khoản người dùng cho 4 vai trò (`admin01`, `teacher01`, `teacher02`, `staff01`, `student01`, `student02`), các khóa học và lớp học ban đầu với mật khẩu băm Argon2 chuẩn an toàn.
 
 ---
 
-## 8.3 Kết Quả Cài Đặt Các Phân Hệ Chức Năng Chính
+## 8.3 Kết Quả Cài Đặt Giao Diện & Các Phân Hệ Chức Năng Chính
 
 Dưới đây là kết quả cài đặt và giao diện thực tế tiêu biểu của 6 phân hệ cốt lõi trong hệ thống:
 
-### 8.3.1 Phân Hệ 1: Đăng Nhập và Phân Quyền RBAC (Role-Based Access Control)
-Màn hình đăng nhập (`SCR-AUTH-01`) tích hợp sẵn các nút chọn nhanh tài khoản mẫu cho 4 vai trò, tự động phân giải vai trò qua JWT và chuyển hướng chính xác về Dashboard Quản trị (`SCR-ADM-01`) với các chỉ số thống kê tổng quan:
+### 8.3.1 Phân Hệ 1: Đăng Nhập & Bàn Làm Việc Quản Trị Trung Tâm
+Màn hình đăng nhập (`SCR-AUTH-01`) tích hợp sẵn các nút chọn nhanh tài khoản mẫu cho 4 vai trò, tự động phân giải vai trò qua JWT và chuyển hướng chính xác về Dashboard Quản trị (`SCR-ADM-01`) với các chỉ số hoạt động tổng quan:
 
 ![Hình 8.1: Giao diện Dashboard Quản trị trung tâm với các chỉ số hoạt động tổng quan (SCR-ADM-01)](../images/02_admin_dashboard.png)
 *Hình 8.1: Giao diện Dashboard Quản trị trung tâm với các chỉ số hoạt động tổng quan (SCR-ADM-01)*
