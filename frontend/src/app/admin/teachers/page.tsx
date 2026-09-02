@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
 import { GiaoVien } from '../../../types';
-import { Plus, Award, Mail, Phone, Edit3, X, CheckCircle, UserCheck, Clock, UserX } from 'lucide-react';
+import { Plus, Award, Mail, Phone, Edit3, X, CheckCircle, UserCheck, Clock, UserX, KeyRound } from 'lucide-react';
 
 export default function AdminTeachersPage() {
   const [teachers, setTeachers] = useState<GiaoVien[]>([]);
@@ -32,6 +32,7 @@ export default function AdminTeachersPage() {
     bangCap: '',
     soDienThoai: '',
     trangThai: 'DANG_LAM_VIEC',
+    matKhauMoi: '',
   });
 
   const fetchTeachers = async () => {
@@ -72,7 +73,7 @@ export default function AdminTeachersPage() {
     }
   };
 
-  const openEditModal = (t: GiaoVien) => {
+  const openEditModal = (t: GiaoVien, defaultPassword?: string) => {
     setEditingTeacher(t);
     setEditFormData({
       hoTen: t.hoTen,
@@ -80,6 +81,7 @@ export default function AdminTeachersPage() {
       bangCap: t.bangCap || '',
       soDienThoai: t.nguoiDung?.soDienThoai || '',
       trangThai: (t as any).trangThai || 'DANG_LAM_VIEC',
+      matKhauMoi: defaultPassword || '',
     });
   };
 
@@ -207,13 +209,20 @@ export default function AdminTeachersPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="pt-2 border-t border-slate-800/60">
+                  <div className="pt-2 border-t border-slate-800/60 flex items-center space-x-2">
                     <button
                       onClick={() => openEditModal(t)}
-                      className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300 text-xs font-semibold flex items-center justify-center space-x-1.5 border border-indigo-500/20 transition"
+                      className="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300 text-xs font-semibold flex items-center justify-center space-x-1.5 border border-indigo-500/20 transition"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
-                      <span>Sửa Thông Tin & Đổi Trạng Thái</span>
+                      <span>Sửa & Trạng Thái</span>
+                    </button>
+                    <button
+                      onClick={() => openEditModal(t, 'Teacher@123')}
+                      title="Khôi phục / Reset mật khẩu về Teacher@123"
+                      className="p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-white border border-amber-500/30 transition"
+                    >
+                      <KeyRound className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -414,6 +423,32 @@ export default function AdminTeachersPage() {
                   </select>
                   <p className="text-[11px] text-slate-400 italic">
                     * Khi chọn "Đã nghỉ việc", hệ thống sẽ giữ nguyên lịch sử điểm danh các lớp cũ và chặn phân công lớp mới.
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-amber-500/30 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <label className="block text-amber-300 font-semibold text-[11px] uppercase tracking-wider flex items-center space-x-1">
+                      <KeyRound className="w-3.5 h-3.5" />
+                      <span>Khôi Phục / Đặt Lại Mật Khẩu (Admin)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setEditFormData({ ...editFormData, matKhauMoi: 'Teacher@123' })}
+                      className="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-white text-[10px] font-bold transition"
+                    >
+                      ⚡ Reset về Teacher@123
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Để trống nếu không muốn đổi mật khẩu..."
+                    value={editFormData.matKhauMoi}
+                    onChange={(e) => setEditFormData({ ...editFormData, matKhauMoi: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono focus:outline-none focus:border-amber-500 text-xs"
+                  />
+                  <p className="text-[10px] text-slate-500">
+                    * Mật khẩu mới sẽ được mã hóa an toàn với Argon2 khi bạn bấm "Lưu Thay Đổi".
                   </p>
                 </div>
 
