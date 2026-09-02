@@ -157,10 +157,14 @@ export class UsersService {
     if (!student) throw new NotFoundException('Không tìm thấy học viên.');
 
     const updated = await this.prisma.$transaction(async (tx) => {
-      if (dto.soDienThoai && student.nguoiDungId) {
+      const userUpdateData: any = {};
+      if (dto.soDienThoai) userUpdateData.soDienThoai = dto.soDienThoai;
+      if (dto.matKhauMoi) userUpdateData.matKhauMaHoa = await argon2.hash(dto.matKhauMoi);
+
+      if (Object.keys(userUpdateData).length > 0 && student.nguoiDungId) {
         await tx.nguoiDung.update({
           where: { id: student.nguoiDungId },
-          data: { soDienThoai: dto.soDienThoai },
+          data: userUpdateData,
         });
       }
 
@@ -319,10 +323,14 @@ export class UsersService {
     if (!teacher) throw new NotFoundException('Không tìm thấy giáo viên.');
 
     const updated = await this.prisma.$transaction(async (tx) => {
-      if (dto.soDienThoai && teacher.nguoiDungId) {
+      const userUpdateData: any = {};
+      if (dto.soDienThoai) userUpdateData.soDienThoai = dto.soDienThoai;
+      if (dto.matKhauMoi) userUpdateData.matKhauMaHoa = await argon2.hash(dto.matKhauMoi);
+
+      if (Object.keys(userUpdateData).length > 0 && teacher.nguoiDungId) {
         await tx.nguoiDung.update({
           where: { id: teacher.nguoiDungId },
-          data: { soDienThoai: dto.soDienThoai },
+          data: userUpdateData,
         });
       }
 

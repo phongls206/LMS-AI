@@ -95,6 +95,11 @@ export class UpdateStudentDto {
   @IsOptional()
   @IsEnum(TrangThaiHocVien)
   trangThai?: TrangThaiHocVien;
+
+  @ApiPropertyOptional({ description: 'Mật khẩu mới nếu muốn reset' })
+  @IsOptional()
+  @IsString()
+  matKhauMoi?: string;
 }
 
 export class CreateTeacherDto {
@@ -163,4 +168,9 @@ export class UpdateTeacherDto {
   @IsOptional()
   @IsEnum(TrangThaiGiaoVien)
   trangThai?: TrangThaiGiaoVien;
+
+  @ApiPropertyOptional({ description: 'Mật khẩu mới nếu muốn reset' })
+  @IsOptional()
+  @IsString()
+  matKhauMoi?: string;
 }

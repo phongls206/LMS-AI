@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
 import { HocVien, TrinhDoCEFR } from '../../../types';
-import { Plus, Search, CheckCircle, Edit3, Trash2, X, AlertTriangle } from 'lucide-react';
+import { Plus, Search, CheckCircle, Edit3, Trash2, X, AlertTriangle, KeyRound } from 'lucide-react';
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<HocVien[]>([]);
@@ -37,6 +37,7 @@ export default function AdminStudentsPage() {
     trinhDoCEFR: 'B1' as TrinhDoCEFR,
     nguonDanhGia: '',
     trangThai: 'DANG_HOC',
+    matKhauMoi: '',
   });
 
   const fetchStudents = async () => {
@@ -78,7 +79,7 @@ export default function AdminStudentsPage() {
     }
   };
 
-  const openEditModal = (s: HocVien) => {
+  const openEditModal = (s: HocVien, autoResetPass = false) => {
     setEditingStudent(s);
     setEditFormData({
       hoTen: s.hoTen,
@@ -87,6 +88,7 @@ export default function AdminStudentsPage() {
       trinhDoCEFR: s.trinhDoCEFR,
       nguonDanhGia: s.nguonDanhGia || '',
       trangThai: s.trangThai || 'DANG_HOC',
+      matKhauMoi: autoResetPass ? 'Student@123' : '',
     });
   };
 
@@ -94,11 +96,18 @@ export default function AdminStudentsPage() {
     e.preventDefault();
     if (!editingStudent) return;
     try {
-      await usersService.updateStudent(Number(editingStudent.id), editFormData);
-      setMessage('Cập nhật thông tin học viên thành công!');
+      const payload: any = { ...editFormData };
+      if (!payload.matKhauMoi) delete payload.matKhauMoi;
+
+      await usersService.updateStudent(Number(editingStudent.id), payload);
+      setMessage(
+        editFormData.matKhauMoi
+          ? `Cập nhật hồ sơ và ĐÃ RESET MẬT KHẨU về "${editFormData.matKhauMoi}" thành công!`
+          : 'Cập nhật thông tin học viên thành công!'
+      );
       setEditingStudent(null);
       fetchStudents();
-      setTimeout(() => setMessage(null), 3000);
+      setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
       alert(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật học viên.');
     }
@@ -121,7 +130,7 @@ export default function AdminStudentsPage() {
     <AppLayout
       allowedRoles={['QUAN_LY', 'TU_VAN_VIEN']}
       title="Hồ Sơ & Quản Lý Học Viên"
-      subtitle="Tiếp nhận học viên mới, chỉnh sửa thông tin, phân loại chuẩn CEFR và quản lý trạng thái"
+      subtitle="Tiếp nhận học viên mới, chỉnh sửa thông tin, phân loại CEFR và hỗ trợ khôi phục mật khẩu"
     >
       <div className="space-y-6">
         {/* Filters and Actions */}
@@ -164,7 +173,7 @@ export default function AdminStudentsPage() {
 
         {message && (
           <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center space-x-2">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
             <span>{message}</span>
           </div>
         )}
@@ -216,7 +225,14 @@ export default function AdminStudentsPage() {
                       <td className="px-5 py-4 text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <button
-                            onClick={() => openEditModal(s)}
+                            onClick={() => openEditModal(s, true)}
+                            title="Reset mật khẩu về Student@123"
+                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-amber-950/50 text-amber-400 hover:text-amber-300 transition"
+                          >
+                            <KeyRound className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => openEditModal(s, false)}
                             title="Sửa thông tin"
                             className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300 transition"
                           >
@@ -363,7 +379,7 @@ export default function AdminStudentsPage() {
           </div>
         )}
 
-        {/* Modal Sửa Học Viên */}
+        {/* Modal Sửa Học Viên & Reset Mật Khẩu */}
         {editingStudent && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4">
@@ -440,6 +456,33 @@ export default function AdminStudentsPage() {
                   </div>
                 </div>
 
+                {/* Phần Reset Mật Khẩu */}
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-indigo-500/30 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <label className="block text-indigo-300 font-semibold uppercase tracking-wider text-[11px] flex items-center space-x-1.5">
+                      <KeyRound className="w-3.5 h-3.5" />
+                      <span>Khôi Phục / Đặt Lại Mật Khẩu</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setEditFormData({ ...editFormData, matKhauMoi: 'Student@123' })}
+                      className="px-2 py-0.5 rounded-md bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-[10px] font-semibold transition"
+                    >
+                      ⚡ Reset về Student@123
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Để trống nếu không đổi, hoặc nhập mật khẩu mới..."
+                    value={editFormData.matKhauMoi}
+                    onChange={(e) => setEditFormData({ ...editFormData, matKhauMoi: e.target.value })}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                  <p className="text-[10px] text-slate-400 italic">
+                    * Sử dụng khi học viên quên mật khẩu và yêu cầu trung tâm cấp lại.
+                  </p>
+                </div>
+
                 <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
                   <button
                     type="button"
@@ -449,7 +492,7 @@ export default function AdminStudentsPage() {
                     Hủy
                   </button>
                   <button type="submit" className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold">
-                    Cập Nhật
+                    Cập Nhật & Lưu
                   </button>
                 </div>
               </form>
