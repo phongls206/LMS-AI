@@ -13,6 +13,14 @@ export class ConsultClassDto {
   })
   @IsOptional()
   lichRanhJson?: any;
+
+  @ApiPropertyOptional({
+    example: 'Muốn luyện thi cấp tốc trong 2 tháng để đạt chuẩn đầu ra đại học, chú trọng kỹ năng Nói',
+    description: 'Mục tiêu / Nguyện vọng học tập chi tiết bằng ngôn ngữ tự nhiên',
+  })
+  @IsOptional()
+  @IsString()
+  mucTieu?: string;
 }
 
 export class GenerateExercisesDto {

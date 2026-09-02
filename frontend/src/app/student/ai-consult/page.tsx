@@ -3,15 +3,47 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService, authService } from '../../../services/api';
-import { Sparkles, CheckCircle2, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
+import {
+  Sparkles,
+  ArrowRight,
+  ShieldCheck,
+  Calendar,
+  Zap,
+  Target,
+  Compass,
+  CheckCircle,
+  Lightbulb,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function StudentAiConsultPage() {
   const [cefr, setCefr] = useState('B1');
   const [selectedDays, setSelectedDays] = useState<number[]>([2, 4, 6]);
+  const [mucTieu, setMucTieu] = useState(
+    'Em muốn học cấp tốc trong 2-3 tháng để đạt chuẩn đầu ra đại học / chứng chỉ quốc tế, chú trọng tăng phản xạ Nói và củng cố Ngữ pháp.',
+  );
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [mode, setMode] = useState<string>('');
+
+  const quickGoals = [
+    {
+      label: '🎯 Luyện thi IELTS 6.5+ Cấp Tốc',
+      text: 'Em cần luyện thi IELTS cấp tốc trong 3 tháng để nộp hồ sơ du học/tốt nghiệp, chú trọng Writing và Speaking.',
+    },
+    {
+      label: '🗣️ Tăng Phản Xạ Giao Tiếp Tự Nhiên',
+      text: 'Muốn rèn luyện phát âm chuẩn IPA, tăng tự tin giao tiếp với người nước ngoài và thuyết trình công việc.',
+    },
+    {
+      label: '🚀 Lấy Lại Gốc Tiếng Anh Từ Đầu',
+      text: 'Mất gốc tiếng Anh nhiều năm, cần một lộ trình bài bản từ cơ bản, giáo viên hướng dẫn chậm và nhiệt tình.',
+    },
+    {
+      label: '💼 Tiếng Anh Đi Làm & Phỏng Vấn',
+      text: 'Cần nâng cao kỹ năng viết Email thương mại, đàm phán hợp đồng và chuẩn bị phỏng vấn công ty đa quốc gia.',
+    },
+  ];
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -41,10 +73,14 @@ export default function StudentAiConsultPage() {
     setRecommendations([]);
 
     try {
-      const res = await aiService.consultClasses(cefr, {
-        thu: selectedDays,
-        gio: '18:00-21:00',
-      });
+      const res = await aiService.consultClasses(
+        cefr,
+        {
+          thu: selectedDays,
+          gio: '18:00-21:00',
+        },
+        mucTieu,
+      );
       setRecommendations(res.data || []);
       setMode(res.mode);
     } catch (err: any) {
@@ -57,33 +93,68 @@ export default function StudentAiConsultPage() {
   return (
     <AppLayout
       allowedRoles={['HOC_VIEN', 'TU_VAN_VIEN', 'QUAN_LY']}
-      title="Tư Vấn Lộ Trình & Lớp Học Tự Động (GenAI)"
-      subtitle="AI phân tích chuẩn CEFR và lịch rảnh để gợi ý tối đa 03 lớp học còn chỗ phù hợp nhất"
+      title="Cố Vấn Lộ Trình & Tư Vấn Lớp Học Thông Minh (GenAI)"
+      subtitle="Ứng dụng mô hình Gemini phân tích ngôn ngữ tự nhiên, so khớp đa chiều với CSDL lớp học thực tế"
     >
       <div className="space-y-6">
-        {/* Form */}
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm">
-          <form onSubmit={handleConsult} className="space-y-4 text-xs">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Form Container */}
+        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-6">
+          <form onSubmit={handleConsult} className="space-y-5 text-xs">
+            {/* Free-text Goal Input */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-indigo-300 font-bold uppercase tracking-wider text-xs flex items-center space-x-2">
+                  <Target className="w-4 h-4 text-indigo-400" />
+                  <span>Mục Tiêu & Nguyện Vọng Học Tập Của Bạn (Tự Nhiên)</span>
+                </label>
+                <span className="text-[11px] text-slate-400 font-medium">
+                  AI hiểu văn bản tự do tiếng Việt
+                </span>
+              </div>
+              <textarea
+                rows={3}
+                value={mucTieu}
+                onChange={(e) => setMucTieu(e.target.value)}
+                placeholder="Nhập bất kỳ mong muốn nào của bạn (VD: Muốn học tối 2-4-6, mục tiêu 6.5 IELTS trong 3 tháng, thích giáo viên phản xạ tốt...)"
+                className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 leading-relaxed font-sans"
+              />
+
+              {/* Quick Goal Chips */}
+              <div className="flex flex-wrap gap-2 pt-1">
+                {quickGoals.map((g, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setMucTieu(g.text)}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-indigo-950 text-slate-300 hover:text-indigo-200 border border-slate-700 text-[11px] font-medium transition flex items-center space-x-1"
+                  >
+                    <span>{g.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Filter Row: CEFR + Days */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-slate-800/80">
               <div>
-                <label className="block text-slate-300 font-semibold mb-1.5 uppercase tracking-wider">
-                  Trình Độ CEFR Cần Tư Vấn
+                <label className="block text-slate-300 font-semibold mb-2 uppercase tracking-wider">
+                  Trình Độ CEFR Hiện Tại
                 </label>
                 <select
                   value={cefr}
                   onChange={(e) => setCefr(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold text-sm focus:outline-none focus:border-indigo-500"
                 >
-                  <option value="A1">A1 — Mất gốc / Bắt đầu</option>
-                  <option value="A2">A2 — Tiền Trung Cấp</option>
-                  <option value="B1">B1 — Trung Cấp</option>
-                  <option value="B2">B2 — Trung Cao Cấp</option>
-                  <option value="C1">C1 — Cao Cấp</option>
+                  <option value="A1">A1 — Mất gốc / Người mới bắt đầu</option>
+                  <option value="A2">A2 — Tiền Trung Cấp (Sơ cấp vững)</option>
+                  <option value="B1">B1 — Trung Cấp (Giao tiếp cơ bản)</option>
+                  <option value="B2">B2 — Trung Cao Cấp (Luyện thi chuyên sâu)</option>
+                  <option value="C1">C1 — Cao Cấp (Thành thạo như bản xứ)</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-slate-300 font-semibold mb-1.5 uppercase tracking-wider">
+                <label className="block text-slate-300 font-semibold mb-2 uppercase tracking-wider">
                   Các Buổi Bạn Rảnh Trong Tuần
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -111,67 +182,140 @@ export default function StudentAiConsultPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 mt-2 bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 hover:opacity-95 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2 disabled:opacity-50"
+              className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 hover:opacity-95 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2 text-sm disabled:opacity-50"
             >
-              <Sparkles className="w-4 h-4" />
-              <span>{loading ? 'Gemini AI Đang Phân Tích Dữ Liệu...' : 'AI Phân Tích & Gợi Ý Lớp Học'}</span>
+              <Sparkles className="w-5 h-5 animate-spin" />
+              <span>
+                {loading
+                  ? 'Gemini AI Đang Phân Tích Ngữ Cảnh & So Khớp Lớp Học...'
+                  : 'AI Phân Tích Toàn Diện & Đề Xuất Lộ Trình Lớp Học'}
+              </span>
             </button>
           </form>
         </div>
 
         {/* Security & Zero-Trust Notice */}
-        <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-400 flex items-center space-x-2">
-          <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>
-            <strong>Bảo vệ Zero-Trust:</strong> Hệ thống tự động lọc các lớp học ảo giác, chỉ đề xuất lớp có thật và còn chỗ trống trong CSDL.
-          </span>
+        <div className="p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>
+              <strong>Bảo vệ Zero-Trust & Grounding DB:</strong> Hệ thống tự động lọc ảo giác, chỉ đề xuất các lớp học thực sự đang mở tuyển sinh và còn chỗ trống trong CSDL.
+            </span>
+          </div>
+          <div className="hidden md:flex items-center space-x-1.5 text-indigo-400 font-semibold text-[11px]">
+            <Zap className="w-3.5 h-3.5" />
+            <span>Powered by Gemini 2.5 Flash</span>
+          </div>
         </div>
 
-        {/* Results */}
+        {/* Loading State */}
         {loading && (
           <div className="py-20 flex flex-col items-center justify-center space-y-3">
-            <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
-            <p className="text-xs text-indigo-300 font-medium animate-pulse">
-              Đang đối chiếu dữ liệu lớp học với mô hình Gemini AI...
+            <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+            <p className="text-sm text-indigo-300 font-medium animate-pulse">
+              Đang đối chiếu nguyện vọng với danh sách lớp học và xây dựng lộ trình...
             </p>
           </div>
         )}
 
+        {/* Results */}
         {recommendations.length > 0 && (
-          <div className="space-y-4">
+          <div className="space-y-4 animate-fadeIn">
             <div className="flex items-center justify-between">
-              <h3 className="font-bold text-white text-base">Top 3 Lớp Học Được AI Khuyên Dùng</h3>
-              <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                Chế độ: {mode}
+              <div>
+                <h3 className="font-bold text-white text-base flex items-center space-x-2">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>Top Lớp Học Được AI Đề Xuất Dành Riêng Cho Bạn</span>
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Được tính toán dựa trên mục tiêu: &ldquo;{mucTieu}&rdquo;
+                </p>
+              </div>
+              <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                Mode: {mode}
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {recommendations.map((item, idx) => (
-                <div key={idx} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between">
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="font-mono text-xs font-bold text-indigo-400 px-2 py-0.5 rounded bg-indigo-500/10">
+                <div
+                  key={idx}
+                  className="p-6 rounded-2xl bg-slate-900 border border-indigo-500/30 shadow-xl flex flex-col justify-between relative overflow-hidden group hover:border-indigo-500 transition-all duration-300"
+                >
+                  {/* Top glowing strip */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-cyan-400 to-emerald-400"></div>
+
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="font-mono text-xs font-bold text-indigo-400 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20">
                         {item.maLopHoc}
                       </span>
-                      <span className="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
-                        Gợi ý #{idx + 1}
+                      <span className="text-xs font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full flex items-center space-x-1">
+                        <CheckCircle className="w-3.5 h-3.5" />
+                        <span>{item.doTuongThich || 95}% Phù hợp</span>
                       </span>
                     </div>
 
-                    <h4 className="text-base font-bold text-white mb-2">{item.tenLopHoc}</h4>
-                    <p className="text-xs text-slate-300 bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 mb-4 leading-relaxed">
-                      💡 {item.lyDoPhuHop}
-                    </p>
+                    <div>
+                      <h4 className="text-base font-bold text-white group-hover:text-indigo-300 transition leading-snug">
+                        {item.tenLopHoc}
+                      </h4>
+                      {item.lichHocText && (
+                        <p className="text-xs text-slate-400 mt-1 flex items-center space-x-1">
+                          <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+                          <span>Lịch học: {item.lichHocText}</span>
+                        </p>
+                      )}
+                    </div>
+
+                    {/* AI Reasoning Box */}
+                    <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                      <div className="flex items-center space-x-1.5 text-amber-400 font-bold text-[11px] uppercase tracking-wider">
+                        <Lightbulb className="w-3.5 h-3.5" />
+                        <span>Phân Tích Của AI</span>
+                      </div>
+                      <p className="text-xs text-slate-300 leading-relaxed">
+                        {item.lyDoPhuHop}
+                      </p>
+                    </div>
+
+                    {/* Highlights & Roadmap */}
+                    {item.diemNoiBat && (
+                      <div className="text-xs text-slate-300 space-y-1">
+                        <p className="text-indigo-400 font-semibold flex items-center space-x-1 text-[11px]">
+                          <Zap className="w-3 h-3" />
+                          <span>Điểm nổi bật:</span>
+                        </p>
+                        <p className="text-slate-300 pl-4">{item.diemNoiBat}</p>
+                      </div>
+                    )}
+
+                    {item.loTrinhKhuyenNghi && (
+                      <div className="text-xs text-slate-300 space-y-1">
+                        <p className="text-emerald-400 font-semibold flex items-center space-x-1 text-[11px]">
+                          <Compass className="w-3 h-3" />
+                          <span>Lộ trình tiếp theo:</span>
+                        </p>
+                        <p className="text-slate-300 pl-4">{item.loTrinhKhuyenNghi}</p>
+                      </div>
+                    )}
                   </div>
 
-                  <Link
-                    href="/student/enroll"
-                    className="w-full py-2.5 text-center rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition flex items-center justify-center space-x-1"
-                  >
-                    <span>Đi Đến Đăng Ký Lớp</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  <div className="pt-5 mt-4 border-t border-slate-800 flex items-center justify-between">
+                    <div>
+                      <p className="text-[10px] text-slate-500 uppercase font-semibold">Học phí</p>
+                      <p className="text-sm font-bold text-amber-400">
+                        {item.hocPhi ? Number(item.hocPhi).toLocaleString('vi-VN') + ' đ' : 'Theo quy chế'}
+                      </p>
+                    </div>
+                    <Link
+                      href="/student/enroll"
+                      className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition flex items-center space-x-1.5 shadow-md shadow-indigo-600/30"
+                    >
+                      <span>Đăng Ký Ngay</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>

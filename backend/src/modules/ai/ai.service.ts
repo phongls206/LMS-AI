@@ -107,31 +107,38 @@ export class AiService {
     );
 
     const prompt = `
-Bạn là chuyên viên tư vấn đào tạo của trung tâm ngoại ngữ ETC English.
+Bạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.
 Dữ liệu học viên:
 - Trình độ CEFR: ${dto.cefr}
 - Lịch rảnh: ${JSON.stringify(dto.lichRanhJson || 'Tất cả các buổi tối')}
+- Mục tiêu / Nguyện vọng cá nhân của học viên: "${dto.mucTieu || 'Mong muốn nâng cao trình độ và tìm lớp học phù hợp nhất với quỹ thời gian'}"
 
-Danh sách lớp học đang mở:
+Danh sách lớp học thực tế đang mở tuyển sinh:
 ${JSON.stringify(
   availableClasses.map((c) => ({
     maLopHoc: c.maLopHoc,
     tenLopHoc: c.tenLopHoc,
+    khoaHoc: c.khoaHoc.tenKhoaHoc,
     trinhDoYeuCau: c.khoaHoc.trinhDoYeuCau,
+    hocPhi: Number(c.khoaHoc.hocPhi),
     conTrong: c.siSoToiDa - c.siSoHienTai,
-    lichHoc: c.lichHoc.map((l) => `Thứ ${l.thuTrongTuan}`),
+    lichHoc: c.lichHoc.map((l) => `Thứ ${l.thuTrongTuan} (${new Date(l.gioBatDau).toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'})} - ${new Date(l.gioKetThuc).toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'})})`),
   })),
 )}
 
-YÊU CẦU:
-1. Gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.
+YÊU CẦU PHÂN TÍCH TỪ AI:
+1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.
 2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.
-3. Trả về đúng định dạng JSON:
+3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.
+4. Trả về đúng định dạng JSON:
 [
   {
     "maLopHoc": "...",
     "tenLopHoc": "...",
-    "lyDoPhuHop": "..."
+    "doTuongThich": 95,
+    "lyDoPhuHop": "...",
+    "diemNoiBat": "...",
+    "loTrinhKhuyenNghi": "..."
   }
 ]
 `;
@@ -153,9 +160,17 @@ YÊU CẦU:
         const parsed = JSON.parse(jsonMatch[0]);
 
         // HẬU KIỂM TRA (Post-Validation): Lọc ảo giác — chỉ giữ lại lớp có trong DB
-        validatedRecommendations = parsed.filter((item: any) =>
-          validClassMap.has(item.maLopHoc),
-        );
+        validatedRecommendations = parsed
+          .filter((item: any) => validClassMap.has(item.maLopHoc))
+          .map((item: any) => {
+            const rawClass = validClassMap.get(item.maLopHoc);
+            return {
+              ...item,
+              hocPhi: rawClass ? Number(rawClass.khoaHoc.hocPhi) : 0,
+              lichHocText: rawClass ? rawClass.lichHoc.map((l) => `Thứ ${l.thuTrongTuan}`).join(', ') : '',
+              conTrong: rawClass ? rawClass.siSoToiDa - rawClass.siSoHienTai : 0,
+            };
+          });
       }
 
       if (validatedRecommendations.length === 0) {
@@ -172,13 +187,25 @@ YÊU CẦU:
         .map((c) => ({
           maLopHoc: c.maLopHoc,
           tenLopHoc: c.tenLopHoc,
+          doTuongThich: 85,
           lyDoPhuHop: `Lớp học chuẩn trình độ ${dto.cefr}, còn ${c.siSoToiDa - c.siSoHienTai} chỗ trống. (Gợi ý tự động)`,
+          diemNoiBat: `Khóa học ${c.khoaHoc.tenKhoaHoc} tiêu chuẩn quốc tế`,
+          loTrinhKhuyenNghi: `Hoàn thành khóa học để củng cố trình độ ${dto.cefr} vững chắc`,
+          hocPhi: Number(c.khoaHoc.hocPhi),
+          lichHocText: c.lichHoc.map((l) => `Thứ ${l.thuTrongTuan}`).join(', '),
+          conTrong: c.siSoToiDa - c.siSoHienTai,
         }));
 
       validatedRecommendations = fallbackList.length > 0 ? fallbackList : availableClasses.slice(0, 3).map((c) => ({
         maLopHoc: c.maLopHoc,
         tenLopHoc: c.tenLopHoc,
+        doTuongThich: 75,
         lyDoPhuHop: `Lớp học mở gần nhất, còn ${c.siSoToiDa - c.siSoHienTai} chỗ trống. (Gợi ý tự động)`,
+        diemNoiBat: `Khóa học ${c.khoaHoc.tenKhoaHoc}`,
+        loTrinhKhuyenNghi: `Tham gia lớp để đánh giá và xếp trình độ phù hợp`,
+        hocPhi: Number(c.khoaHoc.hocPhi),
+        lichHocText: c.lichHoc.map((l) => `Thứ ${l.thuTrongTuan}`).join(', '),
+        conTrong: c.siSoToiDa - c.siSoHienTai,
       }));
     }
 
