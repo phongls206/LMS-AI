@@ -401,7 +401,23 @@ RÀNG BUỘC:
     const excusedSessions = attendances.filter((a) => a.trangThai === 'CO_PHEP').length;
     const attendanceRate = totalSessions > 0 ? ((presentSessions / totalSessions) * 100).toFixed(1) : '100';
 
+    // Xác định giai đoạn tiến độ học tập thực tế
+    let giaiDoan = 'DANG_HOC_DAU_KHOA';
+    let giaiDoanText = 'Đang học giai đoạn đầu (Chưa có điểm kiểm tra)';
+    if (grade?.diemCuoiKy != null || grade?.diemTongKet != null) {
+      giaiDoan = 'DA_TONG_KET_CUOI_KHOA';
+      giaiDoanText = 'Đã hoàn thành và tổng kết khóa học';
+    } else if (grade?.diemGiuaKy != null) {
+      giaiDoan = 'GIUA_KHOA_HOC';
+      giaiDoanText = 'Đang ở giai đoạn giữa khóa (Đã có điểm thi giữa kỳ 30%)';
+    } else if (grade?.diemChuyenCan != null) {
+      giaiDoan = 'DA_CO_DIEM_CHUYEN_CAN';
+      giaiDoanText = 'Đang tích lũy điểm chuyên cần (Chưa thi giữa kỳ/cuối kỳ)';
+    }
+
     const duLieuGoc = {
+      giaiDoan,
+      giaiDoanText,
       tongBuoiHoc: totalSessions,
       coMat: presentSessions,
       vang: absentSessions,
@@ -421,22 +437,28 @@ Bạn là Trợ lý AI Phân tích Học tập của Trung tâm Anh ngữ ETC.
 Dữ liệu học tập thực tế (Ground Truth) của học viên:
 - Họ và tên: ${student.hoTen} (Mã HV: ${student.maHocVien}, Trình độ: ${student.trinhDoCEFR})
 - Lớp học: ${lopHoc.tenLopHoc} (${lopHoc.maLopHoc}) - Khóa học: ${lopHoc.khoaHoc?.tenKhoaHoc || ''}
+- Giai đoạn học tập hiện tại: ${giaiDoanText}
 - Chuyên cần: ${presentSessions}/${totalSessions} buổi tham gia (${attendanceRate}%), Vắng: ${absentSessions} buổi, Đi muộn: ${lateSessions} buổi, Có phép: ${excusedSessions} buổi.
 - Điểm chuyên cần (20%): ${grade?.diemChuyenCan != null ? grade.diemChuyenCan : 'Chưa có'}
-- Điểm giữa kỳ (30%): ${grade?.diemGiuaKy != null ? grade.diemGiuaKy : 'Chưa có'}
-- Điểm cuối kỳ (50%): ${grade?.diemCuoiKy != null ? grade.diemCuoiKy : 'Chưa có'}
-- Điểm tổng kết: ${grade?.diemTongKet != null ? grade.diemTongKet : 'Chưa tổng kết'}
+- Điểm giữa kỳ (30%): ${grade?.diemGiuaKy != null ? grade.diemGiuaKy : 'Chưa thi'}
+- Điểm cuối kỳ (50%): ${grade?.diemCuoiKy != null ? grade.diemCuoiKy : 'Chưa thi'}
+- Điểm tổng kết: ${grade?.diemTongKet != null ? grade.diemTongKet : 'Chưa tổng kết (Khóa đang diễn ra)'}
 - Trạng thái hoàn thành: ${grade?.trangThaiHoanThanh ?? 'CHUA_XEP_LOAI'}
 - Nhận xét của giáo viên: ${grade?.nhanXet || 'Chưa có nhận xét riêng'}
 
-YÊU CẦU:
-Phân tích trung thực, tuyệt đối không bịa đặt số liệu điểm thi hoặc buổi học ngoài dữ liệu trên.
+YÊU CẦU ĐẶC BIỆT:
+1. Nhận diện chính xác giai đoạn học tập (${giaiDoanText}):
+   - Nếu học viên đang ở giai đoạn giữa kỳ (chưa có điểm cuối kỳ): Đánh giá phong độ dựa trên chuyên cần và điểm giữa kỳ; phân tích cơ hội và mục tiêu điểm cần đạt ở bài thi cuối khóa (hệ số 50%) để đạt kết quả cao.
+   - Nếu học viên đã hoàn thành khóa học: Đánh giá toàn diện kết quả đạt/không đạt.
+   - Nếu học viên mới bắt đầu: Khích lệ tinh thần chuyên cần và định hướng phương pháp học tập.
+2. Tuyệt đối trung thực với dữ liệu số, không bịa đặt cột điểm chưa thi.
+
 Trả về định dạng JSON hợp lệ:
 {
-  "diemManh": "Phân tích điểm mạnh về thái độ học tập, chuyên cần hoặc điểm thi đạt kết quả tốt...",
-  "canKhacPhuc": "Chỉ ra các điểm yếu cần cải thiện (vắng học, điểm giữa kỳ/cuối kỳ thấp...)",
-  "loiKhuyen": "Lời khuyên lộ trình ôn tập cụ thể cho học viên trong kỳ tới...",
-  "tomTatChung": "Đoạn nhận xét tổng quan ngắn gọn 1-2 câu về tiến độ học viên."
+  "diemManh": "Phân tích điểm mạnh về thái độ học tập, chuyên cần hoặc kết quả giữa kỳ đạt được...",
+  "canKhacPhuc": "Chỉ ra các điểm yếu hoặc lưu ý để chuẩn bị cho giai đoạn tiếp theo...",
+  "loiKhuyen": "Lời khuyên lộ trình ôn tập cụ thể cho bài thi/giai đoạn tiếp theo...",
+  "tomTatChung": "Đoạn nhận xét tổng quan ngắn gọn 1-2 câu về tiến độ hiện tại."
 }
 `;
 
@@ -465,23 +487,28 @@ Trả về định dạng JSON hợp lệ:
       status = error?.message === 'TIMEOUT' ? TrangThaiYeuCauAI.TIMEOUT : TrangThaiYeuCauAI.FALLBACK_APPLIED;
 
       // RULE-BASED FALLBACK TỔNG HỢP THEO QUY TẮC ĐỐI SOÁT CHUẨN
+      const isMidterm = grade?.diemGiuaKy != null && grade?.diemCuoiKy == null;
       aiInsights = {
         diemManh:
           Number(attendanceRate) >= 80
-            ? `Học viên duy trì tỷ lệ chuyên cần xuất sắc (${attendanceRate}%), có tinh thần kỷ luật học tập tốt.`
+            ? `Học viên duy trì tỷ lệ chuyên cần xuất sắc (${attendanceRate}%), tích cực tham gia các buổi học.`
             : `Học viên đã tham gia ${presentSessions} buổi học trong chương trình.`,
         canKhacPhuc:
           Number(attendanceRate) < 80
             ? `Tỷ lệ chuyên cần hiện tại (${attendanceRate}%) chưa đạt chuẩn tối thiểu 80%. Cần đi học đầy đủ để đảm bảo điều kiện hoàn thành khóa.`
             : grade?.diemGiuaKy != null && Number(grade.diemGiuaKy) < 60
-            ? `Điểm giữa kỳ (${grade.diemGiuaKy}) còn thấp, cần tập trung củng cố lại các chuyên đề trọng tâm.`
-            : `Tiếp tục duy trì tính chủ động và tăng cường trao đổi, luyện nói tiếng Anh trên lớp.`,
-        loiKhuyen: `Tập trung ôn tập theo chuẩn khung CEFR ${student.trinhDoCEFR}, hoàn thành đầy đủ bài tập và tích cực luyện tập trắc nghiệm tự do.`,
-        tomTatChung: `Học viên tham gia ${presentSessions}/${totalSessions} buổi học (${attendanceRate}% chuyên cần). ${
-          grade?.diemTongKet != null
-            ? `Điểm tổng kết đạt ${grade.diemTongKet}/100 (${grade.trangThaiHoanThanh === 'DAT' ? 'ĐẠT' : 'KHÔNG ĐẠT'}).`
-            : 'Đang trong quá trình tích lũy điểm đánh giá kết quả học tập.'
-        }`,
+            ? `Điểm giữa kỳ (${grade.diemGiuaKy}/100) còn thấp, cần ôn tập thêm để kéo điểm ở kỳ thi cuối khóa.`
+            : `Cần chủ động luyện tập tương tác phản xạ nhiều hơn trong các giờ học kỹ năng.`,
+        loiKhuyen: isMidterm
+          ? `Học viên đang ở giai đoạn giữa khóa. Cần tập trung ôn luyện các chủ điểm ngữ pháp và từ vựng trọng tâm để chuẩn bị cho bài thi cuối kỳ (chiếm 50% tổng số điểm).`
+          : `Tập trung ôn tập theo chuẩn khung CEFR ${student.trinhDoCEFR}, tích cực hoàn thành các bài tập trắc nghiệm AI.`,
+        tomTatChung: isMidterm
+          ? `Học viên đã hoàn thành giai đoạn giữa khóa với điểm giữa kỳ: ${grade?.diemGiuaKy}/100 và chuyên cần ${attendanceRate}%. Đang trong tiến trình hướng đến bài thi cuối khóa.`
+          : `Học viên tham gia ${presentSessions}/${totalSessions} buổi học (${attendanceRate}% chuyên cần). ${
+              grade?.diemTongKet != null
+                ? `Điểm tổng kết đạt ${grade.diemTongKet}/100 (${grade.trangThaiHoanThanh === 'DAT' ? 'ĐẠT' : 'KHÔNG ĐẠT'}).`
+                : 'Đang trong quá trình tích lũy điểm đánh giá kết quả học tập.'
+            }`,
       };
     }
 

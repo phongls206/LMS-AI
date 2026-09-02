@@ -312,7 +312,11 @@ export default function StudentAiProgressPage() {
                 <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
                   <span className="text-[11px] font-semibold text-slate-400 block mb-1">Điểm CC (20%)</span>
                   <span className="text-base font-bold text-white block font-mono">
-                    {summary.data.duLieuGoc?.diemChuyenCan != null ? summary.data.duLieuGoc?.diemChuyenCan : '—'}
+                    {summary.data.duLieuGoc?.diemChuyenCan != null ? (
+                      summary.data.duLieuGoc?.diemChuyenCan
+                    ) : (
+                      <span className="text-slate-500 text-xs font-normal">Chưa chốt</span>
+                    )}
                   </span>
                   <span className="text-[10px] text-slate-500 block mt-0.5">Hệ số 0.2</span>
                 </div>
@@ -321,7 +325,11 @@ export default function StudentAiProgressPage() {
                 <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
                   <span className="text-[11px] font-semibold text-slate-400 block mb-1">Điểm Giữa Kỳ (30%)</span>
                   <span className="text-base font-bold text-white block font-mono">
-                    {summary.data.duLieuGoc?.diemGiuaKy != null ? summary.data.duLieuGoc?.diemGiuaKy : '—'}
+                    {summary.data.duLieuGoc?.diemGiuaKy != null ? (
+                      summary.data.duLieuGoc?.diemGiuaKy
+                    ) : (
+                      <span className="text-amber-400 text-xs font-normal">⏳ Chưa thi</span>
+                    )}
                   </span>
                   <span className="text-[10px] text-slate-500 block mt-0.5">Hệ số 0.3</span>
                 </div>
@@ -330,7 +338,11 @@ export default function StudentAiProgressPage() {
                 <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
                   <span className="text-[11px] font-semibold text-slate-400 block mb-1">Điểm Cuối Kỳ (50%)</span>
                   <span className="text-base font-bold text-white block font-mono">
-                    {summary.data.duLieuGoc?.diemCuoiKy != null ? summary.data.duLieuGoc?.diemCuoiKy : '—'}
+                    {summary.data.duLieuGoc?.diemCuoiKy != null ? (
+                      summary.data.duLieuGoc?.diemCuoiKy
+                    ) : (
+                      <span className="text-amber-400 text-xs font-normal">⏳ Chờ thi</span>
+                    )}
                   </span>
                   <span className="text-[10px] text-slate-500 block mt-0.5">Hệ số 0.5</span>
                 </div>
@@ -339,7 +351,11 @@ export default function StudentAiProgressPage() {
                 <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
                   <span className="text-[11px] font-semibold text-slate-400 block mb-1">Điểm Tổng Kết</span>
                   <span className="text-base font-bold text-cyan-400 block font-mono">
-                    {summary.data.duLieuGoc?.diemTongKet != null ? summary.data.duLieuGoc?.diemTongKet : '—'}
+                    {summary.data.duLieuGoc?.diemTongKet != null ? (
+                      summary.data.duLieuGoc?.diemTongKet
+                    ) : (
+                      <span className="text-slate-400 text-xs font-normal">Đang tích lũy</span>
+                    )}
                   </span>
                   <span className="text-[10px] text-slate-500 block mt-0.5">Thang 100</span>
                 </div>
@@ -357,13 +373,28 @@ export default function StudentAiProgressPage() {
                         KHÔNG ĐẠT
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-bold">
-                        CHƯA XẾP LOẠI
+                      <span className="px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[11px] font-bold">
+                        ĐANG THEO HỌC
                       </span>
                     )}
                   </div>
                 </div>
               </div>
+
+              {/* Banner Giai đoạn học tập */}
+              {summary.data.duLieuGoc?.giaiDoanText && (
+                <div className="p-3 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-xs flex items-center justify-between">
+                  <span className="text-indigo-300 font-semibold flex items-center space-x-1.5">
+                    <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Tiến độ khóa học: {summary.data.duLieuGoc.giaiDoanText}</span>
+                  </span>
+                  <span className="text-[11px] text-slate-400">
+                    {summary.data.duLieuGoc.giaiDoan === 'GIUA_KHOA_HOC'
+                      ? '🎯 Bài thi cuối khóa chiếm 50% tổng điểm'
+                      : ''}
+                  </span>
+                </div>
+              )}
 
               {summary.data.duLieuGoc?.nhanXetGiaoVien && (
                 <div className="p-3 rounded-xl bg-slate-950/50 border border-slate-800/80 text-xs text-slate-300">
