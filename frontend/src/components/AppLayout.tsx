@@ -6,7 +6,19 @@ import { useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { authService } from '../services/api';
 import { VaiTro } from '../types';
-import { Bell, Sparkles, KeyRound } from 'lucide-react';
+import {
+  Bell,
+  Sparkles,
+  KeyRound,
+  User,
+  Mail,
+  Phone,
+  ShieldCheck,
+  LogOut,
+  X,
+  GraduationCap,
+  Award,
+} from 'lucide-react';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -24,6 +36,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const router = useRouter();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -38,7 +51,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         setUser(userData);
 
         if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(userData.vaiTro)) {
-          // Redirect to their default role dashboard
           switch (userData.vaiTro) {
             case 'QUAN_LY': router.replace('/admin/dashboard'); break;
             case 'GIAO_VIEN': router.replace('/teacher/dashboard'); break;
@@ -68,9 +80,26 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   if (!user) return null;
 
+  const getRoleBadge = (role: string) => {
+    switch (role) {
+      case 'QUAN_LY':
+        return <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 font-bold text-xs">Quản Trị Viên (Admin)</span>;
+      case 'GIAO_VIEN':
+        return <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold text-xs">Giảng Viên / Giáo Viên</span>;
+      case 'HOC_VIEN':
+        return <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs">Học Viên Trung Tâm</span>;
+      case 'TU_VAN_VIEN':
+        return <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold text-xs">Tư Vấn Viên / Thu Ngân</span>;
+      default:
+        return null;
+    }
+  };
+
+  const displayName = user.hoSoHocVien?.hoTen || user.hoSoGiaoVien?.hoTen || user.tenDangNhap;
+
   return (
     <div className="flex min-h-screen bg-slate-950 text-slate-100 antialiased font-sans">
-      <Sidebar role={user.vaiTro} userName={user.hoSoHocVien?.hoTen || user.hoSoGiaoVien?.hoTen || user.tenDangNhap} />
+      <Sidebar role={user.vaiTro} userName={displayName} />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Header */}
@@ -88,7 +117,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
             <Link
               href="/change-password"
-              title="Đổi mật khẩu"
+              title="Đổi mật khẩu tài khoản"
               className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition"
             >
               <KeyRound className="w-4 h-4" />
@@ -98,15 +127,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <Bell className="w-4 h-4" />
             </button>
 
-            <Link href="/change-password" className="flex items-center space-x-3 pl-2 border-l border-slate-800 hover:opacity-80 transition cursor-pointer" title="Đổi mật khẩu tài khoản">
-              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xs text-white uppercase">
+            {/* Click avatar to open Profile Modal */}
+            <button
+              onClick={() => setShowProfileModal(true)}
+              className="flex items-center space-x-3 pl-2 border-l border-slate-800 hover:opacity-80 transition cursor-pointer text-left focus:outline-none"
+              title="Xem thông tin tài khoản"
+            >
+              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xs text-white uppercase shadow-md shadow-indigo-600/30">
                 {user.tenDangNhap?.slice(0, 2) || 'AD'}
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-xs font-semibold text-slate-200 truncate">{user.tenDangNhap}</p>
-                <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
+                <p className="text-xs font-semibold text-slate-200 truncate">{displayName}</p>
+                <p className="text-[11px] text-slate-400 truncate">{user.email || user.tenDangNhap}</p>
               </div>
-            </Link>
+            </button>
           </div>
         </header>
 
@@ -115,6 +149,118 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           {children}
         </main>
       </div>
+
+      {/* Profile Modal */}
+      {showProfileModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+              <h3 className="text-base font-bold text-white flex items-center space-x-2">
+                <User className="w-4 h-4 text-indigo-400" />
+                <span>Hồ Sơ & Thông Tin Tài Khoản</span>
+              </h3>
+              <button
+                onClick={() => setShowProfileModal(false)}
+                className="text-slate-500 hover:text-white transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex items-center space-x-4 p-4 rounded-xl bg-slate-950 border border-slate-800/80">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center font-black text-xl text-white uppercase shadow-lg shadow-indigo-500/30">
+                {user.tenDangNhap?.slice(0, 2) || 'AD'}
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-bold text-white text-base">{displayName}</h4>
+                <div>{getRoleBadge(user.vaiTro)}</div>
+              </div>
+            </div>
+
+            <div className="space-y-2.5 text-xs text-slate-300">
+              <div className="flex justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/50">
+                <span className="text-slate-400 flex items-center space-x-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Tên Đăng Nhập:</span>
+                </span>
+                <span className="font-mono font-bold text-white">{user.tenDangNhap}</span>
+              </div>
+
+              <div className="flex justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/50">
+                <span className="text-slate-400 flex items-center space-x-1.5">
+                  <Mail className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Email:</span>
+                </span>
+                <span className="font-semibold text-slate-200">{user.email || 'Chưa cập nhật'}</span>
+              </div>
+
+              <div className="flex justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/50">
+                <span className="text-slate-400 flex items-center space-x-1.5">
+                  <Phone className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Số Điện Thoại:</span>
+                </span>
+                <span className="font-mono font-semibold text-slate-200">{user.soDienThoai || 'Chưa cập nhật'}</span>
+              </div>
+
+              {/* Thông tin mở rộng theo vai trò */}
+              {user.hoSoHocVien && (
+                <>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/50">
+                    <span className="text-slate-400 flex items-center space-x-1.5">
+                      <GraduationCap className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Mã Học Viên:</span>
+                    </span>
+                    <span className="font-mono font-bold text-emerald-400">{user.hoSoHocVien.maHocVien}</span>
+                  </div>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/50">
+                    <span className="text-slate-400 flex items-center space-x-1.5">
+                      <Award className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Trình Độ CEFR:</span>
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold text-[11px]">
+                      {user.hoSoHocVien.trinhDoCEFR}
+                    </span>
+                  </div>
+                </>
+              )}
+
+              {user.hoSoGiaoVien && (
+                <>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/50">
+                    <span className="text-slate-400 flex items-center space-x-1.5">
+                      <Award className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Mã Giáo Viên:</span>
+                    </span>
+                    <span className="font-mono font-bold text-indigo-400">{user.hoSoGiaoVien.maGiaoVien}</span>
+                  </div>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/50">
+                    <span className="text-slate-400">Chuyên Môn:</span>
+                    <span className="font-semibold text-slate-200">{user.hoSoGiaoVien.chuyenMon}</span>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="pt-3 border-t border-slate-800 flex space-x-3">
+              <Link
+                href="/change-password"
+                onClick={() => setShowProfileModal(false)}
+                className="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 font-semibold text-xs flex items-center justify-center space-x-1.5 transition border border-slate-700"
+              >
+                <KeyRound className="w-3.5 h-3.5" />
+                <span>Đổi Mật Khẩu</span>
+              </Link>
+              <button
+                onClick={() => authService.logout()}
+                className="flex-1 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white font-semibold text-xs flex items-center justify-center space-x-1.5 transition border border-rose-500/30"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Đăng Xuất</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
