@@ -7,8 +7,6 @@ import { Sidebar } from './Sidebar';
 import { authService } from '../services/api';
 import { VaiTro } from '../types';
 import {
-  Bell,
-  Sparkles,
   KeyRound,
   User,
   Mail,
@@ -110,27 +108,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Gemini AI Ready</span>
-            </div>
-
-            <Link
-              href="/change-password"
-              title="Đổi mật khẩu tài khoản"
-              className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition"
-            >
-              <KeyRound className="w-4 h-4" />
-            </Link>
-
-            <button className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">
-              <Bell className="w-4 h-4" />
-            </button>
-
             {/* Click avatar to open Profile Modal */}
             <button
               onClick={() => setShowProfileModal(true)}
-              className="flex items-center space-x-3 pl-2 border-l border-slate-800 hover:opacity-80 transition cursor-pointer text-left focus:outline-none"
+              className="flex items-center space-x-3 hover:opacity-80 transition cursor-pointer text-left focus:outline-none"
               title="Xem thông tin tài khoản"
             >
               <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xs text-white uppercase shadow-md shadow-indigo-600/30">
