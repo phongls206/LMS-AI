@@ -22,7 +22,7 @@ Mọi tài liệu báo cáo đầy đủ phải tuân thủ chuẩn 9 chương:
 - **Chương 5: Thiết kế Hướng đối tượng:** Sơ đồ lớp (Class Diagram) và đặc tả 12 lớp nghiệp vụ.
 - **Chương 6: Screen Flow & Database:** Danh mục 21 màn hình, sơ đồ phân luồng theo 4 vai trò, ERD Crow's Foot, 14 bảng quan hệ 3NF và các ràng buộc toàn vẹn.
 - **Chương 7: Thiết kế Kiến trúc hệ thống & API:** Kiến trúc 4 tầng, GenAI Pipeline, Deployment Diagram, Tech Stack Matrix, đặc tả RESTful API Endpoints và Ma trận truy vết RTM.
-- **Chương 8: Cài đặt và Triển khai hệ thống:** Hướng dẫn cài đặt, cấu hình môi trường `.env`, migration CSDL.
+- **Chương 8: Cài đặt và Triển khai hệ thống:** Hướng dẫn cài đặt, cấu hình môi trường `.env`, migration CSDL , giao diện thực tế đã triển khai.
 - **Chương 9: Kiểm thử hệ thống & Hướng dẫn sử dụng:** Danh sách Test Case chức năng, kết quả kiểm thử và cẩm nang sử dụng cho từng vai trò người dùng.
 
 ---

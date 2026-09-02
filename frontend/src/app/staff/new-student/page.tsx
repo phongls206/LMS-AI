@@ -10,7 +10,7 @@ import Link from 'next/link';
 export default function StaffNewStudentPage() {
   const [formData, setFormData] = useState({
     tenDangNhap: '',
-    matKhau: 'Student@123',
+    matKhau: '123456',
     email: '',
     soDienThoai: '',
     maHocVien: '',
@@ -59,7 +59,7 @@ export default function StaffNewStudentPage() {
                   setCreatedStudent(null);
                   setFormData({
                     tenDangNhap: '',
-                    matKhau: 'Student@123',
+                    matKhau: '123456',
                     email: '',
                     soDienThoai: '',
                     maHocVien: '',

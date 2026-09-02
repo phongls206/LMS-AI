@@ -8,7 +8,7 @@ import { Sparkles, Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState('admin01');
-  const [password, setPassword] = useState('Admin@123');
+  const [password, setPassword] = useState('123456');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +35,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickFill = (u: string, p = 'Admin@123') => {
+  const handleQuickFill = (u: string, p = '123456') => {
     setUsername(u);
     setPassword(p);
   };

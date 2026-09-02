@@ -17,7 +17,7 @@ export default function AdminTeachersPage() {
 
   const [createFormData, setCreateFormData] = useState({
     tenDangNhap: '',
-    matKhau: 'Teacher@123',
+    matKhau: '123456',
     email: '',
     soDienThoai: '',
     maGiaoVien: '',
@@ -58,7 +58,7 @@ export default function AdminTeachersPage() {
       setShowCreateModal(false);
       setCreateFormData({
         tenDangNhap: '',
-        matKhau: 'Teacher@123',
+        matKhau: '123456',
         email: '',
         soDienThoai: '',
         maGiaoVien: '',
@@ -218,8 +218,8 @@ export default function AdminTeachersPage() {
                       <span>Sửa & Trạng Thái</span>
                     </button>
                     <button
-                      onClick={() => openEditModal(t, 'Teacher@123')}
-                      title="Khôi phục / Reset mật khẩu về Teacher@123"
+                      onClick={() => openEditModal(t, '123456')}
+                      title="Khôi phục / Reset mật khẩu về 123456"
                       className="p-2 rounded-xl bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-white border border-amber-500/30 transition"
                     >
                       <KeyRound className="w-3.5 h-3.5" />
@@ -434,10 +434,10 @@ export default function AdminTeachersPage() {
                     </label>
                     <button
                       type="button"
-                      onClick={() => setEditFormData({ ...editFormData, matKhauMoi: 'Teacher@123' })}
+                      onClick={() => setEditFormData({ ...editFormData, matKhauMoi: '123456' })}
                       className="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500 text-amber-300 hover:text-white text-[10px] font-bold transition"
                     >
-                      ⚡ Reset về Teacher@123
+                      ⚡ Reset về 123456
                     </button>
                   </div>
                   <input

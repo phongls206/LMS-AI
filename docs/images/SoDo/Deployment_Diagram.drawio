@@ -1,0 +1,78 @@
+<mxfile host="app.diagrams.net" agent="Antigravity">
+  <diagram id="deployment-diagram" name="Sơ đồ triển khai hạ tầng">
+    <mxGraphModel dx="2943" dy="1654" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node_client" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=15;fillColor=#FFFFFF;strokeColor=#002060;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;align=center;spacingTop=18;" value="&lt;b&gt;&amp;lt;&amp;lt;device&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;Client Devices&lt;/b&gt;&lt;br&gt;(PC / Laptop / Smartphone)" vertex="1">
+          <mxGeometry height="440" width="300" x="60" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="env_browser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#1F4E79;strokeWidth=1.2;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;align=center;spacingTop=6;" value="&lt;b&gt;&amp;lt;&amp;lt;execution environment&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;Web Browser&lt;/b&gt;&lt;br&gt;(Google Chrome / Safari / Edge)" vertex="1">
+          <mxGeometry height="320" width="250" x="85" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="art_spa" parent="1" style="shape=module;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#EBF1F5;strokeColor=#1F4E79;strokeWidth=1;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;" value="&lt;b&gt;&amp;nbsp; &amp;nbsp;&amp;lt;&amp;lt;artifact&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;&amp;nbsp; &amp;nbsp;Single Page Application (SPA)&lt;/b&gt;&lt;hr&gt;&lt;div align=&quot;left&quot; style=&quot;line-height: 1.4;&quot;&gt;• React / Next.js / Vue Frontend&lt;br&gt;• Admin Dashboard (SCR-ADM)&lt;br&gt;• Teacher Portal (SCR-TEA)&lt;br&gt;• Student Portal (SCR-STU)&lt;br&gt;• Staff Portal (SCR-STA)&lt;br&gt;• LocalStorage (JWT Token Store)&lt;br&gt;• Axios / Fetch API Client&lt;/div&gt;" vertex="1">
+          <mxGeometry height="220" width="220" x="100" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="node_appserver" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=15;fillColor=#FFFFFF;strokeColor=#002060;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;align=center;spacingTop=18;" value="&lt;b&gt;&amp;lt;&amp;lt;device&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;Application Cloud Server&lt;/b&gt;&lt;br&gt;(Linux OS / Docker Container Platform)" vertex="1">
+          <mxGeometry height="720" width="460" x="460" y="100" as="geometry" />
+        </mxCell>
+        <mxCell id="env_proxy" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#1F4E79;strokeWidth=1.2;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;align=center;spacingTop=6;" value="&lt;b&gt;&amp;lt;&amp;lt;execution environment&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;Reverse Proxy &amp;amp; Gateway (Nginx / Cloudflare)&lt;/b&gt;&lt;hr&gt;&lt;div align=&quot;left&quot;&gt;• HTTPS Termination (TLS 1.3 / Port 443)&lt;br&gt;• Rate Limiting &amp;amp; DDoS Protection&lt;br&gt;• Static Assets Caching (Gzip/Brotli)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="120" width="400" x="490" y="190" as="geometry" />
+        </mxCell>
+        <mxCell id="env_backend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#1F4E79;strokeWidth=1.2;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;align=center;spacingTop=6;" value="&lt;b&gt;&amp;lt;&amp;lt;execution environment&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;Application Runtime (Node.js / ASP.NET / Python)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="450" width="400" x="500" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="art_api" parent="1" style="shape=module;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#EBF1F5;strokeColor=#1F4E79;strokeWidth=1;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;" value="&lt;b&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;&amp;lt;&amp;lt;artifact&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp; LMS Core RESTful API Engine&lt;/b&gt;&lt;hr&gt;&lt;div align=&quot;left&quot; style=&quot;line-height: 1.4;&quot;&gt;• API Gateway &amp;amp; Routing Controller&lt;br&gt;• JWT Authentication &amp;amp; RBAC Guard&lt;br&gt;• Business Services (Khóa học, Lớp, Học phí)&lt;br&gt;• Điểm danh (UC008) &amp;amp; Nhập điểm (UC009)&lt;br&gt;• DTO Data Validation &amp;amp; Error Handling&lt;br&gt;• ORM / Data Access Repository&lt;/div&gt;" vertex="1">
+          <mxGeometry height="190" width="360" x="510" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="art_ai_module" parent="1" style="shape=module;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=1;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;" value="&lt;b&gt;&amp;lt;&amp;lt;artifact&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;&amp;nbsp; &amp;nbsp; GenAI Orchestration Module&lt;/b&gt;&lt;hr&gt;&lt;div align=&quot;left&quot; style=&quot;line-height: 1.4;&quot;&gt;• Prompt Template Builder (CEFR/Lịch rảnh)&lt;br&gt;• Google Gemini SDK / REST Client&lt;br&gt;• Output JSON Schema Validator&lt;br&gt;• Fallback &amp;amp; Static Seed Data Resolver&lt;br&gt;• Audit Logger Service (YeuCauAI Table)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="170" width="360" x="510" y="600" as="geometry" />
+        </mxCell>
+        <mxCell id="node_dbserver" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=15;fillColor=#FFFFFF;strokeColor=#002060;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;align=center;spacingTop=18;" value="&lt;b&gt;&amp;lt;&amp;lt;device&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;Database Server&lt;/b&gt;&lt;br&gt;(Dedicated DB Container)" vertex="1">
+          <mxGeometry height="380" width="380" x="1030" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="env_rdbms" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8F9FA;strokeColor=#1F4E79;strokeWidth=1.2;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;align=center;spacingTop=6;" value="&lt;b&gt;&amp;lt;&amp;lt;execution environment&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;Relational DBMS (PostgreSQL / MySQL)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="280" width="330" x="1055" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="db_main" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#FFF2CC;strokeColor=#D6B656;strokeWidth=1.2;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;align=center;spacingTop=4;" value="&lt;b&gt;&amp;lt;&amp;lt;database&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;LMS Relational Database (3NF)&lt;/b&gt;&lt;hr&gt;&lt;div align=&quot;left&quot; style=&quot;line-height: 1.4;&quot;&gt;• 14 Bảng dữ liệu quan hệ&lt;br&gt;• NguoiDung, HoSoHocVien, GiaoVien&lt;br&gt;• KhoaHoc, LopHoc, LichHoc, PhanCong&lt;br&gt;• DangKyHoc, HoaDon, ThanhToan&lt;br&gt;• BuoiHoc, BanGhiDiemDanh, KetQuaHocTap&lt;br&gt;• &lt;b&gt;YeuCauAI&lt;/b&gt; (Bảng log kiểm toán AI)&lt;br&gt;• Automated Nightly Backup Script&lt;/div&gt;" vertex="1">
+          <mxGeometry height="220" width="270" x="1080" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="node_google" parent="1" style="ellipse;shape=cloud;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#9673A6;strokeWidth=1.5;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;align=center;spacingTop=24;" value="&lt;b&gt;&amp;lt;&amp;lt;cloud provider&amp;gt;&amp;gt;&lt;/b&gt;&lt;br&gt;&lt;b&gt;Google Cloud Platform (GCP)&lt;/b&gt;&lt;br&gt;Google Generative AI Infrastructure" vertex="1">
+          <mxGeometry height="350" width="460" x="1010" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="art_gemini" parent="1" style="shape=module;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#E1D5E7;strokeColor=#9673A6;strokeWidth=1;fontFamily=Times New Roman;fontSize=13;verticalAlign=top;" value="&lt;b&gt;&amp;nbsp; &amp;nbsp; &amp;lt;&amp;lt;external service&amp;gt;&amp;gt;&amp;nbsp; &amp;nbsp;&lt;/b&gt;&lt;br&gt;&lt;b&gt;&amp;nbsp; &amp;nbsp; &amp;nbsp;Google Gemini API Endpoints&lt;/b&gt;&lt;hr&gt;&lt;div align=&quot;left&quot; style=&quot;line-height: 1.4;&quot;&gt;• &lt;b&gt;Gemini 3.1 Flash-Lite:&lt;/b&gt; Tư vấn lớp (UC012), Sinh 5 câu trắc nghiệm (UC013)&lt;br&gt;• &lt;b&gt;Gemini 3.1 Pro:&lt;/b&gt; Tóm tắt tiến độ (UC014)&lt;br&gt;• Mode: `response_mime_type: application/json`&lt;br&gt;• REST / gRPC Interface via API Key&lt;/div&gt;" vertex="1">
+          <mxGeometry height="170" width="320" x="1080" y="165" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_client_proxy" edge="1" parent="1" source="art_spa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#002060;strokeWidth=2;endArrow=classic;startArrow=classic;fontFamily=Times New Roman;fontSize=13;" target="env_proxy" value="&lt;b&gt;HTTPS / TLS 1.3&lt;/b&gt;&lt;br&gt;Port 443 / JSON REST">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_proxy_api" edge="1" parent="1" source="env_proxy" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#1F4E79;strokeWidth=1.5;endArrow=classic;startArrow=classic;fontFamily=Times New Roman;fontSize=13;" target="art_api" value="&lt;b&gt;Internal IPC / Forward&lt;/b&gt;&lt;br&gt;HTTP Localhost">
+          <mxGeometry relative="1" x="-0.25" y="10" as="geometry">
+            <mxPoint y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_api_db" edge="1" parent="1" source="art_api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D6B656;strokeWidth=2;endArrow=classic;startArrow=classic;fontFamily=Times New Roman;fontSize=13;" target="db_main" value="&lt;b&gt;TCP/IP Connection Pool&lt;/b&gt;&lt;br&gt;Port 5432/3306 (SSL Encrypted)">
+          <mxGeometry relative="1" x="-0.0617" y="15" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_api_ai" edge="1" parent="1" source="art_api" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673A6;strokeWidth=1.5;endArrow=classic;fontFamily=Times New Roman;fontSize=13;" target="art_ai_module" value="&lt;b&gt;Internal Service Call&lt;/b&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge_ai_google" edge="1" parent="1" source="art_ai_module" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#9673A6;strokeWidth=2;endArrow=classic;startArrow=classic;fontFamily=Times New Roman;fontSize=13;" target="art_gemini" value="&lt;b&gt;HTTPS / REST API&lt;/b&gt;&lt;br&gt;Bearer API Key (Port 443)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="960" y="685" />
+              <mxPoint x="960" y="255" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge_ai_db" edge="1" parent="1" source="art_ai_module" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#D6B656;strokeWidth=1.5;dashed=1;endArrow=classic;fontFamily=Times New Roman;fontSize=13;" target="db_main" value="&lt;b&gt;Log YeuCauAI &amp;amp; Fallback Read&lt;/b&gt;">
+          <mxGeometry relative="1" x="-0.0694" y="-25" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

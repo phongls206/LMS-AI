@@ -1,0 +1,65 @@
+@startuml Deployment_Diagram
+!theme plain
+skinparam roundcorner 8
+skinparam shadowing false
+skinparam defaultFontName "Times New Roman"
+skinparam defaultFontSize 12
+skinparam node {
+    BackgroundColor #FFFFFF
+    BorderColor #002060
+    BorderThickness 1.5
+}
+skinparam component {
+    BackgroundColor #F2F4F8
+    BorderColor #1F4E79
+}
+skinparam database {
+    BackgroundColor #FFF2CC
+    BorderColor #D6B656
+}
+skinparam cloud {
+    BackgroundColor #E1D5E7
+    BorderColor #9673A6
+}
+
+title **Biểu đồ Triển khai Hạ tầng (Deployment Diagram) - Hệ thống LMS AI**
+
+node "<<device>>\nClient Devices\n(PC / Laptop / Smartphone)" as ClientNode {
+    node "<<execution environment>>\nWeb Browser\n(Chrome / Edge / Safari)" as Browser {
+        component "<<artifact>>\n**Single Page Application (SPA)**\n(HTML5, CSS3, React/Vue JS)\n- Admin/Teacher/Student/Staff Portal\n- Local Storage (JWT Token)" as ClientSPA
+    }
+}
+
+node "<<device>>\nCloud / Dedicated Server\n(Linux / Docker Container Environment)" as AppServerNode {
+    node "<<execution environment>>\nWeb / Reverse Proxy Server\n(Nginx / Cloudflare)" as ReverseProxy {
+        component "SSL/TLS Termination\n(HTTPS Port 443)\n- DDoS Protection & Rate Limiting\n- Static Assets Caching" as ProxyComp
+    }
+    
+    node "<<execution environment>>\nApplication Runtime\n(Node.js / ASP.NET / Python)" as BackendEnv {
+        component "<<artifact>>\n**Backend Core API**\n- API Gateway & Routing\n- Auth & RBAC Middleware\n- Business Logic Services\n- DTO Validation Engine" as BackendAPI
+        
+        component "<<artifact>>\n**GenAI Orchestrator Module**\n- Prompt Engineering Engine\n- JSON Schema Validator\n- Fallback & Seed Data Handler" as AIModule
+    }
+}
+
+node "<<device>>\nDatabase Server\n(Dedicated Container / Managed DB)" as DBServerNode {
+    node "<<execution environment>>\nRelational Database Management System" as RDBMS {
+        database "**LMS Relational Database**\n(PostgreSQL / MySQL 3NF)\n- 14 Bảng dữ liệu quan hệ\n- Bảng kiểm toán: YeuCauAI\n- Scheduled Automated Backup" as LMS_DB
+    }
+}
+
+cloud "<<cloud provider>>\nGoogle Cloud Platform" as GoogleCloud {
+    node "<<execution environment>>\nGoogle Generative AI Infrastructure" as GeminiCloud {
+        component "**Google Gemini API Endpoint**\n- Gemini 3.1 Flash-Lite (Tư vấn, Sinh đề)\n- Gemini 3.1 Pro (Tóm tắt tiến độ)\n- Structured JSON Outputs Mode" as GeminiService
+    }
+}
+
+' Relationships & Protocols
+ClientSPA --> ProxyComp : "HTTPS / TLS 1.3\n(Port 443, JSON REST API)"
+ProxyComp --> BackendAPI : "Internal HTTP / IPC\n(Reverse Proxy Forwarding)"
+BackendAPI --> LMS_DB : "TCP/IP Connection Pool\n(Port 5432/3306, SSL Encrypted)"
+BackendAPI ..> AIModule : "Internal Service Call"
+AIModule --> GeminiService : "HTTPS / RESTful API\n(Google AI Studio API Key)"
+AIModule --> LMS_DB : "Ghi Log kiểm toán YeuCauAI\n& Truy xuất Fallback"
+
+@enduml

@@ -1,0 +1,250 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam roundcorner 5
+skinparam shadowing true
+skinparam packageStyle rectangle
+
+title UML CLASS DIAGRAM - HỆ THỐNG QUẢN LÝ TRUNG TÂM NGOẠI NGỮ CÓ TÍCH HỢP AI
+
+enum LoaiVaiTro {
+  QUAN_LY
+  GIAO_VIEN
+  HOC_VIEN
+  TU_VAN_VIEN
+}
+
+enum CEFRLevel {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+}
+
+class NguoiDung {
+  - id: Long
+  - tenDangNhap: String
+  - matKhauMaHoa: String
+  - vaiTro: LoaiVaiTro
+  - email: String
+  - soDienThoai: String
+  - dangHoatDong: Boolean
+  - soLanSai: Integer
+  - khoaDen: DateTime
+  + xacThuc(matKhau: String): Boolean
+  + kiemTraQuyen(maQuyen: String): Boolean
+  + doiMatKhau(mkCu: String, mkMoi: String): Boolean
+  + khoaTaiKhoan(thoiGianPhut: Integer): Void
+}
+
+class HoSoHocVien {
+  - id: Long
+  - nguoiDungId: Long
+  - maHocVien: String
+  - hoTen: String
+  - ngaySinh: Date
+  - gioiTinh: String
+  - diaChi: String
+  - trinhDoCEFR: CEFRLevel
+  - nguonDanhGia: String
+  - lichRanh: JSON
+  - trangThai: String
+  + capNhatHoSo(hoTen, sdt, diaChi): Boolean
+  + capNhatTrinhDo(cefr, nguon): Void
+  + capNhatLichRanh(lichJson): Void
+  + kiemTraPhuHopLop(lop: LopHoc): Boolean
+}
+
+class HoSoGiaoVien {
+  - id: Long
+  - nguoiDungId: Long
+  - maGiaoVien: String
+  - hoTen: String
+  - chuyenMon: String
+  - bangCap: String
+  - trangThai: String
+  + capNhatHoSo(chuyenMon, bangCap): Boolean
+  + kiemTraTrangThaiDay(): Boolean
+}
+
+class KhoaHoc {
+  - id: Long
+  - maKhoaHoc: String
+  - tenKhoaHoc: String
+  - ngonNgu: String
+  - trinhDoYeuCau: CEFRLevel
+  - thoiLuongGio: Integer
+  - hocPhi: Decimal
+  - moTa: String
+  - trangThai: String
+  + capNhatKhoaHoc(ten, hocPhi): Boolean
+  + kichHoat(): Void
+  + ngungHoatDong(): Boolean
+}
+
+class LopHoc {
+  - id: Long
+  - khoaHocId: Long
+  - maLopHoc: String
+  - tenLopHoc: String
+  - siSoToiDa: Integer
+  - siSoHienTai: Integer
+  - ngayBatDau: Date
+  - ngayKetThuc: Date
+  - phongHoc: String
+  - linkOnline: String
+  - trangThai: String
+  + conChoTrong(): Boolean
+  + tangSiSo(): Boolean
+  + giamSiSo(): Void
+  + doiTrangThai(ttMoi): Void
+}
+
+class LichHoc {
+  - id: Long
+  - lopHocId: Long
+  - thuTrongTuan: Integer
+  - gioBatDau: Time
+  - gioKetThuc: Time
+  - phongHoc: String
+  + kiemTraXungDot(lichKhac): Boolean
+}
+
+class PhanCongGiaoVien {
+  - id: Long
+  - lopHocId: Long
+  - giaoVienId: Long
+  - vaiTroPhanCong: String
+  - thoiGianPhanCong: DateTime
+  - trangThai: String
+  + xacNhanPhanCong(): Void
+  + huyPhanCong(lyDo: String): Void
+}
+
+class DangKyHoc {
+  - id: Long
+  - lopHocId: Long
+  - hocVienId: Long
+  - ngayDangKy: DateTime
+  - trangThai: String
+  + kiemTraDieuKienDangKy(): Boolean
+  + xacNhanDangKy(): Void
+  + huyDangKy(lyDo: String): Void
+}
+
+class HoaDon {
+  - id: Long
+  - maHoaDon: String
+  - dangKyHocId: Long
+  - hocVienId: Long
+  - soTienPhaiTra: Decimal
+  - soTienDaTra: Decimal
+  - hanThanhToan: Date
+  - trangThai: String
+  + capNhatThanhToan(soTien): Void
+  + kiemTraCongNo(): Decimal
+}
+
+class ThanhToan {
+  - id: Long
+  - hoaDonId: Long
+  - maGiaoDich: String
+  - soTien: Decimal
+  - phuongThuc: String
+  - thoiGianThanhToan: DateTime
+  - nguoiThuId: Long
+  - trangThai: String
+  - ghiChu: String
+  + xacNhanThanhCong(): Void
+  + thatBai(lyDo: String): Void
+}
+
+class BuoiHoc {
+  - id: Long
+  - lopHocId: Long
+  - soThuTu: Integer
+  - ngayHoc: Date
+  - gioBatDau: Time
+  - gioKetThuc: Time
+  - chuDe: String
+  - trangThai: String
+  + batDauBuoiHoc(): Void
+  + ketThucBuoiHoc(): Void
+}
+
+class BanGhiDiemDanh {
+  - id: Long
+  - buoiHocId: Long
+  - hocVienId: Long
+  - trangThai: String
+  - ghiChu: String
+  - thoiGianDiemDanh: DateTime
+  - giaoVienDiemDanhId: Long
+  + ghiNhanDiemDanh(tt, ghiChu): Void
+  + dieuChinhDiemDanh(ttMoi, lyDo): Boolean
+}
+
+class KetQuaHocTap {
+  - id: Long
+  - lopHocId: Long
+  - hocVienId: Long
+  - diemChuyenCan: Decimal
+  - diemGiuaKy: Decimal
+  - diemCuoiKy: Decimal
+  - diemTongKet: Decimal
+  - nhanXet: String
+  - trangThaiHoanThanh: String
+  + nhapDiem(loai, diem): Boolean
+  + tinhDiemTongKet(): Decimal
+  + danhGiaHoanThanh(): String
+}
+
+class YeuCauAI {
+  - id: Long
+  - nguoiDungId: Long
+  - loaiChucNang: String
+  - promptInput: String
+  - rawOutput: String
+  - validatedOutput: JSON
+  - trangThai: String
+  - thoiGianXuLyMs: Integer
+  - thoiGianGoi: DateTime
+  + ghiNhanKetQua(raw, validated, ms): Void
+  + ghiNhanLoi(loi, fallbackUsed): Void
+}
+
+class DichVuAI {
+  - apiKey: String
+  - modelName: String
+  - timeoutMs: Integer
+  + tuVanLopPhuHop(cefr, lich, dsLop): JSON
+  + sinhBaiLuyenTap(chuDe, cefr): JSON
+  + tomTatTienDo(diemDanh, diemSo): JSON
+  - validateVaLocAoGiac(raw, loai): JSON
+  - xuLyFallback(loai, thamSo): JSON
+}
+
+NguoiDung "1" -- "0..1" HoSoHocVien
+NguoiDung "1" -- "0..1" HoSoGiaoVien
+NguoiDung "1" -- "0..*" YeuCauAI
+DichVuAI ..> YeuCauAI : <<creates>>
+
+KhoaHoc "1" *-- "0..*" LopHoc
+LopHoc "1" *-- "1..*" LichHoc
+LopHoc "1" -- "0..1" PhanCongGiaoVien
+HoSoGiaoVien "1" -- "0..*" PhanCongGiaoVien
+LopHoc "1" *-- "0..*" BuoiHoc
+
+HoSoHocVien "1" -- "0..*" DangKyHoc
+LopHoc "1" -- "0..*" DangKyHoc
+DangKyHoc "1" -- "1" HoaDon
+HoaDon "1" *-- "0..*" ThanhToan
+
+BuoiHoc "1" *-- "0..*" BanGhiDiemDanh
+HoSoHocVien "1" -- "0..*" BanGhiDiemDanh
+HoSoHocVien "1" -- "0..*" KetQuaHocTap
+LopHoc "1" -- "0..*" KetQuaHocTap
+
+@enduml

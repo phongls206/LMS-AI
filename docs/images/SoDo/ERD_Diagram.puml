@@ -1,0 +1,199 @@
+@startuml
+skinparam linetype ortho
+skinparam roundcorner 5
+skinparam shadowing true
+
+title ENTITY RELATIONSHIP DIAGRAM (ERD) - HỆ THỐNG QUẢN LÝ TRUNG TÂM NGOẠI NGỮ CÓ TÍCH HỢP AI
+
+entity "NGUOI_DUNG" as nguoi_dung {
+  * id : BIGINT <<PK>>
+  --
+  * ten_dang_nhap : VARCHAR(50) <<UQ>>
+  * mat_khau_ma_hoa : VARCHAR(255)
+  * vai_tro : VARCHAR(20)
+  * email : VARCHAR(100) <<UQ>>
+  so_dien_thoai : VARCHAR(20)
+  * dang_hoat_dong : BOOLEAN
+  * so_lan_sai : INT
+  khoa_den : TIMESTAMP
+}
+
+entity "HO_SO_HOC_VIEN" as hoc_vien {
+  * id : BIGINT <<PK>>
+  --
+  * nguoi_dung_id : BIGINT <<FK, UQ>>
+  * ma_hoc_vien : VARCHAR(20) <<UQ>>
+  * ho_ten : VARCHAR(100)
+  ngay_sinh : DATE
+  gioi_tinh : VARCHAR(10)
+  dia_chi : VARCHAR(255)
+  * trinh_do_cefr : VARCHAR(2)
+  nguon_danh_gia : VARCHAR(100)
+  lich_ranh_json : JSON
+  * trang_thai : VARCHAR(20)
+}
+
+entity "HO_SO_GIAO_VIEN" as giao_vien {
+  * id : BIGINT <<PK>>
+  --
+  * nguoi_dung_id : BIGINT <<FK, UQ>>
+  * ma_giao_vien : VARCHAR(20) <<UQ>>
+  * ho_ten : VARCHAR(100)
+  chuyen_mon : VARCHAR(100)
+  bang_cap : VARCHAR(150)
+  * trang_thai : VARCHAR(20)
+}
+
+entity "KHOA_HOC" as khoa_hoc {
+  * id : BIGINT <<PK>>
+  --
+  * ma_khoa_hoc : VARCHAR(20) <<UQ>>
+  * ten_khoa_hoc : VARCHAR(150)
+  * ngon_ngu : VARCHAR(50)
+  * trinh_do_yeu_cau : VARCHAR(2)
+  * thoi_luong_gio : INT
+  * hoc_phi : DECIMAL(12,2)
+  mo_ta : TEXT
+  * trang_thai : VARCHAR(20)
+}
+
+entity "LOP_HOC" as lop_hoc {
+  * id : BIGINT <<PK>>
+  --
+  * khoa_hoc_id : BIGINT <<FK>>
+  * ma_lop_hoc : VARCHAR(20) <<UQ>>
+  * ten_lop_hoc : VARCHAR(150)
+  * si_so_toi_da : INT
+  * si_so_hien_tai : INT
+  * ngay_bat_dau : DATE
+  * ngay_ket_thuc : DATE
+  phong_hoc : VARCHAR(50)
+  link_online : VARCHAR(255)
+  * trang_thai : VARCHAR(25)
+}
+
+entity "LICH_HOC" as lich_hoc {
+  * id : BIGINT <<PK>>
+  --
+  * lop_hoc_id : BIGINT <<FK>>
+  * thu_trong_tuan : INT
+  * gio_bat_dau : TIME
+  * gio_ket_thuc : TIME
+  phong_hoc : VARCHAR(50)
+}
+
+entity "PHAN_CONG_GIAO_VIEN" as phan_cong {
+  * id : BIGINT <<PK>>
+  --
+  * lop_hoc_id : BIGINT <<FK>>
+  * giao_vien_id : BIGINT <<FK>>
+  * vai_tro_phan_cong : VARCHAR(20)
+  * thoi_gian_phan_cong : TIMESTAMP
+  * trang_thai : VARCHAR(20)
+}
+
+entity "DANG_KY_HOC" as dang_ky {
+  * id : BIGINT <<PK>>
+  --
+  * lop_hoc_id : BIGINT <<FK>>
+  * hoc_vien_id : BIGINT <<FK>>
+  * ngay_dang_ky : TIMESTAMP
+  * trang_thai : VARCHAR(20)
+}
+
+entity "HOA_DON" as hoa_don {
+  * id : BIGINT <<PK>>
+  --
+  * ma_hoa_don : VARCHAR(30) <<UQ>>
+  * dang_ky_hoc_id : BIGINT <<FK, UQ>>
+  * hoc_vien_id : BIGINT <<FK>>
+  * so_tien_phai_tra : DECIMAL(12,2)
+  * so_tien_da_tra : DECIMAL(12,2)
+  * han_thanh_toan : DATE
+  * trang_thai : VARCHAR(25)
+}
+
+entity "THANH_TOAN" as thanh_toan {
+  * id : BIGINT <<PK>>
+  --
+  * hoa_don_id : BIGINT <<FK>>
+  * ma_giao_dich : VARCHAR(50) <<UQ>>
+  * so_tien : DECIMAL(12,2)
+  * phuong_thuc : VARCHAR(20)
+  * thoi_gian_thanh_toan : TIMESTAMP
+  nguoi_thu_id : BIGINT <<FK>>
+  * trang_thai : VARCHAR(20)
+  ghi_chu : VARCHAR(255)
+}
+
+entity "BUOI_HOC" as buoi_hoc {
+  * id : BIGINT <<PK>>
+  --
+  * lop_hoc_id : BIGINT <<FK>>
+  * so_thu_tu : INT
+  * ngay_hoc : DATE
+  * gio_bat_dau : TIME
+  * gio_ket_thuc : TIME
+  chu_de : VARCHAR(200)
+  * trang_thai : VARCHAR(20)
+}
+
+entity "BAN_GHI_DIEM_DANH" as diem_danh {
+  * id : BIGINT <<PK>>
+  --
+  * buoi_hoc_id : BIGINT <<FK>>
+  * hoc_vien_id : BIGINT <<FK>>
+  * trang_thai : VARCHAR(20)
+  ghi_chu : VARCHAR(255)
+  * thoi_gian_diem_danh : TIMESTAMP
+  giao_vien_diem_danh_id : BIGINT <<FK>>
+}
+
+entity "KET_QUA_HOC_TAP" as ket_qua {
+  * id : BIGINT <<PK>>
+  --
+  * lop_hoc_id : BIGINT <<FK>>
+  * hoc_vien_id : BIGINT <<FK>>
+  * diem_chuyen_can : DECIMAL(5,2)
+  * diem_giua_ky : DECIMAL(5,2)
+  * diem_cuoi_ky : DECIMAL(5,2)
+  * diem_tong_ket : DECIMAL(5,2)
+  nhan_xet : TEXT
+  * trang_thai_hoan_thanh : VARCHAR(20)
+}
+
+entity "YEU_CAU_AI" as yeu_cau_ai {
+  * id : BIGINT <<PK>>
+  --
+  * nguoi_dung_id : BIGINT <<FK>>
+  * loai_chuc_nang : VARCHAR(30)
+  * prompt_input : TEXT
+  raw_output : TEXT
+  validated_output_json : JSON
+  * trang_thai : VARCHAR(20)
+  * thoi_gian_xu_ly_ms : INT
+  * thoi_gian_goi : TIMESTAMP
+}
+
+nguoi_dung ||--o| hoc_vien
+nguoi_dung ||--o| giao_vien
+nguoi_dung ||--o{ yeu_cau_ai
+nguoi_dung ||--o{ thanh_toan
+
+khoa_hoc ||--o{ lop_hoc
+lop_hoc ||--|{ lich_hoc
+lop_hoc ||--o| phan_cong
+giao_vien ||--o{ phan_cong
+lop_hoc ||--o{ buoi_hoc
+
+hoc_vien ||--o{ dang_ky
+lop_hoc ||--o{ dang_ky
+dang_ky ||--|| hoa_don
+hoa_don ||--o{ thanh_toan
+
+buoi_hoc ||--o{ diem_danh
+hoc_vien ||--o{ diem_danh
+hoc_vien ||--o{ ket_qua
+lop_hoc ||--o{ ket_qua
+
+@enduml

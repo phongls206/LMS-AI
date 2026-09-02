@@ -25,8 +25,8 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Bắt đầu nạp Siêu Dữ Liệu Mẫu (Rich Seed Data) cho ETC English Center...\n');
 
-  // Mật khẩu mặc định cho toàn bộ tài khoản: Admin@123
-  const defaultPassword = await argon2.hash('Admin@123');
+  // Mật khẩu mặc định cho toàn bộ tài khoản: 123456
+  const defaultPassword = await argon2.hash('123456');
 
   // ============================================================================
   // 1. NGƯỜI DÙNG & HỒ SƠ (Quản lý, Giáo viên, Tư vấn viên, Học viên)
@@ -872,7 +872,7 @@ async function main() {
 
   console.log('\n🎉 NẠP TOÀN BỘ SIÊU DỮ LIỆU THÀNH CÔNG!');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log('📋 TÀI KHOẢN HỆ THỐNG ĐÃ SẴN SÀNG (Mật khẩu: Admin@123):');
+  console.log('📋 TÀI KHOẢN HỆ THỐNG ĐÃ SẴN SÀNG (Mật khẩu: 123456):');
   console.log('   👑 Quản lý (Admin)   : admin01');
   console.log('   👨‍🏫 Giáo viên (Teacher): teacher01 (Cô Lan), teacher02 (Thầy Minh), teacher03 (Thầy Nam)');
   console.log('   📞 Tư vấn viên (Staff): staff01 (Thảo), staff02 (Ngân)');

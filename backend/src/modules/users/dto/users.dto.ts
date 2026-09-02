@@ -8,7 +8,7 @@ export class CreateStudentDto {
   @IsNotEmpty()
   tenDangNhap: string;
 
-  @ApiProperty({ example: 'Student@123', description: 'Mật khẩu khởi tạo' })
+  @ApiProperty({ example: '123456', description: 'Mật khẩu khởi tạo' })
   @IsString()
   @IsNotEmpty()
   matKhau: string;
@@ -108,7 +108,7 @@ export class CreateTeacherDto {
   @IsNotEmpty()
   tenDangNhap: string;
 
-  @ApiProperty({ example: 'Teacher@123', description: 'Mật khẩu' })
+  @ApiProperty({ example: '123456', description: 'Mật khẩu' })
   @IsString()
   @IsNotEmpty()
   matKhau: string;

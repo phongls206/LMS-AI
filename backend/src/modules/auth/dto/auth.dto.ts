@@ -7,7 +7,7 @@ export class LoginDto {
   @IsNotEmpty({ message: 'Tên đăng nhập không được để trống.' })
   tenDangNhap: string;
 
-  @ApiProperty({ example: 'Admin@123', description: 'Mật khẩu' })
+  @ApiProperty({ example: '123456', description: 'Mật khẩu' })
   @IsString()
   @IsNotEmpty({ message: 'Mật khẩu không được để trống.' })
   matKhau: string;

@@ -20,7 +20,7 @@ export default function AdminStudentsPage() {
 
   const [createFormData, setCreateFormData] = useState({
     tenDangNhap: '',
-    matKhau: 'Student@123',
+    matKhau: '123456',
     email: '',
     soDienThoai: '',
     maHocVien: '',
@@ -63,7 +63,7 @@ export default function AdminStudentsPage() {
       setShowCreateModal(false);
       setCreateFormData({
         tenDangNhap: '',
-        matKhau: 'Student@123',
+        matKhau: '123456',
         email: '',
         soDienThoai: '',
         maHocVien: '',
@@ -88,7 +88,7 @@ export default function AdminStudentsPage() {
       trinhDoCEFR: s.trinhDoCEFR,
       nguonDanhGia: s.nguonDanhGia || '',
       trangThai: s.trangThai || 'DANG_HOC',
-      matKhauMoi: autoResetPass ? 'Student@123' : '',
+      matKhauMoi: autoResetPass ? '123456' : '',
     });
   };
 
@@ -226,7 +226,7 @@ export default function AdminStudentsPage() {
                         <div className="flex items-center justify-end space-x-2">
                           <button
                             onClick={() => openEditModal(s, true)}
-                            title="Reset mật khẩu về Student@123"
+                            title="Reset mật khẩu về 123456"
                             className="p-1.5 rounded-lg bg-slate-800 hover:bg-amber-950/50 text-amber-400 hover:text-amber-300 transition"
                           >
                             <KeyRound className="w-3.5 h-3.5" />
@@ -465,10 +465,10 @@ export default function AdminStudentsPage() {
                     </label>
                     <button
                       type="button"
-                      onClick={() => setEditFormData({ ...editFormData, matKhauMoi: 'Student@123' })}
+                      onClick={() => setEditFormData({ ...editFormData, matKhauMoi: '123456' })}
                       className="px-2 py-0.5 rounded-md bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 border border-indigo-500/40 text-[10px] font-semibold transition"
                     >
-                      ⚡ Reset về Student@123
+                      ⚡ Reset về 123456
                     </button>
                   </div>
                   <input
