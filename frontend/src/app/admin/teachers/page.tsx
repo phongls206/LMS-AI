@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
 import { GiaoVien } from '../../../types';
-import { Plus, Award, Mail, Phone, Edit3, Trash2, X, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Plus, Award, Mail, Phone, Edit3, X, CheckCircle, UserCheck, Clock, UserX } from 'lucide-react';
 
 export default function AdminTeachersPage() {
   const [teachers, setTeachers] = useState<GiaoVien[]>([]);
@@ -14,7 +14,6 @@ export default function AdminTeachersPage() {
   // Modals
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingTeacher, setEditingTeacher] = useState<any | null>(null);
-  const [deletingTeacher, setDeletingTeacher] = useState<any | null>(null);
 
   const [createFormData, setCreateFormData] = useState({
     tenDangNhap: '',
@@ -89,7 +88,7 @@ export default function AdminTeachersPage() {
     if (!editingTeacher) return;
     try {
       await usersService.updateTeacher(Number(editingTeacher.id), editFormData);
-      setMessage('Cập nhật thông tin giáo viên thành công!');
+      setMessage('Cập nhật thông tin và trạng thái giáo viên thành công!');
       setEditingTeacher(null);
       fetchTeachers();
       setTimeout(() => setMessage(null), 3000);
@@ -98,16 +97,35 @@ export default function AdminTeachersPage() {
     }
   };
 
-  const handleDeleteTeacher = async () => {
-    if (!deletingTeacher) return;
-    try {
-      await usersService.deleteTeacher(Number(deletingTeacher.id));
-      setMessage(`Đã xóa giáo viên ${deletingTeacher.hoTen} thành công!`);
-      setDeletingTeacher(null);
-      fetchTeachers();
-      setTimeout(() => setMessage(null), 3000);
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi xóa giáo viên.');
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'DANG_LAM_VIEC':
+        return (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold">
+            <UserCheck className="w-3 h-3" />
+            <span>Đang Làm Việc</span>
+          </span>
+        );
+      case 'TAM_NGHI':
+        return (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] font-semibold">
+            <Clock className="w-3 h-3" />
+            <span>Tạm Nghỉ</span>
+          </span>
+        );
+      case 'DA_NGHI_VIEC':
+        return (
+          <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[11px] font-semibold">
+            <UserX className="w-3 h-3" />
+            <span>Đã Nghỉ Việc</span>
+          </span>
+        );
+      default:
+        return (
+          <span className="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[11px] font-semibold">
+            {status}
+          </span>
+        );
     }
   };
 
@@ -115,7 +133,7 @@ export default function AdminTeachersPage() {
     <AppLayout
       allowedRoles={['QUAN_LY']}
       title="Đội Ngũ Giáo Viên & Giảng Viên"
-      subtitle="Quản lý hồ sơ giảng viên, phân công chuyên môn, trình độ bằng cấp và tình trạng công tác"
+      subtitle="Quản lý hồ sơ giảng viên, phân công chuyên môn, trình độ bằng cấp và điều chỉnh trạng thái công tác"
     >
       <div className="space-y-6">
         {/* Header toolbar */}
@@ -146,7 +164,7 @@ export default function AdminTeachersPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teachers.map((t) => (
+            {teachers.map((t: any) => (
               <div
                 key={t.id}
                 className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm flex flex-col justify-between hover:border-slate-700 transition"
@@ -156,10 +174,11 @@ export default function AdminTeachersPage() {
                     <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-bold text-indigo-400 text-lg">
                       {t.hoTen.split(' ').slice(-1)[0][0]}
                     </div>
-                    <div className="flex items-center space-x-1.5">
+                    <div className="flex flex-col items-end space-y-1.5">
                       <span className="px-2.5 py-1 rounded-md bg-slate-800 text-slate-300 font-mono text-xs font-bold">
                         {t.maGiaoVien}
                       </span>
+                      {getStatusBadge(t.trangThai || 'DANG_LAM_VIEC')}
                     </div>
                   </div>
 
@@ -188,20 +207,13 @@ export default function AdminTeachersPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center justify-end space-x-2 pt-2 border-t border-slate-800/60">
+                  <div className="pt-2 border-t border-slate-800/60">
                     <button
                       onClick={() => openEditModal(t)}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300 text-xs font-semibold flex items-center space-x-1 transition"
+                      className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300 text-xs font-semibold flex items-center justify-center space-x-1.5 border border-indigo-500/20 transition"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
-                      <span>Sửa</span>
-                    </button>
-                    <button
-                      onClick={() => setDeletingTeacher(t)}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/50 text-rose-400 hover:text-rose-300 text-xs font-semibold flex items-center space-x-1 transition"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Xóa</span>
+                      <span>Sửa Thông Tin & Đổi Trạng Thái</span>
                     </button>
                   </div>
                 </div>
@@ -330,7 +342,7 @@ export default function AdminTeachersPage() {
           </div>
         )}
 
-        {/* Modal Sửa Giáo Viên */}
+        {/* Modal Sửa Giáo Viên & Đổi Trạng Thái */}
         {editingTeacher && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4">
@@ -387,17 +399,22 @@ export default function AdminTeachersPage() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Trạng Thái Công Tác</label>
+                <div className="p-3.5 rounded-xl bg-slate-950 border border-indigo-500/30 space-y-1.5">
+                  <label className="block text-indigo-300 font-semibold uppercase tracking-wider text-[11px]">
+                    Trạng Thái Công Tác (Quy Chế Nghiệp Vụ)
+                  </label>
                   <select
                     value={editFormData.trangThai}
                     onChange={(e) => setEditFormData({ ...editFormData, trangThai: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-indigo-500"
                   >
-                    <option value="DANG_LAM_VIEC">DANG_LAM_VIEC (Đang làm việc)</option>
-                    <option value="TAM_NGHI">TAM_NGHI (Tạm nghỉ)</option>
-                    <option value="DA_NGHI_VIEC">DA_NGHI_VIEC (Đã nghỉ việc)</option>
+                    <option value="DANG_LAM_VIEC">🟢 DANG_LAM_VIEC — Đang làm việc (Có thể phân công dạy)</option>
+                    <option value="TAM_NGHI">🟡 TAM_NGHI — Tạm nghỉ (Nghỉ phép / dưỡng bệnh)</option>
+                    <option value="DA_NGHI_VIEC">🔴 DA_NGHI_VIEC — Đã nghỉ việc (Khóa phân công & bảo lưu lịch sử)</option>
                   </select>
+                  <p className="text-[11px] text-slate-400 italic">
+                    * Khi chọn "Đã nghỉ việc", hệ thống sẽ giữ nguyên lịch sử điểm danh các lớp cũ và chặn phân công lớp mới.
+                  </p>
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
@@ -409,40 +426,10 @@ export default function AdminTeachersPage() {
                     Hủy
                   </button>
                   <button type="submit" className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold">
-                    Cập Nhật
+                    Lưu Thay Đổi
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-        )}
-
-        {/* Modal Xác Nhận Xóa Giáo Viên */}
-        {deletingTeacher && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-slate-900 border border-rose-500/30 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
-              <div className="flex items-center space-x-3 text-rose-400">
-                <AlertTriangle className="w-6 h-6 shrink-0" />
-                <h3 className="text-base font-bold text-white">Xác Nhận Xóa Giáo Viên</h3>
-              </div>
-              <p className="text-xs text-slate-300">
-                Bạn có chắc chắn muốn xóa giáo viên{' '}
-                <strong className="text-white">{deletingTeacher.hoTen}</strong> (Mã: {deletingTeacher.maGiaoVien})? Thao tác này sẽ hủy phân công và xóa tài khoản liên quan.
-              </p>
-              <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
-                <button
-                  onClick={() => setDeletingTeacher(null)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
-                >
-                  Hủy
-                </button>
-                <button
-                  onClick={handleDeleteTeacher}
-                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-lg shadow-rose-600/30"
-                >
-                  Đồng Ý Xóa
-                </button>
-              </div>
             </div>
           </div>
         )}
