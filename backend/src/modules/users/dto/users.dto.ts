@@ -75,6 +75,16 @@ export class UpdateStudentDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
+  soDienThoai?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  diaChi?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
   nguonDanhGia?: string;
 
   @ApiPropertyOptional()
@@ -85,4 +95,72 @@ export class UpdateStudentDto {
   @IsOptional()
   @IsEnum(TrangThaiHocVien)
   trangThai?: TrangThaiHocVien;
+}
+
+export class CreateTeacherDto {
+  @ApiProperty({ example: 'teacher04', description: 'Tên đăng nhập' })
+  @IsString()
+  @IsNotEmpty()
+  tenDangNhap: string;
+
+  @ApiProperty({ example: 'Teacher@123', description: 'Mật khẩu' })
+  @IsString()
+  @IsNotEmpty()
+  matKhau: string;
+
+  @ApiProperty({ example: 'teacher04@etc-english.vn', description: 'Email' })
+  @IsEmail()
+  email: string;
+
+  @ApiPropertyOptional({ example: '0902222004' })
+  @IsOptional()
+  @IsString()
+  soDienThoai?: string;
+
+  @ApiProperty({ example: 'GV004', description: 'Mã giáo viên (duy nhất)' })
+  @IsString()
+  @IsNotEmpty()
+  maGiaoVien: string;
+
+  @ApiProperty({ example: 'Hoàng Văn Thái', description: 'Họ và tên giảng viên' })
+  @IsString()
+  @IsNotEmpty()
+  hoTen: string;
+
+  @ApiProperty({ example: 'IELTS Speaking & Writing', description: 'Chuyên môn' })
+  @IsString()
+  @IsNotEmpty()
+  chuyenMon: string;
+
+  @ApiPropertyOptional({ example: 'Thạc sĩ Lý luận & Phương pháp giảng dạy tiếng Anh (TESOL)' })
+  @IsOptional()
+  @IsString()
+  bangCap?: string;
+}
+
+export class UpdateTeacherDto {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  hoTen?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  chuyenMon?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  bangCap?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  soDienThoai?: string;
+
+  @ApiPropertyOptional({ enum: TrangThaiGiaoVien })
+  @IsOptional()
+  @IsEnum(TrangThaiGiaoVien)
+  trangThai?: TrangThaiGiaoVien;
 }

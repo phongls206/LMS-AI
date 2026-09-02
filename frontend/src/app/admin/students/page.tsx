@@ -4,27 +4,40 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
 import { HocVien, TrinhDoCEFR } from '../../../types';
-import { Users, Plus, Search, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plus, Search, CheckCircle, Edit3, Trash2, X, AlertTriangle } from 'lucide-react';
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<HocVien[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [cefrFilter, setCefrFilter] = useState<string>('');
-  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
 
-  const [formData, setFormData] = useState({
+  // Modals state
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingStudent, setEditingStudent] = useState<any | null>(null);
+  const [deletingStudent, setDeletingStudent] = useState<any | null>(null);
+
+  const [createFormData, setCreateFormData] = useState({
     tenDangNhap: '',
     matKhau: 'Student@123',
     email: '',
     soDienThoai: '',
     maHocVien: '',
     hoTen: '',
+    diaChi: '',
     trinhDoCEFR: 'B1' as TrinhDoCEFR,
     nguonDanhGia: 'Placement Test',
   });
 
-  const [message, setMessage] = useState<string | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    hoTen: '',
+    soDienThoai: '',
+    diaChi: '',
+    trinhDoCEFR: 'B1' as TrinhDoCEFR,
+    nguonDanhGia: '',
+    trangThai: 'DANG_HOC',
+  });
 
   const fetchStudents = async () => {
     try {
@@ -44,31 +57,71 @@ export default function AdminStudentsPage() {
   const handleCreateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await usersService.createStudent(formData);
+      await usersService.createStudent(createFormData);
       setMessage('Tiếp nhận & tạo hồ sơ học viên thành công!');
-      setShowModal(false);
-      setFormData({
+      setShowCreateModal(false);
+      setCreateFormData({
         tenDangNhap: '',
         matKhau: 'Student@123',
         email: '',
         soDienThoai: '',
         maHocVien: '',
         hoTen: '',
+        diaChi: '',
         trinhDoCEFR: 'B1',
         nguonDanhGia: 'Placement Test',
       });
       fetchStudents();
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra.');
+      alert(err.response?.data?.message || 'Có lỗi xảy ra khi tạo học viên.');
+    }
+  };
+
+  const openEditModal = (s: HocVien) => {
+    setEditingStudent(s);
+    setEditFormData({
+      hoTen: s.hoTen,
+      soDienThoai: s.nguoiDung?.soDienThoai || '',
+      diaChi: (s as any).diaChi || '',
+      trinhDoCEFR: s.trinhDoCEFR,
+      nguonDanhGia: s.nguonDanhGia || '',
+      trangThai: s.trangThai || 'DANG_HOC',
+    });
+  };
+
+  const handleUpdateStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingStudent) return;
+    try {
+      await usersService.updateStudent(Number(editingStudent.id), editFormData);
+      setMessage('Cập nhật thông tin học viên thành công!');
+      setEditingStudent(null);
+      fetchStudents();
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật học viên.');
+    }
+  };
+
+  const handleDeleteStudent = async () => {
+    if (!deletingStudent) return;
+    try {
+      await usersService.deleteStudent(Number(deletingStudent.id));
+      setMessage(`Đã xóa học viên ${deletingStudent.hoTen} thành công!`);
+      setDeletingStudent(null);
+      fetchStudents();
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi xảy ra khi xóa học viên.');
     }
   };
 
   return (
     <AppLayout
       allowedRoles={['QUAN_LY', 'TU_VAN_VIEN']}
-      title="Hồ Sơ & Danh Sách Học Viên"
-      subtitle="Tiếp nhận học viên mới, phân loại chuẩn CEFR và quản lý thông tin liên hệ"
+      title="Hồ Sơ & Quản Lý Học Viên"
+      subtitle="Tiếp nhận học viên mới, chỉnh sửa thông tin, phân loại chuẩn CEFR và quản lý trạng thái"
     >
       <div className="space-y-6">
         {/* Filters and Actions */}
@@ -101,7 +154,7 @@ export default function AdminStudentsPage() {
           </div>
 
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => setShowCreateModal(true)}
             className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition"
           >
             <Plus className="w-4 h-4" />
@@ -127,12 +180,13 @@ export default function AdminStudentsPage() {
               <table className="w-full text-left text-xs text-slate-300">
                 <thead className="bg-slate-950/80 text-slate-400 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-800">
                   <tr>
-                    <th className="px-5 py-3.5">Mã Học Viên</th>
+                    <th className="px-5 py-3.5">Mã HV</th>
                     <th className="px-5 py-3.5">Họ Và Tên</th>
                     <th className="px-5 py-3.5">Trình Độ CEFR</th>
                     <th className="px-5 py-3.5">Email & SĐT</th>
                     <th className="px-5 py-3.5">Nguồn Đánh Giá</th>
                     <th className="px-5 py-3.5">Trạng Thái</th>
+                    <th className="px-5 py-3.5 text-right">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/80">
@@ -151,9 +205,31 @@ export default function AdminStudentsPage() {
                       </td>
                       <td className="px-5 py-4 text-slate-400 text-[11px]">{s.nguonDanhGia || 'Test đầu vào'}</td>
                       <td className="px-5 py-4">
-                        <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-[11px] font-semibold">
+                        <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
+                          s.trangThai === 'DANG_HOC' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                          s.trangThai === 'DA_TOT_NGHIEP' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                          'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                        }`}>
                           {s.trangThai}
                         </span>
+                      </td>
+                      <td className="px-5 py-4 text-right">
+                        <div className="flex items-center justify-end space-x-2">
+                          <button
+                            onClick={() => openEditModal(s)}
+                            title="Sửa thông tin"
+                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-400 hover:text-indigo-300 transition"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setDeletingStudent(s)}
+                            title="Xóa học viên"
+                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-950/50 text-rose-400 hover:text-rose-300 transition"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -164,19 +240,25 @@ export default function AdminStudentsPage() {
         )}
 
         {/* Modal Thêm Học Viên */}
-        {showModal && (
+        {showCreateModal && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl">
-              <h3 className="text-lg font-bold text-white mb-4">Tiếp Nhận & Tạo Hồ Sơ Học Viên</h3>
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-800">
+                <h3 className="text-base font-bold text-white">Tiếp Nhận & Tạo Hồ Sơ Học Viên Mới</h3>
+                <button onClick={() => setShowCreateModal(false)} className="text-slate-500 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
               <form onSubmit={handleCreateStudent} className="space-y-3 text-xs">
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Mã Học Viên (VD: HV003)</label>
+                    <label className="block text-slate-300 font-semibold mb-1">Mã Học Viên (VD: HV007)</label>
                     <input
                       type="text"
                       required
-                      value={formData.maHocVien}
-                      onChange={(e) => setFormData({ ...formData, maHocVien: e.target.value })}
+                      value={createFormData.maHocVien}
+                      onChange={(e) => setCreateFormData({ ...createFormData, maHocVien: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
@@ -185,8 +267,8 @@ export default function AdminStudentsPage() {
                     <input
                       type="text"
                       required
-                      value={formData.hoTen}
-                      onChange={(e) => setFormData({ ...formData, hoTen: e.target.value })}
+                      value={createFormData.hoTen}
+                      onChange={(e) => setCreateFormData({ ...createFormData, hoTen: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
@@ -198,18 +280,18 @@ export default function AdminStudentsPage() {
                     <input
                       type="text"
                       required
-                      value={formData.tenDangNhap}
-                      onChange={(e) => setFormData({ ...formData, tenDangNhap: e.target.value })}
+                      value={createFormData.tenDangNhap}
+                      onChange={(e) => setCreateFormData({ ...createFormData, tenDangNhap: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Mật Khẩu Mặc Định</label>
+                    <label className="block text-slate-300 font-semibold mb-1">Mật Khẩu Khởi Tạo</label>
                     <input
                       type="password"
                       required
-                      value={formData.matKhau}
-                      onChange={(e) => setFormData({ ...formData, matKhau: e.target.value })}
+                      value={createFormData.matKhau}
+                      onChange={(e) => setCreateFormData({ ...createFormData, matKhau: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
@@ -221,8 +303,8 @@ export default function AdminStudentsPage() {
                     <input
                       type="email"
                       required
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      value={createFormData.email}
+                      onChange={(e) => setCreateFormData({ ...createFormData, email: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
@@ -230,8 +312,8 @@ export default function AdminStudentsPage() {
                     <label className="block text-slate-300 font-semibold mb-1">Số Điện Thoại</label>
                     <input
                       type="text"
-                      value={formData.soDienThoai}
-                      onChange={(e) => setFormData({ ...formData, soDienThoai: e.target.value })}
+                      value={createFormData.soDienThoai}
+                      onChange={(e) => setCreateFormData({ ...createFormData, soDienThoai: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
@@ -241,8 +323,8 @@ export default function AdminStudentsPage() {
                   <div>
                     <label className="block text-slate-300 font-semibold mb-1">Trình Độ CEFR</label>
                     <select
-                      value={formData.trinhDoCEFR}
-                      onChange={(e) => setFormData({ ...formData, trinhDoCEFR: e.target.value as TrinhDoCEFR })}
+                      value={createFormData.trinhDoCEFR}
+                      onChange={(e) => setCreateFormData({ ...createFormData, trinhDoCEFR: e.target.value as TrinhDoCEFR })}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
                     >
                       <option value="A1">A1 - Sơ Cấp</option>
@@ -257,8 +339,8 @@ export default function AdminStudentsPage() {
                     <label className="block text-slate-300 font-semibold mb-1">Nguồn Đánh Giá</label>
                     <input
                       type="text"
-                      value={formData.nguonDanhGia}
-                      onChange={(e) => setFormData({ ...formData, nguonDanhGia: e.target.value })}
+                      value={createFormData.nguonDanhGia}
+                      onChange={(e) => setCreateFormData({ ...createFormData, nguonDanhGia: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
@@ -267,16 +349,140 @@ export default function AdminStudentsPage() {
                 <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
                   <button
                     type="button"
-                    onClick={() => setShowModal(false)}
+                    onClick={() => setShowCreateModal(false)}
                     className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold"
                   >
                     Hủy
                   </button>
-                  <button type="submit" className="px-5 py-2 rounded-xl bg-indigo-600 text-white font-semibold">
-                    Lưu Hồ Sơ
+                  <button type="submit" className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold">
+                    Lưu Học Viên
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Sửa Học Viên */}
+        {editingStudent && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4">
+              <div className="flex justify-between items-center pb-2 border-b border-slate-800">
+                <h3 className="text-base font-bold text-white">
+                  Cập Nhật Hồ Sơ: <span className="text-indigo-400 font-mono">{editingStudent.maHocVien}</span>
+                </h3>
+                <button onClick={() => setEditingStudent(null)} className="text-slate-500 hover:text-white">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateStudent} className="space-y-3 text-xs">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Họ Và Tên</label>
+                  <input
+                    type="text"
+                    required
+                    value={editFormData.hoTen}
+                    onChange={(e) => setEditFormData({ ...editFormData, hoTen: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Số Điện Thoại</label>
+                    <input
+                      type="text"
+                      value={editFormData.soDienThoai}
+                      onChange={(e) => setEditFormData({ ...editFormData, soDienThoai: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Trình Độ CEFR</label>
+                    <select
+                      value={editFormData.trinhDoCEFR}
+                      onChange={(e) => setEditFormData({ ...editFormData, trinhDoCEFR: e.target.value as TrinhDoCEFR })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="A1">A1 - Sơ Cấp</option>
+                      <option value="A2">A2 - Tiền Trung Cấp</option>
+                      <option value="B1">B1 - Trung Cấp</option>
+                      <option value="B2">B2 - Trung Cao Cấp</option>
+                      <option value="C1">C1 - Cao Cấp</option>
+                      <option value="C2">C2 - Thành Thạo</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Nguồn Đánh Giá</label>
+                    <input
+                      type="text"
+                      value={editFormData.nguonDanhGia}
+                      onChange={(e) => setEditFormData({ ...editFormData, nguonDanhGia: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Trạng Thái</label>
+                    <select
+                      value={editFormData.trangThai}
+                      onChange={(e) => setEditFormData({ ...editFormData, trangThai: e.target.value })}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="DANG_HOC">DANG_HOC (Đang học)</option>
+                      <option value="DA_TOT_NGHIEP">DA_TOT_NGHIEP (Đã tốt nghiệp)</option>
+                      <option value="BAO_LUU">BAO_LUU (Bảo lưu)</option>
+                      <option value="NGHI_HOC">NGHI_HOC (Nghỉ học)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => setEditingStudent(null)}
+                    className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-semibold"
+                  >
+                    Hủy
+                  </button>
+                  <button type="submit" className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold">
+                    Cập Nhật
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Xác Nhận Xóa */}
+        {deletingStudent && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-slate-900 border border-rose-500/30 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
+              <div className="flex items-center space-x-3 text-rose-400">
+                <AlertTriangle className="w-6 h-6 shrink-0" />
+                <h3 className="text-base font-bold text-white">Xác Nhận Xóa Học Viên</h3>
+              </div>
+              <p className="text-xs text-slate-300">
+                Bạn có chắc chắn muốn xóa hồ sơ học viên{' '}
+                <strong className="text-white">{deletingStudent.hoTen}</strong> (Mã: {deletingStudent.maHocVien})? Thao tác này sẽ xóa toàn bộ dữ liệu tài khoản liên quan.
+              </p>
+              <div className="flex justify-end space-x-3 pt-3 border-t border-slate-800">
+                <button
+                  onClick={() => setDeletingStudent(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                >
+                  Hủy
+                </button>
+                <button
+                  onClick={handleDeleteStudent}
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-lg shadow-rose-600/30"
+                >
+                  Đồng Ý Xóa
+                </button>
+              </div>
             </div>
           </div>
         )}

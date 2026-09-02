@@ -4,7 +4,12 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateStudentDto, UpdateStudentDto } from './dto/users.dto';
+import {
+  CreateStudentDto,
+  UpdateStudentDto,
+  CreateTeacherDto,
+  UpdateTeacherDto,
+} from './dto/users.dto';
 import { VaiTro } from '@prisma/client';
 import * as argon2 from 'argon2';
 
@@ -19,6 +24,10 @@ export class UsersService {
       ),
     );
   }
+
+  // ============================================================================
+  // HỌC VIÊN (STUDENT) CRUD
+  // ============================================================================
 
   /**
    * UC002 — Danh sách học viên (phân trang, tìm kiếm)
@@ -88,7 +97,6 @@ export class UsersService {
    * UC002 — Tiếp nhận học viên mới (Tạo tài khoản + Hồ sơ trong Transaction)
    */
   async createStudent(dto: CreateStudentDto) {
-    // Kiểm tra trùng username hoặc email
     const existingUser = await this.prisma.nguoiDung.findFirst({
       where: {
         OR: [{ tenDangNhap: dto.tenDangNhap }, { email: dto.email }],
@@ -99,7 +107,6 @@ export class UsersService {
       throw new ConflictException('Tên đăng nhập hoặc Email đã tồn tại.');
     }
 
-    // Kiểm tra trùng mã học viên
     const existingHV = await this.prisma.hoSoHocVien.findUnique({
       where: { maHocVien: dto.maHocVien },
     });
@@ -109,7 +116,6 @@ export class UsersService {
 
     const hashedPassword = await argon2.hash(dto.matKhau);
 
-    // ACID Transaction tạo cả tài khoản và hồ sơ
     const result = await this.prisma.$transaction(async (tx) => {
       const user = await tx.nguoiDung.create({
         data: {
@@ -145,21 +151,69 @@ export class UsersService {
    * UC002 — Cập nhật thông tin học viên
    */
   async updateStudent(id: number, dto: UpdateStudentDto) {
-    await this.findStudentById(id);
-
-    const updated = await this.prisma.hoSoHocVien.update({
+    const student = await this.prisma.hoSoHocVien.findUnique({
       where: { id: BigInt(id) },
-      data: {
-        hoTen: dto.hoTen,
-        trinhDoCEFR: dto.trinhDoCEFR,
-        nguonDanhGia: dto.nguonDanhGia,
-        lichRanhJson: dto.lichRanhJson,
-        trangThai: dto.trangThai,
-      },
+    });
+    if (!student) throw new NotFoundException('Không tìm thấy học viên.');
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      if (dto.soDienThoai && student.nguoiDungId) {
+        await tx.nguoiDung.update({
+          where: { id: student.nguoiDungId },
+          data: { soDienThoai: dto.soDienThoai },
+        });
+      }
+
+      return tx.hoSoHocVien.update({
+        where: { id: BigInt(id) },
+        data: {
+          hoTen: dto.hoTen,
+          trinhDoCEFR: dto.trinhDoCEFR,
+          diaChi: dto.diaChi,
+          nguonDanhGia: dto.nguonDanhGia,
+          lichRanhJson: dto.lichRanhJson,
+          trangThai: dto.trangThai,
+        },
+      });
     });
 
     return this.serializeBigInt(updated);
   }
+
+  /**
+   * UC002 — Xóa học viên
+   */
+  async deleteStudent(id: number) {
+    const student = await this.prisma.hoSoHocVien.findUnique({
+      where: { id: BigInt(id) },
+    });
+    if (!student) throw new NotFoundException('Không tìm thấy học viên.');
+
+    await this.prisma.$transaction(async (tx) => {
+      // Xóa các bảng phụ liên quan nếu có
+      await tx.banGhiDiemDanh.deleteMany({ where: { hocVienId: BigInt(id) } });
+      await tx.ketQuaHocTap.deleteMany({ where: { hocVienId: BigInt(id) } });
+      
+      const dangKy = await tx.dangKyHoc.findMany({ where: { hocVienId: BigInt(id) } });
+      for (const dk of dangKy) {
+        await tx.thanhToan.deleteMany({ where: { hoaDon: { dangKyHocId: dk.id } } });
+        await tx.hoaDon.deleteMany({ where: { dangKyHocId: dk.id } });
+      }
+      await tx.dangKyHoc.deleteMany({ where: { hocVienId: BigInt(id) } });
+      await tx.hoaDon.deleteMany({ where: { hocVienId: BigInt(id) } });
+
+      await tx.hoSoHocVien.delete({ where: { id: BigInt(id) } });
+      if (student.nguoiDungId) {
+        await tx.nguoiDung.delete({ where: { id: student.nguoiDungId } });
+      }
+    });
+
+    return { message: 'Đã xóa hồ sơ học viên thành công.' };
+  }
+
+  // ============================================================================
+  // GIÁO VIÊN (TEACHER) CRUD
+  // ============================================================================
 
   /**
    * UC005 — Danh sách giáo viên
@@ -170,10 +224,139 @@ export class UsersService {
         nguoiDung: {
           select: { email: true, soDienThoai: true, dangHoatDong: true },
         },
+        phanCong: {
+          where: { trangThai: 'DANG_PHU_TRACH' },
+          include: {
+            lopHoc: { select: { id: true, maLopHoc: true, tenLopHoc: true } },
+          },
+        },
       },
       orderBy: { id: 'asc' },
     });
 
     return this.serializeBigInt(teachers);
+  }
+
+  /**
+   * UC005 — Chi tiết giáo viên
+   */
+  async findTeacherById(id: number) {
+    const teacher = await this.prisma.hoSoGiaoVien.findUnique({
+      where: { id: BigInt(id) },
+      include: {
+        nguoiDung: {
+          select: { email: true, soDienThoai: true, dangHoatDong: true },
+        },
+        phanCong: {
+          include: {
+            lopHoc: true,
+          },
+        },
+      },
+    });
+
+    if (!teacher) throw new NotFoundException('Không tìm thấy giáo viên.');
+    return this.serializeBigInt(teacher);
+  }
+
+  /**
+   * UC005 — Thêm giáo viên mới
+   */
+  async createTeacher(dto: CreateTeacherDto) {
+    const existingUser = await this.prisma.nguoiDung.findFirst({
+      where: {
+        OR: [{ tenDangNhap: dto.tenDangNhap }, { email: dto.email }],
+      },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Tên đăng nhập hoặc Email đã tồn tại.');
+    }
+
+    const existingGV = await this.prisma.hoSoGiaoVien.findUnique({
+      where: { maGiaoVien: dto.maGiaoVien },
+    });
+    if (existingGV) {
+      throw new ConflictException('Mã giáo viên đã tồn tại.');
+    }
+
+    const hashedPassword = await argon2.hash(dto.matKhau);
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.nguoiDung.create({
+        data: {
+          tenDangNhap: dto.tenDangNhap,
+          matKhauMaHoa: hashedPassword,
+          vaiTro: VaiTro.GIAO_VIEN,
+          email: dto.email,
+          soDienThoai: dto.soDienThoai,
+        },
+      });
+
+      const teacher = await tx.hoSoGiaoVien.create({
+        data: {
+          nguoiDungId: user.id,
+          maGiaoVien: dto.maGiaoVien,
+          hoTen: dto.hoTen,
+          chuyenMon: dto.chuyenMon,
+          bangCap: dto.bangCap,
+        },
+      });
+
+      return { user, teacher };
+    });
+
+    return this.serializeBigInt(result.teacher);
+  }
+
+  /**
+   * UC005 — Cập nhật thông tin giáo viên
+   */
+  async updateTeacher(id: number, dto: UpdateTeacherDto) {
+    const teacher = await this.prisma.hoSoGiaoVien.findUnique({
+      where: { id: BigInt(id) },
+    });
+    if (!teacher) throw new NotFoundException('Không tìm thấy giáo viên.');
+
+    const updated = await this.prisma.$transaction(async (tx) => {
+      if (dto.soDienThoai && teacher.nguoiDungId) {
+        await tx.nguoiDung.update({
+          where: { id: teacher.nguoiDungId },
+          data: { soDienThoai: dto.soDienThoai },
+        });
+      }
+
+      return tx.hoSoGiaoVien.update({
+        where: { id: BigInt(id) },
+        data: {
+          hoTen: dto.hoTen,
+          chuyenMon: dto.chuyenMon,
+          bangCap: dto.bangCap,
+          trangThai: dto.trangThai,
+        },
+      });
+    });
+
+    return this.serializeBigInt(updated);
+  }
+
+  /**
+   * UC005 — Xóa giáo viên
+   */
+  async deleteTeacher(id: number) {
+    const teacher = await this.prisma.hoSoGiaoVien.findUnique({
+      where: { id: BigInt(id) },
+    });
+    if (!teacher) throw new NotFoundException('Không tìm thấy giáo viên.');
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.phanCongGiaoVien.deleteMany({ where: { giaoVienId: BigInt(id) } });
+      await tx.hoSoGiaoVien.delete({ where: { id: BigInt(id) } });
+      if (teacher.nguoiDungId) {
+        await tx.nguoiDung.delete({ where: { id: teacher.nguoiDungId } });
+      }
+    });
+
+    return { message: 'Đã xóa thông tin giáo viên thành công.' };
   }
 }

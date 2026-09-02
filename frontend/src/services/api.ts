@@ -83,7 +83,12 @@ export const usersService = {
   getStudentById: async (id: number) => (await api.get(`/students/${id}`)).data,
   createStudent: async (data: any) => (await api.post('/students', data)).data,
   updateStudent: async (id: number, data: any) => (await api.put(`/students/${id}`, data)).data,
+  deleteStudent: async (id: number) => (await api.delete(`/students/${id}`)).data,
   getTeachers: async () => (await api.get('/teachers')).data,
+  getTeacherById: async (id: number) => (await api.get(`/teachers/${id}`)).data,
+  createTeacher: async (data: any) => (await api.post('/teachers', data)).data,
+  updateTeacher: async (id: number, data: any) => (await api.put(`/teachers/${id}`, data)).data,
+  deleteTeacher: async (id: number) => (await api.delete(`/teachers/${id}`)).data,
 };
 
 export const enrollmentsService = {
