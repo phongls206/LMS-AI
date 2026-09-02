@@ -61,6 +61,14 @@ export class AuthService {
     };
   }
 
+  private serializeBigInt(obj: any) {
+    return JSON.parse(
+      JSON.stringify(obj, (key, value) =>
+        typeof value === 'bigint' ? Number(value) : value,
+      ),
+    );
+  }
+
   /**
    * UC001 — Lấy thông tin người dùng hiện tại từ JWT
    */
@@ -75,17 +83,17 @@ export class AuthService {
         vaiTro: true,
         dangHoatDong: true,
         hoSoHocVien: {
-          select: { maHocVien: true, hoTen: true, trinhDoCEFR: true },
+          select: { id: true, maHocVien: true, hoTen: true, trinhDoCEFR: true },
         },
         hoSoGiaoVien: {
-          select: { maGiaoVien: true, hoTen: true, chuyenMon: true },
+          select: { id: true, maGiaoVien: true, hoTen: true, chuyenMon: true },
         },
       },
     });
 
     if (!user) throw new NotFoundException('Không tìm thấy tài khoản.');
 
-    return { ...user, id: Number(user.id) };
+    return this.serializeBigInt(user);
   }
 
   /**

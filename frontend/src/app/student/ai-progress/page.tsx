@@ -44,15 +44,14 @@ export default function StudentAiProgressPage() {
           if (schedule.length > 0) {
             const firstClassId = schedule[0].lopHocId || schedule[0].lopHoc?.id;
             setSelectedClassId(Number(firstClassId));
-          }
-          if (me.hoSoHocVien?.id) {
-            setSelectedStudentId(Number(me.hoSoHocVien.id));
+            const sId = me.hoSoHocVien?.id || schedule[0].hocVienId || schedule[0].hocVien?.id;
+            if (sId) setSelectedStudentId(Number(sId));
           }
         } else if (me.vaiTro === 'GIAO_VIEN') {
           const teacherSchedule = await classesService.getTeacherSchedule();
           setClasses(teacherSchedule);
           if (teacherSchedule.length > 0) {
-            const firstClassId = Number(teacherSchedule[0].id);
+            const firstClassId = Number(teacherSchedule[0].id || teacherSchedule[0].lopHocId);
             setSelectedClassId(firstClassId);
             loadStudentsForClass(firstClassId);
           }
@@ -74,14 +73,35 @@ export default function StudentAiProgressPage() {
     initData();
   }, []);
 
-  // Khi giáo viên/quản lý đổi lớp, load danh sách học viên trong lớp đó
+  // Khi giáo viên/quản lý đổi lớp, load danh sách học viên trong lớp đó từ cả 2 nguồn (Đăng ký học & Bảng điểm)
   const loadStudentsForClass = async (classId: number) => {
     try {
-      const res = await gradesService.getClassGrades(classId);
-      const studentGrades = res.ketQua || [];
-      setStudentsInClass(studentGrades);
-      if (studentGrades.length > 0) {
-        setSelectedStudentId(Number(studentGrades[0].hocVienId || studentGrades[0].hocVien?.id));
+      // 1. Lấy thông tin lớp học (đã include dangKyHoc -> hocVien)
+      const classInfo = await classesService.getById(classId);
+      const enrolledStudents = (classInfo?.dangKyHoc || [])
+        .filter((d: any) => d.hocVien)
+        .map((d: any) => d.hocVien);
+
+      // 2. Lấy thêm từ bảng điểm nếu có
+      let gradeStudents: any[] = [];
+      try {
+        const gradeRecords = await gradesService.getClassGrades(classId);
+        const gradeList = Array.isArray(gradeRecords) ? gradeRecords : (gradeRecords?.ketQua || []);
+        gradeStudents = gradeList.filter((g: any) => g.hocVien).map((g: any) => g.hocVien);
+      } catch (e) {
+        // ignore
+      }
+
+      // Gộp và loại trùng lặp học viên theo id
+      const studentMap = new Map<number, any>();
+      enrolledStudents.forEach((s: any) => studentMap.set(Number(s.id), s));
+      gradeStudents.forEach((s: any) => studentMap.set(Number(s.id), s));
+
+      const mergedStudents = Array.from(studentMap.values());
+      setStudentsInClass(mergedStudents);
+
+      if (mergedStudents.length > 0) {
+        setSelectedStudentId(Number(mergedStudents[0].id));
       } else {
         setSelectedStudentId(null);
       }
@@ -172,11 +192,17 @@ export default function StudentAiProgressPage() {
                   {studentsInClass.length === 0 ? (
                     <option value="">(Lớp chưa có danh sách học viên)</option>
                   ) : (
-                    studentsInClass.map((st: any) => (
-                      <option key={st.hocVienId || st.hocVien?.id} value={st.hocVienId || st.hocVien?.id}>
-                        [{st.hocVien?.maHocVien}] {st.hocVien?.hoTen} (CEFR {st.hocVien?.trinhDoCEFR})
-                      </option>
-                    ))
+                    studentsInClass.map((st: any) => {
+                      const studentId = st.id || st.hocVienId || st.hocVien?.id;
+                      const maHV = st.maHocVien || st.hocVien?.maHocVien || 'HV';
+                      const hoTen = st.hoTen || st.hocVien?.hoTen || 'Học viên';
+                      const cefr = st.trinhDoCEFR || st.hocVien?.trinhDoCEFR;
+                      return (
+                        <option key={studentId} value={studentId}>
+                          [{maHV}] {hoTen} {cefr ? `(CEFR ${cefr})` : ''}
+                        </option>
+                      );
+                    })
                   )}
                 </select>
               </div>
