@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
 import { authService } from '../services/api';
 import { VaiTro } from '../types';
-import { Bell, Sparkles } from 'lucide-react';
+import { Bell, Sparkles, KeyRound } from 'lucide-react';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -85,11 +86,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <span>Gemini AI Ready</span>
             </div>
 
+            <Link
+              href="/change-password"
+              title="Đổi mật khẩu"
+              className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition"
+            >
+              <KeyRound className="w-4 h-4" />
+            </Link>
+
             <button className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition">
               <Bell className="w-4 h-4" />
             </button>
 
-            <div className="flex items-center space-x-3 pl-2 border-l border-slate-800">
+            <Link href="/change-password" className="flex items-center space-x-3 pl-2 border-l border-slate-800 hover:opacity-80 transition cursor-pointer" title="Đổi mật khẩu tài khoản">
               <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xs text-white uppercase">
                 {user.tenDangNhap?.slice(0, 2) || 'AD'}
               </div>
@@ -97,7 +106,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <p className="text-xs font-semibold text-slate-200 truncate">{user.tenDangNhap}</p>
                 <p className="text-[11px] text-slate-400 truncate">{user.email}</p>
               </div>
-            </div>
+            </Link>
           </div>
         </header>
 
