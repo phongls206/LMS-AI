@@ -78,7 +78,7 @@ export default function StudentDashboardPage() {
           >
             <BookOpen className="w-6 h-6 text-purple-400 mb-2 group-hover:scale-110 transition" />
             <h4 className="font-bold text-white text-sm">AI Luyện Trắc Nghiệm</h4>
-            <p className="text-xs text-slate-400 mt-1">Luyện 5 câu hỏi kèm giải thích</p>
+            <p className="text-xs text-slate-400 mt-1">Luyện 5 - 15 câu trắc nghiệm kèm giải thích</p>
           </Link>
 
           <Link

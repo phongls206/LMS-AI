@@ -228,12 +228,68 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
   }
 
   /**
-   * UC013 — AI Sinh bài luyện tập trắc nghiệm (Tùy chọn 5, 10, 15 câu, Validation & Fallback đề mẫu)
+   * UC013 — AI Sinh bài luyện tập trắc nghiệm (Smart Caching + Gemini API + Fallback)
    */
   async generateExercises(dto: GenerateExercisesDto, userId: number) {
     const startTime = Date.now();
     const count = dto.soLuong && [5, 10, 15].includes(Number(dto.soLuong)) ? Number(dto.soLuong) : 5;
 
+    // 1. SMART DB CACHE LOOKUP: Kiểm tra xem trong CSDL đã có bộ đề cho chủ đề & trình độ này chưa
+    try {
+      const cachedRecord = await this.prisma.yeuCauAI.findFirst({
+        where: {
+          loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
+          trangThai: TrangThaiYeuCauAI.THANH_CONG,
+          promptInput: {
+            contains: `"${dto.chuDe}"`,
+          },
+        },
+        orderBy: { id: 'desc' },
+      });
+
+      if (cachedRecord && cachedRecord.validatedOutputJson) {
+        const cachedData = cachedRecord.validatedOutputJson as any;
+        if (
+          cachedData.trinhDo === dto.trinhDo &&
+          Array.isArray(cachedData.cauHoi) &&
+          cachedData.cauHoi.length >= count
+        ) {
+          this.logger.log(`⚡ AI Cache Hit: Trả về bộ đề từ CSDL cho chủ đề "${dto.chuDe}" [${dto.trinhDo}]`);
+          const slicedQuestions = cachedData.cauHoi.slice(0, count).map((q: any, idx: number) => ({
+            ...q,
+            id: idx + 1,
+          }));
+
+          const responseData = {
+            ...cachedData,
+            cauHoi: slicedQuestions,
+          };
+
+          // Ghi nhận log truy vấn cache
+          const duration = Date.now() - startTime;
+          await this.logAiRequest(
+            userId,
+            LoaiChucNangAI.SINH_BAI_TAP,
+            `[CACHE_HIT] ${dto.chuDe} - ${dto.trinhDo} - ${count} câu`,
+            '[CACHED_RESULT]',
+            responseData,
+            TrangThaiYeuCauAI.THANH_CONG,
+            duration,
+          );
+
+          return {
+            success: true,
+            mode: 'AI_CACHE',
+            cached: true,
+            data: responseData,
+          };
+        }
+      }
+    } catch (cacheErr: any) {
+      this.logger.warn('Lỗi kiểm tra cache:', cacheErr?.message);
+    }
+
+    // 2. NẾU CHƯA CÓ TRONG CACHE -> GỌI GOOGLE GEMINI FLASH
     const prompt = `
 Bạn là giáo viên tiếng Anh chuyên nghiệp.
 Nhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm đúng ${count} câu về chủ đề "${dto.chuDe}", độ khó chuẩn CEFR "${dto.trinhDo}".

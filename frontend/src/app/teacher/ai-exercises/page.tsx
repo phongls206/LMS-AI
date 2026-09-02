@@ -168,8 +168,8 @@ export default function TeacherAiExercisesPage() {
         {loading && (
           <div className="py-20 flex flex-col items-center justify-center space-y-3">
             <div className="w-10 h-10 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin"></div>
-            <p className="text-xs text-purple-300 font-medium animate-pulse">
-              Gemini AI đang biên soạn 5 câu hỏi chuẩn CEFR {cefr}...
+            <p className="text-xs text-slate-400 animate-pulse font-medium">
+              Gemini AI đang biên soạn {soLuong} câu hỏi chuẩn CEFR {cefr}...
             </p>
           </div>
         )}
@@ -193,8 +193,20 @@ export default function TeacherAiExercisesPage() {
                   <Eye className="w-3.5 h-3.5" />
                   <span>{teacherViewKey ? 'Ẩn Đáp Án Mẫu' : 'Xem Nhanh Đáp Án (Teacher Mode)'}</span>
                 </button>
-                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
-                  Mode: {result.mode}
+                <span
+                  className={`text-[11px] font-medium px-2.5 py-1 rounded-full border ${
+                    result.mode === 'AI_CACHE'
+                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                      : result.mode === 'AI_GEMINI'
+                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                      : 'bg-slate-800 text-slate-300 border-slate-700'
+                  }`}
+                >
+                  {result.mode === 'AI_CACHE'
+                    ? '⚡ AI Cache DB (Tối ưu 0 Token)'
+                    : result.mode === 'AI_GEMINI'
+                    ? '✨ Google Gemini AI'
+                    : '📦 Template Fallback'}
                 </span>
               </div>
             </div>

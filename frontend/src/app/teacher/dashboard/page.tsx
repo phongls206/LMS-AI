@@ -57,7 +57,7 @@ export default function TeacherDashboardPage() {
           >
             <Sparkles className="w-6 h-6 text-purple-400 mb-2 group-hover:scale-110 transition" />
             <h4 className="font-bold text-white text-sm">Sinh Đề Trắc Nghiệm AI</h4>
-            <p className="text-xs text-slate-400 mt-1">Tạo 5 câu hỏi chuẩn CEFR kèm đáp án</p>
+            <p className="text-xs text-slate-400 mt-1">Tạo 5 - 15 câu hỏi chuẩn CEFR kèm đáp án</p>
           </Link>
         </div>
 
