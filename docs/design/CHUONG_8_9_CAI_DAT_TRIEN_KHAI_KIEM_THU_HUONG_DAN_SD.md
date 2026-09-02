@@ -2,138 +2,131 @@
 
 ---
 
-## 8.1 Môi Trường Và Yêu Cầu Kỹ Thuật
+## 8.1 Môi Trường và Công Nghệ Sử Dụng
 
-### 8.1.1 Yêu cầu Cấu hình Phần cứng
-Hệ thống Quản lý trung tâm ngoại ngữ tích hợp AI (ETC English) được xây dựng theo kiến trúc phân tán (Multi-tier Cloud-ready Architecture), cho phép tối ưu hóa tài nguyên phần cứng máy chủ và máy khách, giảm thiểu chi phí đầu tư hạ tầng ban đầu:
+Hệ thống Quản lý Trung tâm Ngoại ngữ tích hợp Trí tuệ Nhân tạo (ETC English LMS AI) được thiết kế và xây dựng theo mô hình phân tán hiện đại (Multi-tier Cloud-Native Architecture), tách biệt hoàn toàn giữa tầng Trình diễn (Frontend), tầng Xử lý nghiệp vụ (Backend), tầng Dữ liệu (Database Tier) và tầng Trí tuệ nhân tạo (GenAI Engine).
 
-*Bảng 8.1: Yêu cầu cấu hình phần cứng tối thiểu và khuyến nghị*
-| Thành phần | Cấu hình tối thiểu | Cấu hình khuyến nghị |
-|:---|:---|:---|
-| **Máy chủ Phát triển (Dev Server)** | CPU 2 Cores, RAM 4GB, Ổ cứng trống 5GB | CPU 4 Cores, RAM 8GB–16GB, Ổ cứng SSD 20GB |
-| **Máy khách Người dùng (Client)** | Thiết bị có trình duyệt web (PC, Laptop, Smartphone) | PC/Laptop màn hình Full HD, kết nối Internet ổn định |
-| **Băng thông Mạng** | Tối thiểu 5 Mbps (truy vấn và gọi GenAI API) | Khuyến nghị 20 Mbps trở lên để tải trang mượt mà |
-
----
-
-### 8.1.2 Yêu cầu Môi trường Phần mềm & Công nghệ
-Hệ thống được phát triển hoàn toàn trên nền tảng TypeScript xuyên suốt từ Frontend đến Backend:
-
-*Bảng 8.2: Danh mục công nghệ và phiên bản phần mềm cốt lõi*
-| Thành phần | Công nghệ / Framework | Phiên bản | Mục đích sử dụng |
+*Bảng 8.1: Bảng tổng hợp danh mục công nghệ và phần mềm sử dụng trong dự án*
+| Thành phần kiến trúc | Công nghệ / Framework | Phiên bản | Vai trò và Mục đích sử dụng |
 |:---|:---|:---|:---|
-| **Runtime Môi trường** | Node.js (LTS) | `v20.x` / `v22.x` | Môi trường thực thi JavaScript/TypeScript phía máy chủ |
-| **Quản lý Gói** | npm | `10.x+` | Quản lý và cài đặt các thư viện phụ thuộc |
-| **Backend Framework** | NestJS | `v11.x` / `v12.x` | Xây dựng RESTful API kiến trúc phân tầng Modular |
-| **ORM / Data Access Layer** | Prisma ORM | `v6.4.1` (Stable) | Quản lý Schema, Migration và Type-safe Database Client |
-| **Frontend Framework** | Next.js (App Router) | `v14.x` / `v16.x` | Xây dựng giao diện SSR/CSR với TypeScript |
-| **CSS & Giao diện** | TailwindCSS + Lucide Icons | `v3.4.x` / `v4.x` | Thiết kế giao diện hiện đại, Responsive đa thiết bị |
-| **Cơ sở Dữ liệu** | PostgreSQL (Neon.tech) | `v15+ / v16+` | CSDL quan hệ Serverless Cloud Database |
-| **Trí tuệ Nhân tạo** | Google Gemini SDK | `@google/genai` | Tích hợp mô hình ngôn ngữ lớn (Gemini 2.5 Flash/Pro) |
-| **Bảo mật & Mã hóa** | Argon2 + JWT | `argon2`, `@nestjs/jwt` | Băm mật khẩu an toàn và xác thực phân quyền Stateless |
+| **Runtime Môi trường** | Node.js (LTS) | `v20.x / v22.x` | Môi trường thực thi JavaScript/TypeScript hiệu năng cao phía máy chủ |
+| **Quản lý Gói (Package Manager)** | npm | `v10.x+` | Quản lý và đồng bộ toàn bộ thư viện phụ thuộc của dự án |
+| **Tầng Xử lý Nghiệp vụ (Backend)** | NestJS Framework | `v11.x / v12.x` | Xây dựng 32 RESTful APIs theo kiến trúc Modular, Dependency Injection |
+| **Tầng Truy xuất Dữ liệu (ORM)** | Prisma ORM | `v6.4.1 (Stable)` | Quản lý Schema 14 bảng 3NF, Migration và Type-safe Client |
+| **Tầng Giao diện Người dùng (Frontend)** | Next.js (App Router) | `v14.x / v16.x` | Xây dựng 23 màn hình SPA/SSR với TypeScript, Routing linh hoạt |
+| **Thiết kế Giao diện & Trực quan** | TailwindCSS + Lucide Icons | `v3.4.x / v4.x` | Hệ thống Design System hiện đại, Glassmorphism và Responsive đa thiết bị |
+| **Hệ Quản trị Cơ sở Dữ liệu** | PostgreSQL (Neon.tech) | `v15+ / v16+` | CSDL quan hệ Serverless Cloud Database hoạt động 24/7 |
+| **Động cơ Trí tuệ Nhân tạo (GenAI)** | Google Gemini SDK | `@google/genai` | Tích hợp mô hình ngôn ngữ lớn (Gemini 2.5 Flash/Pro) vào 3 tính năng trợ giảng |
+| **Bảo mật & Mã hóa Danh tính** | Argon2 + JWT | `argon2`, `@nestjs/jwt` | Băm mật khẩu chống brute-force và cấp phát Token xác thực Stateless |
 
 ---
 
-### 8.1.3 Cấu trúc Thư mục Mã Nguồn Chuẩn
-Dự án được tổ chức theo mô hình Monorepo rõ ràng giữa Backend và Frontend:
+## 8.2 Cài Đặt và Khởi Tạo Cơ Sở Dữ Liệu
 
-```text
-D:\MyProjects\lms-ai\
-├── backend/                        # Máy chủ Backend (NestJS 12)
-│   ├── prisma/
-│   │   ├── schema.prisma           # 14 Models thực thể chuẩn 3NF
-│   │   └── seed.ts                 # Script nạp dữ liệu mẫu ban đầu
-│   ├── src/
-│   │   ├── common/                 # Guards, Decorators, Strategies (RBAC)
-│   │   ├── modules/
-│   │   │   ├── auth/               # Module xác thực JWT & Argon2
-│   │   │   ├── users/              # Module học viên & giáo viên
-│   │   │   ├── courses/            # Module quản lý khóa học
-│   │   │   ├── classes/            # Module lớp học & lịch học (chống trùng phòng/GV)
-│   │   │   ├── enrollments/        # Module đăng ký lớp & hóa đơn học phí
-│   │   │   ├── attendances/        # Module buổi học & điểm danh 4 trạng thái
-│   │   │   ├── grades/             # Module bảng điểm (công thức 20/30/50)
-│   │   │   ├── statistics/         # Module báo cáo doanh thu & tỷ lệ hoàn thành
-│   │   │   └── ai/                 # Module tích hợp Gemini AI & Lọc ảo giác
-│   │   ├── prisma/                 # Prisma Module & Prisma Service
-│   │   ├── app.module.ts           # Root Module của NestJS
-│   │   └── main.ts                 # Điểm khởi chạy hệ thống, Swagger & Validation
-│   └── .env                        # File cấu hình biến môi trường Backend
-├── frontend/                       # Ứng dụng Giao diện (Next.js 14 App Router)
-│   ├── src/
-│   │   ├── app/                    # 23 Màn hình phân luồng theo 4 vai trò (RBAC)
-│   │   ├── components/             # AppLayout, Sidebar, Header phân quyền
-│   │   ├── services/               # Axios API Client với JWT Interceptor
-│   │   └── types/                  # TypeScript Data Models & DTO Interfaces
-└── docs/                           # Tài liệu thiết kế hệ thống & Đồ án
-```
+Cơ sở dữ liệu của hệ thống được lưu trữ trực tiếp trên hạ tầng đám mây Neon Serverless PostgreSQL (đặt tại cụm máy chủ AWS), đảm bảo tính khả dụng 24/7 và hỗ trợ mở rộng tài nguyên tự động.
+
+Quy trình khởi tạo CSDL được thực hiện qua công cụ Prisma ORM với 14 bảng quan hệ chuẩn 3NF (`nguoi_dung`, `ho_so_hoc_vien`, `ho_so_giao_vien`, `khoa_hoc`, `lop_hoc`, `lich_hoc`, `phan_cong_giao_vien`, `dang_ky_hoc`, `hoa_don`, `thanh_toan`, `buoi_hoc`, `ban_ghi_diem_danh`, `ket_qua_hoc_tap`, `yeu_cau_ai`):
+- **Đồng bộ Schema:** Chạy lệnh `npx prisma db push` để tạo toàn bộ bảng, khóa chính, khóa ngoại và ràng buộc toàn vẹn trên Neon Cloud.
+- **Nạp dữ liệu mẫu ban đầu:** Chạy script `npm run db:seed` để nạp sẵn tài khoản cho 4 vai trò (`admin01`, `teacher01`, `teacher02`, `staff01`, `student01`, `student02`), các khóa học và lớp học ban đầu.
 
 ---
 
-## 8.2 Cấu Hình Môi Trường & Quản Trị Bí Mật (Environment & Secrets)
+## 8.3 Kết Quả Cài Đặt Các Phân Hệ Chức Năng Chính
 
-### 8.2.1 Cấu hình Biến Môi Trường Backend (`backend/.env`)
-Toàn bộ thông tin cấu hình nhạy cảm được quản lý qua biến môi trường độc lập, tuyệt đối không hardcode vào mã nguồn:
+### 8.3.1 Phân Hệ 1: Đăng Nhập và Phân Quyền RBAC (Role-Based Access Control)
+Màn hình đăng nhập (`SCR-AUTH-01`) hỗ trợ xác thực danh tính an toàn qua giao thức JWT và mã hóa mật khẩu Argon2. Hệ thống tích hợp sẵn các nút chọn nhanh tài khoản mẫu cho 4 vai trò, tự động phân giải vai trò người dùng và điều hướng chính xác về Dashboard tương ứng:
 
-```env
-# Cổng dịch vụ Backend
-PORT=8000
+![Hình 8.1: Giao diện Đăng nhập hệ thống kèm nút chọn nhanh 4 vai trò (SCR-AUTH-01)](../images/01_login_screen.png)
+*Hình 8.1: Giao diện Đăng nhập hệ thống kèm nút chọn nhanh 4 vai trò (SCR-AUTH-01)*
 
-# Chuỗi kết nối Neon Serverless PostgreSQL (Pooler Mode hỗ trợ SSL)
-DATABASE_URL="postgresql://neondb_owner:npg_3lFnjQKIo5rM@ep-dark-resonance-axjf1mzr-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-
-# Khóa bí mật ký phát mã JWT (Stateless Token)
-JWT_SECRET="etc_english_center_jwt_secret_key_2026_super_secure"
-JWT_EXPIRES_IN="24h"
-
-# Khóa API Google Gemini AI (Tích hợp AI)
-GEMINI_API_KEY="AIzaSy...your_gemini_api_key_here..."
-
-# Cấu hình CORS cho phép Frontend truy cập
-FRONTEND_URL="http://localhost:3000"
-```
+![Hình 8.2: Giao diện Dashboard Quản trị trung tâm với các chỉ số thống kê tổng quan (SCR-ADM-01)](../images/02_admin_dashboard.png)
+*Hình 8.2: Giao diện Dashboard Quản trị trung tâm với các chỉ số thống kê tổng quan (SCR-ADM-01)*
 
 ---
 
-### 8.2.2 Cấu hình Chuỗi Kết Nối Cơ Sở Dữ Liệu Neon Cloud
-Hệ thống sử dụng đường dẫn kết nối dạng **Connection Pooler (PgBouncer)** của Neon.tech để tối ưu số lượng kết nối đồng thời từ NestJS, đồng thời bật chế độ mã hóa đường truyền bắt buộc (`sslmode=require`).
+### 8.3.2 Phân Hệ 2: Quản Lý Khóa Học, Lớp Học & Xếp Lịch (Chống Trùng Phòng Học)
+Phân hệ quản lý đào tạo cho phép Người Quản Lý quản lý danh mục khóa học, mở lớp học mới và xếp thời khóa biểu. Hệ thống tự động kiểm tra chống trùng phòng học (nếu một phòng học đã có lớp vào cùng thứ và khung giờ thì hệ thống sẽ từ chối lưu):
+
+![Hình 8.3: Giao diện Danh mục Khóa học và chuẩn đầu vào CEFR (SCR-ADM-02)](../images/03_admin_courses.png)
+*Hình 8.3: Giao diện Danh mục Khóa học và chuẩn đầu vào CEFR (SCR-ADM-02)*
+
+![Hình 8.4: Giao diện Quản lý Lớp học, Sĩ số và Xếp lịch phòng học (SCR-ADM-03)](../images/04_admin_classes.png)
+*Hình 8.4: Giao diện Quản lý Lớp học, Sĩ số và Xếp lịch phòng học (SCR-ADM-03)*
 
 ---
 
-## 8.3 Quy Trình Cài Đặt Và Khởi Tạo Cơ Sở Dữ Liệu
+### 8.3.3 Phân Hệ 3: Phân Công Giáo Viên & Quản Lý Hồ Sơ Học Viên
+Hệ thống hỗ trợ phân công giảng viên chính cho lớp học với cơ chế kiểm tra chống trùng lịch dạy (ngăn chặn việc phân công giảng viên dạy 2 lớp khác nhau trong cùng một ca học). Đồng thời, phân hệ quản lý học viên hỗ trợ tìm kiếm và lọc danh sách học viên theo từng trình độ CEFR:
 
-Quy trình thiết lập hệ thống từ mã nguồn được thực hiện theo 3 bước tuần tự:
-- **Bước 1: Cài đặt thư viện phụ thuộc (Dependencies):** Chạy `npm install` tại thư mục `backend` và `frontend`.
-- **Bước 2: Đồng bộ CSDL và Sinh Prisma Client:** Chạy `npx prisma db push` và `npx prisma generate` để tạo 14 bảng quan hệ 3NF trên Neon PostgreSQL.
-- **Bước 3: Nạp Dữ liệu Mẫu Ban Đầu (Database Seeding):** Chạy `npm run db:seed` để nạp 4 vai trò người dùng, 2 khóa học, 2 lớp học và lịch học.
+![Hình 8.5: Giao diện Quản lý Hồ sơ Học viên và bộ lọc theo trình độ CEFR (SCR-ADM-05)](../images/05_admin_students.png)
+*Hình 8.5: Giao diện Quản lý Hồ sơ Học viên và bộ lọc theo trình độ CEFR (SCR-ADM-05)*
 
-*Bảng 8.3: Danh mục tài khoản người dùng mẫu sau khi nạp Seeding*
-| Tên đăng nhập | Mật khẩu | Vai trò (RBAC) | Họ và Tên | Mô tả nghiệp vụ |
-|:---|:---|:---|:---|:---|
-| `admin01` | `Admin@123` | `QUAN_LY` | Nguyễn Quản Lý | Toàn quyền quản trị trung tâm, tài chính, phân công |
-| `teacher01` | `Admin@123` | `GIAO_VIEN` | Nguyễn Thị Lan | Giảng viên IELTS, TOEIC (Phụ trách lớp LOP01) |
-| `teacher02` | `Admin@123` | `GIAO_VIEN` | Trần Văn Minh | Giảng viên Giao tiếp (Phụ trách lớp LOP02) |
-| `staff01` | `Admin@123` | `TU_VAN_VIEN` | Lê Thị Tư Vấn | Tư vấn viên tiếp nhận học viên & thu phí tại quầy |
-| `student01` | `Admin@123` | `HOC_VIEN` | Phạm Văn An | Học viên trình độ CEFR B1 (Lớp LOP01) |
-| `student02` | `Admin@123` | `HOC_VIEN` | Hoàng Thị Bình | Học viên trình độ CEFR A2 (Lớp LOP02) |
+![Hình 8.6: Giao diện Tiếp nhận học viên mới và gán trình độ CEFR đầu vào (SCR-STA-02)](../images/14_staff_new_student.png)
+*Hình 8.6: Giao diện Tiếp nhận học viên mới và gán trình độ CEFR đầu vào (SCR-STA-02)*
 
 ---
 
-## 8.4 Quy Trình Khởi Chạy Hệ Thống Trên Môi Trường Cục Bộ
+### 8.3.4 Phân Hệ 4: Đăng Ký Lớp Học (Kiểm Tra 4 Điều Kiện) & Quản Lý Học Phí
+Khi học viên hoặc tư vấn viên thực hiện đăng ký lớp học, hệ thống tự động kiểm tra nghiêm ngặt 4 điều kiện nghiệp vụ:
+1. Sĩ số lớp hiện tại < 25 học viên.
+2. Học viên chưa từng đăng ký lớp này.
+3. Trình độ CEFR học viên >= chuẩn yêu cầu của khóa học.
+4. Lịch học không bị trùng với các lớp khác đang theo học.
 
-1. **Khởi chạy Máy chủ Backend NestJS:** `cd backend && npm run start:dev` (Backend chạy tại port 8000, Swagger UI tại `http://localhost:8000/api/docs`).
-2. **Khởi chạy Ứng dụng Giao diện Frontend Next.js:** `cd frontend && npm run dev` (Giao diện chạy tại `http://localhost:3000/login`).
-3. **Quản lý Dữ liệu Trực quan Qua Prisma Studio:** `cd backend && npx prisma studio` (Giao diện GUI quản lý 14 bảng CSDL tại `http://localhost:5555`).
+Sau khi đăng ký thành công, hệ thống tự động sinh Hóa đơn học phí trong cùng một ACID Transaction:
+
+![Hình 8.7: Giao diện Đăng ký Lớp học với cơ chế kiểm tra tự động 4 điều kiện (SCR-STU-02)](../images/10_student_enroll.png)
+*Hình 8.7: Giao diện Đăng ký Lớp học với cơ chế kiểm tra tự động 4 điều kiện (SCR-STU-02)*
+
+![Hình 8.8: Giao diện Quản lý Học phí và Lập phiếu thu thanh toán nhiều đợt (SCR-ADM-06)](../images/06_admin_fees.png)
+*Hình 8.8: Giao diện Quản lý Học phí và Lập phiếu thu thanh toán nhiều đợt (SCR-ADM-06)*
 
 ---
 
-## 8.5 Phương Án Triển Khai Lên Môi Trường Đám Mây (Cloud Deployment)
+### 8.3.5 Phân Hệ 5: Điểm Danh (4 Trạng Thái) & Bảng Điểm (Công Thức 20/30/50)
+Giảng viên ghi nhận chuyên cần từng buổi học thông qua giao diện điểm danh 4 trạng thái trực quan: `Có Mặt`, `Đi Muộn`, `Có Phép`, `Vắng`.
 
-Hệ thống được thiết kế sẵn sàng cho việc triển khai phân tán không máy chủ (Serverless Cloud Architecture):
-- **Frontend Tier:** Triển khai trên nền tảng Vercel (Edge Network / Serverless Functions) với tên miền chính.
-- **Backend Tier:** Triển khai trên Render hoặc Railway với môi trường Docker Node.js Container.
-- **Database Tier:** Lưu trữ trực tiếp trên Neon Serverless PostgreSQL với tính năng tự động sao lưu và mở rộng quy mô (Auto-scaling).
-- **Chính sách Bảo mật:** Bật tường lửa CORS giới hạn Domain truy cập, áp dụng HTTPS toàn bộ luồng dữ liệu và kích hoạt Rate Limiting ngăn chặn tấn công DDoS.
+Phân hệ Bảng điểm tự động tính toán điểm tổng kết theo đúng trọng số: 
+$$\text{Điểm Tổng Kết} = \text{Chuyên Cần} \times 20\% + \text{Giữa Kỳ} \times 30\% + \text{Cuối Kỳ} \times 50\%$$
+và tự động xếp loại `ĐẠT` khi $\text{Điểm Tổng Kết} \ge 50.00$ và $\text{Chuyên Cần} \ge 80.00$:
+
+![Hình 8.9: Giao diện Điểm danh buổi học với 4 trạng thái chuyên cần (SCR-TEA-03)](../images/07_teacher_attendance.png)
+*Hình 8.9: Giao diện Điểm danh buổi học với 4 trạng thái chuyên cần (SCR-TEA-03)*
+
+![Hình 8.10: Giao diện Nhập điểm và Tự động tính điểm tổng kết 20/30/50 (SCR-TEA-04)](../images/08_teacher_grades.png)
+*Hình 8.10: Giao diện Nhập điểm và Tự động tính điểm tổng kết 20/30/50 (SCR-TEA-04)*
+
+---
+
+### 8.3.6 Phân Hệ 6: Tích Hợp 3 Tính Năng Trí Tuệ Nhân Tạo (GenAI)
+Hệ thống tích hợp Google Gemini AI qua SDK chính thức, kèm cơ chế lọc ảo giác Zero-Trust, Fallback dự phòng tự động và lưu trữ nhật ký kiểm toán (Audit Log) vào bảng `yeu_cau_ai`:
+1. **AI Tư vấn Lớp học phù hợp (UC012):** Phân tích trình độ CEFR và lịch rảnh của học viên, đối soát với CSDL thực tế để gợi ý tối đa 03 lớp học còn chỗ trống phù hợp nhất.
+2. **AI Sinh Đề luyện tập trắc nghiệm (UC013):** Tạo tức thì 05 câu hỏi trắc nghiệm tiếng Anh chuẩn khung CEFR theo chủ đề ngữ pháp/từ vựng được yêu cầu, kèm đáp án và giải thích chi tiết.
+3. **AI Tóm tắt Tiến độ học tập (UC014):** Tổng hợp lịch sử chuyên cần và kết quả thi cử để đưa ra nhận xét cá nhân hóa về điểm mạnh, điểm yếu và lời khuyên ôn tập.
+
+![Hình 8.11: Giao diện AI Tư vấn lộ trình và gợi ý lớp học chuẩn CEFR (SCR-STU-06)](../images/11_student_ai_consult.png)
+*Hình 8.11: Giao diện AI Tư vấn lộ trình và gợi ý lớp học chuẩn CEFR (SCR-STU-06)*
+
+![Hình 8.12: Giao diện Học viên làm bài trắc nghiệm tương tác AI có chấm điểm trực tiếp (SCR-STU-07)](../images/12_student_ai_practice.png)
+*Hình 8.12: Giao diện Học viên làm bài trắc nghiệm tương tác AI có chấm điểm trực tiếp (SCR-STU-07)*
+
+![Hình 8.13: Giao diện AI Tóm tắt tiến độ học tập và lời khuyên ôn tập cá nhân hóa (SCR-STU-08)](../images/13_student_ai_progress.png)
+*Hình 8.13: Giao diện AI Tóm tắt tiến độ học tập và lời khuyên ôn tập cá nhân hóa (SCR-STU-08)*
+
+![Hình 8.14: Giao diện Trợ lý Giảng viên AI sinh 5 câu trắc nghiệm kèm giải thích (SCR-TEA-05)](../images/09_teacher_ai_exercises.png)
+*Hình 8.14: Giao diện Trợ lý Giảng viên AI sinh 5 câu trắc nghiệm kèm giải thích (SCR-TEA-05)*
+
+---
+
+## 8.4 Đóng Gói và Triển Khai Hệ Thống
+
+Hệ thống được thiết kế hoàn chỉnh theo quy chuẩn Cloud-Native, sẵn sàng cho việc đóng gói và triển khai tự động:
+- **Tài liệu API Swagger UI:** Hệ thống tự động sinh tài liệu chuẩn OpenAPI tương tác trực tiếp tại `http://localhost:8000/api/docs`, cho phép kiểm thử và tích hợp nhanh chóng.
+- **Đóng gói Frontend:** Sử dụng Next.js build bundle tối ưu hóa dung lượng tĩnh (SSG/SSR), triển khai lên Vercel Edge Network.
+- **Đóng gói Backend:** Chạy dưới dạng Node.js Container độc lập, kết nối an toàn với Neon PostgreSQL qua SSL/TLS.
+
+![Hình 8.15: Giao diện Tài liệu tương tác Swagger OpenAPI 32 RESTful APIs của hệ thống](../images/15_swagger_docs.png)
+*Hình 8.15: Giao diện Tài liệu tương tác Swagger OpenAPI 32 RESTful APIs của hệ thống*
 
 ---
 ---
