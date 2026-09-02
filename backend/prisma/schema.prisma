@@ -1,0 +1,396 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// ETC English Center — 14 bảng quan hệ chuẩn 3NF
+// Bám sát 100% tài liệu EnglishCenterTOP.docx
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// NHÓM 1: Quản lý Người dùng & RBAC
+// ============================================================================
+
+enum VaiTro {
+  QUAN_LY
+  GIAO_VIEN
+  HOC_VIEN
+  TU_VAN_VIEN
+}
+
+model NguoiDung {
+  id               BigInt   @id @default(autoincrement())
+  tenDangNhap      String   @unique @db.VarChar(50)
+  matKhauMaHoa     String   @db.VarChar(255)
+  vaiTro           VaiTro
+  email            String   @unique @db.VarChar(100)
+  soDienThoai      String?  @db.VarChar(20)
+  dangHoatDong     Boolean  @default(true)
+
+  // Relations
+  hoSoHocVien      HoSoHocVien?
+  hoSoGiaoVien     HoSoGiaoVien?
+  yeuCauAI         YeuCauAI[]
+  thanhToanThu     ThanhToan[]   @relation("NguoiThu")
+
+  @@map("nguoi_dung")
+}
+
+enum TrangThaiHocVien {
+  DANG_HOC
+  DA_TOT_NGHIEP
+  BAO_LUU
+  NGHI_HOC
+}
+
+enum TrinhDoCEFR {
+  A1
+  A2
+  B1
+  B2
+  C1
+  C2
+}
+
+model HoSoHocVien {
+  id            BigInt           @id @default(autoincrement())
+  nguoiDungId   BigInt?          @unique
+  maHocVien     String           @unique @db.VarChar(20)
+  hoTen         String           @db.VarChar(100)
+  ngaySinh      DateTime?        @db.Date
+  gioiTinh      String?          @db.VarChar(10)
+  diaChi        String?          @db.VarChar(255)
+  trinhDoCEFR   TrinhDoCEFR
+  nguonDanhGia  String?          @db.VarChar(100)
+  lichRanhJson  Json?
+  trangThai     TrangThaiHocVien @default(DANG_HOC)
+
+  // Relations
+  nguoiDung      NguoiDung?      @relation(fields: [nguoiDungId], references: [id])
+  dangKyHoc      DangKyHoc[]
+  hoaDon         HoaDon[]
+  diemDanh       BanGhiDiemDanh[]
+  ketQua         KetQuaHocTap[]
+
+  @@map("ho_so_hoc_vien")
+}
+
+enum TrangThaiGiaoVien {
+  DANG_LAM_VIEC
+  TAM_NGHI
+  DA_NGHI_VIEC
+}
+
+model HoSoGiaoVien {
+  id            BigInt             @id @default(autoincrement())
+  nguoiDungId   BigInt?            @unique
+  maGiaoVien    String             @unique @db.VarChar(20)
+  hoTen         String             @db.VarChar(100)
+  chuyenMon     String             @db.VarChar(100)
+  bangCap       String?            @db.VarChar(150)
+  trangThai     TrangThaiGiaoVien  @default(DANG_LAM_VIEC)
+
+  // Relations
+  nguoiDung      NguoiDung?        @relation(fields: [nguoiDungId], references: [id])
+  phanCong       PhanCongGiaoVien[]
+  diemDanhThucHien BanGhiDiemDanh[] @relation("GiaoVienDiemDanh")
+
+  @@map("ho_so_giao_vien")
+}
+
+// ============================================================================
+// NHÓM 2: Đào tạo & Xếp lịch
+// ============================================================================
+
+enum TrangThaiKhoaHoc {
+  HOAT_DONG
+  NGUNG_HOAT_DONG
+}
+
+model KhoaHoc {
+  id              BigInt            @id @default(autoincrement())
+  maKhoaHoc       String            @unique @db.VarChar(20)
+  tenKhoaHoc      String            @db.VarChar(150)
+  ngonNgu         String            @default("Tiếng Anh") @db.VarChar(50)
+  trinhDoYeuCau   TrinhDoCEFR
+  thoiLuongGio    Int
+  hocPhi          Decimal           @db.Decimal(12, 2)
+  moTa            String?           @db.Text
+  trangThai       TrangThaiKhoaHoc  @default(HOAT_DONG)
+
+  // Relations
+  lopHoc          LopHoc[]
+
+  @@map("khoa_hoc")
+}
+
+enum TrangThaiLopHoc {
+  SAP_MO
+  DANG_MO_DANG_KY
+  DANG_HOC
+  DA_KET_THUC
+  DA_HUY
+}
+
+model LopHoc {
+  id            BigInt          @id @default(autoincrement())
+  khoaHocId     BigInt
+  maLopHoc      String          @unique @db.VarChar(20)
+  tenLopHoc     String          @db.VarChar(150)
+  siSoToiDa     Int             @default(25)
+  siSoHienTai   Int             @default(0)
+  ngayBatDau    DateTime        @db.Date
+  ngayKetThuc   DateTime        @db.Date
+  phongHoc      String?         @db.VarChar(50)
+  linkOnline    String?         @db.VarChar(255)
+  trangThai     TrangThaiLopHoc @default(SAP_MO)
+
+  // Relations
+  khoaHoc       KhoaHoc         @relation(fields: [khoaHocId], references: [id])
+  lichHoc       LichHoc[]
+  phanCong      PhanCongGiaoVien[]
+  dangKyHoc     DangKyHoc[]
+  buoiHoc       BuoiHoc[]
+  ketQua        KetQuaHocTap[]
+
+  @@map("lop_hoc")
+}
+
+model LichHoc {
+  id            BigInt   @id @default(autoincrement())
+  lopHocId      BigInt
+  thuTrongTuan  Int      // 2=Thứ Hai ... 8=Chủ Nhật
+  gioBatDau     DateTime @db.Time
+  gioKetThuc    DateTime @db.Time
+  phongHoc      String   @db.VarChar(50)
+
+  // Relations
+  lopHoc        LopHoc   @relation(fields: [lopHocId], references: [id], onDelete: Cascade)
+
+  @@unique([lopHocId, thuTrongTuan, gioBatDau])
+  @@map("lich_hoc")
+}
+
+enum VaiTroPhanCong {
+  CHINH
+  TRO_GIANG
+}
+
+enum TrangThaiPhanCong {
+  DANG_PHU_TRACH
+  DA_HUY
+}
+
+model PhanCongGiaoVien {
+  id                 BigInt            @id @default(autoincrement())
+  lopHocId           BigInt
+  giaoVienId         BigInt
+  vaiTroPhanCong     VaiTroPhanCong    @default(CHINH)
+  thoiGianPhanCong   DateTime          @default(now())
+  trangThai          TrangThaiPhanCong @default(DANG_PHU_TRACH)
+
+  // Relations
+  lopHoc             LopHoc            @relation(fields: [lopHocId], references: [id])
+  giaoVien           HoSoGiaoVien      @relation(fields: [giaoVienId], references: [id])
+
+  @@unique([lopHocId, giaoVienId])
+  @@map("phan_cong_giao_vien")
+}
+
+// ============================================================================
+// NHÓM 3: Đăng ký & Học phí
+// ============================================================================
+
+enum TrangThaiDangKy {
+  CHO_THANH_TOAN
+  DA_XAC_NHAN
+  DA_HUY
+  HOAN_THANH
+}
+
+model DangKyHoc {
+  id           BigInt          @id @default(autoincrement())
+  lopHocId     BigInt
+  hocVienId    BigInt
+  ngayDangKy   DateTime        @default(now())
+  trangThai    TrangThaiDangKy @default(CHO_THANH_TOAN)
+
+  // Relations
+  lopHoc       LopHoc          @relation(fields: [lopHocId], references: [id])
+  hocVien      HoSoHocVien     @relation(fields: [hocVienId], references: [id])
+  hoaDon       HoaDon?
+
+  @@unique([lopHocId, hocVienId])
+  @@map("dang_ky_hoc")
+}
+
+enum TrangThaiHoaDon {
+  CHUA_THANH_TOAN
+  THANH_TOAN_MOT_PHAN
+  DA_HOAN_THANH
+  QUA_HAN
+}
+
+model HoaDon {
+  id              BigInt          @id @default(autoincrement())
+  maHoaDon        String          @unique @db.VarChar(30)
+  dangKyHocId     BigInt          @unique
+  hocVienId       BigInt
+  soTienPhaiTra   Decimal         @db.Decimal(12, 2)
+  soTienDaTra     Decimal         @default(0) @db.Decimal(12, 2)
+  hanThanhToan    DateTime        @db.Date
+  trangThai       TrangThaiHoaDon @default(CHUA_THANH_TOAN)
+
+  // Relations
+  dangKyHoc       DangKyHoc       @relation(fields: [dangKyHocId], references: [id])
+  hocVien         HoSoHocVien     @relation(fields: [hocVienId], references: [id])
+  thanhToan       ThanhToan[]
+
+  @@map("hoa_don")
+}
+
+enum PhuongThucThanhToan {
+  TIEN_MAT
+  CHUYEN_KHOAN
+}
+
+enum TrangThaiThanhToan {
+  THANH_CONG
+  THAT_BAI
+  HOAN_TRA
+}
+
+model ThanhToan {
+  id                 BigInt              @id @default(autoincrement())
+  hoaDonId           BigInt
+  maGiaoDich         String              @unique @db.VarChar(50)
+  soTien             Decimal             @db.Decimal(12, 2)
+  phuongThuc         PhuongThucThanhToan
+  thoiGianThanhToan  DateTime            @default(now())
+  nguoiThuId         BigInt?
+  trangThai          TrangThaiThanhToan  @default(THANH_CONG)
+  ghiChu             String?             @db.VarChar(255)
+
+  // Relations
+  hoaDon             HoaDon              @relation(fields: [hoaDonId], references: [id])
+  nguoiThu           NguoiDung?          @relation("NguoiThu", fields: [nguoiThuId], references: [id])
+
+  @@map("thanh_toan")
+}
+
+// ============================================================================
+// NHÓM 4: Điểm danh & Kết quả
+// ============================================================================
+
+enum TrangThaiBuoiHoc {
+  CHUA_DIEN_RA
+  DANG_DIEN_RA
+  DA_KET_THUC
+  DA_HUY
+}
+
+model BuoiHoc {
+  id            BigInt            @id @default(autoincrement())
+  lopHocId      BigInt
+  soThuTu       Int
+  ngayHoc       DateTime          @db.Date
+  gioBatDau     DateTime          @db.Time
+  gioKetThuc    DateTime          @db.Time
+  chuDe         String?           @db.VarChar(200)
+  trangThai     TrangThaiBuoiHoc  @default(CHUA_DIEN_RA)
+
+  // Relations
+  lopHoc        LopHoc            @relation(fields: [lopHocId], references: [id], onDelete: Cascade)
+  diemDanh      BanGhiDiemDanh[]
+
+  @@map("buoi_hoc")
+}
+
+enum TrangThaiDiemDanh {
+  CO_MAT
+  VANG
+  DI_MUON
+  CO_PHEP
+}
+
+model BanGhiDiemDanh {
+  id                   BigInt             @id @default(autoincrement())
+  buoiHocId            BigInt
+  hocVienId            BigInt
+  trangThai            TrangThaiDiemDanh
+  ghiChu               String?            @db.VarChar(255)
+  thoiGianDiemDanh     DateTime           @default(now())
+  giaoVienDiemDanhId   BigInt
+
+  // Relations
+  buoiHoc              BuoiHoc            @relation(fields: [buoiHocId], references: [id], onDelete: Cascade)
+  hocVien              HoSoHocVien        @relation(fields: [hocVienId], references: [id])
+  giaoVienDiemDanh     HoSoGiaoVien       @relation("GiaoVienDiemDanh", fields: [giaoVienDiemDanhId], references: [id])
+
+  @@unique([buoiHocId, hocVienId])
+  @@map("ban_ghi_diem_danh")
+}
+
+enum TrangThaiHoanThanh {
+  DAT
+  KHONG_DAT
+  CHUA_XEP_LOAI
+}
+
+model KetQuaHocTap {
+  id                   BigInt              @id @default(autoincrement())
+  lopHocId             BigInt
+  hocVienId            BigInt
+  diemChuyenCan        Decimal?            @db.Decimal(5, 2)
+  diemGiuaKy           Decimal?            @db.Decimal(5, 2)
+  diemCuoiKy           Decimal?            @db.Decimal(5, 2)
+  diemTongKet          Decimal?            @db.Decimal(5, 2)
+  nhanXet              String?             @db.Text
+  trangThaiHoanThanh   TrangThaiHoanThanh  @default(CHUA_XEP_LOAI)
+
+  // Relations
+  lopHoc               LopHoc              @relation(fields: [lopHocId], references: [id])
+  hocVien              HoSoHocVien         @relation(fields: [hocVienId], references: [id])
+
+  @@unique([lopHocId, hocVienId])
+  @@map("ket_qua_hoc_tap")
+}
+
+// ============================================================================
+// NHÓM 5: Audit Log GenAI
+// ============================================================================
+
+enum LoaiChucNangAI {
+  TU_VAN_LOP
+  SINH_BAI_TAP
+  TOM_TAT_TIEN_DO
+}
+
+enum TrangThaiYeuCauAI {
+  THANH_CONG
+  LOI_VALIDATION
+  FALLBACK_APPLIED
+  TIMEOUT
+}
+
+model YeuCauAI {
+  id                  BigInt             @id @default(autoincrement())
+  nguoiDungId         BigInt
+  loaiChucNang        LoaiChucNangAI
+  promptInput         String             @db.Text
+  rawOutput           String?            @db.Text
+  validatedOutputJson Json?
+  trangThai           TrangThaiYeuCauAI
+  thoiGianXuLyMs      Int
+  thoiGianGoi         DateTime           @default(now())
+
+  // Relations
+  nguoiDung           NguoiDung          @relation(fields: [nguoiDungId], references: [id], onDelete: Cascade)
+
+  @@map("yeu_cau_ai")
+}
