@@ -280,7 +280,7 @@ export const FALLBACK_QUESTION_BANKS: Record<string, QuestionItem[]> = {
   ],
 };
 
-export function getFallbackExercises(topic: string, cefr: string): FallbackExerciseSet {
+export function getFallbackExercises(topic: string, cefr: string, count: number = 5): FallbackExerciseSet {
   const normalized = topic.toLowerCase();
   let bankKey = 'DEFAULT_CEFR';
 
@@ -298,13 +298,22 @@ export function getFallbackExercises(topic: string, cefr: string): FallbackExerc
     bankKey = 'BUSINESS_ENGLISH';
   }
 
-  const list = FALLBACK_QUESTION_BANKS[bankKey] || FALLBACK_QUESTION_BANKS['DEFAULT_CEFR'];
+  // Lấy các câu hỏi từ ngân hàng chính và bổ sung từ các ngân hàng liên quan nếu cần 10 hoặc 15 câu
+  const primaryList = FALLBACK_QUESTION_BANKS[bankKey] || FALLBACK_QUESTION_BANKS['DEFAULT_CEFR'];
+  const allOtherQuestions = Object.entries(FALLBACK_QUESTION_BANKS)
+    .filter(([key]) => key !== bankKey)
+    .flatMap(([, qs]) => qs);
+
+  const combined = [...primaryList, ...allOtherQuestions];
+  const targetCount = [5, 10, 15].includes(count) ? count : 5;
+  const selectedQuestions = combined.slice(0, targetCount);
 
   return {
     chuDe: topic,
     trinhDo: cefr,
-    cauHoi: list.map((q) => ({
+    cauHoi: selectedQuestions.map((q, idx) => ({
       ...q,
+      id: idx + 1,
       noiDung: q.noiDung.replace('(Chủ đề: ...)', `(Trình độ ${cefr})`),
     })),
   };

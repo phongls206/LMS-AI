@@ -280,8 +280,8 @@ RÀNG BUỘC:
       this.logger.warn('AI Sinh bài tập thất bại, áp dụng Đề mẫu Fallback:', error?.message);
       status = error?.message === 'TIMEOUT' ? TrangThaiYeuCauAI.TIMEOUT : TrangThaiYeuCauAI.FALLBACK_APPLIED;
 
-      // FALLBACK ĐỀ MẪU TĨNH ĐA DẠNG THEO CHỦ ĐỀ & KHUNG CEFR
-      validatedJson = getFallbackExercises(dto.chuDe, dto.trinhDo);
+      // FALLBACK ĐỀ MẪU TĨNH ĐA DẠNG THEO CHỦ ĐỀ & KHUNG CEFR (ĐỦ 5, 10 HOẶC 15 CÂU)
+      validatedJson = getFallbackExercises(dto.chuDe, dto.trinhDo, count);
     }
 
     const duration = Date.now() - startTime;
