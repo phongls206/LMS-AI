@@ -41,6 +41,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ role = 'QUAN_LY', userName = '
           { label: 'Hồ Sơ Giáo Viên', href: '/admin/teachers', icon: UserCheck },
           { label: 'Quản Lý Học Phí', href: '/admin/fees', icon: Receipt },
           { label: 'Báo Cáo Thống Kê', href: '/admin/reports', icon: BarChart3 },
+          { label: 'AI Tóm Tắt Tiến Độ', href: '/student/ai-progress', icon: Sparkles },
         ];
       case 'GIAO_VIEN':
         return [
@@ -49,6 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ role = 'QUAN_LY', userName = '
           { label: 'Điểm Danh Buổi Học', href: '/teacher/attendance', icon: ClipboardList },
           { label: 'Nhập Điểm & Kết Quả', href: '/teacher/grades', icon: Award },
           { label: 'Sinh Bài Tập AI', href: '/teacher/ai-exercises', icon: Sparkles },
+          { label: 'AI Tóm Tắt Tiến Độ', href: '/student/ai-progress', icon: Sparkles },
         ];
       case 'HOC_VIEN':
         return [

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ConsultClassDto, GenerateExercisesDto, SummarizeProgressDto } from './dto/ai.dto';
@@ -359,21 +359,26 @@ RÀNG BUỘC:
   }
 
   /**
-   * UC014 — AI Tóm tắt tiến độ học tập (có Audit Log & Fallback tóm tắt quy tắc)
+   * UC014 — AI Tóm tắt tiến độ học tập (Phân biệt dữ liệu gốc, Zero-Trust Validation & Fallback quy tắc)
    */
   async summarizeProgress(dto: SummarizeProgressDto, userId: number) {
     const startTime = Date.now();
 
-    const [student, attendances, grade] = await Promise.all([
+    const [student, lopHoc, attendances, grade] = await Promise.all([
       this.prisma.hoSoHocVien.findUnique({
         where: { id: BigInt(dto.hocVienId) },
-        select: { hoTen: true, trinhDoCEFR: true },
+        include: { nguoiDung: { select: { email: true, soDienThoai: true } } },
+      }),
+      this.prisma.lopHoc.findUnique({
+        where: { id: BigInt(dto.lopHocId) },
+        include: { khoaHoc: true },
       }),
       this.prisma.banGhiDiemDanh.findMany({
         where: {
           hocVienId: BigInt(dto.hocVienId),
           buoiHoc: { lopHocId: BigInt(dto.lopHocId) },
         },
+        include: { buoiHoc: true },
       }),
       this.prisma.ketQuaHocTap.findUnique({
         where: {
@@ -385,31 +390,58 @@ RÀNG BUỘC:
       }),
     ]);
 
+    if (!student) throw new NotFoundException('Không tìm thấy hồ sơ học viên.');
+    if (!lopHoc) throw new NotFoundException('Không tìm thấy thông tin lớp học.');
+
+    // Tính toán số liệu chuyên cần thực tế (Ground Truth)
     const totalSessions = attendances.length;
     const presentSessions = attendances.filter((a) => a.trangThai === 'CO_MAT').length;
     const absentSessions = attendances.filter((a) => a.trangThai === 'VANG').length;
+    const lateSessions = attendances.filter((a) => a.trangThai === 'DI_MUON').length;
+    const excusedSessions = attendances.filter((a) => a.trangThai === 'CO_PHEP').length;
     const attendanceRate = totalSessions > 0 ? ((presentSessions / totalSessions) * 100).toFixed(1) : '100';
 
+    const duLieuGoc = {
+      tongBuoiHoc: totalSessions,
+      coMat: presentSessions,
+      vang: absentSessions,
+      diMuon: lateSessions,
+      coPhep: excusedSessions,
+      tyLeChuyenCan: `${attendanceRate}%`,
+      diemChuyenCan: grade?.diemChuyenCan != null ? Number(grade.diemChuyenCan) : null,
+      diemGiuaKy: grade?.diemGiuaKy != null ? Number(grade.diemGiuaKy) : null,
+      diemCuoiKy: grade?.diemCuoiKy != null ? Number(grade.diemCuoiKy) : null,
+      diemTongKet: grade?.diemTongKet != null ? Number(grade.diemTongKet) : null,
+      xepLoai: grade?.trangThaiHoanThanh || 'CHUA_XEP_LOAI',
+      nhanXetGiaoVien: grade?.nhanXet || null,
+    };
+
     const prompt = `
-Bạn là trợ lý học tập thông minh của ETC English.
-Dữ liệu học tập của học viên ${student?.hoTen || 'Học viên'}:
-- Tỷ lệ chuyên cần: ${attendanceRate}% (Có mặt ${presentSessions}/${totalSessions} buổi, Vắng ${absentSessions} buổi)
-- Điểm chuyên cần: ${grade?.diemChuyenCan ?? 'Chưa có'}
-- Điểm giữa kỳ: ${grade?.diemGiuaKy ?? 'Chưa có'}
-- Điểm cuối kỳ: ${grade?.diemCuoiKy ?? 'Chưa có'}
-- Điểm tổng kết: ${grade?.diemTongKet ?? 'Chưa có'}
-- Xếp loại hiện tại: ${grade?.trangThaiHoanThanh ?? 'Chưa xếp loại'}
+Bạn là Trợ lý AI Phân tích Học tập của Trung tâm Anh ngữ ETC.
+Dữ liệu học tập thực tế (Ground Truth) của học viên:
+- Họ và tên: ${student.hoTen} (Mã HV: ${student.maHocVien}, Trình độ: ${student.trinhDoCEFR})
+- Lớp học: ${lopHoc.tenLopHoc} (${lopHoc.maLopHoc}) - Khóa học: ${lopHoc.khoaHoc?.tenKhoaHoc || ''}
+- Chuyên cần: ${presentSessions}/${totalSessions} buổi tham gia (${attendanceRate}%), Vắng: ${absentSessions} buổi, Đi muộn: ${lateSessions} buổi, Có phép: ${excusedSessions} buổi.
+- Điểm chuyên cần (20%): ${grade?.diemChuyenCan != null ? grade.diemChuyenCan : 'Chưa có'}
+- Điểm giữa kỳ (30%): ${grade?.diemGiuaKy != null ? grade.diemGiuaKy : 'Chưa có'}
+- Điểm cuối kỳ (50%): ${grade?.diemCuoiKy != null ? grade.diemCuoiKy : 'Chưa có'}
+- Điểm tổng kết: ${grade?.diemTongKet != null ? grade.diemTongKet : 'Chưa tổng kết'}
+- Trạng thái hoàn thành: ${grade?.trangThaiHoanThanh ?? 'CHUA_XEP_LOAI'}
+- Nhận xét của giáo viên: ${grade?.nhanXet || 'Chưa có nhận xét riêng'}
 
 YÊU CẦU:
-Tóm tắt ngắn gọn tiến độ học tập (dưới 150 từ) gồm 3 phần:
-1. Điểm mạnh nổi bật.
-2. Điểm cần khắc phục.
-3. Lời khuyên ôn tập cho kỳ tới.
-TUYỆT ĐỐI CHỈ DỰA TRÊN DỮ LIỆU ĐƯỢC CUNG CẤP, KHÔNG TỰ BỊA ĐẶT.
+Phân tích trung thực, tuyệt đối không bịa đặt số liệu điểm thi hoặc buổi học ngoài dữ liệu trên.
+Trả về định dạng JSON hợp lệ:
+{
+  "diemManh": "Phân tích điểm mạnh về thái độ học tập, chuyên cần hoặc điểm thi đạt kết quả tốt...",
+  "canKhacPhuc": "Chỉ ra các điểm yếu cần cải thiện (vắng học, điểm giữa kỳ/cuối kỳ thấp...)",
+  "loiKhuyen": "Lời khuyên lộ trình ôn tập cụ thể cho học viên trong kỳ tới...",
+  "tomTatChung": "Đoạn nhận xét tổng quan ngắn gọn 1-2 câu về tiến độ học viên."
+}
 `;
 
     let rawOutput: string | null = null;
-    let summaryText = '';
+    let aiInsights: any = null;
     let status: TrangThaiYeuCauAI = TrangThaiYeuCauAI.THANH_CONG;
 
     try {
@@ -417,13 +449,40 @@ TUYỆT ĐỐI CHỈ DỰA TRÊN DỮ LIỆU ĐƯỢC CUNG CẤP, KHÔNG TỰ B�
         this.configService.get('GEMINI_PRO_MODEL') || 'gemini-3.6-flash',
         prompt,
       );
-      summaryText = rawOutput;
+
+      const cleaned = rawOutput.replace(/```json/g, '').replace(/```/g, '').trim();
+      const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        if (parsed.diemManh && parsed.canKhacPhuc && parsed.loiKhuyen) {
+          aiInsights = parsed;
+        }
+      }
+
+      if (!aiInsights) throw new Error('PARSE_ERROR');
     } catch (error: any) {
-      this.logger.warn('AI Tóm tắt thất bại, áp dụng Fallback tổng hợp:', error?.message);
+      this.logger.warn('AI Tóm tắt thất bại, kích hoạt Rule-Based Fallback:', error?.message);
       status = error?.message === 'TIMEOUT' ? TrangThaiYeuCauAI.TIMEOUT : TrangThaiYeuCauAI.FALLBACK_APPLIED;
 
-      // FALLBACK NHẬN XÉT TỔNG HỢP THEO QUY TẮC
-      summaryText = `Học viên tham gia ${presentSessions}/${totalSessions} buổi học (Chuyên cần: ${attendanceRate}%). Điểm giữa kỳ: ${grade?.diemGiuaKy ?? 'Chưa thi'}, Điểm cuối kỳ: ${grade?.diemCuoiKy ?? 'Chưa thi'}. ${Number(attendanceRate) >= 80 ? 'Duy trì tốt tỷ lệ chuyên cần.' : 'Cần chú ý tham gia đầy đủ các buổi học để đảm bảo điều kiện hoàn thành khóa.'}`;
+      // RULE-BASED FALLBACK TỔNG HỢP THEO QUY TẮC ĐỐI SOÁT CHUẨN
+      aiInsights = {
+        diemManh:
+          Number(attendanceRate) >= 80
+            ? `Học viên duy trì tỷ lệ chuyên cần xuất sắc (${attendanceRate}%), có tinh thần kỷ luật học tập tốt.`
+            : `Học viên đã tham gia ${presentSessions} buổi học trong chương trình.`,
+        canKhacPhuc:
+          Number(attendanceRate) < 80
+            ? `Tỷ lệ chuyên cần hiện tại (${attendanceRate}%) chưa đạt chuẩn tối thiểu 80%. Cần đi học đầy đủ để đảm bảo điều kiện hoàn thành khóa.`
+            : grade?.diemGiuaKy != null && Number(grade.diemGiuaKy) < 60
+            ? `Điểm giữa kỳ (${grade.diemGiuaKy}) còn thấp, cần tập trung củng cố lại các chuyên đề trọng tâm.`
+            : `Tiếp tục duy trì tính chủ động và tăng cường trao đổi, luyện nói tiếng Anh trên lớp.`,
+        loiKhuyen: `Tập trung ôn tập theo chuẩn khung CEFR ${student.trinhDoCEFR}, hoàn thành đầy đủ bài tập và tích cực luyện tập trắc nghiệm tự do.`,
+        tomTatChung: `Học viên tham gia ${presentSessions}/${totalSessions} buổi học (${attendanceRate}% chuyên cần). ${
+          grade?.diemTongKet != null
+            ? `Điểm tổng kết đạt ${grade.diemTongKet}/100 (${grade.trangThaiHoanThanh === 'DAT' ? 'ĐẠT' : 'KHÔNG ĐẠT'}).`
+            : 'Đang trong quá trình tích lũy điểm đánh giá kết quả học tập.'
+        }`,
+      };
     }
 
     const duration = Date.now() - startTime;
@@ -432,7 +491,7 @@ TUYỆT ĐỐI CHỈ DỰA TRÊN DỮ LIỆU ĐƯỢC CUNG CẤP, KHÔNG TỰ B�
       LoaiChucNangAI.TOM_TAT_TIEN_DO,
       prompt,
       rawOutput,
-      { summary: summaryText },
+      { duLieuGoc, aiInsights },
       status,
       duration,
     );
@@ -441,9 +500,20 @@ TUYỆT ĐỐI CHỈ DỰA TRÊN DỮ LIỆU ĐƯỢC CUNG CẤP, KHÔNG TỰ B�
       success: true,
       mode: status === TrangThaiYeuCauAI.THANH_CONG ? 'AI_GEMINI' : 'RULE_BASED_FALLBACK',
       data: {
-        hocVien: student?.hoTen,
-        chuyenCan: `${attendanceRate}%`,
-        tomTatTienDo: summaryText,
+        hocVien: {
+          id: Number(student.id),
+          maHocVien: student.maHocVien,
+          hoTen: student.hoTen,
+          trinhDoCEFR: student.trinhDoCEFR,
+        },
+        lopHoc: {
+          id: Number(lopHoc.id),
+          maLopHoc: lopHoc.maLopHoc,
+          tenLopHoc: lopHoc.tenLopHoc,
+          tenKhoaHoc: lopHoc.khoaHoc?.tenKhoaHoc || '',
+        },
+        duLieuGoc,
+        aiPhanTich: aiInsights,
       },
     };
   }
