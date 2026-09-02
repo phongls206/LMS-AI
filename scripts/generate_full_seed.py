@@ -1,4 +1,6 @@
-import {
+import os
+
+seed_ts_content = '''import {
   PrismaClient,
   VaiTro,
   TrinhDoCEFR,
@@ -23,7 +25,7 @@ import * as argon2 from 'argon2';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Bắt đầu nạp SIÊU DỮ LIỆU MẪU TOÀN DIỆN (10 Giảng viên, 30 Học viên, 8 Lớp học) cho ETC English Center...\n');
+  console.log('🌱 Bắt đầu nạp SIÊU DỮ LIỆU MẪU TOÀN DIỆN (10 Giảng viên, 30 Học viên, 8 Lớp học) cho ETC English Center...\\n');
 
   // Mật khẩu mặc định cho toàn bộ tài khoản: 123456
   const defaultPassword = await argon2.hash('123456');
@@ -884,7 +886,7 @@ async function main() {
   });
   console.log('✅ Đã nạp Audit Log AI');
 
-  console.log('\n🎉 NẠP TOÀN BỘ SIÊU DỮ LIỆU THÀNH CÔNG!');
+  console.log('\\n🎉 NẠP TOÀN BỘ SIÊU DỮ LIỆU THÀNH CÔNG!');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('📋 TÀI KHOẢN HỆ THỐNG ĐÃ SẴN SÀNG (Mật khẩu mặc định: 123456):');
   console.log('   👑 Quản lý (Admin)     : admin01');
@@ -903,3 +905,9 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+'''
+
+with open(r'D:\MyProjects\lms-ai\backend\prisma\seed.ts', 'w', encoding='utf-8') as f:
+    f.write(seed_ts_content)
+
+print("SUCCESS: Updated seed.ts with 10 teachers, 30 students, full-capacity class data!")
