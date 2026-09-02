@@ -32,6 +32,11 @@ export class GenerateExercisesDto {
   @ApiProperty({ enum: TrinhDoCEFR, example: TrinhDoCEFR.B1, description: 'Độ khó CEFR' })
   @IsEnum(TrinhDoCEFR)
   trinhDo: TrinhDoCEFR;
+
+  @ApiPropertyOptional({ example: 5, description: 'Số lượng câu hỏi trắc nghiệm cần sinh (5, 10 hoặc 15)' })
+  @IsOptional()
+  @IsNumber()
+  soLuong?: number;
 }
 
 export class SummarizeProgressDto {

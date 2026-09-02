@@ -127,8 +127,8 @@ export const statisticsService = {
 export const aiService = {
   consultClasses: async (cefr: string, lichRanhJson?: any, mucTieu?: string) =>
     (await api.post('/ai/consult-classes', { cefr, lichRanhJson, mucTieu })).data,
-  generateExercises: async (chuDe: string, trinhDo: string) =>
-    (await api.post('/ai/generate-exercises', { chuDe, trinhDo })).data,
+  generateExercises: async (chuDe: string, trinhDo: string, soLuong?: number) =>
+    (await api.post('/ai/generate-exercises', { chuDe, trinhDo, soLuong })).data,
   summarizeProgress: async (hocVienId: number, lopHocId: number) =>
     (await api.post('/ai/summarize-progress', { hocVienId, lopHocId })).data,
 };

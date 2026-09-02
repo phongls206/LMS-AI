@@ -228,16 +228,17 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
   }
 
   /**
-   * UC013 — AI Sinh bài luyện tập 5 câu trắc nghiệm (Validation & Fallback đề mẫu)
+   * UC013 — AI Sinh bài luyện tập trắc nghiệm (Tùy chọn 5, 10, 15 câu, Validation & Fallback đề mẫu)
    */
   async generateExercises(dto: GenerateExercisesDto, userId: number) {
     const startTime = Date.now();
+    const count = dto.soLuong && [5, 10, 15].includes(Number(dto.soLuong)) ? Number(dto.soLuong) : 5;
 
     const prompt = `
 Bạn là giáo viên tiếng Anh chuyên nghiệp.
-Nhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm đúng 5 câu về chủ đề "${dto.chuDe}", độ khó chuẩn CEFR "${dto.trinhDo}".
+Nhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm đúng ${count} câu về chủ đề "${dto.chuDe}", độ khó chuẩn CEFR "${dto.trinhDo}".
 RÀNG BUỘC:
-- Đúng 5 câu hỏi trắc nghiệm (4 lựa chọn A, B, C, D).
+- Đúng ${count} câu hỏi trắc nghiệm (4 lựa chọn A, B, C, D) được đánh số id từ 1 đến ${count}.
 - Bắt buộc có đáp án đúng và giải thích ngắn gọn bằng tiếng Việt.
 - Trả về JSON hợp lệ:
 {
