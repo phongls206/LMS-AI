@@ -1,10 +1,11 @@
 import {
   Injectable,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SubmitGradesDto } from './dto/grades.dto';
-import { TrangThaiHoanThanh, TrangThaiDangKy, TrangThaiLopHoc } from '@prisma/client';
+import { TrangThaiHoanThanh, TrangThaiDangKy, TrangThaiLopHoc, TrangThaiPhanCong, VaiTro } from '@prisma/client';
 
 @Injectable()
 export class GradesService {
@@ -36,11 +37,30 @@ export class GradesService {
   /**
    * UC009 — Nhập điểm & Tự động tính Điểm tổng kết (20% CC + 30% GK + 50% CK)
    */
-  async submitClassGrades(classId: number, dto: SubmitGradesDto) {
+  async submitClassGrades(classId: number, dto: SubmitGradesDto, user?: any) {
     const classRecord = await this.prisma.lopHoc.findUnique({
       where: { id: BigInt(classId) },
     });
     if (!classRecord) throw new NotFoundException('Lớp học không tồn tại.');
+
+    // Nếu người thực hiện là Giáo viên, bắt buộc phải được phân công phụ trách lớp học này
+    if (user && user.vaiTro === VaiTro.GIAO_VIEN) {
+      const teacher = await this.prisma.hoSoGiaoVien.findUnique({
+        where: { nguoiDungId: BigInt(user.id) },
+      });
+      if (!teacher) throw new NotFoundException('Hồ sơ giáo viên không tồn tại.');
+
+      const isAssigned = await this.prisma.phanCongGiaoVien.findFirst({
+        where: {
+          lopHocId: BigInt(classId),
+          giaoVienId: teacher.id,
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+        },
+      });
+      if (!isAssigned) {
+        throw new ForbiddenException('Bạn không được phân công phụ trách lớp học này để nhập điểm.');
+      }
+    }
 
     const results = [];
 

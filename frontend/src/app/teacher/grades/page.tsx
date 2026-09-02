@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, gradesService } from '../../../services/api';
-import { Award, Save, CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
+import { Save, CheckCircle, Sparkles, BookOpen } from 'lucide-react';
 
 export default function TeacherGradesPage() {
   const [classes, setClasses] = useState<any[]>([]);
-  const [selectedClassId, setSelectedClassId] = useState<number>(1);
+  const [selectedClassId, setSelectedClassId] = useState<number | null>(null);
   const [classDetail, setClassDetail] = useState<any>(null);
   const [gradesMap, setGradesMap] = useState<
     Record<number, { cc: number; gk: number; ck: number; nhanXet: string }>
@@ -17,22 +17,34 @@ export default function TeacherGradesPage() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchClasses = async () => {
+    const fetchAssignedClasses = async () => {
       try {
-        const list = await classesService.getAll();
-        setClasses(list);
-        if (list.length > 0) setSelectedClassId(list[0].id);
+        // Chỉ lấy các lớp được phân công cho giáo viên hiện tại
+        const schedule = await classesService.getTeacherSchedule();
+        const assignedClasses = (schedule || [])
+          .map((item: any) => item.lopHoc)
+          .filter(Boolean);
+
+        setClasses(assignedClasses);
+        if (assignedClasses.length > 0) {
+          setSelectedClassId(assignedClasses[0].id);
+        }
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
-    fetchClasses();
+    fetchAssignedClasses();
   }, []);
 
   useEffect(() => {
-    if (!selectedClassId) return;
+    if (!selectedClassId) {
+      setClassDetail(null);
+      setGradesMap({});
+      return;
+    }
+
     const fetchGrades = async () => {
       try {
         const [detail, existingGrades] = await Promise.all([
@@ -83,6 +95,7 @@ export default function TeacherGradesPage() {
   };
 
   const handleSaveGrades = async () => {
+    if (!selectedClassId) return;
     setSaving(true);
     try {
       const payload = Object.entries(gradesMap).map(([studentId, val]) => ({
@@ -107,29 +120,33 @@ export default function TeacherGradesPage() {
     <AppLayout
       allowedRoles={['GIAO_VIEN', 'QUAN_LY']}
       title="Bảng Điểm & Đánh Giá Kết Quả Học Tập"
-      subtitle="Công thức tự động: Điểm Tổng Kết = Chuyên Cần × 20% + Giữa Kỳ × 30% + Cuối Kỳ × 50%"
+      subtitle="Chỉ hiển thị các lớp học bạn được phân công phụ trách. Công thức: 20% Chuyên Cần + 30% Giữa Kỳ + 50% Cuối Kỳ"
     >
       <div className="space-y-6">
         {/* Top filter & Formula reminder */}
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-900 p-4 rounded-2xl border border-slate-800">
           <div className="flex items-center space-x-3 w-full sm:w-auto">
-            <label className="text-xs font-semibold text-slate-400 whitespace-nowrap">Chọn Lớp:</label>
-            <select
-              value={selectedClassId}
-              onChange={(e) => setSelectedClassId(+e.target.value)}
-              className="bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-semibold"
-            >
-              {classes.map((c) => (
-                <option key={c.id} value={c.id}>
-                  [{c.maLopHoc}] {c.tenLopHoc} ({c.siSoHienTai} HV)
-                </option>
-              ))}
-            </select>
+            <label className="text-xs font-semibold text-slate-400 whitespace-nowrap">Lớp Phụ Trách:</label>
+            {classes.length > 0 ? (
+              <select
+                value={selectedClassId || ''}
+                onChange={(e) => setSelectedClassId(+e.target.value)}
+                className="bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-semibold"
+              >
+                {classes.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    [{c.maLopHoc}] {c.tenLopHoc} ({c.siSoHienTai || 0} HV)
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span className="text-xs text-amber-400 italic">Chưa có lớp nào được phân công</span>
+            )}
           </div>
 
           <button
             onClick={handleSaveGrades}
-            disabled={saving}
+            disabled={saving || !selectedClassId || !classDetail?.dangKyHoc?.length}
             className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
@@ -241,7 +258,14 @@ export default function TeacherGradesPage() {
                 ) : (
                   <tr>
                     <td colSpan={8} className="py-12 text-center text-slate-500 text-xs">
-                      Lớp này chưa có học viên.
+                      {classes.length === 0 ? (
+                        <div className="flex flex-col items-center space-y-2">
+                          <BookOpen className="w-8 h-8 text-slate-600" />
+                          <span>Bạn chưa được phân công phụ trách lớp học nào.</span>
+                        </div>
+                      ) : (
+                        'Lớp học này hiện chưa có học viên ghi danh.'
+                      )}
                     </td>
                   </tr>
                 )}

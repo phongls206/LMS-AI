@@ -44,8 +44,9 @@ export class GradesController {
   submitClassGrades(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: SubmitGradesDto,
+    @CurrentUser() user: any,
   ) {
-    return this.gradesService.submitClassGrades(id, dto);
+    return this.gradesService.submitClassGrades(id, dto, user);
   }
 
   /**

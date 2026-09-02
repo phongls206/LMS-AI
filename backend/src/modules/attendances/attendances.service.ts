@@ -1,10 +1,11 @@
 import {
   Injectable,
   NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SubmitAttendanceDto } from './dto/attendances.dto';
-import { TrangThaiBuoiHoc } from '@prisma/client';
+import { TrangThaiBuoiHoc, TrangThaiPhanCong } from '@prisma/client';
 
 @Injectable()
 export class AttendancesService {
@@ -65,7 +66,20 @@ export class AttendancesService {
     const teacher = await this.prisma.hoSoGiaoVien.findUnique({
       where: { nguoiDungId: BigInt(teacherUserId) },
     });
-    if (!teacher) throw new NotFoundException('Không tìm thấy thông tin giáo viên thực hiện.');
+
+    // Nếu người thực hiện là Giáo viên, bắt buộc phải được phân công phụ trách lớp học này
+    if (teacher) {
+      const isAssigned = await this.prisma.phanCongGiaoVien.findFirst({
+        where: {
+          lopHocId: session.lopHocId,
+          giaoVienId: teacher.id,
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+        },
+      });
+      if (!isAssigned) {
+        throw new ForbiddenException('Bạn không được phân công phụ trách lớp học này để thực hiện điểm danh.');
+      }
+    }
 
     // Transaction cập nhật tất cả bản ghi điểm danh
     await this.prisma.$transaction(async (tx) => {
