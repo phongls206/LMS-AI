@@ -23,7 +23,7 @@ export class AiService {
     if (apiKey && apiKey !== 'your-gemini-api-key-here') {
       this.ai = new GoogleGenAI({ apiKey });
     }
-    this.timeoutMs = Number(this.configService.get<string>('GEMINI_TIMEOUT_MS')) || 10000;
+    this.timeoutMs = Number(this.configService.get<string>('GEMINI_TIMEOUT_MS')) || 30000;
   }
 
   private serializeBigInt(obj: any) {
@@ -141,12 +141,13 @@ YÊU CẦU:
 
     try {
       rawOutput = await this.callGeminiWithTimeout(
-        this.configService.get('GEMINI_FLASH_MODEL') || 'gemini-1.5-flash-latest',
+        this.configService.get('GEMINI_FLASH_MODEL') || 'gemini-3.6-flash',
         prompt,
       );
 
       // Parse JSON
-      const jsonMatch = rawOutput.match(/\[[\s\S]*\]/);
+      const cleaned = rawOutput.replace(/```json/g, '').replace(/```/g, '').trim();
+      const jsonMatch = cleaned.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
 
@@ -210,7 +211,7 @@ Nhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm đúng 5 câu về ch�
 RÀNG BUỘC:
 - Đúng 5 câu hỏi trắc nghiệm (4 lựa chọn A, B, C, D).
 - Bắt buộc có đáp án đúng và giải thích ngắn gọn bằng tiếng Việt.
-- Trả về JSON:
+- Trả về JSON hợp lệ:
 {
   "chuDe": "${dto.chuDe}",
   "trinhDo": "${dto.trinhDo}",
@@ -232,11 +233,12 @@ RÀNG BUỘC:
 
     try {
       rawOutput = await this.callGeminiWithTimeout(
-        this.configService.get('GEMINI_FLASH_MODEL') || 'gemini-1.5-flash-latest',
+        this.configService.get('GEMINI_FLASH_MODEL') || 'gemini-3.6-flash',
         prompt,
       );
 
-      const jsonMatch = rawOutput.match(/\{[\s\S]*\}/);
+      const cleaned = rawOutput.replace(/```json/g, '').replace(/```/g, '').trim();
+      const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
         if (Array.isArray(parsed.cauHoi) && parsed.cauHoi.length >= 1) {
@@ -268,6 +270,27 @@ RÀNG BUỘC:
             dapAnDung: 'B',
             giaiThich: '"Yet" dùng ở cuối câu phủ định của thì hiện tại hoàn thành.',
           },
+          {
+            id: 3,
+            noiDung: 'When I ________ home, my mother was cooking dinner.',
+            luaChon: { A: 'arrived', B: 'was arriving', C: 'have arrived', D: 'arrive' },
+            dapAnDung: 'A',
+            giaiThich: 'Hành động ngắn xen vào hành động đang diễn ra trong quá khứ dùng Quá khứ đơn.',
+          },
+          {
+            id: 4,
+            noiDung: 'He ________ English since 2020.',
+            luaChon: { A: 'studies', B: 'has studied', C: 'studied', D: 'is studying' },
+            dapAnDung: 'B',
+            giaiThich: 'Dấu hiệu "since + mốc thời gian" dùng thì Hiện tại hoàn thành.',
+          },
+          {
+            id: 5,
+            noiDung: 'Look! The bus ________.',
+            luaChon: { A: 'comes', B: 'is coming', C: 'came', D: 'has come' },
+            dapAnDung: 'B',
+            giaiThich: 'Dấu hiệu "Look!" diễn tả hành động đang xảy ra dùng Hiện tại tiếp diễn.',
+          },
         ],
       };
     }
@@ -291,12 +314,11 @@ RÀNG BUỘC:
   }
 
   /**
-   * UC014 — AI Tóm tắt tiến độ học tập (Validation & Fallback nhận xét mẫu)
+   * UC014 — AI Tóm tắt tiến độ học tập (có Audit Log & Fallback tóm tắt quy tắc)
    */
   async summarizeProgress(dto: SummarizeProgressDto, userId: number) {
     const startTime = Date.now();
 
-    // 1. Lấy dữ liệu điểm danh và bảng điểm của học viên
     const [student, attendances, grade] = await Promise.all([
       this.prisma.hoSoHocVien.findUnique({
         where: { id: BigInt(dto.hocVienId) },
@@ -347,7 +369,7 @@ TUYỆT ĐỐI CHỈ DỰA TRÊN DỮ LIỆU ĐƯỢC CUNG CẤP, KHÔNG TỰ B�
 
     try {
       rawOutput = await this.callGeminiWithTimeout(
-        this.configService.get('GEMINI_PRO_MODEL') || 'gemini-1.5-pro-latest',
+        this.configService.get('GEMINI_PRO_MODEL') || 'gemini-3.6-flash',
         prompt,
       );
       summaryText = rawOutput;
