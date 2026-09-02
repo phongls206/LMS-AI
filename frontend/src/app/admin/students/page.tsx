@@ -201,8 +201,16 @@ export default function AdminStudentsPage() {
                 <tbody className="divide-y divide-slate-800/80">
                   {students.map((s) => (
                     <tr key={s.id} className="hover:bg-slate-800/40 transition">
-                      <td className="px-5 py-4 font-mono font-bold text-indigo-400">{s.maHocVien}</td>
-                      <td className="px-5 py-4 font-semibold text-white">{s.hoTen}</td>
+                      <td className="px-5 py-4">
+                        <span className="font-mono font-bold text-indigo-400 block">{s.maHocVien}</span>
+                        <span className="font-mono text-[11px] text-slate-400 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800/80">
+                          {s.nguoiDung?.tenDangNhap || s.maHocVien.toLowerCase()}
+                        </span>
+                      </td>
+                      <td className="px-5 py-4">
+                        <p className="font-semibold text-white">{s.hoTen}</p>
+                        <p className="text-[11px] text-slate-400">{s.gioiTinh === 'NAM' ? 'Nam' : 'Nữ'}</p>
+                      </td>
                       <td className="px-5 py-4">
                         <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 font-semibold font-mono">
                           {s.trinhDoCEFR}

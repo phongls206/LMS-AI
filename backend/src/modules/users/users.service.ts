@@ -55,7 +55,7 @@ export class UsersService {
         take: limit,
         include: {
           nguoiDung: {
-            select: { email: true, soDienThoai: true, dangHoatDong: true },
+            select: { id: true, tenDangNhap: true, email: true, soDienThoai: true, dangHoatDong: true },
           },
         },
         orderBy: { id: 'desc' },
@@ -79,7 +79,7 @@ export class UsersService {
       where: { id: BigInt(id) },
       include: {
         nguoiDung: {
-          select: { email: true, soDienThoai: true, dangHoatDong: true },
+          select: { id: true, tenDangNhap: true, email: true, soDienThoai: true, dangHoatDong: true },
         },
         dangKyHoc: {
           include: {
@@ -226,7 +226,7 @@ export class UsersService {
     const teachers = await this.prisma.hoSoGiaoVien.findMany({
       include: {
         nguoiDung: {
-          select: { email: true, soDienThoai: true, dangHoatDong: true },
+          select: { id: true, tenDangNhap: true, email: true, soDienThoai: true, dangHoatDong: true },
         },
         phanCong: {
           where: { trangThai: 'DANG_PHU_TRACH' },
@@ -249,7 +249,7 @@ export class UsersService {
       where: { id: BigInt(id) },
       include: {
         nguoiDung: {
-          select: { email: true, soDienThoai: true, dangHoatDong: true },
+          select: { id: true, tenDangNhap: true, email: true, soDienThoai: true, dangHoatDong: true },
         },
         phanCong: {
           include: {

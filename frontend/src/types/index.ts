@@ -78,9 +78,11 @@ export interface HocVien {
   lichRanhJson?: any;
   trangThai: string;
   nguoiDung?: {
+    id?: number;
+    tenDangNhap?: string;
     email: string;
     soDienThoai?: string;
-    dangHoatDong: boolean;
+    dangHoatDong?: boolean;
   };
 }
 
@@ -92,8 +94,11 @@ export interface GiaoVien {
   bangCap?: string;
   trangThai: string;
   nguoiDung?: {
+    id?: number;
+    tenDangNhap?: string;
     email: string;
     soDienThoai?: string;
+    dangHoatDong?: boolean;
   };
 }
 
