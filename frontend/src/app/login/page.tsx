@@ -116,6 +116,20 @@ export default function LoginPage() {
               </>
             )}
           </button>
+
+          {/* Support / Forgot Password note */}
+          <div className="pt-2 text-center">
+            <p className="text-[11px] text-slate-400 leading-relaxed">
+              Quên mật khẩu? Vui lòng liên hệ Quản trị viên qua{' '}
+              <a
+                href="mailto:lehongphong2108@outlook.com"
+                className="text-indigo-400 hover:text-indigo-300 font-semibold underline underline-offset-2 transition"
+              >
+                lehongphong2108@outlook.com
+              </a>{' '}
+              để được hỗ trợ cấp lại.
+            </p>
+          </div>
         </form>
 
         {/* Quick Test Demo Credentials */}

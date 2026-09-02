@@ -119,6 +119,19 @@ export default function ChangePasswordPage() {
             </button>
           </form>
         </div>
+
+        <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-center text-xs text-slate-400 space-y-1">
+          <p>
+            🔒 <strong className="text-slate-300">Quên mật khẩu cũ?</strong> Vui lòng liên hệ Quản trị viên hệ thống qua{' '}
+            <a
+              href="mailto:lehongphong2108@outlook.com"
+              className="text-indigo-400 hover:text-indigo-300 font-semibold underline underline-offset-2 transition"
+            >
+              lehongphong2108@outlook.com
+            </a>{' '}
+            để được hỗ trợ đặt lại mật khẩu.
+          </p>
+        </div>
       </div>
     </AppLayout>
   );
