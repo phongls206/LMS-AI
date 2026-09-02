@@ -202,6 +202,35 @@ export class EnrollmentsService {
   }
 
   /**
+   * UC007 — Tra cứu danh mục phiếu thu / lịch sử thanh toán theo tư vấn viên hoặc hóa đơn
+   */
+  async findAllPayments(nguoiThuId?: number, hoaDonId?: number) {
+    const where: any = {};
+    if (nguoiThuId) where.nguoiThuId = BigInt(nguoiThuId);
+    if (hoaDonId) where.hoaDonId = BigInt(hoaDonId);
+
+    const payments = await this.prisma.thanhToan.findMany({
+      where,
+      include: {
+        nguoiThu: { select: { id: true, tenDangNhap: true, email: true } },
+        hoaDon: {
+          include: {
+            hocVien: { select: { maHocVien: true, hoTen: true } },
+            dangKyHoc: {
+              include: {
+                lopHoc: { select: { maLopHoc: true, tenLopHoc: true } },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { id: 'desc' },
+    });
+
+    return this.serializeBigInt(payments);
+  }
+
+  /**
    * UC007 — Ghi nhận thanh toán học phí (Phiếu thu)
    */
   async createPayment(invoiceId: number, dto: CreatePaymentDto, collectorUserId?: number) {

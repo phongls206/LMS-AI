@@ -102,6 +102,8 @@ export const enrollmentsService = {
     (await api.get('/invoices', { params: { trangThai, hocVienId } })).data,
   createPayment: async (invoiceId: number, data: { soTien: number; phuongThuc: string; ghiChu?: string }) =>
     (await api.post(`/invoices/${invoiceId}/payments`, data)).data,
+  getPayments: async (nguoiThuId?: number, hoaDonId?: number) =>
+    (await api.get('/payments', { params: { nguoiThuId, hoaDonId } })).data,
 };
 
 export const attendancesService = {

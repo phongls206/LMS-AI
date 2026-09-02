@@ -85,4 +85,22 @@ export class EnrollmentsController {
   ) {
     return this.enrollmentsService.createPayment(id, dto, user.id);
   }
+
+  /**
+   * GET /api/v1/payments — UC007 (Quản lý, TVV)
+   */
+  @Get('payments')
+  @Roles(VaiTro.QUAN_LY, VaiTro.TU_VAN_VIEN)
+  @ApiOperation({ summary: 'Danh mục phiếu thu & lịch sử thanh toán' })
+  @ApiQuery({ name: 'nguoiThuId', required: false })
+  @ApiQuery({ name: 'hoaDonId', required: false })
+  findAllPayments(
+    @Query('nguoiThuId') nguoiThuId?: number,
+    @Query('hoaDonId') hoaDonId?: number,
+  ) {
+    return this.enrollmentsService.findAllPayments(
+      nguoiThuId ? +nguoiThuId : undefined,
+      hoaDonId ? +hoaDonId : undefined,
+    );
+  }
 }

@@ -97,8 +97,9 @@ async function main() {
     { user: 'staff02', ten: 'Hoàng Kim Ngân', email: 'hoang.ngan@etc-english.vn', phone: '0903333002' },
   ];
 
+  const staffUsers: Record<string, any> = {};
   for (const s of staffData) {
-    await prisma.nguoiDung.upsert({
+    const su = await prisma.nguoiDung.upsert({
       where: { tenDangNhap: s.user },
       update: { matKhauMaHoa: defaultPassword },
       create: {
@@ -109,6 +110,7 @@ async function main() {
         soDienThoai: s.phone,
       },
     });
+    staffUsers[s.user] = su;
   }
   console.log('✅ Đã nạp 2 Tư vấn viên: staff01, staff02');
 
@@ -487,6 +489,7 @@ async function main() {
     invoiceStatus: TrangThaiHoaDon;
     payCode?: string;
     payMethod?: PhuongThucThanhToan;
+    staffUserId?: bigint;
   }) => {
     const dk = await prisma.dangKyHoc.create({
       data: {
@@ -517,13 +520,14 @@ async function main() {
           soTien: params.amountPaid,
           phuongThuc: params.payMethod,
           thoiGianThanhToan: new Date('2024-09-05'),
+          nguoiThuId: params.staffUserId || staffUsers['staff01'].id,
           trangThai: TrangThaiThanhToan.THANH_CONG,
         },
       });
     }
   };
 
-  // 5.1 Lớp IELTS-B1-01 (ĐỦ 25 HỌC VIÊN TỐI ĐA: student01 -> student25)
+  // 5.1 Lớp IELTS-B1-01 (ĐỦ 25 HỌC VIÊN TỐI ĐA: student01 -> student25) - Thu ngân: staff01
   const class1Students = Array.from({ length: 25 }, (_, i) => `student${String(i + 1).padStart(2, '0')}`);
   let idx = 1;
   for (const sUser of class1Students) {
@@ -531,6 +535,7 @@ async function main() {
     await enrollAndPay({
       lopId: class1.id,
       studentId: sProfile.id,
+      staffUserId: staffUsers['staff01'].id,
       enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
       invoiceCode: `HD-IELTS-B1-${String(idx).padStart(3, '0')}`,
       amountDue: 3500000,
@@ -542,7 +547,7 @@ async function main() {
     idx++;
   }
 
-  // 5.2 Lớp TOEIC-A2-01 (12 học viên: student26 -> student37)
+  // 5.2 Lớp TOEIC-A2-01 (12 học viên: student26 -> student37) - Thu ngân: staff02
   const class2Students = Array.from({ length: 12 }, (_, i) => `student${String(i + 26).padStart(2, '0')}`);
   idx = 1;
   for (const sUser of class2Students) {
@@ -550,6 +555,7 @@ async function main() {
     await enrollAndPay({
       lopId: class2.id,
       studentId: sProfile.id,
+      staffUserId: staffUsers['staff02'].id,
       enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
       invoiceCode: `HD-TOEIC-A2-${String(idx).padStart(3, '0')}`,
       amountDue: 2800000,
@@ -561,7 +567,7 @@ async function main() {
     idx++;
   }
 
-  // 5.3 Lớp COMM-B1-01 (8 học viên: student38 -> student45)
+  // 5.3 Lớp COMM-B1-01 (8 học viên: student38 -> student45) - Thu ngân: staff01
   const class3Students = Array.from({ length: 8 }, (_, i) => `student${String(i + 38).padStart(2, '0')}`);
   idx = 1;
   for (const sUser of class3Students) {
@@ -569,6 +575,7 @@ async function main() {
     await enrollAndPay({
       lopId: class3.id,
       studentId: sProfile.id,
+      staffUserId: staffUsers['staff01'].id,
       enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
       invoiceCode: `HD-COMM-B1-${String(idx).padStart(3, '0')}`,
       amountDue: 3200000,
@@ -580,7 +587,7 @@ async function main() {
     idx++;
   }
 
-  // 5.4 Lớp ENG-A1-01 (5 học viên: student46 -> student50)
+  // 5.4 Lớp ENG-A1-01 (5 học viên: student46 -> student50) - Thu ngân: staff02
   const class4Students = Array.from({ length: 5 }, (_, i) => `student${String(i + 46).padStart(2, '0')}`);
   idx = 1;
   for (const sUser of class4Students) {
@@ -588,6 +595,7 @@ async function main() {
     await enrollAndPay({
       lopId: class4.id,
       studentId: sProfile.id,
+      staffUserId: staffUsers['staff02'].id,
       enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
       invoiceCode: `HD-ENG-A1-${String(idx).padStart(3, '0')}`,
       amountDue: 2200000,
@@ -599,7 +607,7 @@ async function main() {
     idx++;
   }
 
-  // 5.5 Lớp IELTS-B2-01 (4 học viên: student51 -> student54)
+  // 5.5 Lớp IELTS-B2-01 (4 học viên: student51 -> student54) - Thu ngân: staff02
   const class5Students = Array.from({ length: 4 }, (_, i) => `student${String(i + 51).padStart(2, '0')}`);
   idx = 1;
   for (const sUser of class5Students) {
@@ -607,6 +615,7 @@ async function main() {
     await enrollAndPay({
       lopId: class5.id,
       studentId: sProfile.id,
+      staffUserId: staffUsers['staff02'].id,
       enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
       invoiceCode: `HD-IELTS-B2-${String(idx).padStart(3, '0')}`,
       amountDue: 4800000,
