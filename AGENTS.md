@@ -51,6 +51,7 @@ Khi thực thi các tác vụ chuyên môn, Agent bắt buộc phải tuân th�
 | Rà soát bảo mật               | `security-review`       |
 | Soạn thảo tài liệu            | `documentation`         |
 | Thiết kế & vẽ sơ đồ (UML/ERD) | `diagram-design`        |
+| Thiết kế giao diện UI/UX      | `figma-design`          |
 
 > **Nguyên tắc phân định:** `AGENTS.md` quy định nguyên tắc tổng quan của hệ thống. `SKILL.md` (hoặc file cấu hình skill cụ thể) quy định quy trình chi tiết từng bước. Không lặp lại chi tiết triển khai của Skill vào file này.
 
