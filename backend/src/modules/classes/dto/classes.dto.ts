@@ -52,6 +52,13 @@ export class CreateClassDto {
   linkOnline?: string;
 }
 
+export class UpdateClassStatusDto {
+  @ApiProperty({ enum: TrangThaiLopHoc, example: TrangThaiLopHoc.DANG_HOC, description: 'Trạng thái mới của lớp học' })
+  @IsEnum(TrangThaiLopHoc)
+  @IsNotEmpty()
+  trangThai: TrangThaiLopHoc;
+}
+
 export class CreateScheduleDto {
   @ApiProperty({ example: 2, description: 'Thứ trong tuần (2=Thứ Hai ... 8=Chủ Nhật)' })
   @IsNumber()

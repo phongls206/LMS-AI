@@ -102,6 +102,17 @@ export default function AdminClassesPage() {
     }
   };
 
+  const handleStatusChange = async (classId: number, newStatus: string) => {
+    try {
+      await classesService.updateStatus(classId, newStatus);
+      setMessage({ type: 'success', text: `Cập nhật trạng thái lớp học sang "${newStatus}" thành công!` });
+      fetchData();
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err: any) {
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Lỗi cập nhật trạng thái lớp.' });
+    }
+  };
+
   return (
     <AppLayout
       allowedRoles={['QUAN_LY']}
@@ -152,7 +163,7 @@ export default function AdminClassesPage() {
                     <th className="px-5 py-3.5">Sĩ Số (Max 25)</th>
                     <th className="px-5 py-3.5">Thời Khóa Biểu</th>
                     <th className="px-5 py-3.5">Giáo Viên</th>
-                    <th className="px-5 py-3.5">Trạng Thái</th>
+                    <th className="px-5 py-3.5">Trạng Thái (Đổi Nhanh)</th>
                     <th className="px-5 py-3.5 text-right">Thao Tác</th>
                   </tr>
                 </thead>
@@ -191,9 +202,27 @@ export default function AdminClassesPage() {
                         )}
                       </td>
                       <td className="px-5 py-4">
-                        <span className="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 text-[11px] font-semibold">
-                          {c.trangThai}
-                        </span>
+                        <select
+                          value={c.trangThai}
+                          onChange={(e) => handleStatusChange(Number(c.id), e.target.value)}
+                          className={`px-2.5 py-1 rounded-lg text-xs font-semibold focus:outline-none border transition cursor-pointer ${
+                            c.trangThai === 'DANG_MO_DANG_KY'
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                              : c.trangThai === 'DANG_HOC'
+                              ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30 hover:bg-indigo-500/20'
+                              : c.trangThai === 'SAP_MO'
+                              ? 'bg-blue-500/10 text-blue-400 border-blue-500/30 hover:bg-blue-500/20'
+                              : c.trangThai === 'DA_KET_THUC'
+                              ? 'bg-slate-800 text-slate-400 border-slate-700'
+                              : 'bg-rose-500/10 text-rose-400 border-rose-500/30'
+                          }`}
+                        >
+                          <option value="SAP_MO" className="bg-slate-900 text-blue-400">🔵 Sắp Mở</option>
+                          <option value="DANG_MO_DANG_KY" className="bg-slate-900 text-emerald-400">🟢 Đang Mở Tuyển Sinh</option>
+                          <option value="DANG_HOC" className="bg-slate-900 text-indigo-400">🟣 Đang Học</option>
+                          <option value="DA_KET_THUC" className="bg-slate-900 text-slate-400">⚪ Đã Kết Thúc</option>
+                          <option value="DA_HUY" className="bg-slate-900 text-rose-400">🔴 Đã Hủy</option>
+                        </select>
                       </td>
                       <td className="px-5 py-4 text-right space-x-2">
                         <button

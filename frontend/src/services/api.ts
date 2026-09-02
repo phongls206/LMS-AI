@@ -71,6 +71,8 @@ export const classesService = {
     (await api.get('/classes', { params: { khoaHocId, trangThai } })).data,
   getById: async (id: number) => (await api.get(`/classes/${id}`)).data,
   create: async (data: any) => (await api.post('/classes', data)).data,
+  updateStatus: async (id: number, trangThai: string) =>
+    (await api.put(`/classes/${id}/status`, { trangThai })).data,
   addSchedule: async (id: number, data: any) => (await api.post(`/classes/${id}/schedules`, data)).data,
   assignTeacher: async (id: number, data: any) =>
     (await api.post(`/classes/${id}/assign-teacher`, data)).data,

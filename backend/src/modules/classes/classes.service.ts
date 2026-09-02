@@ -242,4 +242,21 @@ export class ClassesService {
 
     return this.serializeBigInt(assignments);
   }
+
+  /**
+   * UC004 — Đổi trạng thái lớp học (SAP_MO, DANG_MO_DANG_KY, DANG_HOC, DA_KET_THUC, DA_HUY)
+   */
+  async updateClassStatus(id: number, trangThai: TrangThaiLopHoc) {
+    const classRecord = await this.prisma.lopHoc.findUnique({
+      where: { id: BigInt(id) },
+    });
+    if (!classRecord) throw new NotFoundException('Không tìm thấy lớp học.');
+
+    const updated = await this.prisma.lopHoc.update({
+      where: { id: BigInt(id) },
+      data: { trangThai },
+    });
+
+    return this.serializeBigInt(updated);
+  }
 }

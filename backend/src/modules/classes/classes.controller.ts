@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Param,
   Body,
   Query,
@@ -10,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { ClassesService } from './classes.service';
-import { CreateClassDto, CreateScheduleDto, AssignTeacherDto } from './dto/classes.dto';
+import { CreateClassDto, CreateScheduleDto, AssignTeacherDto, UpdateClassStatusDto } from './dto/classes.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -81,6 +82,19 @@ export class ClassesController {
     @Body() dto: AssignTeacherDto,
   ) {
     return this.classesService.assignTeacher(id, dto);
+  }
+
+  /**
+   * PUT /api/v1/classes/:id/status — UC004 (Chỉ Quản lý)
+   */
+  @Put('classes/:id/status')
+  @Roles(VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Đổi trạng thái lớp học (SAP_MO, DANG_MO_DANG_KY, DANG_HOC, DA_KET_THUC, DA_HUY)' })
+  updateClassStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateClassStatusDto,
+  ) {
+    return this.classesService.updateClassStatus(id, dto.trangThai);
   }
 
   /**
