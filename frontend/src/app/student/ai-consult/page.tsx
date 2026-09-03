@@ -94,7 +94,7 @@ export default function StudentAiConsultPage() {
     <AppLayout
       allowedRoles={['HOC_VIEN', 'TU_VAN_VIEN', 'QUAN_LY']}
       title="Cố Vấn Lộ Trình & Tư Vấn Lớp Học Thông Minh (GenAI)"
-      subtitle="Ứng dụng mô hình Gemini phân tích ngôn ngữ tự nhiên, so khớp đa chiều với CSDL lớp học thực tế"
+      subtitle="Ứng dụng Trí tuệ Nhân tạo (AI) phân tích ngôn ngữ tự nhiên, so khớp đa chiều với CSDL lớp học thực tế"
     >
       <div className="space-y-6">
         {/* Form Container */}
@@ -187,7 +187,7 @@ export default function StudentAiConsultPage() {
               <Sparkles className="w-5 h-5 animate-spin" />
               <span>
                 {loading
-                  ? 'Gemini AI Đang Phân Tích Ngữ Cảnh & So Khớp Lớp Học...'
+                  ? 'Hệ Thống AI Đang Phân Tích Ngữ Cảnh & So Khớp Lớp Học...'
                   : 'AI Phân Tích Toàn Diện & Đề Xuất Lộ Trình Lớp Học'}
               </span>
             </button>
@@ -204,7 +204,7 @@ export default function StudentAiConsultPage() {
           </div>
           <div className="hidden md:flex items-center space-x-1.5 text-indigo-400 font-semibold text-[11px]">
             <Zap className="w-3.5 h-3.5" />
-            <span>Powered by Gemini 2.5 Flash</span>
+            <span>Tích hợp AI Tiên Tiến (Zero-Trust Verified)</span>
           </div>
         </div>
 

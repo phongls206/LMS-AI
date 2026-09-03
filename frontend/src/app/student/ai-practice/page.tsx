@@ -165,7 +165,7 @@ export default function StudentAiPracticePage() {
           <div className="py-20 flex flex-col items-center justify-center space-y-3">
             <div className="w-10 h-10 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin"></div>
             <p className="text-xs text-purple-300 font-medium animate-pulse">
-              Gemini AI đang sinh {soLuong} câu hỏi tương tác chuẩn CEFR {cefr}...
+              Hệ thống AI đang sinh {soLuong} câu hỏi tương tác chuẩn CEFR {cefr}...
             </p>
           </div>
         )}
@@ -187,10 +187,10 @@ export default function StudentAiPracticePage() {
                 }`}
               >
                 {result.mode === 'AI_CACHE'
-                  ? '⚡ AI Cache DB (Tối ưu 0 Token)'
+                  ? '⚡ Bộ Nhớ Đệm AI (Tức Thì)'
                   : result.mode === 'AI_GEMINI'
-                  ? '✨ Google Gemini AI'
-                  : '📦 Template Fallback'}
+                  ? '✨ Trí Tuệ Nhân Tạo (AI)'
+                  : '📦 Mẫu Dự Phòng (Fallback)'}
               </span>
             </div>
 

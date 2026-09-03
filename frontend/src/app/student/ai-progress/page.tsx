@@ -234,7 +234,7 @@ export default function StudentAiProgressPage() {
             <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
             <div className="text-center space-y-1">
               <p className="text-sm text-indigo-300 font-bold animate-pulse">
-                Gemini AI đang tổng hợp lịch sử điểm danh và điểm thi...
+                Hệ thống AI đang tổng hợp lịch sử điểm danh và điểm thi...
               </p>
               <p className="text-xs text-slate-400">
                 Kiểm tra tính toàn vẹn (Zero-Trust Validation) để đảm bảo không bịa đặt dữ kiện
@@ -273,7 +273,7 @@ export default function StudentAiProgressPage() {
                 {summary.mode === 'AI_GEMINI' || summary.mode === 'AI_GEMINI_CACHED' ? (
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold shadow-sm shadow-indigo-500/10">
                     <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>✨ Phân Tích Gemini AI {summary.mode === 'AI_GEMINI_CACHED' ? '(Tức Thì • Smart Cache)' : '(Zero-Trust Verified)'}</span>
+                    <span>✨ Phân Tích AI {summary.mode === 'AI_GEMINI_CACHED' ? '(Tức Thì • Smart Cache)' : '(Zero-Trust Verified)'}</span>
                   </span>
                 ) : (
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold">
