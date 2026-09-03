@@ -3,7 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService } from '../../../services/api';
-import { Sparkles, HelpCircle, CheckCircle2, XCircle, RotateCcw, Layers, Clock } from 'lucide-react';
+import {
+  Sparkles,
+  CheckCircle2,
+  XCircle,
+  RotateCcw,
+  Layers,
+  Clock,
+  PlusCircle,
+  CheckSquare,
+  HelpCircle,
+} from 'lucide-react';
 
 const PREDEFINED_TOPICS = [
   'Thì Hiện Tại Hoàn Thành (Present Perfect Tense)',
@@ -12,6 +22,9 @@ const PREDEFINED_TOPICS = [
   'Câu Bị Động Nâng Cao (Passive Voice)',
   'Cụm Động Từ Thông Dụng (Common Phrasal Verbs)',
   'Từ Vựng Tiếng Anh Công Sở & Giao Tiếp (Business English)',
+  'Tiếng Anh Chuyên Ngành Công Nghệ Thông Tin (IT & Tech)',
+  'Từ Vựng Du Lịch, Khách Sạn & Khám Phá (Travel & Tourism)',
+  'Điện Ảnh, Âm Nhạc & Giải Trí (Entertainment & Media)',
   'Giới Từ Chỉ Thời Gian & Nơi Chốn (Prepositions)',
   'Động Từ Khuyết Thiếu (Modal Verbs)',
   'Sự Hòa Hợp Chủ Vị (Subject-Verb Agreement)',
@@ -21,14 +34,27 @@ const PREDEFINED_TOPICS = [
   'CUSTOM',
 ];
 
+const QUICK_SUGGESTIONS = [
+  'Công nghệ thông tin (IT)',
+  'Du lịch & Khám phá (Travel)',
+  'Điện ảnh & Giải trí (Entertainment)',
+  'Đảo ngữ (Inversion)',
+  'Câu giả định (Subjunctive Mood)',
+  'Phrasal verbs with "Look"',
+  'Mạo từ A / An / The',
+  'Gerund vs Infinitive',
+  'IELTS Writing Task 2 Vocab',
+];
+
 export default function StudentAiPracticePage() {
   const [selectedTopic, setSelectedTopic] = useState(PREDEFINED_TOPICS[0]);
   const [customTopic, setCustomTopic] = useState('');
   const [cefr, setCefr] = useState('B1');
   const [soLuong, setSoLuong] = useState(5);
+  const [loaiCauHoi, setLoaiCauHoi] = useState('MIXED');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
-  const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
+  const [userAnswers, setUserAnswers] = useState<Record<number, string | string[]>>({});
   const [submitted, setSubmitted] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
@@ -52,6 +78,7 @@ export default function StudentAiPracticePage() {
         if (parsed.customTopic) setCustomTopic(parsed.customTopic);
         if (parsed.cefr) setCefr(parsed.cefr);
         if (parsed.soLuong) setSoLuong(parsed.soLuong);
+        if (parsed.loaiCauHoi) setLoaiCauHoi(parsed.loaiCauHoi);
       }
     } catch (e) {
       console.error('Lỗi đọc phiên làm bài:', e);
@@ -70,6 +97,7 @@ export default function StudentAiPracticePage() {
           customTopic,
           cefr,
           soLuong,
+          loaiCauHoi,
         }),
       );
     } catch (e) {}
@@ -112,7 +140,7 @@ export default function StudentAiPracticePage() {
     sessionStorage.removeItem('etc_ai_practice_session');
 
     try {
-      const res = await aiService.generateExercises(activeTopic, cefr, soLuong);
+      const res = await aiService.generateExercises(activeTopic, cefr, soLuong, loaiCauHoi);
       setResult(res);
       saveToSession(res, {}, false);
     } catch (err: any) {
@@ -123,20 +151,115 @@ export default function StudentAiPracticePage() {
     }
   };
 
-  const handleSelectOption = (qIdx: number, optionKey: string) => {
+  // Xác định câu hỏi thuộc dạng nào
+  const getQuestionTypeInfo = (q: any) => {
+    const isMulti = q.loaiCauHoi === 'MULTIPLE' || Array.isArray(q.dapAnDung);
+    const isTrueFalse =
+      q.loaiCauHoi === 'TRUE_FALSE' ||
+      (q.luaChon &&
+        Object.keys(q.luaChon).length === 2 &&
+        Object.values(q.luaChon).some(
+          (v: any) =>
+            typeof v === 'string' &&
+            (v.toLowerCase().includes('true') || v.toLowerCase().includes('đúng')),
+        ));
+
+    if (isMulti) {
+      return {
+        isMulti: true,
+        isTrueFalse: false,
+        badgeLabel: '☑ Chọn nhiều đáp án đúng',
+        badgeClass: 'bg-purple-50 text-purple-700 border-purple-200',
+        instruction: 'Bạn có thể chọn một hoặc nhiều phương án đúng',
+      };
+    }
+    if (isTrueFalse) {
+      return {
+        isMulti: false,
+        isTrueFalse: true,
+        badgeLabel: '⚖️ Đúng / Sai (True / False)',
+        badgeClass: 'bg-sky-50 text-sky-700 border-sky-200',
+        instruction: 'Chọn Đúng (True) hoặc Sai (False)',
+      };
+    }
+    return {
+      isMulti: false,
+      isTrueFalse: false,
+      badgeLabel: '🔘 1 đáp án đúng (Single Choice)',
+      badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
+      instruction: 'Chọn 1 đáp án chính xác nhất',
+    };
+  };
+
+  const handleSelectOption = (qIdx: number, optionKey: string, isMultiple: boolean) => {
     if (submitted) return;
-    const newAnswers = { ...userAnswers, [qIdx]: optionKey };
+    let newAnswers: Record<number, string | string[]>;
+
+    if (isMultiple) {
+      const current = Array.isArray(userAnswers[qIdx])
+        ? [...(userAnswers[qIdx] as string[])]
+        : userAnswers[qIdx]
+        ? [userAnswers[qIdx] as string]
+        : [];
+      const next = current.includes(optionKey)
+        ? current.filter((k) => k !== optionKey)
+        : [...current, optionKey].sort();
+      newAnswers = { ...userAnswers, [qIdx]: next };
+    } else {
+      newAnswers = { ...userAnswers, [qIdx]: optionKey };
+    }
+
     setUserAnswers(newAnswers);
     saveToSession(result, newAnswers, submitted);
+  };
+
+  const isQuestionCorrect = (q: any, userAns: any) => {
+    if (!userAns) return false;
+    const correctAns = q.dapAnDung;
+
+    if (Array.isArray(correctAns)) {
+      const userArr = Array.isArray(userAns) ? userAns : [userAns];
+      if (userArr.length !== correctAns.length) return false;
+      return correctAns.every((k: string) => userArr.includes(k));
+    }
+
+    if (typeof correctAns === 'string' && correctAns.includes(',')) {
+      const correctArr = correctAns.split(',').map((k: string) => k.trim().toUpperCase());
+      const userArr = (Array.isArray(userAns) ? userAns : [userAns]).map((k: string) =>
+        k.trim().toUpperCase(),
+      );
+      if (userArr.length !== correctArr.length) return false;
+      return correctArr.every((k: string) => userArr.includes(k));
+    }
+
+    if (Array.isArray(userAns)) {
+      return userAns.length === 1 && userAns[0] === correctAns;
+    }
+    return userAns === correctAns;
+  };
+
+  const formatCorrectAnswer = (correctAns: any) => {
+    if (Array.isArray(correctAns)) return correctAns.join(', ');
+    return String(correctAns);
   };
 
   const calculateScore = () => {
     if (!result?.data?.cauHoi) return 0;
     let correct = 0;
     result.data.cauHoi.forEach((q: any, idx: number) => {
-      if (userAnswers[idx] === q.dapAnDung) correct++;
+      if (isQuestionCorrect(q, userAnswers[idx])) correct++;
     });
     return correct;
+  };
+
+  const countAnswered = () => {
+    if (!result?.data?.cauHoi) return 0;
+    let count = 0;
+    result.data.cauHoi.forEach((_: any, idx: number) => {
+      const a = userAnswers[idx];
+      if (Array.isArray(a) ? a.length > 0 : !!a) count++;
+    });
+    return count;
   };
 
   return (
@@ -146,11 +269,12 @@ export default function StudentAiPracticePage() {
       subtitle="Tạo bài luyện tập tức thì theo chủ đề (tùy chọn 5, 10, 15 câu), chấm điểm trực tiếp và xem giải thích"
     >
       <div className="space-y-6">
-        {/* Form */}
+        {/* Form Cấu Hình Sinh Đề */}
         <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
           <form onSubmit={handleGenerate} className="space-y-4 text-xs">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-              <div className="md:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+              {/* Chủ đề */}
+              <div className="md:col-span-5">
                 <label className="block font-bold text-teal-800 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
                   <Layers className="w-3.5 h-3.5 text-teal-600" />
                   <span>Chọn Chủ Đề Ôn Tập Chuẩn Khung CEFR</span>
@@ -168,7 +292,8 @@ export default function StudentAiPracticePage() {
                 </select>
               </div>
 
-              <div>
+              {/* CEFR */}
+              <div className="md:col-span-2">
                 <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                   Độ Khó CEFR
                 </label>
@@ -185,17 +310,35 @@ export default function StudentAiPracticePage() {
                 </select>
               </div>
 
-              <div>
+              {/* Dạng câu hỏi */}
+              <div className="md:col-span-3">
                 <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                  Số Lượng Câu Hỏi
+                  Dạng Câu Hỏi
+                </label>
+                <select
+                  value={loaiCauHoi}
+                  onChange={(e) => setLoaiCauHoi(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-teal-800 font-bold focus:outline-none focus:border-teal-500 cursor-pointer"
+                >
+                  <option value="MIXED">🌟 Hỗn hợp (Trắc nghiệm, Đúng/Sai, Nhiều đáp án)</option>
+                  <option value="SINGLE">🔘 Trắc nghiệm 1 đáp án (A, B, C, D)</option>
+                  <option value="TRUE_FALSE">⚖️ Đúng / Sai (True / False)</option>
+                  <option value="MULTIPLE">☑️ Chọn nhiều đáp án đúng</option>
+                </select>
+              </div>
+
+              {/* Số lượng + Nút Sinh Đề */}
+              <div className="md:col-span-2">
+                <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Số Lượng
                 </label>
                 <div className="flex space-x-2">
                   <select
                     value={soLuong}
                     onChange={(e) => setSoLuong(+e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-teal-800 focus:outline-none focus:border-teal-500 font-bold cursor-pointer"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-teal-800 focus:outline-none focus:border-teal-500 font-bold cursor-pointer"
                   >
-                    <option value={5}>5 câu (Mặc định)</option>
+                    <option value={5}>5 câu</option>
                     <option value={10}>10 câu</option>
                     <option value={15}>15 câu</option>
                   </select>
@@ -209,7 +352,7 @@ export default function StudentAiPracticePage() {
                     ) : cooldown > 0 ? (
                       <span className="flex items-center space-x-1 text-amber-100 text-[11px] font-bold">
                         <Clock className="w-3.5 h-3.5 text-amber-200 animate-spin" />
-                        <span>Chờ {cooldown}s</span>
+                        <span>{cooldown}s</span>
                       </span>
                     ) : (
                       <>
@@ -229,7 +372,11 @@ export default function StudentAiPracticePage() {
                   <label className="block font-bold text-teal-800 uppercase tracking-wider text-[11px]">
                     Nhập Chủ Đề Tùy Chỉnh Của Bạn:
                   </label>
-                  <span className={`text-[10px] font-mono ${customTopic.length > 80 ? 'text-amber-600' : 'text-slate-400'}`}>
+                  <span
+                    className={`text-[10px] font-mono ${
+                      customTopic.length > 80 ? 'text-amber-600' : 'text-slate-400'
+                    }`}
+                  >
                     {customTopic.length}/100 ký tự
                   </span>
                 </div>
@@ -239,21 +386,14 @@ export default function StudentAiPracticePage() {
                   maxLength={100}
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
-                  placeholder="VD: Inversion, Subjunctive Mood, Phrasal Verbs with 'Look'..."
+                  placeholder="VD: Công nghệ thông tin, Du lịch khách sạn, Điện ảnh giải trí, Inversion..."
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 text-xs"
                 />
 
-                {/* Gợi ý chủ đề nhanh & lọc rác */}
+                {/* Gợi ý chủ đề nhanh & thông dụng */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
                   <span className="text-[10px] text-slate-500 font-medium">💡 Gợi ý nhanh:</span>
-                  {[
-                    'Đảo ngữ (Inversion)',
-                    'Câu giả định (Subjunctive Mood)',
-                    'Phrasal verbs with "Look"',
-                    'Mạo từ A / An / The',
-                    'Gerund vs Infinitive',
-                    'IELTS Writing Task 2 Vocab',
-                  ].map((sug) => (
+                  {QUICK_SUGGESTIONS.map((sug) => (
                     <button
                       key={sug}
                       type="button"
@@ -274,7 +414,7 @@ export default function StudentAiPracticePage() {
           <div className="py-20 flex flex-col items-center justify-center space-y-3">
             <div className="w-10 h-10 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
             <p className="text-xs text-teal-700 font-bold animate-pulse">
-              Hệ thống AI đang sinh {soLuong} câu hỏi tương tác chuẩn CEFR {cefr}...
+              Hệ thống AI đang biên soạn {soLuong} câu hỏi tương tác chuẩn CEFR {cefr}...
             </p>
           </div>
         )}
@@ -282,9 +422,10 @@ export default function StudentAiPracticePage() {
         {/* Result & Quiz Area */}
         {result?.data?.cauHoi && (
           <div className="space-y-6">
-            <div className="p-4 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-between">
+            {/* Header Thống Kê & Nút Tạo Phiên Mới */}
+            <div className="p-4 rounded-xl bg-teal-50 border border-teal-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <span className="text-xs text-teal-900 font-bold">
-                Bài tập: <strong>{result.data.chuDe}</strong> (CEFR {result.data.trinhDo})
+                Bài tập: <strong>{result.data.chuDe}</strong> — Trình độ: <strong>CEFR {result.data.trinhDo}</strong> ({result.data.cauHoi.length} câu)
               </span>
               <div className="flex items-center space-x-2">
                 <span
@@ -302,67 +443,141 @@ export default function StudentAiPracticePage() {
                     ? '✨ Trí Tuệ Nhân Tạo (AI)'
                     : '📦 Mẫu Dự Phòng (Fallback)'}
                 </span>
+                <button
+                  type="button"
+                  onClick={handleResetSession}
+                  className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 transition cursor-pointer shadow-xs"
+                  title="Xóa kết quả hiện tại để tạo phiên luyện tập mới"
+                >
+                  <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
+                  <span>Tạo Phiên Mới</span>
+                </button>
               </div>
             </div>
 
+            {/* Danh Sách Câu Hỏi */}
             <div className="space-y-4">
               {result.data.cauHoi.map((q: any, idx: number) => {
+                const typeInfo = getQuestionTypeInfo(q);
                 const selected = userAnswers[idx];
-                const isCorrect = selected === q.dapAnDung;
+                const isCorrect = isQuestionCorrect(q, selected);
 
                 return (
-                  <div key={q.id || idx} className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <span className="w-6 h-6 rounded-full bg-teal-50 border border-teal-200 text-teal-700 font-bold text-xs flex items-center justify-center shrink-0">
-                        {idx + 1}
+                  <div
+                    key={q.id || idx}
+                    className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start space-x-3">
+                        <span className="w-6 h-6 rounded-full bg-teal-50 border border-teal-200 text-teal-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                          {idx + 1}
+                        </span>
+                        <div className="space-y-1">
+                          <p className="text-sm font-bold text-slate-900 leading-relaxed">
+                            {q.noiDung}
+                          </p>
+                          <p className="text-[11px] text-slate-500 italic">
+                            {typeInfo.instruction}
+                          </p>
+                        </div>
+                      </div>
+                      <span
+                        className={`text-[10px] font-bold px-2.5 py-1 rounded-md border shrink-0 ${typeInfo.badgeClass}`}
+                      >
+                        {typeInfo.badgeLabel}
                       </span>
-                      <p className="text-sm font-bold text-slate-900 leading-relaxed">{q.noiDung}</p>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pl-9">
+                    <div
+                      className={`grid gap-2.5 pl-9 ${
+                        typeInfo.isTrueFalse ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'
+                      }`}
+                    >
                       {q.luaChon &&
                         Object.entries(q.luaChon).map(([optKey, optVal]: [string, any]) => {
-                          const isChosen = selected === optKey;
-                          let btnClass = 'bg-slate-50 border-slate-200 text-slate-700 hover:border-teal-300 hover:bg-teal-50/40';
+                          const isChosen = Array.isArray(selected)
+                            ? selected.includes(optKey)
+                            : selected === optKey;
+
+                          const isAnswerKey = Array.isArray(q.dapAnDung)
+                            ? q.dapAnDung.includes(optKey)
+                            : typeof q.dapAnDung === 'string' && q.dapAnDung.includes(',')
+                            ? q.dapAnDung
+                                .split(',')
+                                .map((k: string) => k.trim())
+                                .includes(optKey)
+                            : q.dapAnDung === optKey;
+
+                          let btnClass =
+                            'bg-slate-50 border-slate-200 text-slate-700 hover:border-teal-300 hover:bg-teal-50/40';
 
                           if (submitted) {
-                            if (optKey === q.dapAnDung) {
-                              btnClass = 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold';
+                            if (isAnswerKey) {
+                              btnClass =
+                                'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold ring-1 ring-emerald-300';
                             } else if (isChosen && !isCorrect) {
-                              btnClass = 'bg-rose-50 border-rose-300 text-rose-800 font-bold';
+                              btnClass =
+                                'bg-rose-50 border-rose-300 text-rose-800 font-bold ring-1 ring-rose-300';
                             } else {
                               btnClass = 'bg-slate-50/50 border-slate-200 text-slate-400 opacity-60';
                             }
                           } else if (isChosen) {
-                            btnClass = 'bg-teal-600 border-teal-600 text-white font-bold shadow-sm';
+                            btnClass =
+                              'bg-teal-600 border-teal-600 text-white font-bold shadow-sm ring-2 ring-teal-600/30';
                           }
 
                           return (
                             <button
                               key={optKey}
                               type="button"
-                              onClick={() => handleSelectOption(idx, optKey)}
-                              className={`p-3 rounded-xl border text-xs text-left transition flex items-center space-x-2 cursor-pointer ${btnClass}`}
+                              onClick={() => handleSelectOption(idx, optKey, typeInfo.isMulti)}
+                              className={`p-3 rounded-xl border text-xs text-left transition flex items-center space-x-2.5 cursor-pointer ${btnClass}`}
                             >
-                              <span className="font-bold opacity-80">[{optKey}]</span>
-                              <span>{optVal}</span>
+                              <span
+                                className={`w-5 h-5 rounded-md flex items-center justify-center font-bold text-[11px] shrink-0 ${
+                                  isChosen
+                                    ? 'bg-white/20 text-white'
+                                    : 'bg-slate-200/80 text-slate-700'
+                                }`}
+                              >
+                                {typeInfo.isMulti ? (
+                                  isChosen ? '☑' : '☐'
+                                ) : (
+                                  optKey
+                                )}
+                              </span>
+                              <span className="leading-snug">{optVal}</span>
                             </button>
                           );
                         })}
                     </div>
 
-                    {/* Explanation after submit */}
+                    {/* Giải thích chi tiết sau khi nộp bài */}
                     {submitted && (
                       <div
                         className={`ml-9 p-3.5 rounded-xl border text-xs ${
-                          isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
+                          isCorrect
+                            ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                            : 'bg-rose-50 border-rose-200 text-rose-800'
                         }`}
                       >
                         <div className="flex items-center space-x-1.5 font-bold mb-1">
-                          {isCorrect ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <XCircle className="w-4 h-4 text-rose-600" />}
-                          <span>{isCorrect ? 'Chính xác!' : `Chưa đúng. Đáp án là [${q.dapAnDung}]`}</span>
+                          {isCorrect ? (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                          )}
+                          <span>
+                            {isCorrect
+                              ? 'Chính xác!'
+                              : `Chưa đúng. Đáp án chuẩn là: [${formatCorrectAnswer(
+                                  q.dapAnDung,
+                                )}]`}
+                          </span>
                         </div>
-                        <p className="text-slate-700 text-[11px] leading-relaxed">{q.giaiThich}</p>
+                        <p className="text-slate-700 text-[11px] leading-relaxed">
+                          {q.giaiThich}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -370,12 +585,12 @@ export default function StudentAiPracticePage() {
               })}
             </div>
 
-            {/* Bottom action */}
-            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex items-center justify-between">
+            {/* Khung Hành Động Dưới Cùng */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
               {submitted ? (
                 <>
                   <div className="flex items-center space-x-3">
-                    <span className="text-xs text-slate-500 font-medium">Kết quả của bạn:</span>
+                    <span className="text-xs text-slate-500 font-medium">Kết quả:</span>
                     <span className="text-xl font-black text-teal-700">
                       {calculateScore()} / {result.data.cauHoi.length} Câu Đúng
                     </span>
@@ -383,35 +598,57 @@ export default function StudentAiPracticePage() {
                       ({((calculateScore() / result.data.cauHoi.length) * 100).toFixed(0)}%)
                     </span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSubmitted(false);
-                      setUserAnswers({});
-                      saveToSession(result, {}, false);
-                    }}
-                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Làm Lại Đề Này</span>
-                  </button>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSubmitted(false);
+                        setUserAnswers({});
+                        saveToSession(result, {}, false);
+                      }}
+                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Làm Lại Đề Này</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleResetSession}
+                      className="px-4 py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer"
+                    >
+                      <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
+                      <span>Tạo Phiên Mới</span>
+                    </button>
+                  </div>
                 </>
               ) : (
                 <>
                   <span className="text-xs text-slate-500 font-medium">
-                    Đã chọn: <strong className="text-slate-900 font-bold">{Object.keys(userAnswers).length}</strong> / {result.data.cauHoi.length} câu
+                    Đã hoàn thành:{' '}
+                    <strong className="text-slate-900 font-bold">{countAnswered()}</strong> /{' '}
+                    {result.data.cauHoi.length} câu
                   </span>
-                  <button
-                    type="button"
-                    disabled={Object.keys(userAnswers).length < result.data.cauHoi.length}
-                    onClick={() => {
-                      setSubmitted(true);
-                      saveToSession(result, userAnswers, true);
-                    }}
-                    className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-md shadow-teal-600/20 transition disabled:opacity-40 cursor-pointer"
-                  >
-                    Nộp Bài & Chấm Điểm
-                  </button>
+                  <div className="flex items-center space-x-2">
+                    <button
+                      type="button"
+                      onClick={handleResetSession}
+                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
+                    >
+                      <PlusCircle className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Hủy & Tạo Đề Khác</span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={countAnswered() < result.data.cauHoi.length}
+                      onClick={() => {
+                        setSubmitted(true);
+                        saveToSession(result, userAnswers, true);
+                      }}
+                      className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-md shadow-teal-600/20 transition disabled:opacity-40 cursor-pointer"
+                    >
+                      Nộp Bài & Chấm Điểm
+                    </button>
+                  </div>
                 </>
               )}
             </div>

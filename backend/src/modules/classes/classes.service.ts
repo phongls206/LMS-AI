@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateClassDto, CreateScheduleDto, AssignTeacherDto } from './dto/classes.dto';
+import { CreateClassDto, CreateScheduleDto, AssignTeacherDto, UpdateClassDto } from './dto/classes.dto';
 import { TrangThaiLopHoc, TrangThaiKhoaHoc, VaiTroPhanCong, TrangThaiPhanCong } from '@prisma/client';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class ClassesService {
       include: {
         khoaHoc: { select: { tenKhoaHoc: true, hocPhi: true, trinhDoYeuCau: true } },
         lichHoc: true,
-        buoiHoc: { select: { id: true, soThuTu: true, ngayHoc: true, chuDe: true, trangThai: true } },
+        buoiHoc: { select: { id: true, soThuTu: true, ngayHoc: true, chuDe: true, trangThai: true, phongHoc: true } },
         _count: { select: { buoiHoc: true, dangKyHoc: true } },
         phanCong: {
           where: { trangThai: 'DANG_PHU_TRACH' },
@@ -150,6 +150,7 @@ export class ClassesService {
           ngayHoc: new Date(sessDate),
           gioBatDau: new Date('1970-01-01T18:00:00'),
           gioKetThuc: new Date('1970-01-01T20:30:00'),
+          phongHoc: dto.phongHoc || 'Phòng A101',
           chuDe: `Buổi ${i + 1}: ${topic}`,
         },
       });
@@ -352,6 +353,30 @@ export class ClassesService {
     const updated = await this.prisma.lopHoc.update({
       where: { id: BigInt(id) },
       data: { trangThai },
+    });
+
+    return this.serializeBigInt(updated);
+  }
+
+  /**
+   * UC004 — Cập nhật thông tin lớp học (phòng học, tên lớp, sĩ số, ngày học)
+   */
+  async updateClass(id: number, dto: UpdateClassDto) {
+    const classRecord = await this.prisma.lopHoc.findUnique({
+      where: { id: BigInt(id) },
+    });
+    if (!classRecord) throw new NotFoundException('Không tìm thấy lớp học.');
+
+    const updateData: any = {};
+    if (dto.tenLopHoc !== undefined) updateData.tenLopHoc = dto.tenLopHoc;
+    if (dto.siSoToiDa !== undefined) updateData.siSoToiDa = dto.siSoToiDa;
+    if (dto.phongHoc !== undefined) updateData.phongHoc = dto.phongHoc;
+    if (dto.ngayBatDau !== undefined) updateData.ngayBatDau = new Date(dto.ngayBatDau);
+    if (dto.ngayKetThuc !== undefined) updateData.ngayKetThuc = new Date(dto.ngayKetThuc);
+
+    const updated = await this.prisma.lopHoc.update({
+      where: { id: BigInt(id) },
+      data: updateData,
     });
 
     return this.serializeBigInt(updated);

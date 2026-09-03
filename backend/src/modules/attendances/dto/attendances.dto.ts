@@ -71,6 +71,11 @@ export class CreateSessionDto {
   @IsString()
   gioKetThuc?: string;
 
+  @ApiPropertyOptional({ example: 'Phòng A101', description: 'Phòng học của buổi học' })
+  @IsOptional()
+  @IsString()
+  phongHoc?: string;
+
   @ApiPropertyOptional({ example: 'Chủ đề: Ôn tập ngữ pháp & từ vựng', description: 'Tiêu đề hoặc chủ đề buổi học' })
   @IsOptional()
   @IsString()
@@ -92,6 +97,11 @@ export class UpdateSessionDto {
   @IsOptional()
   @IsString()
   gioKetThuc?: string;
+
+  @ApiPropertyOptional({ example: 'Phòng A101', description: 'Phòng học' })
+  @IsOptional()
+  @IsString()
+  phongHoc?: string;
 
   @ApiPropertyOptional({ example: 'Tiêu đề buổi học', description: 'Chủ đề buổi học' })
   @IsOptional()

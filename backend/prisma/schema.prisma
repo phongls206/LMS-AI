@@ -301,6 +301,7 @@ model BuoiHoc {
   ngayHoc       DateTime          @db.Date
   gioBatDau     DateTime          @db.Time
   gioKetThuc    DateTime          @db.Time
+  phongHoc      String?           @db.VarChar(50)
   chuDe         String?           @db.VarChar(200)
   trangThai     TrangThaiBuoiHoc  @default(CHUA_DIEN_RA)
 

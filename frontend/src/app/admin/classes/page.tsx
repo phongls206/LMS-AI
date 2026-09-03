@@ -49,6 +49,7 @@ export default function AdminClassesPage() {
     ngayHoc: '',
     gioBatDau: '18:00',
     gioKetThuc: '20:30',
+    phongHoc: 'Phòng A101',
     chuDe: '',
   });
   const [editingSessionId, setEditingSessionId] = useState<number | null>(null);
@@ -57,8 +58,20 @@ export default function AdminClassesPage() {
     ngayHoc: '',
     gioBatDau: '18:00',
     gioKetThuc: '20:30',
+    phongHoc: 'Phòng A101',
   });
   const [savingEditSession, setSavingEditSession] = useState(false);
+
+  // Chỉnh sửa lớp học (phòng học, tên lớp, sĩ số...)
+  const [editingClass, setEditingClass] = useState<LopHoc | null>(null);
+  const [editClassForm, setEditClassForm] = useState({
+    tenLopHoc: '',
+    phongHoc: 'Phòng A101',
+    siSoToiDa: 25,
+    ngayBatDau: '',
+    ngayKetThuc: '',
+  });
+  const [savingEditClass, setSavingEditClass] = useState(false);
 
   // Form states
   const [classForm, setClassForm] = useState({
@@ -238,11 +251,13 @@ export default function AdminClassesPage() {
       setClassSessions(data || []);
       const nextSeq = data && data.length > 0 ? Math.max(...data.map((s: any) => s.soThuTu || 0)) + 1 : 1;
       const targetClass = classes.find((c) => Number(c.id) === Number(classId));
+      const defaultRoom = targetClass?.phongHoc || targetClass?.lichHoc?.[0]?.phongHoc || 'Phòng A101';
       setNewSessionForm({
         soThuTu: nextSeq,
         ngayHoc: targetClass?.ngayBatDau?.slice(0, 10) || new Date().toISOString().slice(0, 10),
         gioBatDau: '18:00',
         gioKetThuc: '20:30',
+        phongHoc: defaultRoom,
         chuDe: `Buổi ${nextSeq}: Kỹ năng tiếng Anh thực hành`,
       });
     } catch (err) {
@@ -282,9 +297,12 @@ export default function AdminClassesPage() {
       const data = await attendancesService.getClassSessions(showSessionsClassId);
       setClassSessions(data || []);
       const nextSeq = data && data.length > 0 ? Math.max(...data.map((s: any) => s.soThuTu || 0)) + 1 : 1;
+      const targetClass = classes.find((c) => Number(c.id) === Number(showSessionsClassId));
+      const defaultRoom = targetClass?.phongHoc || targetClass?.lichHoc?.[0]?.phongHoc || 'Phòng A101';
       setNewSessionForm((prev) => ({
         ...prev,
         soThuTu: nextSeq,
+        phongHoc: defaultRoom,
         chuDe: `Buổi ${nextSeq}: Kỹ năng tiếng Anh thực hành`,
       }));
       fetchData();
@@ -302,12 +320,14 @@ export default function AdminClassesPage() {
       : '';
     const startStr = s.gioBatDau ? new Date(s.gioBatDau).toISOString().substring(11, 16) : '18:00';
     const endStr = s.gioKetThuc ? new Date(s.gioKetThuc).toISOString().substring(11, 16) : '20:30';
+    const targetClass = classes.find((c) => Number(c.id) === Number(showSessionsClassId));
 
     setEditSessionForm({
       chuDe: s.chuDe || `Buổi ${s.soThuTu}`,
       ngayHoc: dateStr,
       gioBatDau: startStr,
       gioKetThuc: endStr,
+      phongHoc: s.phongHoc || targetClass?.phongHoc || targetClass?.lichHoc?.[0]?.phongHoc || 'Phòng A101',
     });
   };
 
@@ -324,12 +344,40 @@ export default function AdminClassesPage() {
         setClassSessions(data || []);
       }
       setEditingSessionId(null);
-      setMessage({ type: 'success', text: 'Cập nhật ngày học, khung giờ và tiêu đề thành công!' });
+      setMessage({ type: 'success', text: 'Cập nhật ngày học, khung giờ, phòng học và tiêu đề thành công!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
       alert(err.response?.data?.message || 'Có lỗi khi cập nhật buổi học.');
     } finally {
       setSavingEditSession(false);
+    }
+  };
+
+  const handleOpenEditClass = (c: LopHoc) => {
+    setEditingClass(c);
+    setEditClassForm({
+      tenLopHoc: c.tenLopHoc,
+      phongHoc: c.phongHoc || c.lichHoc?.[0]?.phongHoc || 'Phòng A101',
+      siSoToiDa: c.siSoToiDa,
+      ngayBatDau: c.ngayBatDau ? c.ngayBatDau.slice(0, 10) : '',
+      ngayKetThuc: c.ngayKetThuc ? c.ngayKetThuc.slice(0, 10) : '',
+    });
+  };
+
+  const handleSaveClass = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingClass) return;
+    setSavingEditClass(true);
+    try {
+      await classesService.update(editingClass.id, editClassForm);
+      setMessage({ type: 'success', text: `Cập nhật thông tin và phòng học lớp ${editingClass.maLopHoc} thành công!` });
+      setEditingClass(null);
+      fetchData();
+      setTimeout(() => setMessage(null), 3500);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi khi cập nhật lớp học.');
+    } finally {
+      setSavingEditClass(false);
     }
   };
 
@@ -515,6 +563,13 @@ export default function AdminClassesPage() {
                               >
                                 + Gán GV
                               </button>
+                              <button
+                                onClick={() => handleOpenEditClass(c)}
+                                className="inline-flex items-center p-1.5 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 border border-slate-200 hover:border-teal-200 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
+                                title="Chỉnh sửa thông tin & phòng học của lớp"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" />
+                              </button>
                             </>
                           )}
                         </div>
@@ -576,16 +631,29 @@ export default function AdminClassesPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">Tên Lớp Học</label>
-                  <input
-                    type="text"
-                    required
-                    value={classForm.tenLopHoc}
-                    onChange={(e) => setClassForm({ ...classForm, tenLopHoc: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
-                    placeholder="VD: IELTS B1 Tối 2-4-6"
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Tên Lớp Học</label>
+                    <input
+                      type="text"
+                      required
+                      value={classForm.tenLopHoc}
+                      onChange={(e) => setClassForm({ ...classForm, tenLopHoc: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      placeholder="VD: IELTS B1 Tối 2-4-6"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Phòng Học Mặc Định</label>
+                    <input
+                      type="text"
+                      required
+                      value={classForm.phongHoc}
+                      onChange={(e) => setClassForm({ ...classForm, phongHoc: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 font-medium"
+                      placeholder="VD: Phòng A101"
+                    />
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -663,6 +731,103 @@ export default function AdminClassesPage() {
                   </button>
                   <button type="submit" className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition shadow-sm cursor-pointer">
                     Mở Lớp Ngay
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Chỉnh Sửa Thông Tin & Phòng Học Lớp */}
+        {editingClass && (
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 shadow-2xl text-slate-800">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Chỉnh Sửa Lớp Học & Phòng Học</h3>
+                  <p className="text-xs text-teal-600 font-mono font-bold mt-0.5">[{editingClass.maLopHoc}] {editingClass.tenLopHoc}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setEditingClass(null)}
+                  className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveClass} className="space-y-4 text-xs">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Tên Lớp Học</label>
+                    <input
+                      type="text"
+                      required
+                      value={editClassForm.tenLopHoc}
+                      onChange={(e) => setEditClassForm({ ...editClassForm, tenLopHoc: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 font-medium"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Phòng Học Chính</label>
+                    <input
+                      type="text"
+                      required
+                      value={editClassForm.phongHoc}
+                      onChange={(e) => setEditClassForm({ ...editClassForm, phongHoc: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 font-medium"
+                      placeholder="VD: Phòng A101"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Sĩ Số Tối Đa</label>
+                  <input
+                    type="number"
+                    max={200}
+                    min={1}
+                    value={editClassForm.siSoToiDa}
+                    onChange={(e) => setEditClassForm({ ...editClassForm, siSoToiDa: +e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Ngày Bắt Đầu</label>
+                    <input
+                      type="date"
+                      value={editClassForm.ngayBatDau}
+                      onChange={(e) => setEditClassForm({ ...editClassForm, ngayBatDau: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Ngày Kết Thúc</label>
+                    <input
+                      type="date"
+                      value={editClassForm.ngayKetThuc}
+                      onChange={(e) => setEditClassForm({ ...editClassForm, ngayKetThuc: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => setEditingClass(null)}
+                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={savingEditClass}
+                    className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition shadow-sm cursor-pointer disabled:opacity-50"
+                  >
+                    {savingEditClass ? 'Đang Lưu...' : 'Lưu Thay Đổi'}
                   </button>
                 </div>
               </form>
@@ -946,7 +1111,7 @@ export default function AdminClassesPage() {
         {/* MODAL QUẢN LÝ DANH SÁCH BUỔI HỌC CỦA LỚP */}
         {showSessionsClassId && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-800 p-6 space-y-5">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-800 p-6 space-y-5">
               {(() => {
                 const targetClass = classes.find((c) => Number(c.id) === Number(showSessionsClassId));
                 return (
@@ -961,12 +1126,17 @@ export default function AdminClassesPage() {
                           <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold">
                             {classSessions.length} buổi học hiện có
                           </span>
+                          {targetClass?.phongHoc && (
+                            <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 text-xs font-semibold border border-indigo-200">
+                              Phòng mặc định: {targetClass.phongHoc}
+                            </span>
+                          )}
                         </div>
                         <h3 className="text-lg font-bold text-slate-900">
                           Quản Lý Buổi Học — {targetClass?.tenLopHoc}
                         </h3>
                         <p className="text-xs text-slate-500">
-                          Khởi tạo, sắp xếp và tùy chỉnh giáo trình từng buổi học phục vụ giáo viên điểm danh chuyên cần
+                          Khởi tạo, sắp xếp và tùy chỉnh ngày giờ, phòng học & giáo trình từng buổi học phục vụ giáo viên điểm danh chuyên cần
                         </p>
                       </div>
                       <button
@@ -1010,7 +1180,7 @@ export default function AdminClassesPage() {
                           <Plus className="w-4 h-4 text-teal-600" />
                           Thêm Buổi Học Mới Cho Lớp
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
                           <div>
                             <label className="block text-slate-700 font-bold mb-1">Số Thứ Tự</label>
                             <input
@@ -1050,6 +1220,16 @@ export default function AdminClassesPage() {
                               value={newSessionForm.gioKetThuc}
                               onChange={(e) => setNewSessionForm({ ...newSessionForm, gioKetThuc: e.target.value })}
                               className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-teal-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-700 font-bold mb-1">Phòng Học</label>
+                            <input
+                              type="text"
+                              value={newSessionForm.phongHoc}
+                              onChange={(e) => setNewSessionForm({ ...newSessionForm, phongHoc: e.target.value })}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-teal-500 font-medium"
+                              placeholder="VD: Phòng A101"
                             />
                           </div>
                         </div>
@@ -1097,6 +1277,7 @@ export default function AdminClassesPage() {
                               <th className="py-2.5 px-3 w-16 text-center">Buổi</th>
                               <th className="py-2.5 px-3 w-28">Ngày Học</th>
                               <th className="py-2.5 px-3 w-28">Khung Giờ</th>
+                              <th className="py-2.5 px-3 w-28">Phòng Học</th>
                               <th className="py-2.5 px-3">Tiêu Đề / Chủ Đề Buổi Học</th>
                               <th className="py-2.5 px-3 w-24">Trạng Thái</th>
                               <th className="py-2.5 px-3 w-20 text-right">Thao Tác</th>
@@ -1108,6 +1289,7 @@ export default function AdminClassesPage() {
                               const formattedDate = s.ngayHoc ? new Date(s.ngayHoc).toLocaleDateString('vi-VN') : '—';
                               const startTime = s.gioBatDau ? new Date(s.gioBatDau).toISOString().substring(11, 16) : '18:00';
                               const endTime = s.gioKetThuc ? new Date(s.gioKetThuc).toISOString().substring(11, 16) : '20:30';
+                              const displayRoom = s.phongHoc || targetClass?.phongHoc || targetClass?.lichHoc?.[0]?.phongHoc || 'Phòng A101';
 
                               return (
                                 <tr key={s.id} className={`hover:bg-slate-50/80 transition ${isEditing ? 'bg-teal-50/30' : ''}`}>
@@ -1152,6 +1334,21 @@ export default function AdminClassesPage() {
                                       `${startTime} - ${endTime}`
                                     )}
                                   </td>
+                                  <td className="py-2.5 px-3 font-medium text-slate-800">
+                                    {isEditing ? (
+                                      <input
+                                        type="text"
+                                        value={editSessionForm.phongHoc}
+                                        onChange={(e) => setEditSessionForm({ ...editSessionForm, phongHoc: e.target.value })}
+                                        className="w-full bg-white border border-teal-400 rounded-lg px-2 py-1 text-slate-900 text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 font-medium"
+                                        placeholder="VD: Phòng A101"
+                                      />
+                                    ) : (
+                                      <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 font-medium font-mono text-[11px] inline-flex items-center gap-1">
+                                        {displayRoom}
+                                      </span>
+                                    )}
+                                  </td>
                                   <td className="py-2.5 px-3">
                                     {isEditing ? (
                                       <input
@@ -1168,7 +1365,7 @@ export default function AdminClassesPage() {
                                         <button
                                           onClick={() => handleStartEditSession(s)}
                                           className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-slate-200 text-slate-500 transition cursor-pointer"
-                                          title="Chỉnh sửa ngày, giờ & tiêu đề buổi này"
+                                          title="Chỉnh sửa ngày, giờ, phòng học & tiêu đề buổi này"
                                         >
                                           <Edit3 className="w-3 h-3" />
                                         </button>
@@ -1199,7 +1396,7 @@ export default function AdminClassesPage() {
                                           onClick={() => handleSaveSession(Number(s.id))}
                                           disabled={savingEditSession}
                                           className="px-2 py-1 rounded-md bg-teal-600 hover:bg-teal-700 text-white font-bold text-[11px] cursor-pointer shadow-xs inline-flex items-center gap-1"
-                                          title="Lưu ngày, giờ và tiêu đề"
+                                          title="Lưu ngày, giờ, phòng học và tiêu đề"
                                         >
                                           <Check className="w-3.5 h-3.5" />
                                           <span>{savingEditSession ? '...' : 'Lưu'}</span>
@@ -1217,7 +1414,7 @@ export default function AdminClassesPage() {
                                         <button
                                           onClick={() => handleStartEditSession(s)}
                                           className="p-1 rounded-lg text-slate-400 hover:text-teal-600 hover:bg-teal-50 transition cursor-pointer"
-                                          title="Chỉnh sửa ngày, giờ & tiêu đề"
+                                          title="Chỉnh sửa ngày, giờ, phòng học & tiêu đề"
                                         >
                                           <Edit3 className="w-3.5 h-3.5" />
                                         </button>

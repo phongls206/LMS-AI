@@ -89,6 +89,7 @@ export const classesService = {
     (await api.get('/classes', { params: { khoaHocId, trangThai } })).data,
   getById: async (id: number) => (await api.get(`/classes/${id}`)).data,
   create: async (data: any) => (await api.post('/classes', data)).data,
+  update: async (id: number, data: any) => (await api.put(`/classes/${id}`, data)).data,
   updateStatus: async (id: number, trangThai: string) =>
     (await api.put(`/classes/${id}/status`, { trangThai })).data,
   addSchedule: async (id: number, data: any) => (await api.post(`/classes/${id}/schedules`, data)).data,
@@ -156,8 +157,8 @@ export const statisticsService = {
 export const aiService = {
   consultClasses: async (cefr: string, lichRanhJson?: any, mucTieu?: string) =>
     (await api.post('/ai/consult-classes', { cefr, lichRanhJson, mucTieu })).data,
-  generateExercises: async (chuDe: string, trinhDo: string, soLuong?: number) =>
-    (await api.post('/ai/generate-exercises', { chuDe, trinhDo, soLuong })).data,
+  generateExercises: async (chuDe: string, trinhDo: string, soLuong?: number, loaiCauHoi?: string) =>
+    (await api.post('/ai/generate-exercises', { chuDe, trinhDo, soLuong, loaiCauHoi })).data,
   summarizeProgress: async (hocVienId: number, lopHocId: number) =>
     (await api.post('/ai/summarize-progress', { hocVienId, lopHocId })).data,
 };

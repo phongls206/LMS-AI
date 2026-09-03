@@ -47,6 +47,18 @@ export interface LichHoc {
   phongHoc: string;
 }
 
+export interface BuoiHoc {
+  id: number;
+  lopHocId: number;
+  soThuTu: number;
+  ngayHoc: string;
+  gioBatDau: string;
+  gioKetThuc: string;
+  phongHoc?: string;
+  chuDe?: string;
+  trangThai: 'CHUA_DIEN_RA' | 'DANG_DIEN_RA' | 'DA_KET_THUC' | 'DA_HUY';
+}
+
 export interface LopHoc {
   id: number;
   khoaHocId: number;
@@ -63,7 +75,7 @@ export interface LopHoc {
   lichHoc?: LichHoc[];
   phanCong?: any[];
   dangKyHoc?: any[];
-  buoiHoc?: any[];
+  buoiHoc?: BuoiHoc[];
   _count?: {
     buoiHoc?: number;
     dangKyHoc?: number;

@@ -64,6 +64,33 @@ export class UpdateClassStatusDto {
   trangThai: TrangThaiLopHoc;
 }
 
+export class UpdateClassDto {
+  @ApiPropertyOptional({ example: 'IELTS B1 Tối 3-5-7' })
+  @IsOptional()
+  @IsString()
+  tenLopHoc?: string;
+
+  @ApiPropertyOptional({ example: 25 })
+  @IsOptional()
+  @IsNumber()
+  siSoToiDa?: number;
+
+  @ApiPropertyOptional({ example: 'Phòng A101' })
+  @IsOptional()
+  @IsString()
+  phongHoc?: string;
+
+  @ApiPropertyOptional({ example: '2024-10-01' })
+  @IsOptional()
+  @IsDateString()
+  ngayBatDau?: string;
+
+  @ApiPropertyOptional({ example: '2024-12-30' })
+  @IsOptional()
+  @IsDateString()
+  ngayKetThuc?: string;
+}
+
 export class CreateScheduleDto {
   @ApiProperty({ example: 2, description: 'Thứ trong tuần (2=Thứ Hai ... 8=Chủ Nhật)' })
   @IsNumber()

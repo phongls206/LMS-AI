@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { ClassesService } from './classes.service';
-import { CreateClassDto, CreateScheduleDto, AssignTeacherDto, UpdateClassStatusDto } from './dto/classes.dto';
+import { CreateClassDto, CreateScheduleDto, AssignTeacherDto, UpdateClassStatusDto, UpdateClassDto } from './dto/classes.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -82,6 +82,19 @@ export class ClassesController {
     @Body() dto: AssignTeacherDto,
   ) {
     return this.classesService.assignTeacher(id, dto);
+  }
+
+  /**
+   * PUT /api/v1/classes/:id — UC004 (Chỉ Quản lý)
+   */
+  @Put('classes/:id')
+  @Roles(VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Cập nhật thông tin lớp học (phòng học, tên lớp, sĩ số)' })
+  updateClass(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateClassDto,
+  ) {
+    return this.classesService.updateClass(id, dto);
   }
 
   /**

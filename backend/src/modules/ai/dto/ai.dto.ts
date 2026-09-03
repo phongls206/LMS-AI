@@ -40,6 +40,11 @@ export class GenerateExercisesDto {
   @IsOptional()
   @IsNumber()
   soLuong?: number;
+
+  @ApiPropertyOptional({ example: 'MIXED', description: 'Dạng câu hỏi: MIXED (Hỗn hợp), SINGLE (1 đáp án), TRUE_FALSE (Đúng/Sai), MULTIPLE (Chọn nhiều đáp án)' })
+  @IsOptional()
+  @IsString()
+  loaiCauHoi?: string;
 }
 
 export class SummarizeProgressDto {

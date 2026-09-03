@@ -214,10 +214,11 @@ export class AttendancesService {
     ];
 
     const schedules = classRecord.lichHoc;
-    const sessionDates: { date: Date; startTime: Date; endTime: Date }[] = [];
+    const sessionDates: { date: Date; startTime: Date; endTime: Date; room: string }[] = [];
 
     const defaultStartTime = new Date('1970-01-01T18:00:00');
     const defaultEndTime = new Date('1970-01-01T20:30:00');
+    const defaultRoom = classRecord.phongHoc || 'Phòng A101';
 
     let currentDate = new Date(classRecord.ngayBatDau);
     if (isNaN(currentDate.getTime())) currentDate = new Date();
@@ -234,6 +235,7 @@ export class AttendancesService {
             date: new Date(currentDate),
             startTime: matchedSchedule.gioBatDau ? new Date(matchedSchedule.gioBatDau) : defaultStartTime,
             endTime: matchedSchedule.gioKetThuc ? new Date(matchedSchedule.gioKetThuc) : defaultEndTime,
+            room: matchedSchedule.phongHoc || defaultRoom,
           });
         }
         currentDate.setDate(currentDate.getDate() + 1);
@@ -245,6 +247,7 @@ export class AttendancesService {
           date: new Date(currentDate),
           startTime: defaultStartTime,
           endTime: defaultEndTime,
+          room: defaultRoom,
         });
         currentDate.setDate(currentDate.getDate() + (i % 2 === 0 ? 2 : 3));
       }
@@ -266,6 +269,7 @@ export class AttendancesService {
           ngayHoc: sessionDates[i].date,
           gioBatDau: sessionDates[i].startTime,
           gioKetThuc: sessionDates[i].endTime,
+          phongHoc: sessionDates[i].room,
           chuDe,
           trangThai: TrangThaiBuoiHoc.CHUA_DIEN_RA,
         },
@@ -299,6 +303,7 @@ export class AttendancesService {
         ngayHoc: new Date(dto.ngayHoc),
         gioBatDau: startTime,
         gioKetThuc: endTime,
+        phongHoc: dto.phongHoc?.trim() || classRecord.phongHoc || 'Phòng A101',
         chuDe: dto.chuDe || `Buổi ${dto.soThuTu}: Bài học chuyên đề`,
         trangThai: TrangThaiBuoiHoc.CHUA_DIEN_RA,
       },
@@ -308,7 +313,7 @@ export class AttendancesService {
   }
 
   /**
-   * Cập nhật tiêu đề / ngày / giờ của một buổi học
+   * Cập nhật tiêu đề / ngày / giờ / phòng học của một buổi học
    */
   async updateSession(sessionId: number, dto: UpdateSessionDto) {
     const session = await this.prisma.buoiHoc.findUnique({
@@ -318,6 +323,7 @@ export class AttendancesService {
 
     const updateData: any = {};
     if (dto.chuDe !== undefined) updateData.chuDe = dto.chuDe;
+    if (dto.phongHoc !== undefined) updateData.phongHoc = dto.phongHoc?.trim() || null;
     if (dto.ngayHoc) updateData.ngayHoc = new Date(dto.ngayHoc);
     if (dto.gioBatDau) {
       updateData.gioBatDau = new Date(

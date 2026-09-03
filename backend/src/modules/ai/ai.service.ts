@@ -371,14 +371,27 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
 
     // GỌI GOOGLE GEMINI FLASH VỚI UNIQUE SESSION NONCE ĐỂ LUÔN TẠO BỘ ĐỀ MỚI MẺ
     const sessionNonce = `${Date.now()}_${Math.floor(Math.random() * 10000)}`;
+    const formatInstruction =
+      dto.loaiCauHoi === 'TRUE_FALSE'
+        ? 'Tất cả các câu hỏi phải ở dạng ĐÚNG / SAI (True/False): trường "luaChon" chỉ gồm {"A": "True (Đúng)", "B": "False (Sai)"}, "dapAnDung" là "A" hoặc "B", "loaiCauHoi": "TRUE_FALSE".'
+        : dto.loaiCauHoi === 'MULTIPLE'
+        ? 'Tất cả các câu hỏi phải ở dạng CHỌN NHIỀU ĐÁP ÁN ĐÚNG: trường "luaChon" gồm 4 lựa chọn {A, B, C, D}, "dapAnDung" là mảng gồm 2 hoặc 3 đáp án đúng (ví dụ: ["A", "C"]), "loaiCauHoi": "MULTIPLE". Cuối noiDung câu hỏi ghi rõ "(Chọn tất cả đáp án đúng)".'
+        : dto.loaiCauHoi === 'SINGLE'
+        ? 'Tất cả các câu hỏi ở dạng TRẮC NGHIỆM 1 ĐÁP ÁN ĐÚNG: trường "luaChon" gồm 4 lựa chọn {A, B, C, D}, "dapAnDung" là 1 ký tự ("A"|"B"|"C"|"D"), "loaiCauHoi": "SINGLE".'
+        : 'Hãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án ("SINGLE"), câu hỏi Đúng/Sai ("TRUE_FALSE" với lựa chọn A: True / B: False), và câu hỏi chọn nhiều đáp án đúng ("MULTIPLE" với dapAnDung là mảng như ["A", "C"]).';
+
     const prompt = `
 Bạn là giáo viên tiếng Anh chuyên nghiệp.
 Nhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng ${count} câu về chủ đề "${dto.chuDe}", độ khó chuẩn CEFR "${dto.trinhDo}".
 Mã phiên sinh đề ngẫu nhiên: #${sessionNonce}.
+
+YÊU CẦU DẠNG CÂU HỎI:
+${formatInstruction}
+
 RÀNG BUỘC NGHIÊM NGẶT:
 - Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.
-- Đúng ${count} câu hỏi trắc nghiệm (4 lựa chọn A, B, C, D) được đánh số id từ 1 đến ${count}.
-- Bắt buộc có đáp án đúng và giải thích ngắn gọn bằng tiếng Việt.
+- Đúng ${count} câu hỏi được đánh số id từ 1 đến ${count}.
+- Bắt buộc có đáp án đúng ("dapAnDung") và giải thích ngắn gọn ("giaiThich") bằng tiếng Việt.
 - Trả về JSON hợp lệ:
 {
   "chuDe": "${dto.chuDe}",
@@ -387,8 +400,9 @@ RÀNG BUỘC NGHIÊM NGẶT:
     {
       "id": 1,
       "noiDung": "...",
+      "loaiCauHoi": "SINGLE" | "TRUE_FALSE" | "MULTIPLE",
       "luaChon": { "A": "...", "B": "...", "C": "...", "D": "..." },
-      "dapAnDung": "A",
+      "dapAnDung": "A" hoặc ["A", "C"],
       "giaiThich": "..."
     }
   ]
@@ -410,6 +424,34 @@ RÀNG BUỘC NGHIÊM NGẶT:
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
         if (Array.isArray(parsed.cauHoi) && parsed.cauHoi.length >= 1) {
+          parsed.cauHoi = parsed.cauHoi.map((q: any, idx: number) => {
+            let loai = q.loaiCauHoi;
+            let dapAn = q.dapAnDung;
+
+            if (typeof dapAn === 'string' && dapAn.includes(',')) {
+              dapAn = dapAn.split(',').map((x: string) => x.trim().toUpperCase());
+              loai = 'MULTIPLE';
+            }
+
+            if (!loai) {
+              if (Array.isArray(dapAn)) {
+                loai = 'MULTIPLE';
+              } else if (q.luaChon && Object.keys(q.luaChon).length === 2) {
+                loai = 'TRUE_FALSE';
+              } else {
+                loai = 'SINGLE';
+              }
+            }
+
+            return {
+              id: q.id || idx + 1,
+              noiDung: q.noiDung || '',
+              loaiCauHoi: loai,
+              luaChon: q.luaChon || {},
+              dapAnDung: dapAn,
+              giaiThich: q.giaiThich || '',
+            };
+          });
           validatedJson = parsed;
         }
       }
@@ -419,8 +461,8 @@ RÀNG BUỘC NGHIÊM NGẶT:
       this.logger.warn('AI Sinh bài tập thất bại, áp dụng Đề mẫu Fallback:', error?.message);
       status = error?.message === 'TIMEOUT' ? TrangThaiYeuCauAI.TIMEOUT : TrangThaiYeuCauAI.FALLBACK_APPLIED;
 
-      // FALLBACK ĐỀ MẪU TĨNH ĐA DẠNG THEO CHỦ ĐỀ & KHUNG CEFR (ĐỦ 5, 10 HOẶC 15 CÂU)
-      validatedJson = getFallbackExercises(dto.chuDe, dto.trinhDo, count);
+      // FALLBACK ĐỀ MẪU TĨNH ĐA DẠNG THEO CHỦ ĐỀ & KHUNG CEFR (HỖ TRỢ IT, ENTERTAINMENT, TOURISM & MULTIPLE/TRUE_FALSE)
+      validatedJson = getFallbackExercises(dto.chuDe, dto.trinhDo, count, dto.loaiCauHoi);
     }
 
     const duration = Date.now() - startTime;
