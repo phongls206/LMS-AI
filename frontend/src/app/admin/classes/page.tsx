@@ -6,6 +6,24 @@ import { classesService, coursesService, usersService } from '../../../services/
 import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
 import { GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle } from 'lucide-react';
 
+const DAYS_OF_WEEK = [
+  { value: 2, label: 'Thứ Hai', short: 'T2' },
+  { value: 3, label: 'Thứ Ba', short: 'T3' },
+  { value: 4, label: 'Thứ Tư', short: 'T4' },
+  { value: 5, label: 'Thứ Năm', short: 'T5' },
+  { value: 6, label: 'Thứ Sáu', short: 'T6' },
+  { value: 7, label: 'Thứ Bảy', short: 'T7' },
+  { value: 8, label: 'Chủ Nhật', short: 'CN' },
+];
+
+const PRESET_SCHEDULES = [
+  { label: 'T2 - T4 - T6', days: [2, 4, 6] },
+  { label: 'T3 - T5 - T7', days: [3, 5, 7] },
+  { label: 'T7 - Chủ Nhật', days: [7, 8] },
+  { label: 'T2 đến T6', days: [2, 3, 4, 5, 6] },
+  { label: 'Cả Tuần', days: [2, 3, 4, 5, 6, 7, 8] },
+];
+
 export default function AdminClassesPage() {
   const [classes, setClasses] = useState<LopHoc[]>([]);
   const [courses, setCourses] = useState<KhoaHoc[]>([]);
@@ -29,17 +47,32 @@ export default function AdminClassesPage() {
   });
 
   const [scheduleForm, setScheduleForm] = useState({
-    thuTrongTuan: 2,
     gioBatDau: '18:00',
     gioKetThuc: '20:30',
     phongHoc: 'Phòng A101',
   });
+
+  const [selectedDays, setSelectedDays] = useState<number[]>([2, 4, 6]);
+  const [submittingSchedule, setSubmittingSchedule] = useState(false);
 
   const [assignForm, setAssignForm] = useState({
     giaoVienId: 1,
   });
 
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const toggleDay = (dayVal: number) => {
+    if (selectedDays.includes(dayVal)) {
+      setSelectedDays(selectedDays.filter((d) => d !== dayVal));
+    } else {
+      setSelectedDays([...selectedDays, dayVal].sort((a, b) => a - b));
+    }
+  };
+
+  const handleOpenAddSchedule = (classId: number) => {
+    setShowAddSchedule(classId);
+    setSelectedDays([2, 4, 6]);
+  };
 
   const fetchData = async () => {
     try {
@@ -78,14 +111,50 @@ export default function AdminClassesPage() {
 
   const handleAddSchedule = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!showAddSchedule) return;
-    try {
-      await classesService.addSchedule(showAddSchedule, scheduleForm);
-      setMessage({ type: 'success', text: 'Thêm lịch học thành công (Đã qua kiểm tra chống trùng phòng)!' });
+    if (!showAddSchedule || selectedDays.length === 0) return;
+
+    setSubmittingSchedule(true);
+    const addedDays: string[] = [];
+    const conflictErrors: string[] = [];
+
+    for (const thu of selectedDays) {
+      const dayLabel = DAYS_OF_WEEK.find((d) => d.value === thu)?.label || `Thứ ${thu}`;
+      try {
+        await classesService.addSchedule(showAddSchedule, {
+          thuTrongTuan: thu,
+          gioBatDau: scheduleForm.gioBatDau,
+          gioKetThuc: scheduleForm.gioKetThuc,
+          phongHoc: scheduleForm.phongHoc,
+        });
+        addedDays.push(dayLabel);
+      } catch (err: any) {
+        conflictErrors.push(
+          `${dayLabel}: ${err.response?.data?.message || 'Bị trùng phòng học'}`
+        );
+      }
+    }
+
+    setSubmittingSchedule(false);
+
+    if (addedDays.length > 0 && conflictErrors.length === 0) {
+      setMessage({
+        type: 'success',
+        text: `Đã xếp thành công ${addedDays.length} buổi học (${addedDays.join(', ')}) cho lớp vào khung giờ ${scheduleForm.gioBatDau}-${scheduleForm.gioKetThuc} (${scheduleForm.phongHoc})!`,
+      });
       setShowAddSchedule(null);
       fetchData();
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Lỗi thêm lịch học.' });
+    } else if (addedDays.length > 0 && conflictErrors.length > 0) {
+      setMessage({
+        type: 'success',
+        text: `Đã xếp ${addedDays.length} buổi (${addedDays.join(', ')}). Bị trùng lịch: ${conflictErrors.join(' | ')}`,
+      });
+      setShowAddSchedule(null);
+      fetchData();
+    } else {
+      setMessage({
+        type: 'error',
+        text: `Không thể xếp lịch: ${conflictErrors.join(' | ')}`,
+      });
     }
   };
 
@@ -249,7 +318,7 @@ export default function AdminClassesPage() {
                           ) : (
                             <>
                               <button
-                                onClick={() => setShowAddSchedule(c.id)}
+                                onClick={() => handleOpenAddSchedule(c.id)}
                                 className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
                               >
                                 + Lịch Học
@@ -369,31 +438,136 @@ export default function AdminClassesPage() {
           </div>
         )}
 
-        {/* Modal Thêm Lịch Học */}
+        {/* Modal Thêm Lịch Học (Chọn Nhiều Ngày Linh Hoạt) */}
         {showAddSchedule && (
           <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-6 shadow-2xl text-slate-800">
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Thêm Buổi Học Tuần</h3>
-              <p className="text-xs text-amber-700 mb-4">⚠️ Hệ thống tự động chặn nếu phòng học bị trùng lịch.</p>
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 shadow-2xl text-slate-800 space-y-4">
+              <div className="flex justify-between items-start pb-2 border-b border-slate-100">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Xếp Lịch Học Tuần</h3>
+                  {classes.find((c) => c.id === showAddSchedule) && (
+                    <p className="text-xs text-teal-600 font-bold mt-0.5">
+                      Lớp: [{classes.find((c) => c.id === showAddSchedule)?.maLopHoc}] {classes.find((c) => c.id === showAddSchedule)?.tenLopHoc}
+                    </p>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAddSchedule(null)}
+                  className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-2.5">
+                ⚠️ Hệ thống tự động kiểm tra và chặn nếu phòng học bị trùng lịch với lớp khác.
+              </p>
+
+              {/* Lịch hiện có của lớp này (nếu có) */}
+              {classes.find((c) => c.id === showAddSchedule)?.lichHoc &&
+                (classes.find((c) => c.id === showAddSchedule)?.lichHoc?.length || 0) > 0 && (
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
+                    <span className="text-slate-500 font-semibold block mb-1">
+                      Các buổi đã xếp trước đó:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {classes.find((c) => c.id === showAddSchedule)?.lichHoc?.map((lh: any) => (
+                        <span
+                          key={lh.id}
+                          className="px-2 py-0.5 rounded-md bg-white border border-slate-200 font-mono text-[11px] text-slate-700 font-medium"
+                        >
+                          T{lh.thuTrongTuan} ({lh.gioBatDau?.slice(11, 16) || lh.gioBatDau} - {lh.gioKetThuc?.slice(11, 16) || lh.gioKetThuc}) [{lh.phongHoc}]
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
               <form onSubmit={handleAddSchedule} className="space-y-4 text-xs">
+                {/* Chọn ngày trong tuần */}
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Thứ Trong Tuần</label>
-                  <select
-                    value={scheduleForm.thuTrongTuan}
-                    onChange={(e) => setScheduleForm({ ...scheduleForm, thuTrongTuan: +e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
-                  >
-                    <option value={2}>Thứ Hai</option>
-                    <option value={3}>Thứ Ba</option>
-                    <option value={4}>Thứ Tư</option>
-                    <option value={5}>Thứ Năm</option>
-                    <option value={6}>Thứ Sáu</option>
-                    <option value={7}>Thứ Bảy</option>
-                    <option value={8}>Chủ Nhật</option>
-                  </select>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="block text-slate-700 font-bold uppercase tracking-wider">
+                      Chọn Các Ngày Học Trong Tuần
+                    </label>
+                    <span className="text-[11px] font-bold text-teal-600">
+                      Đã chọn: {selectedDays.length} ngày
+                    </span>
+                  </div>
+
+                  {/* Quick Presets */}
+                  <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
+                    <span className="text-[11px] text-slate-400 font-medium">Chọn mẫu:</span>
+                    {PRESET_SCHEDULES.map((p) => {
+                      const isMatch =
+                        p.days.length === selectedDays.length &&
+                        p.days.every((d) => selectedDays.includes(d));
+                      return (
+                        <button
+                          key={p.label}
+                          type="button"
+                          onClick={() => setSelectedDays([...p.days])}
+                          className={`px-2 py-1 rounded-lg text-[11px] font-bold border transition cursor-pointer ${
+                            isMatch
+                              ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
+                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                          }`}
+                        >
+                          {p.label}
+                        </button>
+                      );
+                    })}
+                    {selectedDays.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDays([])}
+                        className="px-2 py-1 rounded-lg text-[11px] text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 font-semibold transition cursor-pointer"
+                      >
+                        Xóa chọn
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Day Pills Grid */}
+                  <div className="grid grid-cols-4 sm:grid-cols-7 gap-1.5">
+                    {DAYS_OF_WEEK.map((day) => {
+                      const isSelected = selectedDays.includes(day.value);
+                      return (
+                        <button
+                          key={day.value}
+                          type="button"
+                          onClick={() => toggleDay(day.value)}
+                          className={`py-2 px-1 rounded-xl text-xs font-bold border text-center transition flex flex-col items-center justify-center cursor-pointer ${
+                            isSelected
+                              ? 'bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20'
+                              : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                          }`}
+                        >
+                          <span className="text-sm">{isSelected ? '✓' : day.short}</span>
+                          <span className="text-[10px] mt-0.5 opacity-90">{day.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {selectedDays.length === 0 ? (
+                    <p className="text-amber-600 font-semibold text-[11px] mt-1.5">
+                      ⚠️ Vui lòng nhấp chọn ít nhất một ngày học ở trên.
+                    </p>
+                  ) : (
+                    <p className="text-teal-700 font-medium text-[11px] mt-1.5">
+                      ✓ Lịch sẽ áp dụng cho:{' '}
+                      <strong className="font-bold">
+                        {selectedDays
+                          .map((d) => DAYS_OF_WEEK.find((x) => x.value === d)?.label)
+                          .join(', ')}
+                      </strong>
+                    </p>
+                  )}
                 </div>
 
+                {/* Giờ học */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Giờ Bắt Đầu</label>
@@ -401,8 +575,10 @@ export default function AdminClassesPage() {
                       type="text"
                       required
                       value={scheduleForm.gioBatDau}
-                      onChange={(e) => setScheduleForm({ ...scheduleForm, gioBatDau: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono"
+                      onChange={(e) =>
+                        setScheduleForm({ ...scheduleForm, gioBatDau: e.target.value })
+                      }
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono font-bold focus:outline-none focus:border-teal-500"
                       placeholder="18:00"
                     />
                   </div>
@@ -412,26 +588,31 @@ export default function AdminClassesPage() {
                       type="text"
                       required
                       value={scheduleForm.gioKetThuc}
-                      onChange={(e) => setScheduleForm({ ...scheduleForm, gioKetThuc: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono"
+                      onChange={(e) =>
+                        setScheduleForm({ ...scheduleForm, gioKetThuc: e.target.value })
+                      }
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono font-bold focus:outline-none focus:border-teal-500"
                       placeholder="20:30"
                     />
                   </div>
                 </div>
 
+                {/* Phòng học */}
                 <div>
                   <label className="block text-slate-700 font-bold mb-1">Phòng Học</label>
                   <input
                     type="text"
                     required
                     value={scheduleForm.phongHoc}
-                    onChange={(e) => setScheduleForm({ ...scheduleForm, phongHoc: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900"
+                    onChange={(e) =>
+                      setScheduleForm({ ...scheduleForm, phongHoc: e.target.value })
+                    }
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-bold focus:outline-none focus:border-teal-500"
                     placeholder="Phòng A101"
                   />
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                <div className="flex justify-end space-x-3 pt-3 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => setShowAddSchedule(null)}
@@ -439,8 +620,16 @@ export default function AdminClassesPage() {
                   >
                     Hủy
                   </button>
-                  <button type="submit" className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition shadow-sm cursor-pointer">
-                    Xác Nhận Xếp Lịch
+                  <button
+                    type="submit"
+                    disabled={submittingSchedule || selectedDays.length === 0}
+                    className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition shadow-md shadow-teal-600/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center space-x-2"
+                  >
+                    <span>
+                      {submittingSchedule
+                        ? 'Đang Xếp Lịch...'
+                        : `Xác Nhận Xếp Lịch (${selectedDays.length} Buổi)`}
+                    </span>
                   </button>
                 </div>
               </form>
