@@ -58,13 +58,10 @@ export class EnrollmentsService {
       throw new BadRequestException('Lớp học này đã kết thúc khóa học, không thể đăng ký mới.');
     }
 
-    if (classRecord.trangThai === TrangThaiLopHoc.DANG_HOC) {
-      throw new BadRequestException('Lớp học đã bắt đầu học, không thể đăng ký mới.');
-    }
-
     if (
       classRecord.trangThai !== TrangThaiLopHoc.DANG_MO_DANG_KY &&
-      classRecord.trangThai !== TrangThaiLopHoc.SAP_MO
+      classRecord.trangThai !== TrangThaiLopHoc.SAP_MO &&
+      classRecord.trangThai !== TrangThaiLopHoc.DANG_HOC
     ) {
       throw new BadRequestException(`Lớp học hiện ở trạng thái "${classRecord.trangThai}", chưa mở tiếp nhận ghi danh.`);
     }
