@@ -72,6 +72,70 @@ export class StatisticsService {
       },
     });
 
+    // 5. Phân bổ trình độ CEFR thực tế từ CSDL
+    const cefrGroups = await this.prisma.hoSoHocVien.groupBy({
+      by: ['trinhDoCEFR'],
+      _count: { id: true },
+    });
+
+    const cefrDistribution = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].map((level) => {
+      const found = cefrGroups.find((g) => g.trinhDoCEFR === level);
+      const count = found ? found._count.id : 0;
+      const percent = totalStudents > 0 ? Math.round((count / totalStudents) * 100) : 0;
+      return {
+        level,
+        count,
+        percent,
+      };
+    });
+
+    // 6. Cơ cấu trạng thái học tập của học viên thực tế từ CSDL
+    const statusGroups = await this.prisma.hoSoHocVien.groupBy({
+      by: ['trangThai'],
+      _count: { id: true },
+    });
+
+    const statusMap: Record<string, number> = {};
+    statusGroups.forEach((g) => {
+      statusMap[g.trangThai] = g._count.id;
+    });
+
+    const dangHoc = statusMap['DANG_HOC'] || 0;
+    const daTotNghiep = statusMap['DA_TOT_NGHIEP'] || 0;
+    const baoLuu = statusMap['BAO_LUU'] || 0;
+    const nghiHoc = statusMap['NGHI_HOC'] || 0;
+
+    const studentStatusMetrics = [
+      {
+        label: 'Đang Theo Học',
+        count: dangHoc,
+        percent: totalStudents > 0 ? Math.round((dangHoc / totalStudents) * 100) : 0,
+        color: 'bg-teal-500',
+        text: 'text-teal-700',
+      },
+      {
+        label: 'Đã Hoàn Thành Khóa',
+        count: daTotNghiep,
+        percent: totalStudents > 0 ? Math.round((daTotNghiep / totalStudents) * 100) : 0,
+        color: 'bg-emerald-500',
+        text: 'text-emerald-700',
+      },
+      {
+        label: 'Đang Bảo Lưu',
+        count: baoLuu,
+        percent: totalStudents > 0 ? Math.round((baoLuu / totalStudents) * 100) : 0,
+        color: 'bg-amber-500',
+        text: 'text-amber-700',
+      },
+      {
+        label: 'Đã Thôi Học',
+        count: nghiHoc,
+        percent: totalStudents > 0 ? Math.round((nghiHoc / totalStudents) * 100) : 0,
+        color: 'bg-rose-500',
+        text: 'text-rose-700',
+      },
+    ];
+
     return this.serializeBigInt({
       tongQuan: {
         tongHocVien: totalStudents,
@@ -87,6 +151,8 @@ export class StatisticsService {
         tyLeDatPhanTram: passRate,
       },
       siSoCacLop: classEnrollments,
+      phanBoCEFR: cefrDistribution,
+      coCauTrangThaiHocVien: studentStatusMetrics,
     });
   }
 }

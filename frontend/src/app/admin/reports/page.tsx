@@ -44,14 +44,17 @@ export default function AdminReportsPage() {
         const [statsData, classesData, studentsData, invoicesData, paymentsData] = await Promise.all([
           statisticsService.getDashboard().catch(() => null),
           classesService.getAll().catch(() => []),
-          usersService.getStudents(1, 100).catch(() => ({ items: [] })),
+          usersService.getStudents(1, 200).catch(() => ({ data: [] })),
           enrollmentsService.getInvoices().catch(() => []),
           enrollmentsService.getPayments().catch(() => []),
         ]);
 
         setStats(statsData);
         setClasses(Array.isArray(classesData) ? classesData : []);
-        setStudents(studentsData?.items || []);
+        const studentList = Array.isArray(studentsData)
+          ? studentsData
+          : studentsData?.data || studentsData?.items || [];
+        setStudents(studentList);
         setInvoices(Array.isArray(invoicesData) ? invoicesData : []);
         setPayments(Array.isArray(paymentsData) ? paymentsData : []);
       } catch (err) {
@@ -94,11 +97,17 @@ export default function AdminReportsPage() {
     };
   }, [invoices, payments]);
 
-  // Phân bổ trình độ học viên theo khung CEFR
+  // Phân bổ trình độ học viên theo khung CEFR (Phản ứng tức thì theo CSDL)
   const cefrDistribution = useMemo(() => {
+    // 1. Ưu tiên số liệu trực tiếp từ Backend Stats (tính toán toàn diện từ CSDL)
+    if (stats?.phanBoCEFR && Array.isArray(stats.phanBoCEFR) && stats.phanBoCEFR.length > 0) {
+      return stats.phanBoCEFR;
+    }
+
+    // 2. Dự phòng tính toán trực tiếp từ mảng students
     const counts: Record<string, number> = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
     students.forEach((s) => {
-      const level = s.hoSoHocVien?.trinhDoCEFR || 'B1';
+      const level = s.trinhDoCEFR || s.hoSoHocVien?.trinhDoCEFR || 'B1';
       if (counts[level] !== undefined) counts[level]++;
       else counts['B1']++;
     });
@@ -109,15 +118,21 @@ export default function AdminReportsPage() {
       count,
       percent: Math.round((count / total) * 100),
     }));
-  }, [students]);
+  }, [stats, students]);
 
-  // Cơ cấu trạng thái học viên
+  // Cơ cấu trạng thái học viên (Phản ứng tức thì theo CSDL)
   const studentStatusMetrics = useMemo(() => {
+    // 1. Ưu tiên số liệu trực tiếp từ Backend Stats
+    if (stats?.coCauTrangThaiHocVien && Array.isArray(stats.coCauTrangThaiHocVien) && stats.coCauTrangThaiHocVien.length > 0) {
+      return stats.coCauTrangThaiHocVien;
+    }
+
+    // 2. Dự phòng tính toán từ mảng students
     const total = students.length || 1;
-    const dangHoc = students.filter((s) => s.hoSoHocVien?.trangThaiHoc === 'DANG_HOC').length;
-    const baoLuu = students.filter((s) => s.hoSoHocVien?.trangThaiHoc === 'BAO_LUU').length;
-    const hoanThanh = students.filter((s) => s.hoSoHocVien?.trangThaiHoc === 'HOAN_THANH').length;
-    const thoiHoc = students.filter((s) => s.hoSoHocVien?.trangThaiHoc === 'THOI_HOC').length;
+    const dangHoc = students.filter((s) => (s.trangThai || s.trangThaiHoc) === 'DANG_HOC').length;
+    const hoanThanh = students.filter((s) => ['DA_TOT_NGHIEP', 'HOAN_THANH'].includes(s.trangThai || s.trangThaiHoc)).length;
+    const baoLuu = students.filter((s) => (s.trangThai || s.trangThaiHoc) === 'BAO_LUU').length;
+    const thoiHoc = students.filter((s) => ['NGHI_HOC', 'THOI_HOC'].includes(s.trangThai || s.trangThaiHoc)).length;
 
     return [
       { label: 'Đang Theo Học', count: dangHoc, percent: Math.round((dangHoc / total) * 100), color: 'bg-teal-500', text: 'text-teal-700' },
@@ -125,7 +140,7 @@ export default function AdminReportsPage() {
       { label: 'Đang Bảo Lưu', count: baoLuu, percent: Math.round((baoLuu / total) * 100), color: 'bg-amber-500', text: 'text-amber-700' },
       { label: 'Đã Thôi Học', count: thoiHoc, percent: Math.round((thoiHoc / total) * 100), color: 'bg-rose-500', text: 'text-rose-700' },
     ];
-  }, [students]);
+  }, [stats, students]);
 
   // Xuất file CSV báo cáo lớp học
   const exportToCSV = () => {
@@ -389,12 +404,12 @@ export default function AdminReportsPage() {
                       <span>Phân Bổ Trình Độ Đầu Vào (Khung CEFR)</span>
                     </h3>
                     <span className="text-xs font-mono font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-md border border-teal-200">
-                      {students.length} Học Viên
+                      {stats?.tongQuan?.tongHocVien || students.length || 0} Học Viên
                     </span>
                   </div>
 
                   <div className="space-y-3.5 pt-2">
-                    {cefrDistribution.map((item) => (
+                    {cefrDistribution.map((item: any) => (
                       <div key={item.level} className="space-y-1">
                         <div className="flex justify-between text-xs font-bold">
                           <span className="font-mono text-slate-700">CEFR {item.level}</span>
@@ -427,7 +442,7 @@ export default function AdminReportsPage() {
                   </h3>
 
                   <div className="space-y-3 pt-2">
-                    {studentStatusMetrics.map((status) => (
+                    {studentStatusMetrics.map((status: any) => (
                       <div key={status.label} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
                         <div className="flex justify-between items-center text-xs font-bold">
                           <span className={status.text}>{status.label}</span>

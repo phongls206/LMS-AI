@@ -47,12 +47,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between relative overflow-x-hidden font-sans">
+    <div className="min-h-screen bg-slate-50 flex flex-col relative overflow-x-hidden font-sans">
       {/* Background ambient lighting - Soft Teal & Sky */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="flex-1 flex flex-col justify-center items-center px-4 py-12 z-10">
+      <div className="flex flex-col justify-center items-center px-4 py-14 z-10 flex-1">
         <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-2xl shadow-xl p-8">
         {/* Brand */}
         <div className="text-center mb-8">
