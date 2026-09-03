@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { VaiTro } from '../types';
 import { authService } from '../services/api';
+import { EtcLogo } from './EtcLogo';
 
 interface SidebarProps {
   role?: VaiTro;
@@ -112,22 +113,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
     >
       {/* Brand Header */}
       <div className="p-4 border-b border-slate-100 flex items-center justify-between">
-        <div className="flex items-center space-x-3 overflow-hidden">
-          <div
-            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 via-cyan-600 to-blue-500 flex items-center justify-center font-black text-white text-xl shadow-md shadow-teal-500/20 shrink-0 cursor-pointer hover:scale-105 transition-transform"
+        <div className="overflow-hidden">
+          <EtcLogo
+            size="md"
+            collapsed={!showFull}
             onClick={onToggleCollapse}
-            title={isCollapsed ? 'Nhấp để mở rộng menu' : 'ETC ENGLISH'}
-          >
-            E
-          </div>
-          {showFull && (
-            <div className="overflow-hidden">
-              <h1 className="font-bold text-slate-900 text-base tracking-tight leading-tight truncate">
-                ETC ENGLISH
-              </h1>
-              <p className="text-xs text-teal-600 font-semibold truncate">LMS + Smart AI</p>
-            </div>
-          )}
+          />
         </div>
 
         {/* Mobile Close Button */}

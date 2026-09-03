@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '../../services/api';
 import { Footer } from '../../components/Footer';
+import { EtcLogo } from '../../components/EtcLogo';
 import { Sparkles, Lock, User, AlertCircle, AlertTriangle, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
@@ -58,11 +59,10 @@ export default function LoginPage() {
         <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-2xl shadow-xl p-8">
           {/* Brand */}
           <div className="text-center mb-8">
-            <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-tr from-teal-600 via-cyan-600 to-blue-500 flex items-center justify-center font-black text-white text-2xl shadow-md shadow-teal-500/25">
-              E
+            <div className="flex justify-center mb-2">
+              <EtcLogo size="lg" />
             </div>
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight">ETC ENGLISH CENTER</h1>
-            <p className="text-xs text-teal-600 mt-1 font-semibold flex items-center justify-center space-x-1">
+            <p className="text-xs text-teal-600 font-semibold flex items-center justify-center space-x-1.5 mt-2">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Hệ Thống LMS Tích Hợp AI</span>
             </p>

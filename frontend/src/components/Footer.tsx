@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { MapPin, Phone, Mail } from 'lucide-react';
+import { EtcLogo } from './EtcLogo';
 
 export const Footer: React.FC = () => {
   return (
@@ -46,14 +47,9 @@ export const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Right Column: Clean Favicon Logo E perfectly aligned and centered */}
+          {/* Right Column: Clean Brand Logo */}
           <div className="hidden flex items-center justify-center md:self-center shrink-0">
-            <div
-              className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-teal-600 via-cyan-600 to-blue-500 flex items-center justify-center font-black text-white text-3xl shadow-xl shadow-teal-500/25 ring-4 ring-white/10 hover:scale-105 transition-transform"
-              title="ETC English Center"
-            >
-              E
-            </div>
+            <EtcLogo size="md" />
           </div>
         </div>
       </div>
