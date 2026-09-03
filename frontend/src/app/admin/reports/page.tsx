@@ -24,7 +24,7 @@ import {
   Building2,
   BookOpen,
 } from 'lucide-react';
-import { formatTrangThaiHocVien, formatTrangThaiLopHoc } from '../../../utils/formatters';
+import { formatTrangThaiHocVien, formatTrangThaiLopHoc, formatTrangThaiHoaDon } from '../../../utils/formatters';
 
 type TabType = 'overview' | 'students_cefr' | 'classes_fill';
 
@@ -142,28 +142,109 @@ export default function AdminReportsPage() {
     ];
   }, [stats, students]);
 
-  // Xuất file CSV báo cáo lớp học
-  const exportToCSV = () => {
-    const headers = ['Mã Lớp', 'Tên Lớp Học', 'Khóa Học', 'Sĩ Số Thực Tế', 'Sĩ Số Tối Đa', 'Tỷ Lệ Lấp Đầy', 'Trạng Thái'];
-    const rows = classes.map((c) => [
-      c.maLopHoc,
-      `"${c.tenLopHoc}"`,
-      `"${c.khoaHoc?.tenKhoaHoc || ''}"`,
-      c.siSoHienTai,
-      c.siSoToiDa,
-      `${Math.round((c.siSoHienTai / (c.siSoToiDa || 1)) * 100)}%`,
-      formatTrangThaiLopHoc(c.trangThai),
-    ]);
-
-    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  // ─── Utility: tải file CSV ────────────────────────────────────────────────────
+  const downloadCSV = (csvContent: string, filename: string) => {
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `Bao_Cao_Thong_Ke_ETC_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // ─── CSV 1: Báo cáo lớp học (Sĩ số & Lấp đầy) ──────────────────────────────
+  const exportClassesCSV = () => {
+    const headers = [
+      'Mã Lớp', 'Tên Lớp Học', 'Khóa Học', 'Sĩ Số Thực Tế', 'Sĩ Số Tối Đa',
+      'Tỷ Lệ Lấp Đầy (%)', 'Trạng Thái',
+    ];
+    const rows = classes.map((c) => [
+      c.maLopHoc,
+      `"${(c.tenLopHoc || '').replace(/"/g, '""')}"`,
+      `"${(c.khoaHoc?.tenKhoaHoc || '').replace(/"/g, '""')}"`,
+      c.siSoHienTai ?? 0,
+      c.siSoToiDa ?? 0,
+      Math.round(((c.siSoHienTai ?? 0) / Math.max(c.siSoToiDa ?? 1, 1)) * 100),
+      `"${formatTrangThaiLopHoc(c.trangThai)}"`,
+    ]);
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    downloadCSV(csv, `Bao_Cao_Lop_Hoc_ETC_${new Date().toISOString().slice(0, 10)}.csv`);
+  };
+
+  // ─── CSV 2: Báo cáo học phí & công nợ đầy đủ ────────────────────────────────
+  const exportInvoicesCSV = () => {
+    const headers = [
+      'Mã Hóa Đơn', 'Mã Học Viên', 'Họ Tên Học Viên', 'Mã Lớp', 'Tên Lớp Học',
+      'Học Phí Phải Trả (VNĐ)', 'Đã Thanh Toán (VNĐ)', 'Còn Nợ (VNĐ)',
+      'Tỷ Lệ Đã Thanh Toán (%)', 'Trạng Thái Hóa Đơn', 'Ngày Lập Hóa Đơn',
+    ];
+    const rows = invoices.map((inv) => {
+      const phaiTra = Number(inv.soTienPhaiTra ?? 0);
+      const daTra = Number(inv.soTienDaTra ?? 0);
+      const conNo = Math.max(0, phaiTra - daTra);
+      const tiLe = phaiTra > 0 ? Math.round((daTra / phaiTra) * 100) : 0;
+      const ngayLap = inv.ngayLap
+        ? new Date(inv.ngayLap).toLocaleDateString('vi-VN')
+        : (inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('vi-VN') : '');
+      return [
+        inv.maHoaDon ?? '',
+        inv.hocVien?.maHocVien ?? '',
+        `"${(inv.hocVien?.hoTen ?? '').replace(/"/g, '""')}"`,
+        inv.dangKyHoc?.lopHoc?.maLopHoc ?? '',
+        `"${(inv.dangKyHoc?.lopHoc?.tenLopHoc ?? '').replace(/"/g, '""')}"`,
+        phaiTra,
+        daTra,
+        conNo,
+        tiLe,
+        `"${formatTrangThaiHoaDon(inv.trangThai)}"`,
+        ngayLap,
+      ];
+    });
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    downloadCSV(csv, `Bao_Cao_Hoc_Phi_ETC_${new Date().toISOString().slice(0, 10)}.csv`);
+  };
+
+  // ─── CSV 3: Lịch sử phiếu thu (Thanh toán) ──────────────────────────────────
+  const exportPaymentsCSV = () => {
+    const headers = [
+      'Mã Giao Dịch', 'Mã Hóa Đơn', 'Mã Học Viên', 'Họ Tên Học Viên',
+      'Tên Lớp Học', 'Số Tiền Thu (VNĐ)', 'Phương Thức', 'Trạng Thái',
+      'Người Thu', 'Ghi Chú', 'Thời Gian Thanh Toán',
+    ];
+    const rows = payments.map((p) => {
+      const ngayThu = p.thoiGianThanhToan
+        ? new Date(p.thoiGianThanhToan).toLocaleString('vi-VN')
+        : (p.createdAt ? new Date(p.createdAt).toLocaleString('vi-VN') : '');
+      const ptTT = p.phuongThuc === 'CHUYEN_KHOAN' ? 'Chuyển Khoản' : 'Tiền Mặt';
+      const trangThai = p.trangThai === 'THANH_CONG' ? 'Thành Công' : (p.trangThai === 'THAT_BAI' ? 'Thất Bại' : p.trangThai ?? '');
+      return [
+        p.maGiaoDich ?? '',
+        p.hoaDon?.maHoaDon ?? p.hoaDonId ?? '',
+        p.hoaDon?.hocVien?.maHocVien ?? '',
+        `"${(p.hoaDon?.hocVien?.hoTen ?? '').replace(/"/g, '""')}"`,
+        `"${(p.hoaDon?.dangKyHoc?.lopHoc?.tenLopHoc ?? '').replace(/"/g, '""')}"`,
+        Number(p.soTien ?? 0),
+        ptTT,
+        trangThai,
+        p.nguoiThu?.tenDangNhap ?? '',
+        `"${(p.ghiChu ?? '').replace(/"/g, '""')}"`,
+        ngayThu,
+      ];
+    });
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    downloadCSV(csv, `Lich_Su_Phieu_Thu_ETC_${new Date().toISOString().slice(0, 10)}.csv`);
+  };
+
+  // ─── Export theo tab hiện tại ────────────────────────────────────────────────
+  const exportToCSV = () => {
+    if (activeTab === 'students_cefr' || activeTab === 'overview') {
+      exportInvoicesCSV();
+    } else {
+      exportClassesCSV();
+    }
   };
 
   return (
@@ -219,18 +300,34 @@ export default function AdminReportsPage() {
             </div>
 
             {/* Export Actions */}
-            <div className="flex items-center space-x-2 self-end md:self-auto">
+            <div className="flex items-center space-x-2 self-end md:self-auto flex-wrap gap-1">
               <button
-                onClick={exportToCSV}
-                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-teal-700 hover:text-teal-800 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 transition shadow-sm cursor-pointer"
-                title="Tải bảng tính CSV"
+                onClick={exportInvoicesCSV}
+                className="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 text-xs font-bold flex items-center space-x-1.5 border border-emerald-200 transition shadow-sm cursor-pointer"
+                title="Xuất CSV báo cáo học phí & công nợ đầy đủ"
               >
-                <Download className="w-4 h-4 text-teal-600" />
-                <span>Xuất CSV</span>
+                <Download className="w-4 h-4" />
+                <span>CSV Học Phí</span>
+              </button>
+              <button
+                onClick={exportPaymentsCSV}
+                className="px-3 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 hover:text-teal-800 text-xs font-bold flex items-center space-x-1.5 border border-teal-200 transition shadow-sm cursor-pointer"
+                title="Xuất CSV lịch sử phiếu thu thanh toán"
+              >
+                <Download className="w-4 h-4" />
+                <span>CSV Phiếu Thu</span>
+              </button>
+              <button
+                onClick={exportClassesCSV}
+                className="px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 transition shadow-sm cursor-pointer"
+                title="Xuất CSV báo cáo sĩ số & lớp học"
+              >
+                <Download className="w-4 h-4 text-slate-600" />
+                <span>CSV Lớp Học</span>
               </button>
               <button
                 onClick={() => window.print()}
-                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 transition shadow-sm cursor-pointer"
+                className="px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 transition shadow-sm cursor-pointer"
                 title="In hoặc lưu định dạng PDF"
               >
                 <Printer className="w-4 h-4 text-slate-600" />

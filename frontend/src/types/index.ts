@@ -108,10 +108,32 @@ export interface HoaDon {
   soTienPhaiTra: string | number;
   soTienDaTra: string | number;
   hanThanhToan: string;
+  ngayLap?: string;
+  createdAt?: string;
   trangThai: TrangThaiHoaDon;
   hocVien?: { maHocVien: string; hoTen: string };
   dangKyHoc?: {
     lopHoc?: { maLopHoc: string; tenLopHoc: string };
   };
   thanhToan?: any[];
+}
+
+export interface ThanhToan {
+  id: number;
+  maGiaoDich?: string;
+  hoaDonId?: number | string;
+  soTien: string | number;
+  phuongThuc: 'TIEN_MAT' | 'CHUYEN_KHOAN';
+  trangThai?: string;
+  ghiChu?: string;
+  thoiGianThanhToan?: string;
+  createdAt?: string;
+  nguoiThu?: { id: number; tenDangNhap: string; email?: string };
+  hoaDon?: {
+    maHoaDon?: string;
+    hocVien?: { maHocVien: string; hoTen: string };
+    dangKyHoc?: {
+      lopHoc?: { maLopHoc: string; tenLopHoc: string };
+    };
+  };
 }

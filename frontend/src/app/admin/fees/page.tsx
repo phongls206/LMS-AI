@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { enrollmentsService, usersService, classesService } from '../../../services/api';
 import { HoaDon, HocVien, LopHoc } from '../../../types';
-import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck } from 'lucide-react';
+import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck, Download } from 'lucide-react';
 import { formatTrangThaiHoaDon, formatTrangThaiLopHoc } from '../../../utils/formatters';
 
 export default function AdminFeesPage() {
@@ -48,6 +48,48 @@ export default function AdminFeesPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // ─── Xuất CSV Hóa Đơn Học Phí ────────────────────────────────────────────────
+  const exportInvoicesCSV = () => {
+    const headers = [
+      'Mã Hóa Đơn', 'Mã Học Viên', 'Họ Tên Học Viên',
+      'Mã Lớp', 'Tên Lớp Học',
+      'Học Phí Phải Trả (VNĐ)', 'Đã Thanh Toán (VNĐ)', 'Còn Nợ (VNĐ)',
+      'Tỷ Lệ Đã Thanh Toán (%)', 'Trạng Thái Hóa Đơn', 'Ngày Lập',
+    ];
+    const rows = invoices.map((inv) => {
+      const phaiTra = Number(inv.soTienPhaiTra ?? 0);
+      const daTra = Number(inv.soTienDaTra ?? 0);
+      const conNo = Math.max(0, phaiTra - daTra);
+      const tiLe = phaiTra > 0 ? Math.round((daTra / phaiTra) * 100) : 0;
+      const ngayLap = inv.ngayLap
+        ? new Date(inv.ngayLap).toLocaleDateString('vi-VN')
+        : (inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('vi-VN') : '');
+      return [
+        inv.maHoaDon ?? '',
+        inv.hocVien?.maHocVien ?? '',
+        `"${(inv.hocVien?.hoTen ?? '').replace(/"/g, '""')}"`,
+        inv.dangKyHoc?.lopHoc?.maLopHoc ?? '',
+        `"${(inv.dangKyHoc?.lopHoc?.tenLopHoc ?? '').replace(/"/g, '""')}"`,
+        phaiTra,
+        daTra,
+        conNo,
+        tiLe,
+        `"${formatTrangThaiHoaDon(inv.trangThai)}"`,
+        ngayLap,
+      ];
+    });
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Hoa_Don_Hoc_Phi_ETC_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const handleEnrollAndInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,9 +228,19 @@ export default function AdminFeesPage() {
                 2. Quầy Thu Học Phí & Lập Phiếu Thu
               </h3>
             </div>
-            <span className="text-xs text-slate-500 font-bold">
-              {invoices.length} hóa đơn trong hệ thống
-            </span>
+            <div className="flex items-center space-x-3">
+              <span className="text-xs text-slate-500 font-bold">
+                {invoices.length} hóa đơn trong hệ thống
+              </span>
+              <button
+                onClick={exportInvoicesCSV}
+                className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center space-x-1.5 border border-emerald-200 transition cursor-pointer shadow-sm"
+                title="Xuất danh sách hóa đơn ra file CSV"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Xuất CSV</span>
+              </button>
+            </div>
           </div>
 
           {loading ? (
