@@ -1,65 +1,148 @@
 ---
+
 name: ui-mockup-designer
-description: Design and generate interactive, high-fidelity UI demo mockups, wireframes, and prototypes for web applications, dashboards, landing pages, and mobile screens.
----
+description: Create high-fidelity PNG UI mockups for applications that have not been implemented yet, based on requirements, use cases, user flows, and business specifications.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# UI Mockup Designer Skill
+# UI Mockup Designer
 
-A skill for generating visually polished, realistic, and production-ready UI demo mockups and interactive prototypes.
+Design visual UI mockups for an application **before development begins**.
 
-## 1. Summary
-This skill guides the design and generation of functional UI mockups for web applications, dashboards, landing pages, and mobile screens. It defaults to self-contained, responsive HTML with Tailwind CSS and Lucide icons so users can preview the interface directly in any web browser.
+The goal is to transform requirements, Use Cases, Screen Flow, and business rules into realistic PNG interface designs that show what the future application could look like.
 
----
+## 1. When to Use
 
-## 2. When to Use
-Use this skill when the user requests:
-- Designing or drafting a UI mockup, wireframe, or prototype.
-- Creating screen layouts for dashboards, admin panels, e-commerce, SaaS, or mobile apps.
-- Prototyping a landing page, form flow, modal, or complex UI component.
-- Visualizing user interface concepts or converting requirement specs into mockups.
+Use this skill when:
 
----
+* The application has not been implemented yet.
+* The user wants visual UI references before coding.
+* Requirements or Use Cases need to be converted into screens.
+* A Screen Flow needs to be visualized.
+* A project needs UI designs for important system functions.
 
-## 3. Core Principles
-1. **Deliver self-contained, runnable code:** Default to a complete, standalone HTML file using the Tailwind CSS CDN script, Google Fonts (e.g., Inter), and SVG or Lucide icons.
-2. **Use realistic, domain-specific data:** Avoid generic "Lorem Ipsum" or "Text 1". Use realistic names, dates, financial amounts, product details, and metrics.
-3. **Prioritize visual hierarchy and contrast:** Use cohesive color palettes (neutral slate/zinc backgrounds, distinct brand primary colors, and semantic status colors for success, warning, and error).
-4. **Design for responsiveness:** Ensure layouts adapt smoothly to desktop, tablet, and mobile viewport sizes with flexbox and grid utilities.
-5. **Include interactive micro-states:** Provide hover states, active states, badges, tooltips, and sensible transitions to make the mockup feel alive.
+## 2. Input
 
----
+Use available project information such as:
 
-## 4. Workflow Steps
+* Requirements.
+* Use Cases.
+* Screen Flow.
+* User roles.
+* Business rules.
+* Functional specifications.
+* Existing design documents.
 
-### Step 1: Analyze Requirements
-- **Identify the product type:** Dashboard, SaaS portal, e-commerce, mobile app, or landing page.
-- **Determine target audience:** Primary user actions and core workflow goals.
-- **Clarify theme preference:** Dark mode, light mode, or clean neutral, along with brand identity.
+If documentation is available, use it as the primary source.
 
-### Step 2: Structure the Layout
-- **Top navigation or sidebar:** Logo, navigation links, search bar, notifications, and user avatar.
-- **Main content area:** Page title, breadcrumbs, action buttons, summary stat cards, and primary data tables or charts.
-- **Secondary panels:** Filters, contextual drawers, details sidebar, or modal overlays where appropriate.
+## 3. Design Process
 
-### Step 3: Select Styling and Typography
-- **Typography:** Clean sans-serif fonts such as Inter, Roboto, or system sans.
-- **Spacing:** Consistent padding and margin scales (e.g., `p-4`, `p-6`, `gap-4`, `gap-6`).
-- **Card styling:** Subtle borders (`border border-slate-200` or `border-slate-800`), rounded corners (`rounded-xl` or `rounded-2xl`), and gentle box shadows.
+### Step 1 — Understand the System
 
-### Step 4: Generate the Mockup Code
-- Provide clean, semantic HTML5 structure.
-- Embed Tailwind CSS via CDN script in the `<head>` tag.
-- Include Lucide icon CDN or inline SVGs for crisp iconography.
-- Group related sections with descriptive comments for easy inspection and modification.
+Identify:
 
-### Step 5: Offer Variations or Extensions
-- Suggest next steps such as converting to React/Next.js components, adding dark mode toggles, or implementing multi-step flow screens.
+* Target users.
+* User roles.
+* Main workflows.
+* Important features.
+* Information users need to see.
+* Actions users need to perform.
 
----
+### Step 2 — Identify Required Screens
 
-## 5. Gotchas & Best Practices
-- **Avoid external asset dependencies:** Do not link to external images that may break or expire. Use SVG placeholders, Unsplash source URLs with reliable dimensions, or CSS-styled avatar placeholders with initials.
-- **Avoid cluttered layouts:** Give elements breathing room with adequate whitespace. Do not overcrowd dashboards.
-- **Verify accessibility:** Ensure proper text contrast ratios between background and foreground colors.
-- **Maintain responsive containers:** Wrap main sections in `max-w` containers with `mx-auto` and responsive horizontal padding.
+Convert important Use Cases and flows into screens.
+
+For example:
+
+Login
+↓
+Dashboard
+↓
+Student Management
+↓
+Student List
+↓
+Student Details
+↓
+Edit Student
+
+Create the necessary screens for each important step.
+
+### Step 3 — Design the UI
+
+For each screen, determine:
+
+* Page structure.
+* Navigation.
+* Content hierarchy.
+* Forms.
+* Tables.
+* Cards.
+* Buttons.
+* Filters.
+* Modals.
+* Status indicators.
+* Empty and error states when relevant.
+
+Use realistic domain-specific content.
+
+### Step 4 — Generate PNG
+
+Generate a high-fidelity PNG mockup that looks like a real application.
+
+The design should be:
+
+* Modern.
+* Professional.
+* Clean.
+* Realistic.
+* Easy to understand.
+* Consistent across screens.
+
+Do not generate implementation code.
+
+## 4. Important Rules
+
+* Design the application as if it is **still being planned**.
+* Do not assume an existing UI or implementation.
+* Derive screens from requirements and user workflows.
+* Do not invent important business logic.
+* Use standard UX patterns when minor details are unspecified.
+* Prioritize important Use Cases over secondary features.
+* Keep all screens visually consistent.
+
+## 5. Visual Style
+
+Use:
+
+* Clear typography.
+* Consistent spacing.
+* Strong visual hierarchy.
+* Professional color palette.
+* Appropriate icons.
+* Clean cards and tables.
+* Subtle borders and shadows.
+* Balanced whitespace.
+
+Avoid:
+
+* Excessive decoration.
+* Random UI elements.
+* Lorem ipsum.
+* Generic placeholder data.
+* Overly complicated layouts.
+
+## 6. Output
+
+The primary output is:
+
+**High-fidelity PNG UI mockups**
+
+Each image represents a proposed screen of the future application.
+
+The mockups are visual design references for the development team and can later be implemented in React, Next.js, or another frontend technology.
+
+## 7. Core Principle
+
+**Requirements → Use Cases → User Flow → Screens → UI Mockups → Implementation**
+
+Design the interface **before the application exists**, using the available project specifications as the source of truth.
