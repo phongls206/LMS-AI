@@ -122,19 +122,19 @@ export default function AdminDashboardPage() {
                   stats.siSoCacLop.map((c: any) => {
                     const percent = Math.min(100, Math.round((c.siSoHienTai / c.siSoToiDa) * 100));
                     return (
-                      <div key={c.id} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                      <div key={c.id} className="p-4 rounded-xl bg-slate-50 dark:bg-[#111827] border border-slate-200/80 dark:border-[#1e2d45]">
                         <div className="flex justify-between items-center mb-2">
                           <div>
                             <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded mr-2">
                               {c.maLopHoc}
                             </span>
-                            <span className="text-sm font-bold text-slate-800">{c.tenLopHoc}</span>
+                            <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{c.tenLopHoc}</span>
                           </div>
-                          <span className="text-xs font-bold text-slate-600">
+                          <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
                             {c.siSoHienTai} / {c.siSoToiDa} HV ({percent}%)
                           </span>
                         </div>
-                        <div className="w-full h-2.5 rounded-full bg-slate-200 overflow-hidden">
+                        <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all duration-300 ${percent >= 90
                               ? 'bg-rose-500'

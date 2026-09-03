@@ -233,23 +233,88 @@ html.dark .bg-slate-200 {
   background-color: #1e2d45 !important;
 }
 
-/* ── Table Badges in Dark Mode ────────────────────────────────────────── */
-html.dark td span.bg-emerald-50 {
-  background-color: rgba(16, 90, 61, 0.35) !important;
+/* ── Badges, Chips & Stat Blocks in Dark Mode (Eliminate Bright White/Gray Patches) ── */
+html.dark .bg-teal-50 {
+  background-color: rgba(20, 184, 166, 0.16) !important;
+  border-color: rgba(45, 212, 191, 0.35) !important;
+  color: #2dd4bf !important;
+}
+html.dark .bg-teal-50 * {
+  color: #2dd4bf !important;
+}
+
+html.dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.16) !important;
+  border-color: rgba(52, 211, 153, 0.35) !important;
   color: #34d399 !important;
-  border-color: rgba(52, 211, 153, 0.4) !important;
+}
+html.dark .bg-emerald-50 * {
+  color: #34d399 !important;
 }
 
-html.dark td span.bg-amber-50 {
-  background-color: rgba(120, 53, 15, 0.35) !important;
+html.dark .bg-cyan-50,
+html.dark .bg-sky-50 {
+  background-color: rgba(14, 165, 233, 0.16) !important;
+  border-color: rgba(56, 189, 248, 0.35) !important;
+  color: #38bdf8 !important;
+}
+html.dark .bg-cyan-50 *,
+html.dark .bg-sky-50 * {
+  color: #38bdf8 !important;
+}
+
+html.dark .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.16) !important;
+  border-color: rgba(251, 191, 36, 0.35) !important;
   color: #fbbf24 !important;
-  border-color: rgba(251, 191, 36, 0.4) !important;
+}
+html.dark .bg-amber-50 * {
+  color: #fbbf24 !important;
 }
 
-html.dark td span.bg-rose-50 {
-  background-color: rgba(136, 19, 55, 0.35) !important;
+html.dark .bg-rose-50 {
+  background-color: rgba(244, 63, 94, 0.16) !important;
+  border-color: rgba(251, 113, 133, 0.35) !important;
   color: #fb7185 !important;
-  border-color: rgba(251, 113, 133, 0.4) !important;
+}
+html.dark .bg-rose-50 * {
+  color: #fb7185 !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: #141c2e !important;
+  border-color: #1e2d45 !important;
+}
+
+/* Text color overrides for high contrast and readability in dark mode */
+html.dark .text-teal-700,
+html.dark .text-teal-800,
+html.dark .text-teal-900 {
+  color: #2dd4bf !important;
+}
+
+html.dark .text-emerald-700,
+html.dark .text-emerald-800,
+html.dark .text-emerald-900 {
+  color: #34d399 !important;
+}
+
+html.dark .text-cyan-700,
+html.dark .text-cyan-800,
+html.dark .text-cyan-900 {
+  color: #38bdf8 !important;
+}
+
+html.dark .text-amber-700,
+html.dark .text-amber-800,
+html.dark .text-amber-900 {
+  color: #fbbf24 !important;
+}
+
+html.dark .text-rose-700,
+html.dark .text-rose-800,
+html.dark .text-rose-900 {
+  color: #fb7185 !important;
 }
 
 /* ── ETC Brand Text — 100% visible in both Light and Dark Mode ────────── */
