@@ -42,15 +42,15 @@ export default function StaffNewStudentPage() {
     >
       <div className="max-w-2xl mx-auto space-y-6">
         {createdStudent ? (
-          <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 text-center space-y-4">
-            <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+          <div className="p-8 rounded-2xl bg-white border border-slate-200/90 shadow-sm text-center space-y-4">
+            <div className="w-14 h-14 mx-auto rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
               <CheckCircle className="w-8 h-8" />
             </div>
-            <h3 className="text-xl font-bold text-white">Tiếp Nhận Học Viên Thành Công!</h3>
-            <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-xs text-slate-300 space-y-1">
-              <p>Họ tên: <strong className="text-white">{createdStudent.hoTen}</strong></p>
-              <p>Mã học viên: <strong className="text-indigo-400 font-mono">{createdStudent.maHocVien}</strong></p>
-              <p>Trình độ: <strong className="text-emerald-400 font-mono">CEFR {createdStudent.trinhDoCEFR}</strong></p>
+            <h3 className="text-xl font-bold text-slate-900">Tiếp Nhận Học Viên Thành Công!</h3>
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700 space-y-1">
+              <p>Họ tên: <strong className="text-slate-900 font-bold">{createdStudent.hoTen}</strong></p>
+              <p>Mã học viên: <strong className="text-teal-700 font-mono font-bold">{createdStudent.maHocVien}</strong></p>
+              <p>Trình độ: <strong className="text-emerald-700 font-mono font-bold">CEFR {createdStudent.trinhDoCEFR}</strong></p>
             </div>
 
             <div className="flex justify-center space-x-3 pt-4">
@@ -68,13 +68,13 @@ export default function StaffNewStudentPage() {
                     nguonDanhGia: 'Placement Test tại Quầy',
                   });
                 }}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold"
+                className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
               >
                 Tiếp Nhận Học Viên Khác
               </button>
               <Link
                 href="/staff/collect-fee"
-                className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center space-x-1"
+                className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1 shadow-sm transition"
               >
                 <span>Đi Đến Ghi Danh & Thu Học Phí</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -82,83 +82,83 @@ export default function StaffNewStudentPage() {
             </div>
           </div>
         ) : (
-          <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm">
+          <div className="p-8 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Mã Học Viên (VD: HV004)</label>
+                  <label className="block text-slate-700 font-bold mb-1">Mã Học Viên (VD: HV004)</label>
                   <input
                     type="text"
                     required
                     value={formData.maHocVien}
                     onChange={(e) => setFormData({ ...formData, maHocVien: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500 font-mono"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500 font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Họ Và Tên Học Viên</label>
+                  <label className="block text-slate-700 font-bold mb-1">Họ Và Tên Học Viên</label>
                   <input
                     type="text"
                     required
                     value={formData.hoTen}
                     onChange={(e) => setFormData({ ...formData, hoTen: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Tên Đăng Nhập</label>
+                  <label className="block text-slate-700 font-bold mb-1">Tên Đăng Nhập</label>
                   <input
                     type="text"
                     required
                     value={formData.tenDangNhap}
                     onChange={(e) => setFormData({ ...formData, tenDangNhap: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Mật Khẩu Ban Đầu</label>
+                  <label className="block text-slate-700 font-bold mb-1">Mật Khẩu Ban Đầu</label>
                   <input
                     type="password"
                     required
                     value={formData.matKhau}
                     onChange={(e) => setFormData({ ...formData, matKhau: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Email</label>
+                  <label className="block text-slate-700 font-bold mb-1">Email</label>
                   <input
                     type="email"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Số Điện Thoại</label>
+                  <label className="block text-slate-700 font-bold mb-1">Số Điện Thoại</label>
                   <input
                     type="text"
                     value={formData.soDienThoai}
                     onChange={(e) => setFormData({ ...formData, soDienThoai: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Trình Độ CEFR Xếp Lớp</label>
+                  <label className="block text-slate-700 font-bold mb-1">Trình Độ CEFR Xếp Lớp</label>
                   <select
                     value={formData.trinhDoCEFR}
                     onChange={(e) => setFormData({ ...formData, trinhDoCEFR: e.target.value as TrinhDoCEFR })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white font-bold focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-teal-500 cursor-pointer"
                   >
                     <option value="A1">A1 - Sơ Cấp</option>
                     <option value="A2">A2 - Tiền Trung Cấp</option>
@@ -168,12 +168,12 @@ export default function StaffNewStudentPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Nguồn Đánh Giá Trình Độ</label>
+                  <label className="block text-slate-700 font-bold mb-1">Nguồn Đánh Giá Trình Độ</label>
                   <input
                     type="text"
                     value={formData.nguonDanhGia}
                     onChange={(e) => setFormData({ ...formData, nguonDanhGia: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500"
                   />
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default function StaffNewStudentPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition disabled:opacity-50"
+                className="w-full py-3 mt-4 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white font-bold rounded-xl shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer"
               >
                 {loading ? 'Đang Lưu...' : 'Xác Nhận Tiếp Nhận Học Viên'}
               </button>

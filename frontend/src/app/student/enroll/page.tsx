@@ -62,29 +62,29 @@ export default function StudentEnrollPage() {
     <AppLayout
       allowedRoles={['HOC_VIEN', 'TU_VAN_VIEN']}
       title="Đăng Ký Lớp Học Mới"
-      subtitle="Hệ thống tự động kiểm tra 4 điều kiện: Sĩ số < 25, Chưa đăng ký, Chuẩn CEFR và Trùng lịch học"
+      subtitle="Hệ thống tự động kiểm tra 4 điều kiện: Sĩ số chỗ trống, Chưa đăng ký, Chuẩn CEFR và Trùng lịch học"
     >
       <div className="space-y-6">
         {/* User CEFR Info */}
-        <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-800/40 flex justify-between items-center text-xs">
-          <div className="flex items-center space-x-2 text-indigo-300">
+        <div className="p-4 rounded-2xl bg-teal-50 border border-teal-200 flex justify-between items-center text-xs">
+          <div className="flex items-center space-x-2 text-teal-900">
             <span>Học viên:</span>
-            <strong className="text-white">{user?.hoSoHocVien?.hoTen}</strong>
+            <strong className="text-slate-900">{user?.hoSoHocVien?.hoTen}</strong>
             <span>— Trình độ hiện tại:</span>
-            <span className="font-bold text-emerald-400 font-mono">CEFR {user?.hoSoHocVien?.trinhDoCEFR || 'B1'}</span>
+            <span className="font-bold text-teal-700 font-mono">CEFR {user?.hoSoHocVien?.trinhDoCEFR || 'B1'}</span>
           </div>
-          <span className="text-slate-400">Chỉ được đăng ký các lớp có CEFR ≤ trình độ của bạn</span>
+          <span className="text-slate-500 font-medium">Chỉ được đăng ký các lớp có CEFR ≤ trình độ của bạn</span>
         </div>
 
         {message && (
           <div
-            className={`p-4 rounded-xl text-xs flex items-center space-x-2 ${
+            className={`p-4 rounded-xl text-xs flex items-center space-x-2 shadow-sm ${
               message.type === 'success'
-                ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300'
-                : 'bg-rose-500/10 border border-rose-500/30 text-rose-300'
+                ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+                : 'bg-rose-50 border border-rose-200 text-rose-800'
             }`}
           >
-            {message.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
+            {message.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" /> : <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />}
             <span>{message.text}</span>
           </div>
         )}
@@ -92,7 +92,7 @@ export default function StudentEnrollPage() {
         {/* Classes Grid */}
         {loading ? (
           <div className="py-20 flex justify-center items-center">
-            <div className="w-8 h-8 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -101,38 +101,38 @@ export default function StudentEnrollPage() {
               const isFull = c.siSoHienTai >= c.siSoToiDa;
 
               return (
-                <div key={c.id} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col justify-between">
+                <div key={c.id} className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-teal-300 hover:shadow-md transition">
                   <div>
                     <div className="flex justify-between items-center mb-3">
-                      <span className="font-mono text-xs font-bold text-indigo-400 px-2.5 py-1 rounded bg-indigo-500/10">
+                      <span className="font-mono text-xs font-bold text-teal-700 px-2.5 py-1 rounded bg-teal-50 border border-teal-200">
                         {c.maLopHoc}
                       </span>
-                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold">
+                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-teal-50 text-teal-700 font-bold border border-teal-200">
                         Yêu cầu: CEFR {c.khoaHoc?.trinhDoYeuCau}
                       </span>
                     </div>
 
-                    <h3 className="text-lg font-bold text-white mb-1">{c.tenLopHoc}</h3>
-                    <p className="text-xs text-slate-400 mb-4">{c.khoaHoc?.tenKhoaHoc}</p>
+                    <h3 className="text-lg font-bold text-slate-900 mb-1">{c.tenLopHoc}</h3>
+                    <p className="text-xs text-slate-500 mb-4">{c.khoaHoc?.tenKhoaHoc}</p>
 
-                    <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2 text-xs text-slate-300 mb-4">
+                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs text-slate-700 mb-4">
                       <div className="flex justify-between">
                         <span className="text-slate-500">Học phí:</span>
-                        <span className="font-bold text-emerald-400">
+                        <span className="font-bold text-emerald-700">
                           {Number(c.khoaHoc?.hocPhi).toLocaleString()} đ
                         </span>
                       </div>
 
                       <div className="flex justify-between">
                         <span className="text-slate-500">Sĩ số chỗ trống:</span>
-                        <span className={`font-semibold ${isFull ? 'text-rose-400' : 'text-slate-200'}`}>
+                        <span className={`font-semibold ${isFull ? 'text-rose-600' : 'text-slate-800'}`}>
                           {c.siSoHienTai} / {c.siSoToiDa} ({c.siSoToiDa - c.siSoHienTai} chỗ trống)
                         </span>
                       </div>
 
                       <div className="flex justify-between">
                         <span className="text-slate-500">Lịch học:</span>
-                        <span>{c.lichHoc?.map((l: any) => `Thứ ${l.thuTrongTuan}`).join(', ')}</span>
+                        <span className="font-medium">{c.lichHoc?.map((l: any) => `Thứ ${l.thuTrongTuan}`).join(', ')}</span>
                       </div>
                     </div>
                   </div>
@@ -141,12 +141,12 @@ export default function StudentEnrollPage() {
                     type="button"
                     onClick={() => handleEnroll(c.id)}
                     disabled={isFull || isEnrolled || enrollingId === c.id}
-                    className={`w-full py-2.5 rounded-xl font-semibold text-xs flex items-center justify-center space-x-1.5 transition ${
+                    className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer ${
                       isEnrolled
-                        ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
+                        ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
                         : isFull
-                        ? 'bg-rose-950/50 text-rose-400 border border-rose-800/50 cursor-not-allowed'
-                        : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30'
+                        ? 'bg-rose-50 text-rose-600 border border-rose-200 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white shadow-md shadow-teal-600/20'
                     }`}
                   >
                     <span>

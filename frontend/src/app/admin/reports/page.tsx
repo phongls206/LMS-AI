@@ -78,12 +78,13 @@ export default function AdminReportsPage() {
       .filter((p) => p.phuongThuc === 'TIEN_MAT')
       .reduce((sum, p) => sum + Number(p.soTien || 0), 0);
     const totalPaymentSum = bankPayments + cashPayments || 1;
+
     const bankPercent = Math.round((bankPayments / totalPaymentSum) * 100);
     const cashPercent = 100 - bankPercent;
 
     return {
       totalBilled,
-      totalCollected: totalCollected || stats?.tongQuan?.tongDoanhThu || 0,
+      totalCollected,
       totalDebt,
       collectionRate,
       bankPayments,
@@ -91,42 +92,48 @@ export default function AdminReportsPage() {
       bankPercent,
       cashPercent,
     };
-  }, [invoices, payments, stats]);
+  }, [invoices, payments]);
 
-  // Phân tích cơ cấu CEFR của học viên
+  // Phân bổ trình độ học viên theo khung CEFR
   const cefrDistribution = useMemo(() => {
-    const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-    const total = students.length || 1;
-    return levels.map((lvl) => {
-      const count = students.filter((s) => s.trinhDoCEFR === lvl).length;
-      const percent = Math.round((count / total) * 100);
-      return { level: lvl, count, percent };
+    const counts: Record<string, number> = { A1: 0, A2: 0, B1: 0, B2: 0, C1: 0, C2: 0 };
+    students.forEach((s) => {
+      const level = s.hoSoHocVien?.trinhDoCEFR || 'B1';
+      if (counts[level] !== undefined) counts[level]++;
+      else counts['B1']++;
     });
+
+    const total = students.length || 1;
+    return Object.entries(counts).map(([level, count]) => ({
+      level,
+      count,
+      percent: Math.round((count / total) * 100),
+    }));
   }, [students]);
 
-  // Phân tích trạng thái học viên
+  // Cơ cấu trạng thái học viên
   const studentStatusMetrics = useMemo(() => {
     const total = students.length || 1;
-    const dangHoc = students.filter((s) => s.trangThai === 'DANG_HOC').length;
-    const daTotNghiep = students.filter((s) => s.trangThai === 'DA_TOT_NGHIEP').length;
-    const baoLuu = students.filter((s) => s.trangThai === 'BAO_LUU').length;
-    const nghiHoc = students.filter((s) => s.trangThai === 'NGHI_HOC' || s.trangThai === 'THOI_HOC').length;
+    const dangHoc = students.filter((s) => s.hoSoHocVien?.trangThaiHoc === 'DANG_HOC').length;
+    const baoLuu = students.filter((s) => s.hoSoHocVien?.trangThaiHoc === 'BAO_LUU').length;
+    const hoanThanh = students.filter((s) => s.hoSoHocVien?.trangThaiHoc === 'HOAN_THANH').length;
+    const thoiHoc = students.filter((s) => s.hoSoHocVien?.trangThaiHoc === 'THOI_HOC').length;
 
     return [
-      { label: 'Đang Học', count: dangHoc, percent: Math.round((dangHoc / total) * 100), color: 'bg-emerald-500', text: 'text-emerald-400' },
-      { label: 'Đã Tốt Nghiệp', count: daTotNghiep, percent: Math.round((daTotNghiep / total) * 100), color: 'bg-blue-500', text: 'text-blue-400' },
-      { label: 'Bảo Lưu', count: baoLuu, percent: Math.round((baoLuu / total) * 100), color: 'bg-amber-500', text: 'text-amber-400' },
-      { label: 'Nghỉ Học', count: nghiHoc, percent: Math.round((nghiHoc / total) * 100), color: 'bg-rose-500', text: 'text-rose-400' },
+      { label: 'Đang Theo Học', count: dangHoc, percent: Math.round((dangHoc / total) * 100), color: 'bg-teal-500', text: 'text-teal-700' },
+      { label: 'Đã Hoàn Thành Khóa', count: hoanThanh, percent: Math.round((hoanThanh / total) * 100), color: 'bg-emerald-500', text: 'text-emerald-700' },
+      { label: 'Đang Bảo Lưu', count: baoLuu, percent: Math.round((baoLuu / total) * 100), color: 'bg-amber-500', text: 'text-amber-700' },
+      { label: 'Đã Thôi Học', count: thoiHoc, percent: Math.round((thoiHoc / total) * 100), color: 'bg-rose-500', text: 'text-rose-700' },
     ];
   }, [students]);
 
-  // Xuất file CSV báo cáo toàn diện
+  // Xuất file CSV báo cáo lớp học
   const exportToCSV = () => {
-    const headers = ['Mã Lớp', 'Tên Lớp', 'Khóa Học', 'Sĩ Số Hiện Tại', 'Sĩ Số Tối Đa', 'Tỷ Lệ Lấp Đầy (%)', 'Trạng Thái'];
+    const headers = ['Mã Lớp', 'Tên Lớp Học', 'Khóa Học', 'Sĩ Số Thực Tế', 'Sĩ Số Tối Đa', 'Tỷ Lệ Lấp Đầy', 'Trạng Thái'];
     const rows = classes.map((c) => [
       c.maLopHoc,
-      `"${c.tenLopHoc?.replace(/"/g, '""')}"`,
-      `"${c.khoaHoc?.tenKhoaHoc?.replace(/"/g, '""') || ''}"`,
+      `"${c.tenLopHoc}"`,
+      `"${c.khoaHoc?.tenKhoaHoc || ''}"`,
       c.siSoHienTai,
       c.siSoToiDa,
       `${Math.round((c.siSoHienTai / (c.siSoToiDa || 1)) * 100)}%`,
@@ -152,21 +159,21 @@ export default function AdminReportsPage() {
     >
       {loading ? (
         <div className="py-24 flex flex-col justify-center items-center space-y-3">
-          <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
-          <p className="text-xs text-slate-400">Đang tổng hợp dữ liệu phân tích hệ thống...</p>
+          <div className="w-10 h-10 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
+          <p className="text-xs text-slate-500 font-semibold">Đang tổng hợp dữ liệu phân tích hệ thống...</p>
         </div>
       ) : (
         <div className="space-y-6">
           {/* Header Action Bar & Navigation Tabs */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-3.5 rounded-2xl border border-slate-200/90 shadow-sm">
             {/* Tabs */}
             <div className="flex items-center space-x-2 overflow-x-auto pb-1 md:pb-0">
               <button
                 onClick={() => setActiveTab('overview')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 whitespace-nowrap cursor-pointer ${
                   activeTab === 'overview'
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
+                    : 'bg-slate-100 text-slate-700 hover:bg-teal-50 hover:text-teal-800'
                 }`}
               >
                 <DollarSign className="w-4 h-4" />
@@ -176,8 +183,8 @@ export default function AdminReportsPage() {
                 onClick={() => setActiveTab('students_cefr')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 whitespace-nowrap cursor-pointer ${
                   activeTab === 'students_cefr'
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
+                    : 'bg-slate-100 text-slate-700 hover:bg-teal-50 hover:text-teal-800'
                 }`}
               >
                 <Users className="w-4 h-4" />
@@ -187,8 +194,8 @@ export default function AdminReportsPage() {
                 onClick={() => setActiveTab('classes_fill')}
                 className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 whitespace-nowrap cursor-pointer ${
                   activeTab === 'classes_fill'
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
+                    : 'bg-slate-100 text-slate-700 hover:bg-teal-50 hover:text-teal-800'
                 }`}
               >
                 <GraduationCap className="w-4 h-4" />
@@ -200,18 +207,18 @@ export default function AdminReportsPage() {
             <div className="flex items-center space-x-2 self-end md:self-auto">
               <button
                 onClick={exportToCSV}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 hover:text-white text-xs font-semibold flex items-center space-x-1.5 border border-slate-700/60 transition shadow-sm cursor-pointer"
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-teal-700 hover:text-teal-800 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 transition shadow-sm cursor-pointer"
                 title="Tải bảng tính CSV"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-4 h-4 text-teal-600" />
                 <span>Xuất CSV</span>
               </button>
               <button
                 onClick={() => window.print()}
-                className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center space-x-1.5 border border-slate-700/60 transition shadow-sm cursor-pointer"
+                className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 transition shadow-sm cursor-pointer"
                 title="In hoặc lưu định dạng PDF"
               >
-                <Printer className="w-4 h-4" />
+                <Printer className="w-4 h-4 text-slate-600" />
                 <span>In Báo Cáo</span>
               </button>
             </div>
@@ -222,111 +229,111 @@ export default function AdminReportsPage() {
             <div className="space-y-6">
               {/* 4 Cards Chỉ Số Tài Chính */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Doanh Thu Đã Thu</p>
-                      <p className="text-2xl font-black text-emerald-400 mt-1">
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Doanh Thu Đã Thu</p>
+                      <p className="text-2xl font-black text-emerald-700 mt-1">
                         {financeMetrics.totalCollected.toLocaleString()} đ
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-emerald-500/10 text-emerald-400">
+                    <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600">
                       <DollarSign className="w-6 h-6" />
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center text-xs text-emerald-400">
+                  <div className="mt-3 flex items-center text-xs text-emerald-700 font-semibold">
                     <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
                     <span>Tỷ lệ thu hồi học phí: {financeMetrics.collectionRate}%</span>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Công Nợ Còn Phải Thu</p>
-                      <p className="text-2xl font-black text-amber-400 mt-1">
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Công Nợ Còn Phải Thu</p>
+                      <p className="text-2xl font-black text-amber-700 mt-1">
                         {financeMetrics.totalDebt.toLocaleString()} đ
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-amber-500/10 text-amber-400">
+                    <div className="p-3 rounded-xl bg-amber-50 text-amber-600">
                       <Clock className="w-6 h-6" />
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center text-xs text-slate-400">
-                    <span>Học viên đang theo học chưa thanh toán đủ</span>
+                  <div className="mt-3 flex items-center text-xs text-slate-500 font-medium">
+                    <span>Học viên đang học chưa thanh toán đủ</span>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Quy Mô Học Viên</p>
-                      <p className="text-2xl font-black text-indigo-400 mt-1">
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Quy Mô Học Viên</p>
+                      <p className="text-2xl font-black text-teal-700 mt-1">
                         {stats?.tongQuan?.tongHocVien || students.length || 0}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-indigo-500/10 text-indigo-400">
+                    <div className="p-3 rounded-xl bg-teal-50 text-teal-600">
                       <Users className="w-6 h-6" />
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center text-xs text-indigo-300">
+                  <div className="mt-3 flex items-center text-xs text-teal-700 font-semibold">
                     <span>Học viên ghi danh toàn hệ thống</span>
                   </div>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm relative overflow-hidden">
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Lớp Đang Hoạt Động</p>
-                      <p className="text-2xl font-black text-cyan-400 mt-1">
+                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Lớp Đang Hoạt Động</p>
+                      <p className="text-2xl font-black text-sky-700 mt-1">
                         {classes.length || stats?.tongQuan?.lopDangMo || 0}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-400">
+                    <div className="p-3 rounded-xl bg-sky-50 text-sky-600">
                       <Building2 className="w-6 h-6" />
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center text-xs text-cyan-300">
-                    <span>Số lớp đang mở tuyển sinh & đang học</span>
+                  <div className="mt-3 flex items-center text-xs text-sky-700 font-semibold">
+                    <span>Số lớp đang tuyển sinh & đang học</span>
                   </div>
                 </div>
               </div>
 
               {/* Cơ Cấu Hình Thức Thanh Toán & Tiến Độ Tài Chính */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-                    <CreditCard className="w-4 h-4 text-indigo-400" />
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
+                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+                    <CreditCard className="w-4 h-4 text-teal-600" />
                     <span>Cơ Cấu Hình Thức Thu Phí</span>
                   </h3>
                   <div className="space-y-3 pt-2">
                     <div>
-                      <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span className="text-cyan-300 flex items-center gap-1.5">
+                      <div className="flex justify-between text-xs font-bold mb-1">
+                        <span className="text-teal-700 flex items-center gap-1.5">
                           <span>💳 Chuyển Khoản Ngân Hàng</span>
                         </span>
-                        <span className="text-white">
+                        <span className="text-slate-800">
                           {financeMetrics.bankPayments.toLocaleString()} đ ({financeMetrics.bankPercent}%)
                         </span>
                       </div>
-                      <div className="w-full h-3 rounded-full bg-slate-800 overflow-hidden">
+                      <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-500"
+                          className="h-full bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full transition-all duration-500"
                           style={{ width: `${financeMetrics.bankPercent}%` }}
                         ></div>
                       </div>
                     </div>
 
                     <div>
-                      <div className="flex justify-between text-xs font-semibold mb-1">
-                        <span className="text-amber-300 flex items-center gap-1.5">
+                      <div className="flex justify-between text-xs font-bold mb-1">
+                        <span className="text-amber-700 flex items-center gap-1.5">
                           <span>💵 Tiền Mặt Trực Tiếp</span>
                         </span>
-                        <span className="text-white">
+                        <span className="text-slate-800">
                           {financeMetrics.cashPayments.toLocaleString()} đ ({financeMetrics.cashPercent}%)
                         </span>
                       </div>
-                      <div className="w-full h-3 rounded-full bg-slate-800 overflow-hidden">
+                      <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
                           style={{ width: `${financeMetrics.cashPercent}%` }}
@@ -334,36 +341,36 @@ export default function AdminReportsPage() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-[11px] text-slate-400 italic pt-2">
+                  <p className="text-[11px] text-slate-500 italic pt-2">
                     * Thống kê tự động từ các phiếu thu thực tế đã quyết toán qua cổng kế toán của ETC English.
                   </p>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-                    <Award className="w-4 h-4 text-emerald-400" />
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
+                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+                    <Award className="w-4 h-4 text-teal-600" />
                     <span>Hiệu Suất Tốt Nghiệp & Chuẩn Đầu Ra</span>
                   </h3>
                   <div className="grid grid-cols-3 gap-3 text-center pt-2">
-                    <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                      <p className="text-[10px] font-bold text-emerald-400 uppercase">ĐẠT CHUẨN</p>
-                      <p className="text-xl font-black text-white mt-0.5">{stats?.tyLeHoanThanh?.dat || 0}</p>
-                      <p className="text-[10px] text-emerald-300/80 mt-0.5">Cấp chứng chỉ</p>
+                    <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                      <p className="text-[10px] font-bold text-emerald-700 uppercase">ĐẠT CHUẨN</p>
+                      <p className="text-xl font-black text-emerald-800 mt-0.5">{stats?.tyLeHoanThanh?.dat || 0}</p>
+                      <p className="text-[10px] text-emerald-600 mt-0.5">Cấp chứng chỉ</p>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20">
-                      <p className="text-[10px] font-bold text-rose-400 uppercase">CHƯA ĐẠT</p>
-                      <p className="text-xl font-black text-white mt-0.5">{stats?.tyLeHoanThanh?.khongDat || 0}</p>
-                      <p className="text-[10px] text-rose-300/80 mt-0.5">Cần thi lại</p>
+                    <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200">
+                      <p className="text-[10px] font-bold text-rose-700 uppercase">CHƯA ĐẠT</p>
+                      <p className="text-xl font-black text-rose-800 mt-0.5">{stats?.tyLeHoanThanh?.khongDat || 0}</p>
+                      <p className="text-[10px] text-rose-600 mt-0.5">Cần thi lại</p>
                     </div>
-                    <div className="p-3.5 rounded-xl bg-slate-800 border border-slate-700/60">
-                      <p className="text-[10px] font-bold text-slate-300 uppercase">ĐANG HỌC</p>
-                      <p className="text-xl font-black text-white mt-0.5">{stats?.tyLeHoanThanh?.chuaXepLoai || 0}</p>
-                      <p className="text-[10px] text-slate-400 mt-0.5">Chưa xếp loại</p>
+                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <p className="text-[10px] font-bold text-slate-600 uppercase">ĐANG HỌC</p>
+                      <p className="text-xl font-black text-slate-800 mt-0.5">{stats?.tyLeHoanThanh?.chuaXepLoai || 0}</p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Chưa xếp loại</p>
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-xs text-slate-300 flex justify-between items-center">
-                    <span>Tỷ lệ hoàn thành toàn khóa:</span>
-                    <strong className="text-emerald-400 text-sm font-bold">{stats?.tyLeHoanThanh?.tyLeDatPhanTram || 0}%</strong>
+                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center">
+                    <span className="font-medium">Tỷ lệ hoàn thành toàn khóa:</span>
+                    <strong className="text-teal-700 text-sm font-black">{stats?.tyLeHoanThanh?.tyLeDatPhanTram || 0}%</strong>
                   </div>
                 </div>
               </div>
@@ -375,32 +382,34 @@ export default function AdminReportsPage() {
             <div className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Phân bổ CEFR */}
-                <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-                      <Layers className="w-4 h-4 text-indigo-400" />
+                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+                      <Layers className="w-4 h-4 text-teal-600" />
                       <span>Phân Bổ Trình Độ Đầu Vào (Khung CEFR)</span>
                     </h3>
-                    <span className="text-xs font-mono text-indigo-300">{students.length} Học Viên</span>
+                    <span className="text-xs font-mono font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-md border border-teal-200">
+                      {students.length} Học Viên
+                    </span>
                   </div>
 
                   <div className="space-y-3.5 pt-2">
                     {cefrDistribution.map((item) => (
                       <div key={item.level} className="space-y-1">
-                        <div className="flex justify-between text-xs font-semibold">
-                          <span className="font-mono text-slate-200">CEFR {item.level}</span>
-                          <span className="text-slate-400">
+                        <div className="flex justify-between text-xs font-bold">
+                          <span className="font-mono text-slate-700">CEFR {item.level}</span>
+                          <span className="text-slate-500">
                             {item.count} học viên ({item.percent}%)
                           </span>
                         </div>
-                        <div className="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden">
+                        <div className="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
                           <div
                             className={`h-full rounded-full transition-all duration-500 ${
                               ['A1', 'A2'].includes(item.level)
                                 ? 'bg-cyan-500'
                                 : ['B1', 'B2'].includes(item.level)
-                                ? 'bg-indigo-500'
-                                : 'bg-purple-500'
+                                ? 'bg-teal-600'
+                                : 'bg-blue-600'
                             }`}
                             style={{ width: `${item.percent}%` }}
                           ></div>
@@ -411,22 +420,22 @@ export default function AdminReportsPage() {
                 </div>
 
                 {/* Phân bổ trạng thái học tập */}
-                <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-                  <h3 className="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-                    <PieChart className="w-4 h-4 text-emerald-400" />
+                <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
+                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+                    <PieChart className="w-4 h-4 text-teal-600" />
                     <span>Cơ Cấu Trạng Thái Học Tập Của Học Viên</span>
                   </h3>
 
-                  <div className="space-y-4 pt-2">
+                  <div className="space-y-3 pt-2">
                     {studentStatusMetrics.map((status) => (
-                      <div key={status.label} className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2">
+                      <div key={status.label} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
                         <div className="flex justify-between items-center text-xs font-bold">
                           <span className={status.text}>{status.label}</span>
-                          <span className="text-white font-mono">
+                          <span className="text-slate-800 font-mono">
                             {status.count} HV ({status.percent}%)
                           </span>
                         </div>
-                        <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                        <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
                           <div
                             className={`h-full ${status.color} rounded-full transition-all duration-500`}
                             style={{ width: `${status.percent}%` }}
@@ -444,20 +453,20 @@ export default function AdminReportsPage() {
           {activeTab === 'classes_fill' && (
             <div className="space-y-6">
               {/* Bảng Chi Tiết Hiệu Suất Từng Lớp */}
-              <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+              <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
-                    <h3 className="text-base font-bold text-white">Hiệu Suất Tuyển Sinh & Tỷ Lệ Lấp Đầy Từng Lớp</h3>
-                    <p className="text-xs text-slate-400">Theo dõi số lượng học viên ghi danh so với sĩ số tối đa quy định</p>
+                    <h3 className="text-base font-bold text-slate-900">Hiệu Suất Tuyển Sinh & Tỷ Lệ Lấp Đầy Từng Lớp</h3>
+                    <p className="text-xs text-slate-500">Theo dõi số lượng học viên ghi danh so với sĩ số quy định của từng lớp</p>
                   </div>
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 self-start">
+                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 self-start">
                     Tổng {classes.length} Lớp Học
                   </span>
                 </div>
 
-                <div className="overflow-x-auto rounded-xl border border-slate-800">
-                  <table className="w-full text-left text-xs text-slate-300">
-                    <thead className="bg-slate-950/80 text-slate-400 uppercase text-[11px] font-semibold tracking-wider border-b border-slate-800">
+                <div className="overflow-x-auto rounded-xl border border-slate-200">
+                  <table className="w-full text-left text-xs text-slate-700">
+                    <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                       <tr>
                         <th className="px-5 py-3.5 whitespace-nowrap">Mã Lớp</th>
                         <th className="px-5 py-3.5 whitespace-nowrap">Tên Lớp Học</th>
@@ -467,42 +476,42 @@ export default function AdminReportsPage() {
                         <th className="px-5 py-3.5 whitespace-nowrap text-center">Trạng Thái</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/80">
+                    <tbody className="divide-y divide-slate-100">
                       {classes.map((c: any) => {
                         const maxCap = c.siSoToiDa || 25;
                         const fillPercent = Math.min(100, Math.round((c.siSoHienTai / maxCap) * 100));
                         return (
-                          <tr key={c.id} className="hover:bg-slate-800/40 transition">
-                            <td className="px-5 py-4 font-mono font-bold text-indigo-400 whitespace-nowrap">
+                          <tr key={c.id} className="hover:bg-teal-50/30 transition">
+                            <td className="px-5 py-4 font-mono font-bold text-teal-700 whitespace-nowrap">
                               {c.maLopHoc}
                             </td>
-                            <td className="px-5 py-4 font-semibold text-white whitespace-nowrap">
+                            <td className="px-5 py-4 font-bold text-slate-900 whitespace-nowrap">
                               {c.tenLopHoc}
                             </td>
                             <td className="px-5 py-4 whitespace-nowrap">
-                              <span className="block text-slate-200">{c.khoaHoc?.tenKhoaHoc}</span>
-                              <span className="text-[10px] font-mono text-indigo-300 bg-indigo-500/10 px-1.5 py-0.5 rounded mt-0.5 inline-block">
+                              <span className="block font-semibold text-slate-800">{c.khoaHoc?.tenKhoaHoc}</span>
+                              <span className="text-[10px] font-mono text-teal-800 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded mt-0.5 inline-block font-bold">
                                 CEFR {c.khoaHoc?.trinhDoYeuCau}
                               </span>
                             </td>
-                            <td className="px-5 py-4 text-center whitespace-nowrap font-mono font-bold text-white">
+                            <td className="px-5 py-4 text-center whitespace-nowrap font-mono font-bold text-slate-900">
                               {c.siSoHienTai} / {maxCap} HV
                             </td>
                             <td className="px-5 py-4 whitespace-nowrap">
                               <div className="space-y-1">
                                 <div className="flex justify-between text-[11px] font-bold">
-                                  <span className={fillPercent >= 90 ? 'text-rose-400' : fillPercent >= 60 ? 'text-indigo-300' : 'text-slate-400'}>
+                                  <span className={fillPercent >= 90 ? 'text-rose-600' : fillPercent >= 60 ? 'text-teal-700' : 'text-slate-600'}>
                                     {fillPercent}%
                                   </span>
                                   <span className="text-slate-500 text-[10px]">Còn {Math.max(0, maxCap - c.siSoHienTai)} chỗ</span>
                                 </div>
-                                <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                                <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
                                   <div
                                     className={`h-full rounded-full transition-all duration-300 ${
                                       fillPercent >= 90
                                         ? 'bg-rose-500'
                                         : fillPercent >= 60
-                                        ? 'bg-indigo-500'
+                                        ? 'bg-teal-600'
                                         : 'bg-cyan-500'
                                     }`}
                                     style={{ width: `${fillPercent}%` }}
@@ -512,12 +521,12 @@ export default function AdminReportsPage() {
                             </td>
                             <td className="px-5 py-4 text-center whitespace-nowrap">
                               <span
-                                className={`px-2.5 py-1 rounded-full text-[11px] font-semibold ${
+                                className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${
                                   c.trangThai === 'DANG_MO_DANG_KY'
-                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                     : c.trangThai === 'DANG_HOC'
-                                    ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20'
-                                    : 'bg-slate-800 text-slate-300'
+                                    ? 'bg-sky-50 text-sky-700 border-sky-200'
+                                    : 'bg-slate-100 text-slate-700 border-slate-200'
                                 }`}
                               >
                                 {formatTrangThaiLopHoc(c.trangThai)}

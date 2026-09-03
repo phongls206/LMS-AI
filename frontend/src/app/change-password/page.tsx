@@ -40,71 +40,71 @@ export default function ChangePasswordPage() {
 
   return (
     <AppLayout
-      title="Đổi Mật Khẩu Cá Nhân (SCR-AUTH-02)"
+      title="Đổi Mật Khẩu Cá Nhân"
       subtitle="Cập nhật mật khẩu bảo mật cho tài khoản của bạn"
     >
       <div className="max-w-md mx-auto space-y-6">
         {message && (
           <div
-            className={`p-4 rounded-xl text-xs flex items-center space-x-2 ${
+            className={`p-4 rounded-xl text-xs flex items-center space-x-2 shadow-sm ${
               message.type === 'success'
-                ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300'
-                : 'bg-rose-500/10 border border-rose-500/30 text-rose-300'
+                ? 'bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold'
+                : 'bg-rose-50 border border-rose-200 text-rose-800 font-bold'
             }`}
           >
-            {message.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0" /> : <AlertCircle className="w-4 h-4 shrink-0" />}
+            {message.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" /> : <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />}
             <span>{message.text}</span>
           </div>
         )}
 
-        <div className="p-8 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl">
+        <div className="p-8 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
           <form onSubmit={handleChangePassword} className="space-y-4 text-xs">
             <div>
-              <label className="block text-slate-300 font-semibold mb-1.5 uppercase tracking-wider">
+              <label className="block text-slate-700 font-bold mb-1.5 uppercase tracking-wider">
                 Mật Khẩu Hiện Tại
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="password"
                   required
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 pl-10 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pl-10 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
                   placeholder="Nhập mật khẩu cũ"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1.5 uppercase tracking-wider">
+              <label className="block text-slate-700 font-bold mb-1.5 uppercase tracking-wider">
                 Mật Khẩu Mới
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="password"
                   required
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 pl-10 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pl-10 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
                   placeholder="Tối thiểu 6 ký tự"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-slate-300 font-semibold mb-1.5 uppercase tracking-wider">
+              <label className="block text-slate-700 font-bold mb-1.5 uppercase tracking-wider">
                 Xác Nhận Mật Khẩu Mới
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="password"
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 pl-10 text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pl-10 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
                   placeholder="Nhập lại mật khẩu mới"
                 />
               </div>
@@ -113,19 +113,19 @@ export default function ChangePasswordPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition disabled:opacity-50"
+              className="w-full py-3 mt-2 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white font-bold rounded-xl shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer"
             >
               {loading ? 'Đang Xử Lý...' : 'Cập Nhật Mật Khẩu'}
             </button>
           </form>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/60 border border-slate-800 text-center text-xs text-slate-400 space-y-1">
+        <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 text-center text-xs text-slate-600 space-y-1">
           <p>
-            🔒 <strong className="text-slate-300">Quên mật khẩu cũ?</strong> Vui lòng liên hệ Quản trị viên hệ thống qua{' '}
+            🔒 <strong className="text-slate-800">Quên mật khẩu cũ?</strong> Vui lòng liên hệ Quản trị viên hệ thống qua{' '}
             <a
               href="mailto:lehongphong2108@outlook.com"
-              className="text-indigo-400 hover:text-indigo-300 font-semibold underline underline-offset-2 transition"
+              className="text-teal-700 hover:text-teal-800 font-bold underline underline-offset-2 transition"
             >
               lehongphong2108@outlook.com
             </a>{' '}

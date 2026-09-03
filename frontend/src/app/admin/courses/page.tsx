@@ -68,15 +68,15 @@ export default function AdminCoursesPage() {
     >
       <div className="space-y-6">
         {/* Actions Bar */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
           <div>
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Tổng số {courses.length} chương trình đào tạo
             </span>
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center space-x-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold shadow-lg shadow-indigo-600/30 transition"
+            className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Mở Khóa Học Mới</span>
@@ -84,8 +84,8 @@ export default function AdminCoursesPage() {
         </div>
 
         {message && (
-          <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm flex items-center space-x-2">
-            <CheckCircle className="w-4 h-4 text-emerald-400" />
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center space-x-2 shadow-sm">
+            <CheckCircle className="w-4 h-4 text-emerald-600" />
             <span>{message}</span>
           </div>
         )}
@@ -93,51 +93,51 @@ export default function AdminCoursesPage() {
         {/* Courses Grid */}
         {loading ? (
           <div className="py-20 flex justify-center items-center">
-            <div className="w-8 h-8 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+            <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((course) => (
               <div
                 key={course.id}
-                className="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition flex flex-col justify-between"
+                className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:border-teal-400 hover:shadow-md transition flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="px-2.5 py-1 rounded-md bg-indigo-500/10 text-indigo-400 text-xs font-bold font-mono">
+                    <span className="px-2.5 py-1 rounded-md bg-teal-50 text-teal-700 text-xs font-bold font-mono border border-teal-200">
                       {course.maKhoaHoc}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold">
+                    <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
                       CEFR {course.trinhDoYeuCau}
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-white mb-2 leading-snug">{course.tenKhoaHoc}</h3>
-                  <p className="text-xs text-slate-400 line-clamp-2 mb-4">
+                  <h3 className="text-lg font-bold text-slate-900 mb-2 leading-snug">{course.tenKhoaHoc}</h3>
+                  <p className="text-xs text-slate-500 line-clamp-2 mb-4">
                     {course.moTa || 'Chương trình đào tạo tiếng Anh chuẩn quốc tế.'}
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800/80 space-y-2 text-xs">
-                  <div className="flex items-center justify-between text-slate-300">
-                    <span className="flex items-center text-slate-400">
-                      <Clock className="w-3.5 h-3.5 mr-1.5 text-slate-500" /> Thời lượng:
+                <div className="pt-4 border-t border-slate-100 space-y-2 text-xs">
+                  <div className="flex items-center justify-between text-slate-600">
+                    <span className="flex items-center text-slate-500">
+                      <Clock className="w-3.5 h-3.5 mr-1.5 text-slate-400" /> Thời lượng:
                     </span>
-                    <span className="font-semibold">{course.thoiLuongGio} giờ học</span>
+                    <span className="font-bold text-slate-800">{course.thoiLuongGio} giờ học</span>
                   </div>
 
-                  <div className="flex items-center justify-between text-slate-300">
-                    <span className="flex items-center text-slate-400">
-                      <DollarSign className="w-3.5 h-3.5 mr-1.5 text-slate-500" /> Học phí niêm yết:
+                  <div className="flex items-center justify-between text-slate-600">
+                    <span className="flex items-center text-slate-500">
+                      <DollarSign className="w-3.5 h-3.5 mr-1.5 text-slate-400" /> Học phí niêm yết:
                     </span>
-                    <span className="font-bold text-emerald-400 text-sm">
+                    <span className="font-black text-teal-700 text-sm">
                       {Number(course.hocPhi).toLocaleString()} đ
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between text-slate-400 text-[11px] pt-1">
+                  <div className="flex items-center justify-between text-slate-500 text-[11px] pt-1">
                     <span>Lớp học liên kết:</span>
-                    <span className="font-semibold text-slate-200">{course._count?.lopHoc || 0} lớp</span>
+                    <span className="font-bold text-slate-700">{course._count?.lopHoc || 0} lớp</span>
                   </div>
                 </div>
               </div>
@@ -147,42 +147,42 @@ export default function AdminCoursesPage() {
 
         {/* Modal Tạo Khóa Học Mới */}
         {showModal && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl">
-              <h3 className="text-lg font-bold text-white mb-4">Mở Chương Trình Khóa Học Mới</h3>
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 shadow-2xl text-slate-800">
+              <h3 className="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">Mở Chương Trình Khóa Học Mới</h3>
 
               <form onSubmit={handleCreateCourse} className="space-y-4 text-xs">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Mã Khóa Học (VD: KH-IELTS-70)</label>
+                  <label className="block text-slate-700 font-bold mb-1">Mã Khóa Học (VD: KH-IELTS-70)</label>
                   <input
                     type="text"
                     required
                     value={formData.maKhoaHoc}
                     onChange={(e) => setFormData({ ...formData, maKhoaHoc: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                     placeholder="KH-..."
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Tên Khóa Học</label>
+                  <label className="block text-slate-700 font-bold mb-1">Tên Khóa Học</label>
                   <input
                     type="text"
                     required
                     value={formData.tenKhoaHoc}
                     onChange={(e) => setFormData({ ...formData, tenKhoaHoc: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                     placeholder="VD: IELTS Master 7.0+"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Chuẩn CEFR Yêu Cầu</label>
+                    <label className="block text-slate-700 font-bold mb-1">Chuẩn CEFR Yêu Cầu</label>
                     <select
                       value={formData.trinhDoYeuCau}
                       onChange={(e) => setFormData({ ...formData, trinhDoYeuCau: e.target.value as TrinhDoCEFR })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                     >
                       <option value="A1">A1 - Sơ Cấp</option>
                       <option value="A2">A2 - Tiền Trung Cấp</option>
@@ -194,20 +194,20 @@ export default function AdminCoursesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Thời Lượng (Giờ)</label>
+                    <label className="block text-slate-700 font-bold mb-1">Thời Lượng (Giờ)</label>
                     <input
                       type="number"
                       required
                       min={1}
                       value={formData.thoiLuongGio}
                       onChange={(e) => setFormData({ ...formData, thoiLuongGio: +e.target.value })}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Học Phí Niêm Yết (VNĐ)</label>
+                  <label className="block text-slate-700 font-bold mb-1">Học Phí Niêm Yết (VNĐ)</label>
                   <input
                     type="number"
                     required
@@ -215,33 +215,33 @@ export default function AdminCoursesPage() {
                     step={100000}
                     value={formData.hocPhi}
                     onChange={(e) => setFormData({ ...formData, hocPhi: +e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Mô Tả Khóa Học</label>
+                  <label className="block text-slate-700 font-bold mb-1">Mô Tả Khóa Học</label>
                   <textarea
                     rows={3}
                     value={formData.moTa}
                     onChange={(e) => setFormData({ ...formData, moTa: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500"
                     placeholder="Mục tiêu và quyền lợi học viên..."
                   />
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-4 border-t border-slate-800">
+                <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition"
+                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer"
                   >
                     Hủy Bỏ
                   </button>
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition disabled:opacity-50"
+                    className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition disabled:opacity-50 cursor-pointer shadow-sm"
                   >
                     {submitting ? 'Đang Lưu...' : 'Xác Nhận Tạo Khóa Học'}
                   </button>

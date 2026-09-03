@@ -98,15 +98,10 @@ export default function StudentAiPracticePage() {
         return;
       }
       const words = activeTopic.split(/\s+/);
-      for (const word of words) {
-        const clean = word.replace(/[^a-zA-ZÀ-ỹ]/g, '').toLowerCase();
-        if (clean.length >= 6) {
-          const hasVowel = /[aeiouyáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ]/.test(clean);
-          if (!hasVowel) {
-            alert(`Phát hiện từ không có nghĩa: "${word}". Vui lòng nhập chủ đề ngữ pháp / từ vựng tiếng Anh hợp lệ.`);
-            return;
-          }
-        }
+      const isGibberish = words.some((w) => w.length > 18 && !w.includes('-'));
+      if (isGibberish) {
+        alert('Chủ đề chứa từ vô nghĩa quá dài. Vui lòng nhập chủ đề học thuật rõ ràng.');
+        return;
       }
     }
 
@@ -121,7 +116,7 @@ export default function StudentAiPracticePage() {
       setResult(res);
       saveToSession(res, {}, false);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Lỗi gọi AI sinh bài tập.');
+      alert(err.response?.data?.message || 'Có lỗi khi sinh bài trắc nghiệm.');
     } finally {
       setLoading(false);
       setCooldown(5); // 5s cooldown chống spam
@@ -152,18 +147,18 @@ export default function StudentAiPracticePage() {
     >
       <div className="space-y-6">
         {/* Form */}
-        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm">
+        <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
           <form onSubmit={handleGenerate} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
               <div className="md:col-span-2">
-                <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
-                  <Layers className="w-3.5 h-3.5 text-purple-400" />
+                <label className="block font-bold text-teal-800 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
+                  <Layers className="w-3.5 h-3.5 text-teal-600" />
                   <span>Chọn Chủ Đề Ôn Tập Chuẩn Khung CEFR</span>
                 </label>
                 <select
                   value={selectedTopic}
                   onChange={(e) => setSelectedTopic(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-medium focus:outline-none focus:border-purple-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 font-semibold focus:outline-none focus:border-teal-500 cursor-pointer"
                 >
                   {PREDEFINED_TOPICS.map((t) => (
                     <option key={t} value={t}>
@@ -174,13 +169,13 @@ export default function StudentAiPracticePage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                   Độ Khó CEFR
                 </label>
                 <select
                   value={cefr}
                   onChange={(e) => setCefr(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-purple-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-teal-500 cursor-pointer"
                 >
                   <option value="A1">A1 — Sơ cấp</option>
                   <option value="A2">A2 — Tiền trung cấp</option>
@@ -191,14 +186,14 @@ export default function StudentAiPracticePage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                   Số Lượng Câu Hỏi
                 </label>
                 <div className="flex space-x-2">
                   <select
                     value={soLuong}
                     onChange={(e) => setSoLuong(+e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-purple-300 focus:outline-none focus:border-purple-500 font-bold"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-teal-800 focus:outline-none focus:border-teal-500 font-bold cursor-pointer"
                   >
                     <option value={5}>5 câu (Mặc định)</option>
                     <option value={10}>10 câu</option>
@@ -207,13 +202,13 @@ export default function StudentAiPracticePage() {
                   <button
                     type="submit"
                     disabled={loading || cooldown > 0}
-                    className="px-4 h-10 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl flex items-center justify-center space-x-1.5 shadow-lg shadow-purple-600/30 transition disabled:opacity-50 shrink-0 cursor-pointer disabled:cursor-not-allowed"
+                    className="px-4 h-10 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white font-bold rounded-xl flex items-center justify-center space-x-1.5 shadow-md shadow-teal-600/20 transition disabled:opacity-50 shrink-0 cursor-pointer disabled:cursor-not-allowed"
                   >
                     {loading ? (
                       <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                     ) : cooldown > 0 ? (
-                      <span className="flex items-center space-x-1 text-amber-300 text-[11px] font-bold">
-                        <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                      <span className="flex items-center space-x-1 text-amber-100 text-[11px] font-bold">
+                        <Clock className="w-3.5 h-3.5 text-amber-200 animate-spin" />
                         <span>Chờ {cooldown}s</span>
                       </span>
                     ) : (
@@ -231,10 +226,10 @@ export default function StudentAiPracticePage() {
             {selectedTopic === 'CUSTOM' && (
               <div className="pt-2 space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block font-semibold text-purple-300 uppercase tracking-wider text-[11px]">
+                  <label className="block font-bold text-teal-800 uppercase tracking-wider text-[11px]">
                     Nhập Chủ Đề Tùy Chỉnh Của Bạn:
                   </label>
-                  <span className={`text-[10px] font-mono ${customTopic.length > 80 ? 'text-amber-400' : 'text-slate-500'}`}>
+                  <span className={`text-[10px] font-mono ${customTopic.length > 80 ? 'text-amber-600' : 'text-slate-400'}`}>
                     {customTopic.length}/100 ký tự
                   </span>
                 </div>
@@ -245,12 +240,12 @@ export default function StudentAiPracticePage() {
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
                   placeholder="VD: Inversion, Subjunctive Mood, Phrasal Verbs with 'Look'..."
-                  className="w-full bg-slate-950 border border-purple-500/50 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 text-xs"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 text-xs"
                 />
 
                 {/* Gợi ý chủ đề nhanh & lọc rác */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <span className="text-[10px] text-slate-400 font-medium">💡 Gợi ý nhanh:</span>
+                  <span className="text-[10px] text-slate-500 font-medium">💡 Gợi ý nhanh:</span>
                   {[
                     'Đảo ngữ (Inversion)',
                     'Câu giả định (Subjunctive Mood)',
@@ -263,7 +258,7 @@ export default function StudentAiPracticePage() {
                       key={sug}
                       type="button"
                       onClick={() => setCustomTopic(sug)}
-                      className="px-2 py-0.5 rounded-md bg-purple-950/50 hover:bg-purple-900/60 text-purple-300 border border-purple-800/40 text-[10px] transition cursor-pointer"
+                      className="px-2 py-0.5 rounded-md bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-[10px] font-semibold transition cursor-pointer"
                     >
                       +{sug}
                     </button>
@@ -277,8 +272,8 @@ export default function StudentAiPracticePage() {
         {/* Loading */}
         {loading && (
           <div className="py-20 flex flex-col items-center justify-center space-y-3">
-            <div className="w-10 h-10 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin"></div>
-            <p className="text-xs text-purple-300 font-medium animate-pulse">
+            <div className="w-10 h-10 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
+            <p className="text-xs text-teal-700 font-bold animate-pulse">
               Hệ thống AI đang sinh {soLuong} câu hỏi tương tác chuẩn CEFR {cefr}...
             </p>
           </div>
@@ -287,18 +282,18 @@ export default function StudentAiPracticePage() {
         {/* Result & Quiz Area */}
         {result?.data?.cauHoi && (
           <div className="space-y-6">
-            <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-800/40 flex items-center justify-between">
-              <span className="text-xs text-purple-300 font-semibold">
+            <div className="p-4 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-between">
+              <span className="text-xs text-teal-900 font-bold">
                 Bài tập: <strong>{result.data.chuDe}</strong> (CEFR {result.data.trinhDo})
               </span>
               <div className="flex items-center space-x-2">
                 <span
-                  className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${
+                  className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
                     result.mode === 'AI_CACHE'
-                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                      ? 'bg-amber-100 text-amber-800 border-amber-300'
                       : result.mode === 'AI_GEMINI'
-                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-                      : 'bg-slate-800 text-slate-300 border-slate-700'
+                      ? 'bg-teal-100 text-teal-800 border-teal-300'
+                      : 'bg-slate-100 text-slate-700 border-slate-300'
                   }`}
                 >
                   {result.mode === 'AI_CACHE'
@@ -310,10 +305,10 @@ export default function StudentAiPracticePage() {
                 <button
                   type="button"
                   onClick={handleResetSession}
-                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center space-x-1 border border-slate-700/60 transition cursor-pointer"
+                  className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 transition cursor-pointer shadow-sm"
                   title="Xóa đề hiện tại để tạo phiên bài mới"
                 >
-                  <PlusCircle className="w-3.5 h-3.5 text-purple-400" />
+                  <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
                   <span>Tạo Phiên Mới</span>
                 </button>
               </div>
@@ -325,30 +320,30 @@ export default function StudentAiPracticePage() {
                 const isCorrect = selected === q.dapAnDung;
 
                 return (
-                  <div key={q.id || idx} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+                  <div key={q.id || idx} className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
                     <div className="flex items-start space-x-3">
-                      <span className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-xs flex items-center justify-center shrink-0">
+                      <span className="w-6 h-6 rounded-full bg-teal-50 border border-teal-200 text-teal-700 font-bold text-xs flex items-center justify-center shrink-0">
                         {idx + 1}
                       </span>
-                      <p className="text-sm font-semibold text-white leading-relaxed">{q.noiDung}</p>
+                      <p className="text-sm font-bold text-slate-900 leading-relaxed">{q.noiDung}</p>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pl-9">
                       {q.luaChon &&
                         Object.entries(q.luaChon).map(([optKey, optVal]: [string, any]) => {
                           const isChosen = selected === optKey;
-                          let btnClass = 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700';
+                          let btnClass = 'bg-slate-50 border-slate-200 text-slate-700 hover:border-teal-300 hover:bg-teal-50/40';
 
                           if (submitted) {
                             if (optKey === q.dapAnDung) {
-                              btnClass = 'bg-emerald-500/20 border-emerald-500 text-emerald-300 font-semibold';
+                              btnClass = 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold';
                             } else if (isChosen && !isCorrect) {
-                              btnClass = 'bg-rose-500/20 border-rose-500 text-rose-300 font-semibold';
+                              btnClass = 'bg-rose-50 border-rose-300 text-rose-800 font-bold';
                             } else {
-                              btnClass = 'bg-slate-950/40 border-slate-900 text-slate-600 opacity-60';
+                              btnClass = 'bg-slate-50/50 border-slate-200 text-slate-400 opacity-60';
                             }
                           } else if (isChosen) {
-                            btnClass = 'bg-indigo-600 border-indigo-500 text-white font-semibold shadow-md shadow-indigo-500/30';
+                            btnClass = 'bg-teal-600 border-teal-600 text-white font-bold shadow-sm';
                           }
 
                           return (
@@ -356,7 +351,7 @@ export default function StudentAiPracticePage() {
                               key={optKey}
                               type="button"
                               onClick={() => handleSelectOption(idx, optKey)}
-                              className={`p-3 rounded-xl border text-xs text-left transition flex items-center space-x-2 ${btnClass}`}
+                              className={`p-3 rounded-xl border text-xs text-left transition flex items-center space-x-2 cursor-pointer ${btnClass}`}
                             >
                               <span className="font-bold opacity-80">[{optKey}]</span>
                               <span>{optVal}</span>
@@ -369,14 +364,14 @@ export default function StudentAiPracticePage() {
                     {submitted && (
                       <div
                         className={`ml-9 p-3.5 rounded-xl border text-xs ${
-                          isCorrect ? 'bg-emerald-950/30 border-emerald-800/50 text-emerald-300' : 'bg-rose-950/30 border-rose-800/50 text-rose-300'
+                          isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-rose-50 border-rose-200 text-rose-800'
                         }`}
                       >
                         <div className="flex items-center space-x-1.5 font-bold mb-1">
-                          {isCorrect ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <XCircle className="w-4 h-4 text-rose-400" />}
+                          {isCorrect ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <XCircle className="w-4 h-4 text-rose-600" />}
                           <span>{isCorrect ? 'Chính xác!' : `Chưa đúng. Đáp án là [${q.dapAnDung}]`}</span>
                         </div>
-                        <p className="text-slate-300 text-[11px]">{q.giaiThich}</p>
+                        <p className="text-slate-700 text-[11px] leading-relaxed">{q.giaiThich}</p>
                       </div>
                     )}
                   </div>
@@ -385,15 +380,15 @@ export default function StudentAiPracticePage() {
             </div>
 
             {/* Bottom action */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-between">
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex items-center justify-between">
               {submitted ? (
                 <>
                   <div className="flex items-center space-x-3">
-                    <span className="text-xs text-slate-400">Kết quả của bạn:</span>
-                    <span className="text-xl font-black text-indigo-400">
+                    <span className="text-xs text-slate-500 font-medium">Kết quả của bạn:</span>
+                    <span className="text-xl font-black text-teal-700">
                       {calculateScore()} / {result.data.cauHoi.length} Câu Đúng
                     </span>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300">
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-teal-50 border border-teal-200 text-teal-800">
                       ({((calculateScore() / result.data.cauHoi.length) * 100).toFixed(0)}%)
                     </span>
                   </div>
@@ -404,7 +399,7 @@ export default function StudentAiPracticePage() {
                       setUserAnswers({});
                       saveToSession(result, {}, false);
                     }}
-                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
+                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
                     <span>Làm Lại Đề Này</span>
@@ -412,8 +407,8 @@ export default function StudentAiPracticePage() {
                 </>
               ) : (
                 <>
-                  <span className="text-xs text-slate-400">
-                    Đã chọn: <strong className="text-white">{Object.keys(userAnswers).length}</strong> / {result.data.cauHoi.length} câu
+                  <span className="text-xs text-slate-500 font-medium">
+                    Đã chọn: <strong className="text-slate-900 font-bold">{Object.keys(userAnswers).length}</strong> / {result.data.cauHoi.length} câu
                   </span>
                   <button
                     type="button"
@@ -422,7 +417,7 @@ export default function StudentAiPracticePage() {
                       setSubmitted(true);
                       saveToSession(result, userAnswers, true);
                     }}
-                    className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition disabled:opacity-40 cursor-pointer"
+                    className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-md shadow-teal-600/20 transition disabled:opacity-40 cursor-pointer"
                   >
                     Nộp Bài & Chấm Điểm
                   </button>

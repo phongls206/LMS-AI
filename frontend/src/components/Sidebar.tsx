@@ -17,8 +17,10 @@ import {
   Award,
   UserPlus,
   X,
+  LogOut,
 } from 'lucide-react';
 import { VaiTro } from '../types';
+import { authService } from '../services/api';
 
 interface SidebarProps {
   role?: VaiTro;
@@ -96,34 +98,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
+  const showFull = !isCollapsed || mobileOpen;
+
   return (
     <aside
       className={`
         fixed inset-y-0 left-0 z-50 md:static md:z-0
-        bg-slate-900 text-slate-200 min-h-screen flex flex-col border-r border-slate-800 shrink-0
-        transition-all duration-300 ease-in-out shadow-2xl md:shadow-none
+        bg-white text-slate-700 min-h-screen flex flex-col border-r border-slate-200/90 shrink-0
+        transition-all duration-300 ease-in-out shadow-xl md:shadow-none
         ${mobileOpen ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0'}
         ${isCollapsed ? 'md:w-20' : 'md:w-64'}
       `}
     >
       {/* Brand Header */}
-      <div
-        className={`p-4 border-b border-slate-800 flex items-center justify-between`}
-      >
+      <div className="p-4 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center space-x-3 overflow-hidden">
           <div
-            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-cyan-400 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-indigo-500/30 shrink-0 cursor-pointer hover:scale-105 transition-transform"
+            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 via-cyan-600 to-blue-500 flex items-center justify-center font-black text-white text-xl shadow-md shadow-teal-500/20 shrink-0 cursor-pointer hover:scale-105 transition-transform"
             onClick={onToggleCollapse}
             title={isCollapsed ? 'Nhấp để mở rộng menu' : 'ETC ENGLISH'}
           >
             E
           </div>
-          {(!isCollapsed || mobileOpen) && (
+          {showFull && (
             <div className="overflow-hidden">
-              <h1 className="font-bold text-white text-base tracking-wide leading-tight truncate">
+              <h1 className="font-bold text-slate-900 text-base tracking-tight leading-tight truncate">
                 ETC ENGLISH
               </h1>
-              <p className="text-xs text-indigo-400 font-medium truncate">LMS + GenAI Platform</p>
+              <p className="text-xs text-teal-600 font-semibold truncate">LMS + GenAI Platform</p>
             </div>
           )}
         </div>
@@ -131,7 +133,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Mobile Close Button */}
         <button
           onClick={onCloseMobile}
-          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition md:hidden"
+          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition md:hidden"
           title="Đóng menu"
         >
           <X className="w-5 h-5" />
@@ -139,52 +141,51 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Role Badge - Ẩn hoàn toàn khi thu nhỏ Sidebar */}
-      {(!isCollapsed || mobileOpen) && (
+      {showFull && (
         <div
-          className="py-2.5 px-4 bg-slate-950/40 border-b border-slate-800/60 flex items-center justify-between"
+          className="py-2.5 px-4 bg-teal-50/70 border-b border-teal-100/80 flex items-center justify-between"
           title={`Vai trò: ${getRoleLabel()}`}
         >
           <div>
-            <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Vai trò</p>
-            <p className="text-xs font-semibold text-emerald-400 truncate">{getRoleLabel()}</p>
+            <p className="text-[10px] text-teal-800 uppercase tracking-wider font-bold">Vai trò hệ thống</p>
+            <p className="text-xs font-bold text-teal-700 truncate">{getRoleLabel()}</p>
           </div>
           <span
-            className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"
+            className="w-2 h-2 rounded-full bg-teal-500 animate-pulse shrink-0"
             title={`Đang hoạt động: ${getRoleLabel()}`}
           ></span>
         </div>
       )}
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-2.5 py-4 space-y-1.5 overflow-y-auto overflow-x-hidden">
+      <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto overflow-x-hidden">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
-          const showFull = !isCollapsed || mobileOpen;
           return (
             <Link
               key={item.href}
               href={item.href}
               onClick={onCloseMobile}
               title={!showFull ? item.label : undefined}
-              className={`flex items-center rounded-xl text-sm font-medium transition-all duration-200 group relative ${
-                !showFull ? 'justify-center px-0 py-3' : 'space-x-3 px-3 py-2.5'
+              className={`flex items-center rounded-xl text-xs font-semibold transition-all duration-200 group relative ${
+                !showFull ? 'justify-center px-0 py-2.5' : 'space-x-3 px-3 py-2.5'
               } ${
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800/90 hover:text-white'
+                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
+                  : 'text-slate-600 hover:bg-teal-50/80 hover:text-teal-700'
               }`}
             >
               <Icon
-                className={`w-5 h-5 shrink-0 transition-transform group-hover:scale-110 ${
-                  isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'
+                className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${
+                  isActive ? 'text-white' : 'text-slate-400 group-hover:text-teal-600'
                 }`}
               />
               {showFull && <span className="truncate">{item.label}</span>}
 
               {/* Floating Tooltip when Collapsed on Desktop */}
               {!showFull && (
-                <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-950 text-slate-100 text-xs font-medium rounded-lg shadow-xl border border-slate-800 whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
+                <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-900 text-white text-xs font-medium rounded-lg shadow-xl border border-slate-800 whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
                   {item.label}
                 </div>
               )}
@@ -192,6 +193,48 @@ export const Sidebar: React.FC<SidebarProps> = ({
           );
         })}
       </nav>
+
+      {/* Pinned Bottom Footer: Profile Summary & Logout */}
+      <div className="border-t border-slate-200/90 p-3 bg-slate-50/80 shrink-0">
+        {showFull ? (
+          <div className="space-y-2.5">
+            <div className="flex items-center space-x-2.5 px-1 py-0.5">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-bold text-xs text-white uppercase shadow-sm shrink-0">
+                {userName?.slice(0, 2) || 'AD'}
+              </div>
+              <div className="overflow-hidden min-w-0 flex-1">
+                <p className="text-xs font-bold text-slate-800 truncate">{userName}</p>
+                <p className="text-[10px] text-teal-600 font-medium truncate">{getRoleLabel()}</p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => authService.logout()}
+              className="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-200/80 hover:border-rose-500 text-xs font-semibold transition-all duration-200 cursor-pointer group shadow-sm"
+              title="Đăng xuất khỏi hệ thống"
+            >
+              <LogOut className="w-3.5 h-3.5 text-rose-500 group-hover:text-white transition-colors" />
+              <span>Đăng Xuất</span>
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center space-y-2">
+            <div
+              className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-bold text-xs text-white uppercase shadow-sm"
+              title={`${userName} (${getRoleLabel()})`}
+            >
+              {userName?.slice(0, 2) || 'AD'}
+            </div>
+            <button
+              onClick={() => authService.logout()}
+              className="p-2 rounded-xl bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-200/80 hover:border-rose-500 transition-colors cursor-pointer group"
+              title="Đăng xuất khỏi hệ thống"
+            >
+              <LogOut className="w-4 h-4 text-rose-500 group-hover:text-white transition-colors" />
+            </button>
+          </div>
+        )}
+      </div>
     </aside>
   );
 };

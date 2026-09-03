@@ -98,13 +98,11 @@ export default function StudentAiProgressPage() {
   // Khi giáo viên/quản lý đổi lớp, load danh sách học viên trong lớp đó từ cả 2 nguồn (Đăng ký học & Bảng điểm)
   const loadStudentsForClass = async (classId: number) => {
     try {
-      // 1. Lấy thông tin lớp học (đã include dangKyHoc -> hocVien)
       const classInfo = await classesService.getById(classId);
       const enrolledStudents = (classInfo?.dangKyHoc || [])
         .filter((d: any) => d.hocVien)
         .map((d: any) => d.hocVien);
 
-      // 2. Lấy thêm từ bảng điểm nếu có
       let gradeStudents: any[] = [];
       try {
         const gradeRecords = await gradesService.getClassGrades(classId);
@@ -118,17 +116,17 @@ export default function StudentAiProgressPage() {
       const studentMap = new Map<number, any>();
       enrolledStudents.forEach((s: any) => studentMap.set(Number(s.id), s));
       gradeStudents.forEach((s: any) => studentMap.set(Number(s.id), s));
+      const combined = Array.from(studentMap.values());
 
-      const mergedStudents = Array.from(studentMap.values());
-      setStudentsInClass(mergedStudents);
-
-      if (mergedStudents.length > 0) {
-        setSelectedStudentId(Number(mergedStudents[0].id));
+      setStudentsInClass(combined);
+      if (combined.length > 0) {
+        const firstStudentId = Number(combined[0].id);
+        setSelectedStudentId(firstStudentId);
       } else {
         setSelectedStudentId(null);
       }
     } catch (err) {
-      console.error('Lỗi tải danh sách học viên của lớp:', err);
+      console.error('Lỗi tải học viên của lớp:', err);
       setStudentsInClass([]);
       setSelectedStudentId(null);
     }
@@ -137,7 +135,6 @@ export default function StudentAiProgressPage() {
   const handleClassChange = (classId: number) => {
     setSelectedClassId(classId);
     setSummary(null);
-    setErrorMsg(null);
     if (role !== 'HOC_VIEN') {
       loadStudentsForClass(classId);
     }
@@ -145,29 +142,30 @@ export default function StudentAiProgressPage() {
 
   const handleGenerateSummary = async () => {
     if (!selectedClassId || !selectedStudentId) {
-      alert('Vui lòng chọn đầy đủ lớp học và học viên cần tóm tắt.');
+      setErrorMsg('Vui lòng chọn đầy đủ Lớp học và Học viên.');
       return;
     }
 
     setLoading(true);
-    setSummary(null);
     setErrorMsg(null);
+    setSummary(null);
+    sessionStorage.removeItem('etc_ai_progress_session');
 
     try {
-      const res = await aiService.summarizeProgress(Number(selectedStudentId), Number(selectedClassId));
+      const res = await aiService.summarizeProgress(selectedStudentId, selectedClassId);
       setSummary(res);
       try {
         sessionStorage.setItem(
           'etc_ai_progress_session',
           JSON.stringify({
             summary: res,
-            selectedStudentId,
             selectedClassId,
+            selectedStudentId,
           }),
         );
       } catch (e) {}
     } catch (err: any) {
-      setErrorMsg(err.response?.data?.message || 'Có lỗi xảy ra khi yêu cầu AI tóm tắt tiến độ.');
+      setErrorMsg(err.response?.data?.message || 'Không thể tạo báo cáo tóm tắt tiến độ.');
     } finally {
       setLoading(false);
       setCooldown(5); // 5s cooldown chống spam
@@ -182,18 +180,18 @@ export default function StudentAiProgressPage() {
     >
       <div className="space-y-6 max-w-6xl mx-auto">
         {/* Bộ lọc chọn Lớp và Học viên */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
             {/* Dropdown Lớp Học */}
             <div className="flex flex-col space-y-1">
-              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1">
-                <GraduationCap className="w-3.5 h-3.5 text-indigo-400" />
+              <label className="text-[11px] font-bold text-teal-800 uppercase tracking-wider flex items-center space-x-1">
+                <GraduationCap className="w-3.5 h-3.5 text-teal-600" />
                 <span>{role === 'HOC_VIEN' ? 'Lớp Đang Theo Học:' : 'Chọn Lớp Học:'}</span>
               </label>
               <select
                 value={selectedClassId || ''}
                 onChange={(e) => handleClassChange(Number(e.target.value))}
-                className="bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-semibold min-w-[220px]"
+                className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-bold min-w-[220px] cursor-pointer"
               >
                 {classes.map((c: any) => {
                   const classObj = c.lopHoc || c;
@@ -210,8 +208,8 @@ export default function StudentAiProgressPage() {
             {/* Dropdown Học Viên (Dành cho Giáo viên & Quản lý) */}
             {role !== 'HOC_VIEN' && (
               <div className="flex flex-col space-y-1">
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1">
-                  <User className="w-3.5 h-3.5 text-indigo-400" />
+                <label className="text-[11px] font-bold text-teal-800 uppercase tracking-wider flex items-center space-x-1">
+                  <User className="w-3.5 h-3.5 text-teal-600" />
                   <span>Chọn Học Viên:</span>
                 </label>
                 <select
@@ -220,7 +218,7 @@ export default function StudentAiProgressPage() {
                     setSelectedStudentId(Number(e.target.value));
                     setSummary(null);
                   }}
-                  className="bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 font-semibold min-w-[220px]"
+                  className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-bold min-w-[220px] cursor-pointer"
                 >
                   {studentsInClass.length === 0 ? (
                     <option value="">(Lớp chưa có danh sách học viên)</option>
@@ -246,7 +244,7 @@ export default function StudentAiProgressPage() {
           <button
             onClick={handleGenerateSummary}
             disabled={loading || cooldown > 0 || !selectedClassId || !selectedStudentId}
-            className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:opacity-90 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition disabled:opacity-40 shrink-0 cursor-pointer disabled:cursor-not-allowed"
+            className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-40 shrink-0 cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -254,8 +252,8 @@ export default function StudentAiProgressPage() {
                 <span>AI Đang Phân Tích & Đối Soát...</span>
               </>
             ) : cooldown > 0 ? (
-              <span className="flex items-center space-x-1 text-amber-300 font-bold">
-                <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+              <span className="flex items-center space-x-1 text-amber-100 font-bold">
+                <Clock className="w-3.5 h-3.5 text-amber-200 animate-spin" />
                 <span>Chờ {cooldown}s</span>
               </span>
             ) : (
@@ -269,21 +267,21 @@ export default function StudentAiProgressPage() {
 
         {/* Thông báo lỗi nếu có */}
         {errorMsg && (
-          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center space-x-2">
-            <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0" />
+          <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center space-x-2 shadow-sm">
+            <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
             <span>{errorMsg}</span>
           </div>
         )}
 
         {/* Loading Spinner */}
         {loading && (
-          <div className="py-24 flex flex-col items-center justify-center space-y-4 bg-slate-900/60 rounded-2xl border border-slate-800/80">
-            <div className="w-12 h-12 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+          <div className="py-24 flex flex-col items-center justify-center space-y-4 bg-white rounded-2xl border border-slate-200 shadow-sm">
+            <div className="w-12 h-12 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
             <div className="text-center space-y-1">
-              <p className="text-sm text-indigo-300 font-bold animate-pulse">
+              <p className="text-sm text-teal-700 font-bold animate-pulse">
                 Hệ thống AI đang tổng hợp lịch sử điểm danh và điểm thi...
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Kiểm tra tính toàn vẹn (Zero-Trust Validation) để đảm bảo không bịa đặt dữ kiện
               </p>
             </div>
@@ -294,23 +292,23 @@ export default function StudentAiProgressPage() {
         {summary && summary.data && (
           <div className="space-y-6 animate-fadeIn">
             {/* 1. Header Báo Cáo */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-500 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/20">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-600 to-cyan-500 text-white flex items-center justify-center font-black text-xl shadow-md shadow-teal-500/20">
                   {summary.data.hocVien?.hoTen?.split(' ').slice(-1)[0][0] || 'HV'}
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="font-bold text-white text-lg">{summary.data.hocVien?.hoTen}</h3>
-                    <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-800 text-indigo-300 border border-slate-700">
+                    <h3 className="font-bold text-slate-900 text-lg">{summary.data.hocVien?.hoTen}</h3>
+                    <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
                       {summary.data.hocVien?.maHocVien}
                     </span>
-                    <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200">
                       CEFR {summary.data.hocVien?.trinhDoCEFR}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Lớp: <strong className="text-slate-200">[{summary.data.lopHoc?.maLopHoc}] {summary.data.lopHoc?.tenLopHoc}</strong> — Khóa: <span className="text-indigo-400">{summary.data.lopHoc?.tenKhoaHoc}</span>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Lớp: <strong className="text-slate-800">[{summary.data.lopHoc?.maLopHoc}] {summary.data.lopHoc?.tenLopHoc}</strong> — Khóa: <span className="text-teal-700 font-semibold">{summary.data.lopHoc?.tenKhoaHoc}</span>
                   </p>
                 </div>
               </div>
@@ -318,13 +316,13 @@ export default function StudentAiProgressPage() {
               {/* Badge Mode */}
               <div className="flex items-center space-x-2">
                 {summary.mode === 'AI_GEMINI' || summary.mode === 'AI_GEMINI_CACHED' ? (
-                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-bold shadow-sm shadow-indigo-500/10">
-                    <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
+                    <Sparkles className="w-3.5 h-3.5 text-teal-600" />
                     <span>✨ Phân Tích AI {summary.mode === 'AI_GEMINI_CACHED' ? '(Tức Thì • Smart Cache)' : '(Zero-Trust Verified)'}</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold">
-                    <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold">
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
                     <span>📋 Phân Tích Sư Phạm (Hệ Thống Quy Tắc)</span>
                   </span>
                 )}
@@ -334,32 +332,32 @@ export default function StudentAiProgressPage() {
                     sessionStorage.removeItem('etc_ai_progress_session');
                     setSummary(null);
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center space-x-1 border border-slate-700/60 transition cursor-pointer"
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 transition cursor-pointer"
                   title="Xóa tóm tắt hiện tại để tạo phiên mới"
                 >
-                  <PlusCircle className="w-3.5 h-3.5 text-indigo-400" />
+                  <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
                   <span>Tạo Phiên Mới</span>
                 </button>
               </div>
             </div>
 
             {/* 2. PHẦN 1: BẢNG DỮ LIỆU GỐC (GROUND TRUTH - TỪ DATABASE) */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div className="flex items-center space-x-2 text-white font-bold text-sm">
-                  <FileText className="w-4 h-4 text-indigo-400" />
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center space-x-2 text-slate-900 font-bold text-sm">
+                  <FileText className="w-4 h-4 text-teal-600" />
                   <span>DỮ LIỆU GỐC TỪ HỆ THỐNG (GROUND TRUTH RAW METRICS)</span>
                 </div>
-                <span className="text-[11px] text-slate-400 italic">
+                <span className="text-[11px] text-slate-500 italic">
                   Dữ liệu điểm danh & điểm thi thực tế được lấy trực tiếp từ CSDL
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 {/* Chuyên Cần */}
-                <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
-                  <span className="text-[11px] font-semibold text-slate-400 block mb-1">Tỷ Lệ Chuyên Cần</span>
-                  <span className="text-base font-bold text-emerald-400 block font-mono">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-[11px] font-bold text-slate-500 block mb-1">Tỷ Lệ Chuyên Cần</span>
+                  <span className="text-base font-black text-emerald-700 block font-mono">
                     {summary.data.duLieuGoc?.tyLeChuyenCan}
                   </span>
                   <span className="text-[10px] text-slate-500 block mt-0.5">
@@ -368,48 +366,48 @@ export default function StudentAiProgressPage() {
                 </div>
 
                 {/* Điểm Chuyên Cần 20% */}
-                <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
-                  <span className="text-[11px] font-semibold text-slate-400 block mb-1">Điểm CC (20%)</span>
-                  <span className="text-base font-bold text-white block font-mono">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-[11px] font-bold text-slate-500 block mb-1">Điểm CC (20%)</span>
+                  <span className="text-base font-black text-slate-900 block font-mono">
                     {summary.data.duLieuGoc?.diemChuyenCan != null ? (
                       summary.data.duLieuGoc?.diemChuyenCan
                     ) : (
-                      <span className="text-slate-500 text-xs font-normal">Chưa chốt</span>
+                      <span className="text-slate-400 text-xs font-normal">Chưa chốt</span>
                     )}
                   </span>
                   <span className="text-[10px] text-slate-500 block mt-0.5">Hệ số 0.2</span>
                 </div>
 
                 {/* Điểm Giữa Kỳ 30% */}
-                <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
-                  <span className="text-[11px] font-semibold text-slate-400 block mb-1">Điểm Giữa Kỳ (30%)</span>
-                  <span className="text-base font-bold text-white block font-mono">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-[11px] font-bold text-slate-500 block mb-1">Điểm Giữa Kỳ (30%)</span>
+                  <span className="text-base font-black text-slate-900 block font-mono">
                     {summary.data.duLieuGoc?.diemGiuaKy != null ? (
                       summary.data.duLieuGoc?.diemGiuaKy
                     ) : (
-                      <span className="text-amber-400 text-xs font-normal">⏳ Chưa thi</span>
+                      <span className="text-amber-600 text-xs font-normal">⏳ Chưa thi</span>
                     )}
                   </span>
                   <span className="text-[10px] text-slate-500 block mt-0.5">Hệ số 0.3</span>
                 </div>
 
                 {/* Điểm Cuối Kỳ 50% */}
-                <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
-                  <span className="text-[11px] font-semibold text-slate-400 block mb-1">Điểm Cuối Kỳ (50%)</span>
-                  <span className="text-base font-bold text-white block font-mono">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-[11px] font-bold text-slate-500 block mb-1">Điểm Cuối Kỳ (50%)</span>
+                  <span className="text-base font-black text-slate-900 block font-mono">
                     {summary.data.duLieuGoc?.diemCuoiKy != null ? (
                       summary.data.duLieuGoc?.diemCuoiKy
                     ) : (
-                      <span className="text-amber-400 text-xs font-normal">⏳ Chờ thi</span>
+                      <span className="text-amber-600 text-xs font-normal">⏳ Chờ thi</span>
                     )}
                   </span>
                   <span className="text-[10px] text-slate-500 block mt-0.5">Hệ số 0.5</span>
                 </div>
 
                 {/* Điểm Tổng Kết */}
-                <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
-                  <span className="text-[11px] font-semibold text-slate-400 block mb-1">Điểm Tổng Kết</span>
-                  <span className="text-base font-bold text-cyan-400 block font-mono">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-[11px] font-bold text-slate-500 block mb-1">Điểm Tổng Kết</span>
+                  <span className="text-base font-black text-teal-700 block font-mono">
                     {summary.data.duLieuGoc?.diemTongKet != null ? (
                       summary.data.duLieuGoc?.diemTongKet
                     ) : (
@@ -420,19 +418,19 @@ export default function StudentAiProgressPage() {
                 </div>
 
                 {/* Xếp Loại */}
-                <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800">
-                  <span className="text-[11px] font-semibold text-slate-400 block mb-1">Xếp Loại</span>
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-[11px] font-bold text-slate-500 block mb-1">Xếp Loại</span>
                   <div>
                     {summary.data.duLieuGoc?.xepLoai === 'DAT' ? (
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] font-bold">
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold">
                         ĐẠT
                       </span>
                     ) : summary.data.duLieuGoc?.xepLoai === 'KHONG_DAT' ? (
-                      <span className="px-2 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[11px] font-bold">
+                      <span className="px-2 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[11px] font-bold">
                         KHÔNG ĐẠT
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-[11px] font-bold">
+                      <span className="px-2 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-teal-700 text-[11px] font-bold">
                         ĐANG THEO HỌC
                       </span>
                     )}
@@ -442,12 +440,12 @@ export default function StudentAiProgressPage() {
 
               {/* Banner Giai đoạn học tập */}
               {summary.data.duLieuGoc?.giaiDoanText && (
-                <div className="p-3 rounded-xl bg-indigo-950/30 border border-indigo-500/20 text-xs flex items-center justify-between">
-                  <span className="text-indigo-300 font-semibold flex items-center space-x-1.5">
-                    <TrendingUp className="w-3.5 h-3.5 text-indigo-400" />
+                <div className="p-3 rounded-xl bg-teal-50 border border-teal-200 text-xs flex items-center justify-between">
+                  <span className="text-teal-900 font-bold flex items-center space-x-1.5">
+                    <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
                     <span>Tiến độ khóa học: {summary.data.duLieuGoc.giaiDoanText}</span>
                   </span>
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px] text-teal-700 font-medium">
                     {summary.data.duLieuGoc.giaiDoan === 'GIUA_KHOA_HOC'
                       ? '🎯 Bài thi cuối khóa chiếm 50% tổng điểm'
                       : ''}
@@ -456,56 +454,56 @@ export default function StudentAiProgressPage() {
               )}
 
               {summary.data.duLieuGoc?.nhanXetGiaoVien && (
-                <div className="p-3 rounded-xl bg-slate-950/50 border border-slate-800/80 text-xs text-slate-300">
-                  💬 <strong className="text-slate-200">Ghi chú từ giáo viên:</strong> {summary.data.duLieuGoc.nhanXetGiaoVien}
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-700">
+                  💬 <strong className="text-slate-900">Ghi chú từ giáo viên:</strong> {summary.data.duLieuGoc.nhanXetGiaoVien}
                 </div>
               )}
             </div>
 
             {/* 3. PHẦN 2: BÁO CÁO PHÂN TÍCH TIẾN ĐỘ THÔNG MINH CỦA AI */}
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-6">
-              <div className="flex items-center space-x-2 text-indigo-400 font-bold text-sm pb-3 border-b border-slate-800">
-                <Sparkles className="w-4 h-4 text-cyan-400" />
+            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-6">
+              <div className="flex items-center space-x-2 text-teal-800 font-bold text-sm pb-3 border-b border-slate-100">
+                <Sparkles className="w-4 h-4 text-teal-600" />
                 <span>KẾT QUẢ TỔNG HỢP & PHÂN TÍCH TIẾN ĐỘ THÔNG MINH CỦA AI</span>
               </div>
 
               {/* Tóm tắt chung */}
               {summary.data.aiPhanTich?.tomTatChung && (
-                <div className="p-4 rounded-xl bg-slate-950/80 border border-indigo-500/20 text-xs text-slate-200 leading-relaxed">
-                  📝 <strong className="text-indigo-300">Tóm tắt chung:</strong> {summary.data.aiPhanTich.tomTatChung}
+                <div className="p-4 rounded-xl bg-teal-50/70 border border-teal-200 text-xs text-slate-800 leading-relaxed">
+                  📝 <strong className="text-teal-900 font-bold">Tóm tắt chung:</strong> {summary.data.aiPhanTich.tomTatChung}
                 </div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* 1. Điểm mạnh */}
-                <div className="p-5 rounded-2xl bg-emerald-950/20 border border-emerald-500/30 space-y-3">
-                  <div className="flex items-center space-x-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
-                    <CheckCircle2 className="w-4 h-4" />
+                <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-3">
+                  <div className="flex items-center space-x-2 text-emerald-800 font-bold text-xs uppercase tracking-wider">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                     <span>1. Điểm Mạnh Nổi Bật</span>
                   </div>
-                  <p className="text-xs text-slate-200 leading-relaxed whitespace-pre-line">
+                  <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-line">
                     {summary.data.aiPhanTich?.diemManh || 'Duy trì tốt kỷ luật học tập.'}
                   </p>
                 </div>
 
                 {/* 2. Điểm cần khắc phục */}
-                <div className="p-5 rounded-2xl bg-amber-950/20 border border-amber-500/30 space-y-3">
-                  <div className="flex items-center space-x-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
-                    <AlertTriangle className="w-4 h-4" />
+                <div className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-3">
+                  <div className="flex items-center space-x-2 text-amber-800 font-bold text-xs uppercase tracking-wider">
+                    <AlertTriangle className="w-4 h-4 text-amber-600" />
                     <span>2. Điểm Cần Khắc Phục</span>
                   </div>
-                  <p className="text-xs text-slate-200 leading-relaxed whitespace-pre-line">
+                  <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-line">
                     {summary.data.aiPhanTich?.canKhacPhuc || 'Cần nỗ lực hơn trong các bài kiểm tra định kỳ.'}
                   </p>
                 </div>
 
                 {/* 3. Lời khuyên ôn tập */}
-                <div className="p-5 rounded-2xl bg-indigo-950/20 border border-indigo-500/30 space-y-3">
-                  <div className="flex items-center space-x-2 text-indigo-400 font-bold text-xs uppercase tracking-wider">
-                    <Lightbulb className="w-4 h-4" />
+                <div className="p-5 rounded-2xl bg-teal-50/70 border border-teal-200 space-y-3">
+                  <div className="flex items-center space-x-2 text-teal-800 font-bold text-xs uppercase tracking-wider">
+                    <Lightbulb className="w-4 h-4 text-teal-600" />
                     <span>3. Lời Khuyên Ôn Tập Kỳ Tới</span>
                   </div>
-                  <p className="text-xs text-slate-200 leading-relaxed whitespace-pre-line">
+                  <p className="text-xs text-slate-700 leading-relaxed whitespace-pre-line">
                     {summary.data.aiPhanTich?.loiKhuyen || 'Tập trung củng cố kiến thức ngữ pháp và từ vựng.'}
                   </p>
                 </div>

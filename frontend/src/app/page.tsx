@@ -30,8 +30,8 @@ export default function RootPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-      <div className="w-10 h-10 border-4 border-indigo-500/20 border-t-indigo-500 rounded-full animate-spin"></div>
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="w-10 h-10 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
     </div>
   );
 }
