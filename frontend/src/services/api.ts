@@ -43,6 +43,7 @@ export const authService = {
   login: async (tenDangNhap: string, matKhau: string) => {
     const res = await api.post('/auth/login', { tenDangNhap, matKhau });
     if (res.data.accessToken) {
+      sessionStorage.clear(); // Xóa phiên làm việc AI cũ khi đăng nhập mới
       localStorage.setItem('etc_access_token', res.data.accessToken);
       localStorage.setItem('etc_user_session', JSON.stringify(res.data.user));
     }
@@ -54,6 +55,7 @@ export const authService = {
   logout: () => {
     localStorage.removeItem('etc_access_token');
     localStorage.removeItem('etc_user_session');
+    sessionStorage.clear(); // Xóa sạch phiên AI khi đăng xuất
     window.location.href = '/login';
   },
 };

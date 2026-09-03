@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService } from '../../../services/api';
-import { Sparkles, CheckCircle2, XCircle, RotateCcw, BookOpen, Layers, Eye, PlayCircle } from 'lucide-react';
+import { Sparkles, CheckCircle2, XCircle, RotateCcw, BookOpen, Layers, Eye, PlayCircle, PlusCircle } from 'lucide-react';
 
 const PREDEFINED_TOPICS = [
   'Thì Hiện Tại Hoàn Thành (Present Perfect Tense)',
@@ -34,6 +34,51 @@ export default function TeacherAiExercisesPage() {
   const [submitted, setSubmitted] = useState(false);
   const [teacherViewKey, setTeacherViewKey] = useState(false);
 
+  // Khôi phục phiên bài tập từ sessionStorage khi chuyển qua lại giữa các trang
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('etc_ai_teacher_exercises');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.result) setResult(parsed.result);
+        if (parsed.userAnswers) setUserAnswers(parsed.userAnswers);
+        if (typeof parsed.submitted === 'boolean') setSubmitted(parsed.submitted);
+        if (typeof parsed.teacherViewKey === 'boolean') setTeacherViewKey(parsed.teacherViewKey);
+        if (parsed.selectedTopic) setSelectedTopic(parsed.selectedTopic);
+        if (parsed.customTopic) setCustomTopic(parsed.customTopic);
+        if (parsed.cefr) setCefr(parsed.cefr);
+        if (parsed.soLuong) setSoLuong(parsed.soLuong);
+      }
+    } catch (e) {
+      console.error('Lỗi đọc phiên bài tập:', e);
+    }
+  }, []);
+
+  const saveToSession = (newResult: any, newAnswers: any, newSubmitted: boolean, newViewKey: boolean) => {
+    try {
+      sessionStorage.setItem(
+        'etc_ai_teacher_exercises',
+        JSON.stringify({
+          result: newResult,
+          userAnswers: newAnswers,
+          submitted: newSubmitted,
+          teacherViewKey: newViewKey,
+          selectedTopic,
+          customTopic,
+          cefr,
+          soLuong,
+        }),
+      );
+    } catch (e) {}
+  };
+
+  const handleResetSession = () => {
+    sessionStorage.removeItem('etc_ai_teacher_exercises');
+    setResult(null);
+    setUserAnswers({});
+    setSubmitted(false);
+  };
+
   const activeTopic = selectedTopic === 'CUSTOM' ? customTopic.trim() : selectedTopic;
 
   const handleGenerate = async (e: React.FormEvent) => {
@@ -47,10 +92,12 @@ export default function TeacherAiExercisesPage() {
     setResult(null);
     setUserAnswers({});
     setSubmitted(false);
+    sessionStorage.removeItem('etc_ai_teacher_exercises');
 
     try {
       const res = await aiService.generateExercises(activeTopic, cefr, soLuong);
       setResult(res);
+      saveToSession(res, {}, false, teacherViewKey);
     } catch (err: any) {
       alert(err.response?.data?.message || 'Lỗi gọi AI sinh bài tập.');
     } finally {
@@ -60,7 +107,9 @@ export default function TeacherAiExercisesPage() {
 
   const handleSelectOption = (qIdx: number, optionKey: string) => {
     if (submitted) return;
-    setUserAnswers((prev) => ({ ...prev, [qIdx]: optionKey }));
+    const newAnswers = { ...userAnswers, [qIdx]: optionKey };
+    setUserAnswers(newAnswers);
+    saveToSession(result, newAnswers, submitted, teacherViewKey);
   };
 
   const calculateScore = () => {
@@ -184,11 +233,15 @@ export default function TeacherAiExercisesPage() {
                   Chủ đề: <strong>{result.data.chuDe}</strong> — Trình độ: <strong>CEFR {result.data.trinhDo}</strong>
                 </span>
               </div>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
                 <button
                   type="button"
-                  onClick={() => setTeacherViewKey(!teacherViewKey)}
-                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-semibold flex items-center space-x-1.5 border border-indigo-500/30 transition"
+                  onClick={() => {
+                    const nextKey = !teacherViewKey;
+                    setTeacherViewKey(nextKey);
+                    saveToSession(result, userAnswers, submitted, nextKey);
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-semibold flex items-center space-x-1.5 border border-indigo-500/30 transition cursor-pointer"
                 >
                   <Eye className="w-3.5 h-3.5" />
                   <span>{teacherViewKey ? 'Ẩn Đáp Án Mẫu' : 'Xem Nhanh Đáp Án (Teacher Mode)'}</span>
@@ -208,6 +261,15 @@ export default function TeacherAiExercisesPage() {
                     ? '✨ Trí Tuệ Nhân Tạo (AI)'
                     : '📦 Mẫu Dự Phòng (Fallback)'}
                 </span>
+                <button
+                  type="button"
+                  onClick={handleResetSession}
+                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center space-x-1 border border-slate-700/60 transition cursor-pointer"
+                  title="Xóa đề hiện tại để tạo phiên bài mới"
+                >
+                  <PlusCircle className="w-3.5 h-3.5 text-purple-400" />
+                  <span>Tạo Phiên Mới</span>
+                </button>
               </div>
             </div>
 
@@ -309,11 +371,12 @@ export default function TeacherAiExercisesPage() {
                     onClick={() => {
                       setSubmitted(false);
                       setUserAnswers({});
+                      saveToSession(result, {}, false, teacherViewKey);
                     }}
-                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition"
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Làm Lại</span>
+                    <span>Làm Lại Đề Này</span>
                   </button>
                 </>
               ) : (
@@ -325,8 +388,11 @@ export default function TeacherAiExercisesPage() {
                   <button
                     type="button"
                     disabled={Object.keys(userAnswers).length < result.data.cauHoi.length}
-                    onClick={() => setSubmitted(true)}
-                    className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition disabled:opacity-40"
+                    onClick={() => {
+                      setSubmitted(true);
+                      saveToSession(result, userAnswers, true, teacherViewKey);
+                    }}
+                    className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition disabled:opacity-40 cursor-pointer"
                   >
                     Nộp Bài & Chấm Điểm
                   </button>

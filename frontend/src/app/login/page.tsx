@@ -35,11 +35,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleQuickFill = (u: string, p = '123456') => {
-    setUsername(u);
-    setPassword(p);
-  };
-
   return (
     <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center px-4 relative overflow-hidden font-sans">
       {/* Background ambient lighting */}
@@ -131,43 +126,6 @@ export default function LoginPage() {
             </p>
           </div>
         </form>
-
-        {/* Quick Test Demo Credentials */}
-        <div className="mt-8 pt-6 border-t border-slate-800/80">
-          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 text-center">
-            ⚡ Đăng nhập nhanh tài khoản mẫu:
-          </p>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <button
-              type="button"
-              onClick={() => handleQuickFill('admin01')}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/50 text-left transition truncate"
-            >
-              👑 <span className="font-semibold text-indigo-300">Quản lý:</span> admin01
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('teacher01')}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/50 text-left transition truncate"
-            >
-              👩‍🏫 <span className="font-semibold text-emerald-300">Giáo viên:</span> teacher01
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('staff01')}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/50 text-left transition truncate"
-            >
-              📞 <span className="font-semibold text-amber-300">Tư vấn:</span> staff01
-            </button>
-            <button
-              type="button"
-              onClick={() => handleQuickFill('student01')}
-              className="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/50 text-left transition truncate"
-            >
-              🎓 <span className="font-semibold text-cyan-300">Học viên:</span> student01
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

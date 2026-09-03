@@ -13,6 +13,7 @@ import {
   Compass,
   CheckCircle,
   Lightbulb,
+  PlusCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -46,6 +47,23 @@ export default function StudentAiConsultPage() {
   ];
 
   useEffect(() => {
+    // Khôi phục phiên tư vấn từ sessionStorage nếu đã có trước đó
+    try {
+      const saved = sessionStorage.getItem('etc_ai_consult_session');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.recommendations && parsed.recommendations.length > 0) {
+          setRecommendations(parsed.recommendations);
+          if (parsed.mode) setMode(parsed.mode);
+          if (parsed.mucTieu) setMucTieu(parsed.mucTieu);
+          if (parsed.selectedDays) setSelectedDays(parsed.selectedDays);
+          if (parsed.cefr) setCefr(parsed.cefr);
+        }
+      }
+    } catch (e) {
+      console.error('Lỗi đọc phiên tư vấn:', e);
+    }
+
     const fetchUser = async () => {
       try {
         const me = await authService.getMe();
@@ -70,7 +88,7 @@ export default function StudentAiConsultPage() {
   const handleConsult = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setRecommendations([]);
+    sessionStorage.removeItem('etc_ai_consult_session');
 
     try {
       const res = await aiService.consultClasses(
@@ -81,8 +99,22 @@ export default function StudentAiConsultPage() {
         },
         mucTieu,
       );
-      setRecommendations(res.data || []);
-      setMode(res.mode);
+      const recs = res.data || [];
+      const m = res.mode || '';
+      setRecommendations(recs);
+      setMode(m);
+      try {
+        sessionStorage.setItem(
+          'etc_ai_consult_session',
+          JSON.stringify({
+            cefr,
+            selectedDays,
+            mucTieu,
+            recommendations: recs,
+            mode: m,
+          }),
+        );
+      } catch (e) {}
     } catch (err: any) {
       alert(err.response?.data?.message || 'Có lỗi khi gọi AI tư vấn.');
     } finally {
@@ -231,15 +263,30 @@ export default function StudentAiConsultPage() {
                   Được tính toán dựa trên mục tiêu: &ldquo;{mucTieu}&rdquo;
                 </p>
               </div>
-              <span
-                className={`text-[11px] font-medium px-3 py-1 rounded-full border ${
-                  mode === 'AI_GEMINI'
-                    ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
-                    : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                }`}
-              >
-                {mode === 'AI_GEMINI' ? '✨ Trí Tuệ Nhân Tạo (AI)' : '📋 Hệ Thống Quy Tắc (Rule-Based)'}
-              </span>
+              <div className="flex items-center space-x-2">
+                <span
+                  className={`text-[11px] font-medium px-3 py-1 rounded-full border ${
+                    mode === 'AI_GEMINI'
+                      ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                      : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                  }`}
+                >
+                  {mode === 'AI_GEMINI' ? '✨ Trí Tuệ Nhân Tạo (AI)' : '📋 Hệ Thống Quy Tắc (Rule-Based)'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    sessionStorage.removeItem('etc_ai_consult_session');
+                    setRecommendations([]);
+                    setMode('');
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center space-x-1 border border-slate-700/60 transition cursor-pointer"
+                  title="Xóa kết quả hiện tại để tạo phiên tư vấn mới"
+                >
+                  <PlusCircle className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Tạo Phiên Mới</span>
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

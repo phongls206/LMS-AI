@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService } from '../../../services/api';
-import { Sparkles, HelpCircle, CheckCircle2, XCircle, RotateCcw, Layers } from 'lucide-react';
+import { Sparkles, HelpCircle, CheckCircle2, XCircle, RotateCcw, Layers, PlusCircle } from 'lucide-react';
 
 const PREDEFINED_TOPICS = [
   'Thì Hiện Tại Hoàn Thành (Present Perfect Tense)',
@@ -31,6 +31,49 @@ export default function StudentAiPracticePage() {
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
+  // Khôi phục phiên làm bài từ sessionStorage khi chuyển qua lại giữa các trang
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem('etc_ai_practice_session');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.result) setResult(parsed.result);
+        if (parsed.userAnswers) setUserAnswers(parsed.userAnswers);
+        if (typeof parsed.submitted === 'boolean') setSubmitted(parsed.submitted);
+        if (parsed.selectedTopic) setSelectedTopic(parsed.selectedTopic);
+        if (parsed.customTopic) setCustomTopic(parsed.customTopic);
+        if (parsed.cefr) setCefr(parsed.cefr);
+        if (parsed.soLuong) setSoLuong(parsed.soLuong);
+      }
+    } catch (e) {
+      console.error('Lỗi đọc phiên làm bài:', e);
+    }
+  }, []);
+
+  const saveToSession = (newResult: any, newAnswers: any, newSubmitted: boolean) => {
+    try {
+      sessionStorage.setItem(
+        'etc_ai_practice_session',
+        JSON.stringify({
+          result: newResult,
+          userAnswers: newAnswers,
+          submitted: newSubmitted,
+          selectedTopic,
+          customTopic,
+          cefr,
+          soLuong,
+        }),
+      );
+    } catch (e) {}
+  };
+
+  const handleResetSession = () => {
+    sessionStorage.removeItem('etc_ai_practice_session');
+    setResult(null);
+    setUserAnswers({});
+    setSubmitted(false);
+  };
+
   const activeTopic = selectedTopic === 'CUSTOM' ? customTopic.trim() : selectedTopic;
 
   const handleGenerate = async (e: React.FormEvent) => {
@@ -44,10 +87,12 @@ export default function StudentAiPracticePage() {
     setResult(null);
     setUserAnswers({});
     setSubmitted(false);
+    sessionStorage.removeItem('etc_ai_practice_session');
 
     try {
       const res = await aiService.generateExercises(activeTopic, cefr, soLuong);
       setResult(res);
+      saveToSession(res, {}, false);
     } catch (err: any) {
       alert(err.response?.data?.message || 'Lỗi gọi AI sinh bài tập.');
     } finally {
@@ -57,7 +102,9 @@ export default function StudentAiPracticePage() {
 
   const handleSelectOption = (qIdx: number, optionKey: string) => {
     if (submitted) return;
-    setUserAnswers((prev) => ({ ...prev, [qIdx]: optionKey }));
+    const newAnswers = { ...userAnswers, [qIdx]: optionKey };
+    setUserAnswers(newAnswers);
+    saveToSession(result, newAnswers, submitted);
   };
 
   const calculateScore = () => {
@@ -177,21 +224,32 @@ export default function StudentAiPracticePage() {
               <span className="text-xs text-purple-300 font-semibold">
                 Bài tập: <strong>{result.data.chuDe}</strong> (CEFR {result.data.trinhDo})
               </span>
-              <span
-                className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${
-                  result.mode === 'AI_CACHE'
-                    ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+              <div className="flex items-center space-x-2">
+                <span
+                  className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${
+                    result.mode === 'AI_CACHE'
+                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/40'
+                      : result.mode === 'AI_GEMINI'
+                      ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
+                      : 'bg-slate-800 text-slate-300 border-slate-700'
+                  }`}
+                >
+                  {result.mode === 'AI_CACHE'
+                    ? '⚡ Bộ Nhớ Đệm AI (Tức Thì)'
                     : result.mode === 'AI_GEMINI'
-                    ? 'bg-purple-500/20 text-purple-300 border-purple-500/30'
-                    : 'bg-slate-800 text-slate-300 border-slate-700'
-                }`}
-              >
-                {result.mode === 'AI_CACHE'
-                  ? '⚡ Bộ Nhớ Đệm AI (Tức Thì)'
-                  : result.mode === 'AI_GEMINI'
-                  ? '✨ Trí Tuệ Nhân Tạo (AI)'
-                  : '📦 Mẫu Dự Phòng (Fallback)'}
-              </span>
+                    ? '✨ Trí Tuệ Nhân Tạo (AI)'
+                    : '📦 Mẫu Dự Phòng (Fallback)'}
+                </span>
+                <button
+                  type="button"
+                  onClick={handleResetSession}
+                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center space-x-1 border border-slate-700/60 transition cursor-pointer"
+                  title="Xóa đề hiện tại để tạo phiên bài mới"
+                >
+                  <PlusCircle className="w-3.5 h-3.5 text-purple-400" />
+                  <span>Tạo Phiên Mới</span>
+                </button>
+              </div>
             </div>
 
             <div className="space-y-4">
@@ -277,11 +335,12 @@ export default function StudentAiPracticePage() {
                     onClick={() => {
                       setSubmitted(false);
                       setUserAnswers({});
+                      saveToSession(result, {}, false);
                     }}
-                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition"
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    <span>Làm Lại</span>
+                    <span>Làm Lại Đề Này</span>
                   </button>
                 </>
               ) : (
@@ -292,8 +351,11 @@ export default function StudentAiPracticePage() {
                   <button
                     type="button"
                     disabled={Object.keys(userAnswers).length < result.data.cauHoi.length}
-                    onClick={() => setSubmitted(true)}
-                    className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition disabled:opacity-40"
+                    onClick={() => {
+                      setSubmitted(true);
+                      saveToSession(result, userAnswers, true);
+                    }}
+                    className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition disabled:opacity-40 cursor-pointer"
                   >
                     Nộp Bài & Chấm Điểm
                   </button>

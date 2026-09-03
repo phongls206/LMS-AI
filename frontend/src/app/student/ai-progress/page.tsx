@@ -17,6 +17,7 @@ import {
   Layers,
   Clock,
   ShieldCheck,
+  PlusCircle,
 } from 'lucide-react';
 
 export default function StudentAiProgressPage() {
@@ -66,6 +67,19 @@ export default function StudentAiProgressPage() {
             loadStudentsForClass(firstClassId);
           }
         }
+
+        // Khôi phục phiên tóm tắt đã lưu nếu có
+        try {
+          const saved = sessionStorage.getItem('etc_ai_progress_session');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.summary) {
+              setSummary(parsed.summary);
+              if (parsed.selectedClassId) setSelectedClassId(parsed.selectedClassId);
+              if (parsed.selectedStudentId) setSelectedStudentId(parsed.selectedStudentId);
+            }
+          }
+        } catch (e) {}
       } catch (err) {
         console.error('Lỗi khởi tạo dữ liệu tóm tắt:', err);
       }
@@ -134,6 +148,16 @@ export default function StudentAiProgressPage() {
     try {
       const res = await aiService.summarizeProgress(Number(selectedStudentId), Number(selectedClassId));
       setSummary(res);
+      try {
+        sessionStorage.setItem(
+          'etc_ai_progress_session',
+          JSON.stringify({
+            summary: res,
+            selectedStudentId,
+            selectedClassId,
+          }),
+        );
+      } catch (e) {}
     } catch (err: any) {
       setErrorMsg(err.response?.data?.message || 'Có lỗi xảy ra khi yêu cầu AI tóm tắt tiến độ.');
     } finally {
@@ -281,6 +305,18 @@ export default function StudentAiProgressPage() {
                     <span>📋 Phân Tích Sư Phạm (Hệ Thống Quy Tắc)</span>
                   </span>
                 )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    sessionStorage.removeItem('etc_ai_progress_session');
+                    setSummary(null);
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center space-x-1 border border-slate-700/60 transition cursor-pointer"
+                  title="Xóa tóm tắt hiện tại để tạo phiên mới"
+                >
+                  <PlusCircle className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Tạo Phiên Mới</span>
+                </button>
               </div>
             </div>
 
