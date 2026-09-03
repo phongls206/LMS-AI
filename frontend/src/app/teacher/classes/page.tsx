@@ -5,6 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { classesService } from '../../../services/api';
 import { GraduationCap, Users, Calendar, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { formatTrangThaiLopHoc } from '../../../utils/formatters';
 
 export default function TeacherClassesPage() {
   const [classes, setClasses] = useState<any[]>([]);
@@ -47,7 +48,7 @@ export default function TeacherClassesPage() {
                         {lop?.maLopHoc}
                       </span>
                       <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 font-semibold">
-                        {lop?.trangThai}
+                        {formatTrangThaiLopHoc(lop?.trangThai)}
                       </span>
                     </div>
 

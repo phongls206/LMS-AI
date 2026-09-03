@@ -18,6 +18,7 @@ import {
   UserPlus,
   ChevronLeft,
   ChevronRight,
+  X,
 } from 'lucide-react';
 import { VaiTro } from '../types';
 
@@ -26,6 +27,8 @@ interface SidebarProps {
   userName?: string;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
+  mobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -33,6 +36,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   userName = 'Người dùng',
   isCollapsed = false,
   onToggleCollapse,
+  mobileOpen = false,
+  onCloseMobile,
 }) => {
   const pathname = usePathname();
 
@@ -95,15 +100,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <aside
-      className={`bg-slate-900 text-slate-200 min-h-screen flex flex-col border-r border-slate-800 shrink-0 transition-all duration-300 ease-in-out ${
-        isCollapsed ? 'w-20' : 'w-64'
-      }`}
+      className={`
+        fixed inset-y-0 left-0 z-50 md:static md:z-0
+        bg-slate-900 text-slate-200 min-h-screen flex flex-col border-r border-slate-800 shrink-0
+        transition-all duration-300 ease-in-out shadow-2xl md:shadow-none
+        ${mobileOpen ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0'}
+        ${isCollapsed ? 'md:w-20' : 'md:w-64'}
+      `}
     >
       {/* Brand Header */}
       <div
-        className={`p-4 border-b border-slate-800 flex items-center ${
-          isCollapsed ? 'justify-center' : 'justify-between'
-        }`}
+        className={`p-4 border-b border-slate-800 flex items-center justify-between`}
       >
         <div className="flex items-center space-x-3 overflow-hidden">
           <div
@@ -113,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           >
             E
           </div>
-          {!isCollapsed && (
+          {(!isCollapsed || mobileOpen) && (
             <div className="overflow-hidden">
               <h1 className="font-bold text-white text-base tracking-wide leading-tight truncate">
                 ETC ENGLISH
@@ -123,10 +130,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
 
+        {/* Mobile Close Button */}
+        <button
+          onClick={onCloseMobile}
+          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition md:hidden"
+          title="Đóng menu"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        {/* Desktop Collapse Button */}
         {!isCollapsed && onToggleCollapse && (
           <button
             onClick={onToggleCollapse}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition hidden md:block"
             title="Thu gọn thanh bên"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -137,11 +154,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Role Badge */}
       <div
         className={`py-2.5 bg-slate-950/40 border-b border-slate-800/60 flex items-center ${
-          isCollapsed ? 'justify-center px-2' : 'justify-between px-4'
+          isCollapsed && !mobileOpen ? 'justify-center px-2' : 'justify-between px-4'
         }`}
         title={`Vai trò: ${getRoleLabel()}`}
       >
-        {!isCollapsed ? (
+        {!isCollapsed || mobileOpen ? (
           <div>
             <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Vai trò</p>
             <p className="text-xs font-semibold text-emerald-400 truncate">{getRoleLabel()}</p>
@@ -158,13 +175,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
+          const showFull = !isCollapsed || mobileOpen;
           return (
             <Link
               key={item.href}
               href={item.href}
-              title={isCollapsed ? item.label : undefined}
+              onClick={onCloseMobile}
+              title={!showFull ? item.label : undefined}
               className={`flex items-center rounded-xl text-sm font-medium transition-all duration-200 group relative ${
-                isCollapsed ? 'justify-center px-0 py-3' : 'space-x-3 px-3 py-2.5'
+                !showFull ? 'justify-center px-0 py-3' : 'space-x-3 px-3 py-2.5'
               } ${
                 isActive
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-semibold'
@@ -176,10 +195,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'
                 }`}
               />
-              {!isCollapsed && <span className="truncate">{item.label}</span>}
+              {showFull && <span className="truncate">{item.label}</span>}
 
-              {/* Floating Tooltip when Collapsed */}
-              {isCollapsed && (
+              {/* Floating Tooltip when Collapsed on Desktop */}
+              {!showFull && (
                 <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-950 text-slate-100 text-xs font-medium rounded-lg shadow-xl border border-slate-800 whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
                   {item.label}
                 </div>
@@ -189,9 +208,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Bottom Toggle Rail Button */}
+      {/* Desktop Bottom Toggle Rail Button */}
       {onToggleCollapse && (
-        <div className="p-3 border-t border-slate-800/80 bg-slate-950/30 flex items-center justify-center">
+        <div className="p-3 border-t border-slate-800/80 bg-slate-950/30 hidden md:flex items-center justify-center">
           <button
             onClick={onToggleCollapse}
             className="w-full flex items-center justify-center py-2 px-2 rounded-xl bg-slate-800/50 hover:bg-slate-800 text-slate-400 hover:text-white transition-all text-xs font-medium border border-slate-700/40"

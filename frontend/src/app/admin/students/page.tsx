@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
 import { HocVien, TrinhDoCEFR } from '../../../types';
+import { formatTrangThaiHocVien } from '../../../utils/formatters';
 import {
   Plus,
   Search,
@@ -326,7 +327,7 @@ export default function AdminStudentsPage() {
                                 : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                             }`}
                           >
-                            {s.trangThai}
+                            {formatTrangThaiHocVien(s.trangThai)}
                           </span>
                         </td>
                         <td className="px-5 py-4 text-right whitespace-nowrap">
@@ -659,10 +660,10 @@ export default function AdminStudentsPage() {
                       onChange={(e) => setEditFormData({ ...editFormData, trangThai: e.target.value })}
                       className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"
                     >
-                      <option value="DANG_HOC">DANG_HOC (Đang học)</option>
-                      <option value="DA_TOT_NGHIEP">DA_TOT_NGHIEP (Đã tốt nghiệp)</option>
-                      <option value="BAO_LUU">BAO_LUU (Bảo lưu)</option>
-                      <option value="NGHI_HOC">NGHI_HOC (Nghỉ học)</option>
+                      <option value="DANG_HOC">Đang Học</option>
+                      <option value="DA_TOT_NGHIEP">Đã Tốt Nghiệp</option>
+                      <option value="BAO_LUU">Bảo Lưu</option>
+                      <option value="NGHI_HOC">Nghỉ Học</option>
                     </select>
                   </div>
                 </div>
@@ -799,7 +800,7 @@ export default function AdminStudentsPage() {
                     <p className="flex justify-between">
                       <span className="text-slate-500">Trạng thái:</span>
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                        {detailStudent.trangThai || 'DANG_HOC'}
+                        {formatTrangThaiHocVien(detailStudent.trangThai)}
                       </span>
                     </p>
                   </div>

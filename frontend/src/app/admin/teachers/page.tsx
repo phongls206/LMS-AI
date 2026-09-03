@@ -759,9 +759,9 @@ export default function AdminTeachersPage() {
                     onChange={(e) => setEditFormData({ ...editFormData, trangThai: e.target.value })}
                     className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-white font-bold focus:outline-none focus:border-indigo-500"
                   >
-                    <option value="DANG_LAM_VIEC">🟢 DANG_LAM_VIEC — Đang làm việc (Có thể phân công dạy)</option>
-                    <option value="TAM_NGHI">🟡 TAM_NGHI — Tạm nghỉ (Nghỉ phép / dưỡng bệnh)</option>
-                    <option value="DA_NGHI_VIEC">🔴 DA_NGHI_VIEC — Đã nghỉ việc (Khóa phân công & bảo lưu lịch sử)</option>
+                    <option value="DANG_LAM_VIEC">🟢 Đang Làm Việc (Có thể phân công dạy)</option>
+                    <option value="TAM_NGHI">🟡 Tạm Nghỉ (Nghỉ phép / dưỡng bệnh)</option>
+                    <option value="DA_NGHI_VIEC">🔴 Đã Nghỉ Việc (Khóa phân công & bảo lưu lịch sử)</option>
                   </select>
                   <p className="text-[11px] text-slate-400 italic">
                     * Khi chọn "Đã nghỉ việc", hệ thống sẽ giữ nguyên lịch sử điểm danh các lớp cũ và chặn phân công lớp mới.

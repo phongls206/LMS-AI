@@ -17,6 +17,7 @@ import {
   GraduationCap,
   Award,
   PanelLeft,
+  Menu,
 } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -37,8 +38,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [loading, setLoading] = useState(true);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Khôi phục trạng thái thu gọn sidebar từ localStorage
+  // Khôi phục trạng thái thu gọn sidebar từ localStorage trên Desktop
   useEffect(() => {
     const saved = localStorage.getItem('etc_sidebar_collapsed');
     if (saved !== null) {
@@ -114,23 +116,44 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const displayName = user.hoSoHocVien?.hoTen || user.hoSoGiaoVien?.hoTen || user.tenDangNhap;
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 antialiased font-sans">
-      {/* Sidebar with collapse support */}
+    <div className="flex min-h-screen bg-slate-950 text-slate-100 antialiased font-sans relative">
+      {/* Mobile Backdrop Overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden animate-fadeIn"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* Sidebar with Mobile Drawer & Desktop Collapse Support */}
       <Sidebar
         role={user.vaiTro}
         userName={displayName}
         isCollapsed={isCollapsed}
         onToggleCollapse={handleToggleSidebar}
+        mobileOpen={mobileOpen}
+        onCloseMobile={() => setMobileOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
         {/* Top Header Navbar */}
-        <header className="h-16 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-4 md:px-6 flex items-center justify-between sticky top-0 z-20">
+        <header className="h-16 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-3 sm:px-6 flex items-center justify-between sticky top-0 z-30">
           {/* Left: Sidebar Toggle + Title */}
-          <div className="flex items-center space-x-3 min-w-0">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            {/* Mobile Toggle Button */}
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="p-2 -ml-1 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0 md:hidden focus:outline-none"
+              title="Mở menu"
+              aria-label="Open Mobile Menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Desktop Toggle Button */}
             <button
               onClick={handleToggleSidebar}
-              className="p-2 -ml-1 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+              className="p-2 -ml-1 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0 hidden md:block focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
               title={isCollapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar'}
               aria-label="Toggle Sidebar"
             >
@@ -139,12 +162,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
             <div className="min-w-0">
               {title && (
-                <h2 className="text-base md:text-lg font-bold text-white leading-tight truncate">
+                <h2 className="text-sm sm:text-base md:text-lg font-bold text-white leading-tight truncate">
                   {title}
                 </h2>
               )}
               {subtitle && (
-                <p className="text-[11px] md:text-xs text-slate-400 truncate hidden sm:block">
+                <p className="text-[10px] sm:text-xs text-slate-400 truncate hidden sm:block">
                   {subtitle}
                 </p>
               )}
@@ -152,11 +175,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
 
           {/* Right: User Profile & Quick Logout on Navbar */}
-          <div className="flex items-center space-x-2 md:space-x-3 shrink-0">
+          <div className="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
             {/* Click avatar/name to open Profile Modal */}
             <button
               onClick={() => setShowProfileModal(true)}
-              className="flex items-center space-x-2.5 p-1.5 md:px-3 md:py-1.5 rounded-xl hover:bg-slate-800/80 border border-transparent hover:border-slate-700/60 transition cursor-pointer text-left focus:outline-none"
+              className="flex items-center space-x-2 p-1 sm:px-3 sm:py-1.5 rounded-xl hover:bg-slate-800/80 border border-transparent hover:border-slate-700/60 transition cursor-pointer text-left focus:outline-none"
               title="Xem thông tin tài khoản"
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center font-bold text-xs text-white uppercase shadow-md shadow-indigo-600/30 shrink-0">
@@ -174,12 +197,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </div>
 
             {/* Vertical Divider */}
-            <div className="h-6 w-px bg-slate-800/90 mx-1"></div>
+            <div className="h-6 w-px bg-slate-800/90 mx-0.5 sm:mx-1"></div>
 
             {/* Nút Đăng Xuất Tinh Gọn Trên Navbar */}
             <button
               onClick={() => authService.logout()}
-              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/20 hover:border-rose-500 text-xs font-semibold transition-all duration-200 shadow-sm cursor-pointer group"
+              className="flex items-center space-x-1.5 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/20 hover:border-rose-500 text-xs font-semibold transition-all duration-200 shadow-sm cursor-pointer group"
               title="Đăng xuất khỏi hệ thống"
             >
               <LogOut className="w-3.5 h-3.5 text-rose-400 group-hover:text-white transition-colors" />
@@ -188,16 +211,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
         </header>
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto max-w-7xl w-full mx-auto">
+        {/* Main Content Area - Fully responsive with touch friendly layout */}
+        <main className="flex-1 p-3 sm:p-5 md:p-6 overflow-y-auto max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>
 
       {/* Profile Modal */}
       {showProfileModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-5">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl space-y-4 sm:space-y-5 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center pb-3 border-b border-slate-800">
               <h3 className="text-base font-bold text-white flex items-center space-x-2">
                 <User className="w-4 h-4 text-indigo-400" />
@@ -205,23 +228,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               </h3>
               <button
                 onClick={() => setShowProfileModal(false)}
-                className="text-slate-500 hover:text-white transition"
+                className="text-slate-500 hover:text-white transition p-1"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="flex items-center space-x-4 p-4 rounded-xl bg-slate-950 border border-slate-800/80">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center font-black text-xl text-white uppercase shadow-lg shadow-indigo-500/30">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center font-black text-xl text-white uppercase shadow-lg shadow-indigo-500/30 shrink-0">
                 {user.tenDangNhap?.slice(0, 2) || 'AD'}
               </div>
-              <div className="space-y-1">
-                <h4 className="font-bold text-white text-base">{displayName}</h4>
+              <div className="space-y-1 overflow-hidden">
+                <h4 className="font-bold text-white text-base truncate">{displayName}</h4>
                 <div>{getRoleBadge(user.vaiTro)}</div>
               </div>
             </div>
 
-            <div className="space-y-2.5 text-xs text-slate-300">
+            <div className="space-y-2 text-xs text-slate-300">
               <div className="flex justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/50">
                 <span className="text-slate-400 flex items-center space-x-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
@@ -235,7 +258,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   <Mail className="w-3.5 h-3.5 text-indigo-400" />
                   <span>Email:</span>
                 </span>
-                <span className="font-semibold text-slate-200">{user.email || 'Chưa cập nhật'}</span>
+                <span className="font-semibold text-slate-200 truncate max-w-[200px]">{user.email || 'Chưa cập nhật'}</span>
               </div>
 
               <div className="flex justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/50">

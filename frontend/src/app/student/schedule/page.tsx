@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { gradesService } from '../../../services/api';
 import { Calendar, Clock, MapPin } from 'lucide-react';
+import { formatTrangThaiLopHoc } from '../../../utils/formatters';
 
 export default function StudentSchedulePage() {
   const [enrollments, setEnrollments] = useState<any[]>([]);
@@ -45,7 +46,7 @@ export default function StudentSchedulePage() {
                       {lop?.maLopHoc}
                     </span>
                     <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold">
-                      {enr.trangThai}
+                      {formatTrangThaiLopHoc(enr.trangThai)}
                     </span>
                   </div>
 

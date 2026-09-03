@@ -224,19 +224,21 @@ export default function AdminClassesPage() {
                           <option value="DA_HUY" className="bg-slate-900 text-rose-400">🔴 Đã Hủy</option>
                         </select>
                       </td>
-                      <td className="px-5 py-4 text-right space-x-2">
-                        <button
-                          onClick={() => setShowAddSchedule(c.id)}
-                          className="px-2.5 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-white border border-indigo-500/30 transition text-[11px] font-medium"
-                        >
-                          + Lịch Học
-                        </button>
-                        <button
-                          onClick={() => setShowAssignTeacher(c.id)}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500 text-emerald-300 hover:text-white border border-emerald-500/30 transition text-[11px] font-medium"
-                        >
-                          + Gán GV
-                        </button>
+                      <td className="px-5 py-4 text-right whitespace-nowrap">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => setShowAddSchedule(c.id)}
+                            className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500 text-indigo-300 hover:text-white border border-indigo-500/30 transition text-xs font-semibold shadow-sm whitespace-nowrap cursor-pointer"
+                          >
+                            + Lịch Học
+                          </button>
+                          <button
+                            onClick={() => setShowAssignTeacher(c.id)}
+                            className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500 text-emerald-300 hover:text-white border border-emerald-500/30 transition text-xs font-semibold shadow-sm whitespace-nowrap cursor-pointer"
+                          >
+                            + Gán GV
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

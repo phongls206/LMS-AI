@@ -5,6 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { enrollmentsService, authService } from '../../../services/api';
 import { UserPlus, Receipt, Sparkles, DollarSign, Clock, CheckCircle, AlertCircle, ArrowRight, UserCheck, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import Link from 'next/link';
+import { formatTrangThaiHoaDon } from '../../../utils/formatters';
 
 export default function StaffDashboardPage() {
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -248,7 +249,7 @@ export default function StaffDashboardPage() {
                         </td>
                         <td className="px-4 py-3.5">
                           <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400">
-                            ✓ {p.trangThai}
+                            ✓ {p.trangThai === 'THANH_CONG' ? 'Thành công' : formatTrangThaiHoaDon(p.trangThai)}
                           </span>
                         </td>
                       </tr>
@@ -323,7 +324,7 @@ export default function StaffDashboardPage() {
                         </td>
                         <td className="px-4 py-3.5">
                           <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-400">
-                            {inv.trangThai}
+                            {formatTrangThaiHoaDon(inv.trangThai)}
                           </span>
                         </td>
                         <td className="px-4 py-3.5 text-right">

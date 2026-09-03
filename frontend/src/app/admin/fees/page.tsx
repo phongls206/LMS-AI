@@ -5,6 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { enrollmentsService, usersService, classesService } from '../../../services/api';
 import { HoaDon, HocVien, LopHoc } from '../../../types';
 import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck } from 'lucide-react';
+import { formatTrangThaiHoaDon, formatTrangThaiLopHoc } from '../../../utils/formatters';
 
 export default function AdminFeesPage() {
   const [invoices, setInvoices] = useState<HoaDon[]>([]);
@@ -150,7 +151,7 @@ export default function AdminFeesPage() {
               >
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>
-                    [{c.maLopHoc}] {c.tenLopHoc} — {c.trangThai} ({c.siSoHienTai}/{c.siSoToiDa} HV)
+                    [{c.maLopHoc}] {c.tenLopHoc} — {formatTrangThaiLopHoc(c.trangThai)} ({c.siSoHienTai}/{c.siSoToiDa} HV)
                   </option>
                 ))}
               </select>
@@ -234,7 +235,7 @@ export default function AdminFeesPage() {
                                 : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                             }`}
                           >
-                            {inv.trangThai}
+                            {formatTrangThaiHoaDon(inv.trangThai)}
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right">

@@ -5,6 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { gradesService, authService } from '../../../services/api';
 import { BookOpen, Calendar, Award, Sparkles, Receipt, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
+import { formatTrangThaiLopHoc } from '../../../utils/formatters';
 
 export default function StudentDashboardPage() {
   const [user, setUser] = useState<any>(null);
@@ -114,7 +115,7 @@ export default function StudentDashboardPage() {
                       {item.lopHoc?.maLopHoc}
                     </span>
                     <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold">
-                      {item.trangThai}
+                      {formatTrangThaiLopHoc(item.trangThai)}
                     </span>
                   </div>
                   <h4 className="font-bold text-white text-sm">{item.lopHoc?.tenLopHoc}</h4>

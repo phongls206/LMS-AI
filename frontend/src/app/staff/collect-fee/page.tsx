@@ -5,6 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { usersService, classesService, enrollmentsService } from '../../../services/api';
 import { HocVien, LopHoc, HoaDon } from '../../../types';
 import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck, Calendar, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { formatTrangThaiHoaDon, formatTrangThaiLopHoc } from '../../../utils/formatters';
 
 export default function StaffCollectFeePage() {
   const [students, setStudents] = useState<HocVien[]>([]);
@@ -179,7 +180,7 @@ export default function StaffCollectFeePage() {
               >
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>
-                    [{c.maLopHoc}] {c.tenLopHoc} — {c.trangThai} ({c.siSoHienTai}/{c.siSoToiDa} HV)
+                    [{c.maLopHoc}] {c.tenLopHoc} — {formatTrangThaiLopHoc(c.trangThai)} ({c.siSoHienTai}/{c.siSoToiDa} HV)
                   </option>
                 ))}
               </select>
@@ -283,7 +284,7 @@ export default function StaffCollectFeePage() {
                                   : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'
                               }`}
                             >
-                              {inv.trangThai}
+                              {formatTrangThaiHoaDon(inv.trangThai)}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-right">
