@@ -231,8 +231,14 @@ export default function StudentAiConsultPage() {
                   Được tính toán dựa trên mục tiêu: &ldquo;{mucTieu}&rdquo;
                 </p>
               </div>
-              <span className="text-[11px] font-mono px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                Mode: {mode}
+              <span
+                className={`text-[11px] font-medium px-3 py-1 rounded-full border ${
+                  mode === 'AI_GEMINI'
+                    ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                    : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                }`}
+              >
+                {mode === 'AI_GEMINI' ? '✨ Trí Tuệ Nhân Tạo (AI)' : '📋 Hệ Thống Quy Tắc (Rule-Based)'}
               </span>
             </div>
 
