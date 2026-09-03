@@ -191,11 +191,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               </div>
             </button>
 
-            {/* Role Chip (Desktop) */}
-            <div className="hidden md:block">
-              {getRoleBadge(user.vaiTro)}
-            </div>
-
             {/* Vertical Divider */}
             <div className="h-6 w-px bg-slate-800/90 mx-0.5 sm:mx-1"></div>
 

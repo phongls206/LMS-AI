@@ -17,7 +17,6 @@ import {
   Award,
   UserPlus,
   ChevronLeft,
-  ChevronRight,
   X,
 } from 'lucide-react';
 import { VaiTro } from '../types';
@@ -207,26 +206,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           );
         })}
       </nav>
-
-      {/* Desktop Bottom Toggle Rail Button */}
-      {onToggleCollapse && (
-        <div className="p-3 border-t border-slate-800/80 bg-slate-950/30 hidden md:flex items-center justify-center">
-          <button
-            onClick={onToggleCollapse}
-            className="w-full flex items-center justify-center py-2 px-2 rounded-xl bg-slate-800/50 hover:bg-slate-800 text-slate-400 hover:text-white transition-all text-xs font-medium border border-slate-700/40"
-            title={isCollapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar'}
-          >
-            {isCollapsed ? (
-              <ChevronRight className="w-4 h-4" />
-            ) : (
-              <div className="flex items-center space-x-2">
-                <ChevronLeft className="w-4 h-4" />
-                <span className="truncate">Thu gọn sidebar</span>
-              </div>
-            )}
-          </button>
-        </div>
-      )}
     </aside>
   );
 };
