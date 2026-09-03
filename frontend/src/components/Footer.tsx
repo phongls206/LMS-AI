@@ -5,7 +5,7 @@ import { MapPin, Phone, Mail } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-900 border-t border-slate-800 text-slate-300 text-xs">
+    <footer className="bg-slate-900 border-t border-slate-800 text-slate-300 text-xs mt-auto shrink-0 w-full">
       {/* Top Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
