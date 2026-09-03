@@ -125,7 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <h1 className="font-bold text-slate-900 text-base tracking-tight leading-tight truncate">
                 ETC ENGLISH
               </h1>
-              <p className="text-xs text-teal-600 font-semibold truncate">LMS + GenAI Platform</p>
+              <p className="text-xs text-teal-600 font-semibold truncate">Smart Center Management</p>
             </div>
           )}
         </div>
