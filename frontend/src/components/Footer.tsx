@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { MapPin, Phone, Mail, Globe } from 'lucide-react';
+import { MapPin, Phone, Mail } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
@@ -47,31 +46,14 @@ export const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Right Column: Logo Box & Domain */}
-          <div className="flex flex-col items-start md:items-end gap-2 shrink-0">
-            <div className="bg-white px-4 py-2.5 rounded-xl shadow-sm flex items-center space-x-2 border border-slate-200">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-teal-600 via-cyan-600 to-blue-500 flex items-center justify-center font-black text-white text-sm">
-                E
-              </div>
-              <div className="text-left">
-                <span className="font-black text-slate-900 text-sm tracking-tight block leading-none">
-                  ETC ENGLISH
-                </span>
-                <span className="text-[10px] text-teal-700 font-bold block mt-0.5">
-                  Smart Center Management
-                </span>
-              </div>
-            </div>
-
-            <a
-              href="https://etcedu.vercel.app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-teal-400 hover:text-teal-300 transition flex items-center gap-1.5 font-medium text-xs pt-1"
+          {/* Right Column: Clean Favicon Logo E perfectly aligned and centered */}
+          <div className="flex items-center justify-center md:self-center shrink-0">
+            <div
+              className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-teal-600 via-cyan-600 to-blue-500 flex items-center justify-center font-black text-white text-3xl shadow-xl shadow-teal-500/25 ring-4 ring-white/10 hover:scale-105 transition-transform"
+              title="ETC English Center"
             >
-              <Globe className="w-3.5 h-3.5" />
-              <span>https://etcedu.vercel.app</span>
-            </a>
+              E
+            </div>
           </div>
         </div>
       </div>

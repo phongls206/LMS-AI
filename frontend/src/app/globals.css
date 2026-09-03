@@ -47,3 +47,120 @@ div[data-nextjs-toast-wrapper] {
   opacity: 0 !important;
   pointer-events: none !important;
 }
+
+/* ========================================================================= */
+/* DARK THEME (GIAO DIỆN TỐI NGUYÊN BẢN CŨ) KHI BẬT DARK MODE                */
+/* ========================================================================= */
+html.dark {
+  --background: #020617;
+  --foreground: #f8fafc;
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #020617 !important;
+  color: #f8fafc !important;
+}
+
+/* Backgrounds & Containers */
+html.dark .bg-slate-50,
+html.dark .bg-slate-100 {
+  background-color: #0b0f19 !important;
+}
+
+html.dark .bg-white {
+  background-color: #0f172a !important;
+}
+
+html.dark .bg-slate-50\/80,
+html.dark .bg-slate-50\/70,
+html.dark .bg-slate-50\/50 {
+  background-color: #020617 !important;
+}
+
+/* Borders */
+html.dark .border-slate-200,
+html.dark .border-slate-200\/90,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-200\/60,
+html.dark .border-slate-100 {
+  border-color: #1e293b !important;
+}
+
+/* Texts */
+html.dark .text-slate-900,
+html.dark .text-slate-800 {
+  color: #f8fafc !important;
+}
+
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+html.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+html.dark .text-slate-400 {
+  color: #64748b !important;
+}
+
+/* Sidebar & Headers */
+html.dark aside.bg-white {
+  background-color: #0f172a !important;
+  border-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark header.bg-white\/90 {
+  background-color: rgba(15, 23, 42, 0.9) !important;
+  border-color: #1e293b !important;
+}
+
+/* Tables */
+html.dark thead.bg-slate-50,
+html.dark thead {
+  background-color: #020617 !important;
+  color: #94a3b8 !important;
+  border-color: #1e293b !important;
+}
+
+html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+html.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #1e293b !important;
+}
+
+html.dark tr.hover\:bg-teal-50\/30:hover {
+  background-color: rgba(30, 41, 59, 0.7) !important;
+}
+
+/* Form Inputs & Selects */
+html.dark input.bg-slate-50,
+html.dark select.bg-slate-50,
+html.dark input.bg-white,
+html.dark select.bg-white,
+html.dark textarea.bg-slate-50,
+html.dark textarea.bg-white {
+  background-color: #020617 !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* Dark mode scrollbars */
+html.dark ::-webkit-scrollbar-track {
+  background: #020617;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}

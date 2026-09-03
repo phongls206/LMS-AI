@@ -103,8 +103,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={`
-        fixed inset-y-0 left-0 z-50 md:static md:z-0
-        bg-white text-slate-700 min-h-screen flex flex-col border-r border-slate-200/90 shrink-0
+        fixed inset-y-0 left-0 z-50 md:sticky md:top-0 md:h-screen
+        bg-white text-slate-700 h-screen flex flex-col border-r border-slate-200/90 shrink-0
         transition-all duration-300 ease-in-out shadow-xl md:shadow-none
         ${mobileOpen ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0'}
         ${isCollapsed ? 'md:w-20' : 'md:w-64'}
@@ -194,46 +194,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Pinned Bottom Footer: Profile Summary & Logout */}
-      <div className="border-t border-slate-200/90 p-3 bg-slate-50/80 shrink-0">
-        {showFull ? (
-          <div className="space-y-2.5">
-            <div className="flex items-center space-x-2.5 px-1 py-0.5">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-bold text-xs text-white uppercase shadow-sm shrink-0">
-                {userName?.slice(0, 2) || 'AD'}
-              </div>
-              <div className="overflow-hidden min-w-0 flex-1">
-                <p className="text-xs font-bold text-slate-800 truncate">{userName}</p>
-                <p className="text-[10px] text-teal-600 font-medium truncate">{getRoleLabel()}</p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => authService.logout()}
-              className="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-200/80 hover:border-rose-500 text-xs font-semibold transition-all duration-200 cursor-pointer group shadow-sm"
-              title="Đăng xuất khỏi hệ thống"
-            >
-              <LogOut className="w-3.5 h-3.5 text-rose-500 group-hover:text-white transition-colors" />
-              <span>Đăng Xuất</span>
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center space-y-2">
-            <div
-              className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-bold text-xs text-white uppercase shadow-sm"
-              title={`${userName} (${getRoleLabel()})`}
-            >
-              {userName?.slice(0, 2) || 'AD'}
-            </div>
-            <button
-              onClick={() => authService.logout()}
-              className="p-2 rounded-xl bg-rose-50 hover:bg-rose-500 text-rose-600 hover:text-white border border-rose-200/80 hover:border-rose-500 transition-colors cursor-pointer group"
-              title="Đăng xuất khỏi hệ thống"
-            >
-              <LogOut className="w-4 h-4 text-rose-500 group-hover:text-white transition-colors" />
-            </button>
-          </div>
-        )}
+      {/* Pinned Bottom Footer: Logout Only */}
+      <div className="border-t border-slate-200/90 p-3 bg-slate-50/80 shrink-0 mt-auto">
+        <button
+          onClick={() => authService.logout()}
+          className={`w-full flex items-center justify-center rounded-xl text-xs font-bold text-rose-600 bg-white hover:bg-rose-600 hover:text-white border border-rose-200 hover:border-rose-600 transition-all duration-200 cursor-pointer shadow-sm group ${
+            !showFull ? 'p-2.5' : 'space-x-2 py-2.5 px-3'
+          }`}
+          title="Đăng xuất khỏi hệ thống"
+        >
+          <LogOut className="w-4 h-4 text-rose-500 group-hover:text-white transition-colors shrink-0" />
+          {showFull && <span>Đăng Xuất</span>}
+        </button>
       </div>
     </aside>
   );

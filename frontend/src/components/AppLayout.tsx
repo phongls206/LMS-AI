@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
-import { Footer } from './Footer';
 import { authService } from '../services/api';
 import { VaiTro } from '../types';
 import {
@@ -17,6 +16,8 @@ import {
   GraduationCap,
   Award,
   KeyRound,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -39,6 +40,33 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  // Đọc theme từ localStorage khi khởi tạo
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('etc_theme');
+    if (savedTheme === 'dark') {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDark(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const handleToggleTheme = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('etc_theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('etc_theme', 'light');
+      }
+      return next;
+    });
+  };
 
   // Đọc trạng thái thu nhỏ sidebar từ LocalStorage khi khởi tạo
   useEffect(() => {
@@ -193,8 +221,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </div>
           </div>
 
-          {/* Right: User Profile Avatar */}
+          {/* Right: Theme Toggle + User Profile Avatar */}
           <div className="flex items-center space-x-2 shrink-0">
+            {/* Dark / Light Mode Toggle Button */}
+            <button
+              onClick={handleToggleTheme}
+              className="p-2 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition cursor-pointer text-slate-700 flex items-center justify-center focus:outline-none shadow-sm"
+              title={isDark ? 'Chuyển sang Giao diện Sáng (Light Mode)' : 'Chuyển sang Giao diện Tối (Dark Mode)'}
+              aria-label="Chuyển đổi giao diện Sáng / Tối"
+            >
+              {isDark ? (
+                <Sun className="w-4 h-4 text-amber-500 hover:rotate-45 transition-transform" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-600 hover:text-teal-600 transition-colors" />
+              )}
+            </button>
+
+            {/* User Profile Avatar */}
             <button
               onClick={() => setShowProfileModal(true)}
               className="flex items-center space-x-2 p-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-slate-50 hover:bg-teal-50 border border-slate-200/80 hover:border-teal-300 transition cursor-pointer text-left focus:outline-none"
@@ -215,9 +258,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         <main className="flex-1 p-3 sm:p-5 md:p-6 max-w-7xl w-full mx-auto">
           {children}
         </main>
-
-        {/* System Footer */}
-        <Footer />
       </div>
 
       {/* Profile Modal */}
