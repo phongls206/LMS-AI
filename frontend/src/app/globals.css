@@ -201,10 +201,24 @@ html.dark thead {
 
 html.dark thead th {
   color: #64748b !important;
+  border-bottom-color: #1e2d45 !important;
 }
 
-html.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
-html.dark .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+html.dark thead tr {
+  border-bottom-color: #1e2d45 !important;
+}
+
+/* Fix Tailwind v4 divide border-color in dark mode for all rows (including the first row) */
+html.dark tbody tr,
+html.dark table tr {
+  border-color: #1e2d45 !important;
+}
+
+html.dark :where(.divide-slate-100 > *),
+html.dark :where(.divide-slate-200 > *),
+html.dark .divide-slate-100 > *,
+html.dark .divide-slate-200 > *,
+html.dark .divide-y > * {
   border-color: #1e2d45 !important;
 }
 

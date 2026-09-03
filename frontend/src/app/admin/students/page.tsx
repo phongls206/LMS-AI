@@ -74,11 +74,13 @@ export default function AdminStudentsPage() {
     try {
       setLoading(true);
       const res = await usersService.getStudents(page, limit, search || undefined, cefrFilter || undefined);
-      setStudents(res.data || []);
-      if (res.meta) {
-        setTotal(res.meta.total || 0);
-        setTotalPages(res.meta.totalPages || 1);
-      }
+      const studentList = Array.isArray(res) ? res : res.data || [];
+      setStudents(studentList);
+      
+      const totalCount = res.total ?? res.meta?.total ?? studentList.length;
+      const pagesCount = res.totalPages ?? res.meta?.totalPages ?? Math.max(1, Math.ceil(totalCount / limit));
+      setTotal(totalCount);
+      setTotalPages(pagesCount);
     } catch (err) {
       console.error(err);
     } finally {
@@ -89,11 +91,6 @@ export default function AdminStudentsPage() {
   useEffect(() => {
     fetchStudents();
   }, [page, limit, search, cefrFilter]);
-
-  // Reset to page 1 when search or filter changes
-  useEffect(() => {
-    setPage(1);
-  }, [search, cefrFilter]);
 
   const handleCreateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -174,7 +171,10 @@ export default function AdminStudentsPage() {
               <input
                 type="text"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
                 placeholder="Tìm họ tên, mã học viên..."
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 pl-9 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
               />
@@ -182,7 +182,10 @@ export default function AdminStudentsPage() {
 
             <select
               value={cefrFilter}
-              onChange={(e) => setCefrFilter(e.target.value)}
+              onChange={(e) => {
+                setCefrFilter(e.target.value);
+                setPage(1);
+              }}
               className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500"
             >
               <option value="">Tất cả CEFR</option>
