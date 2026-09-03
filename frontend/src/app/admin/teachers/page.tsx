@@ -405,8 +405,8 @@ export default function AdminTeachersPage() {
                         key={p}
                         onClick={() => setPage(p)}
                         className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${page === p
-                            ? 'bg-teal-600 text-white shadow-sm'
-                            : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                          ? 'bg-teal-600 text-white shadow-sm'
+                          : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                           }`}
                       >
                         {p}
