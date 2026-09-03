@@ -85,6 +85,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     };
 
     checkAuth();
+
+    // Heartbeat định kỳ (15s) và kiểm tra khi chuyển lại tab để kịp thời phát hiện Single Session Kickout
+    const heartbeatInterval = setInterval(() => {
+      authService.getMe().catch(() => {});
+    }, 15000);
+
+    const handleVisibility = () => {
+      if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+        authService.getMe().catch(() => {});
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      clearInterval(heartbeatInterval);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, [router, allowedRoles]);
 
   if (loading) {

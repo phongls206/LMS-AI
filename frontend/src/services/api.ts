@@ -20,15 +20,28 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Xử lý lỗi tập trung (401 redirect to login)
+// Xử lý lỗi tập trung (401 Single Session Kickout & redirect to login)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (typeof window !== 'undefined' && error.response?.status === 401) {
+      const msg = typeof error.response?.data?.message === 'string' ? error.response.data.message : '';
+      const isKicked =
+        msg.includes('thiết bị') ||
+        msg.includes('khác') ||
+        msg.includes('kết thúc') ||
+        msg.includes('phiên làm việc');
+
       localStorage.removeItem('etc_access_token');
       localStorage.removeItem('etc_user_session');
+      sessionStorage.clear();
+
       if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+        if (isKicked) {
+          window.location.href = '/login?kicked=1';
+        } else {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);
@@ -52,7 +65,10 @@ export const authService = {
   getMe: async () => (await api.get('/auth/me')).data,
   changePassword: async (matKhauCu: string, matKhauMoi: string) =>
     (await api.post('/auth/change-password', { matKhauCu, matKhauMoi })).data,
-  logout: () => {
+  logout: async () => {
+    try {
+      await api.post('/auth/logout');
+    } catch (e) {}
     localStorage.removeItem('etc_access_token');
     localStorage.removeItem('etc_user_session');
     sessionStorage.clear(); // Xóa sạch phiên AI khi đăng xuất

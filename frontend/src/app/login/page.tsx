@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '../../services/api';
-import { Sparkles, Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
+import { Sparkles, Lock, User, AlertCircle, AlertTriangle, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,6 +11,16 @@ export default function LoginPage() {
   const [password, setPassword] = useState('123456');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [wasKicked, setWasKicked] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('kicked') === '1') {
+        setWasKicked(true);
+      }
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +63,18 @@ export default function LoginPage() {
             <span>Hệ Thống LMS Tích Hợp GenAI</span>
           </p>
         </div>
+
+        {wasKicked && (
+          <div className="mb-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start space-x-3">
+            <AlertTriangle className="w-5 h-5 shrink-0 text-amber-400 mt-0.5" />
+            <div>
+              <p className="font-bold text-amber-200">Phiên Đăng Nhập Đã Bị Ngắt!</p>
+              <p className="text-[11px] text-amber-300/80 mt-0.5 leading-relaxed">
+                Tài khoản của bạn vừa được đăng nhập từ một thiết bị hoặc trình duyệt khác. Để bảo mật thông tin, hệ thống tự động đăng xuất phiên làm việc này.
+              </p>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="mb-6 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center space-x-2">

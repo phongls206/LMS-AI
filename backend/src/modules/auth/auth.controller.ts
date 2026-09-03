@@ -55,14 +55,14 @@ export class AuthController {
   }
 
   /**
-   * POST /api/v1/auth/logout — UC001 (Stateless JWT — client tự xóa token)
+   * POST /api/v1/auth/logout — UC001 (Thu hồi phiên trên Server và Client)
    */
   @Post('logout')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Đăng xuất (hủy phiên phía client)' })
-  logout() {
-    return { message: 'Đăng xuất thành công. Vui lòng xóa token phía Client.' };
+  @ApiOperation({ summary: 'Đăng xuất và thu hồi phiên làm việc trên máy chủ' })
+  logout(@CurrentUser() user: any) {
+    return this.authService.logout(user.id);
   }
 }

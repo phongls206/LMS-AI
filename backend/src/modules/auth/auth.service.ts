@@ -8,6 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../../prisma/prisma.service';
 import { LoginDto, ChangePasswordDto } from './dto/auth.dto';
 import { JwtPayload } from '../../common/interfaces/jwt-payload.interface';
+import { SessionManagerService } from './session-manager.service';
+import { randomUUID } from 'crypto';
 import * as argon2 from 'argon2';
 
 @Injectable()
@@ -15,6 +17,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private sessionManager: SessionManagerService,
   ) {}
 
   /**
@@ -41,11 +44,16 @@ export class AuthService {
       throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không đúng.');
     }
 
-    // 4. Ký JWT Token
+    // 4. Khởi tạo phiên làm việc duy nhất (Single Concurrent Session Kickout)
+    const sessionId = randomUUID();
+    this.sessionManager.registerSession(Number(user.id), sessionId);
+
+    // 5. Ký JWT Token
     const payload: JwtPayload = {
       sub: Number(user.id),
       vaiTro: user.vaiTro,
       email: user.email,
+      sessionId,
     };
 
     const accessToken = this.jwtService.sign(payload);
@@ -162,5 +170,13 @@ export class AuthService {
     });
 
     return { message: 'Đổi mật khẩu thành công.' };
+  }
+
+  /**
+   * UC001 — Thu hồi phiên làm việc khi người dùng đăng xuất
+   */
+  async logout(userId: number) {
+    this.sessionManager.revokeSession(userId);
+    return { message: 'Đăng xuất thành công. Phiên làm việc đã được giải phóng.' };
   }
 }
