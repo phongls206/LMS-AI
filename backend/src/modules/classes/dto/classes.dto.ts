@@ -50,6 +50,11 @@ export class CreateClassDto {
   @IsOptional()
   @IsString()
   linkOnline?: string;
+
+  @ApiPropertyOptional({ example: 12, description: 'Số buổi học dự kiến' })
+  @IsOptional()
+  @IsNumber()
+  soBuoiHoc?: number;
 }
 
 export class UpdateClassStatusDto {

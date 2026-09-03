@@ -39,3 +39,62 @@ export class SubmitAttendanceDto {
   @Type(() => AttendanceRecordDto)
   danhSach: AttendanceRecordDto[];
 }
+
+export class GenerateSessionsDto {
+  @ApiPropertyOptional({ example: 12, description: 'Số buổi học cần sinh tự động' })
+  @IsOptional()
+  @IsNumber()
+  soBuoiHoc?: number;
+
+  @ApiPropertyOptional({ example: 'Unit 1: Overview', description: 'Tiêu đề hoặc chủ đề cơ bản' })
+  @IsOptional()
+  @IsString()
+  chuDeMoi?: string;
+}
+
+export class CreateSessionDto {
+  @ApiProperty({ example: 1, description: 'Số thứ tự buổi học' })
+  @IsNumber()
+  soThuTu: number;
+
+  @ApiProperty({ example: '2026-09-15', description: 'Ngày diễn ra buổi học (YYYY-MM-DD)' })
+  @IsString()
+  ngayHoc: string;
+
+  @ApiPropertyOptional({ example: '18:00', description: 'Giờ bắt đầu buổi học' })
+  @IsOptional()
+  @IsString()
+  gioBatDau?: string;
+
+  @ApiPropertyOptional({ example: '20:30', description: 'Giờ kết thúc buổi học' })
+  @IsOptional()
+  @IsString()
+  gioKetThuc?: string;
+
+  @ApiPropertyOptional({ example: 'Chủ đề: Ôn tập ngữ pháp & từ vựng', description: 'Tiêu đề hoặc chủ đề buổi học' })
+  @IsOptional()
+  @IsString()
+  chuDe?: string;
+}
+
+export class UpdateSessionDto {
+  @ApiPropertyOptional({ example: '2026-09-15', description: 'Ngày học (YYYY-MM-DD)' })
+  @IsOptional()
+  @IsString()
+  ngayHoc?: string;
+
+  @ApiPropertyOptional({ example: '18:00', description: 'Giờ bắt đầu' })
+  @IsOptional()
+  @IsString()
+  gioBatDau?: string;
+
+  @ApiPropertyOptional({ example: '20:30', description: 'Giờ kết thúc' })
+  @IsOptional()
+  @IsString()
+  gioKetThuc?: string;
+
+  @ApiPropertyOptional({ example: 'Tiêu đề buổi học', description: 'Chủ đề buổi học' })
+  @IsOptional()
+  @IsString()
+  chuDe?: string;
+}

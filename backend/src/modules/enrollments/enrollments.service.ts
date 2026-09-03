@@ -11,6 +11,7 @@ import {
   TrangThaiHoaDon,
   TrangThaiThanhToan,
   TrangThaiLopHoc,
+  TrangThaiKhoaHoc,
   TrinhDoCEFR,
 } from '@prisma/client';
 
@@ -49,6 +50,13 @@ export class EnrollmentsService {
     });
 
     if (!classRecord) throw new NotFoundException('Lớp học không tồn tại.');
+
+    // Kiểm tra trạng thái Khóa học: Nếu tạm ngừng tuyển sinh thì tuyệt đối không cho đăng ký
+    if (classRecord.khoaHoc?.trangThai === TrangThaiKhoaHoc.NGUNG_HOAT_DONG) {
+      throw new BadRequestException(
+        `Khóa học "${classRecord.khoaHoc.tenKhoaHoc}" hiện đang tạm ngừng tuyển sinh. Không thể tiếp nhận học viên đăng ký vào lớp này.`
+      );
+    }
 
     if (classRecord.trangThai === TrangThaiLopHoc.DA_HUY) {
       throw new BadRequestException('Lớp học này đã bị hủy, không thể tiếp nhận đăng ký mới.');

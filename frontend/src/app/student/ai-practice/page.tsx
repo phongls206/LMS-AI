@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService } from '../../../services/api';
-import { Sparkles, HelpCircle, CheckCircle2, XCircle, RotateCcw, Layers, PlusCircle, Clock } from 'lucide-react';
+import { Sparkles, HelpCircle, CheckCircle2, XCircle, RotateCcw, Layers, Clock } from 'lucide-react';
 
 const PREDEFINED_TOPICS = [
   'Thì Hiện Tại Hoàn Thành (Present Perfect Tense)',
@@ -302,15 +302,6 @@ export default function StudentAiPracticePage() {
                     ? '✨ Trí Tuệ Nhân Tạo (AI)'
                     : '📦 Mẫu Dự Phòng (Fallback)'}
                 </span>
-                <button
-                  type="button"
-                  onClick={handleResetSession}
-                  className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 transition cursor-pointer shadow-sm"
-                  title="Xóa đề hiện tại để tạo phiên bài mới"
-                >
-                  <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
-                  <span>Tạo Phiên Mới</span>
-                </button>
               </div>
             </div>
 

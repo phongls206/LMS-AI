@@ -369,66 +369,14 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
     const startTime = Date.now();
     const count = dto.soLuong && [5, 10, 15].includes(Number(dto.soLuong)) ? Number(dto.soLuong) : 5;
 
-    // 1. SMART DB CACHE LOOKUP: Kiểm tra xem trong CSDL đã có bộ đề cho chủ đề & trình độ này chưa
-    try {
-      const cachedRecord = await this.prisma.yeuCauAI.findFirst({
-        where: {
-          loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
-          trangThai: TrangThaiYeuCauAI.THANH_CONG,
-          promptInput: {
-            contains: `"${dto.chuDe}"`,
-          },
-        },
-        orderBy: { id: 'desc' },
-      });
-
-      if (cachedRecord && cachedRecord.validatedOutputJson) {
-        const cachedData = cachedRecord.validatedOutputJson as any;
-        if (
-          cachedData.trinhDo === dto.trinhDo &&
-          Array.isArray(cachedData.cauHoi) &&
-          cachedData.cauHoi.length >= count
-        ) {
-          this.logger.log(`⚡ AI Cache Hit: Trả về bộ đề từ CSDL cho chủ đề "${dto.chuDe}" [${dto.trinhDo}]`);
-          const slicedQuestions = cachedData.cauHoi.slice(0, count).map((q: any, idx: number) => ({
-            ...q,
-            id: idx + 1,
-          }));
-
-          const responseData = {
-            ...cachedData,
-            cauHoi: slicedQuestions,
-          };
-
-          // Ghi nhận log truy vấn cache
-          const duration = Date.now() - startTime;
-          await this.logAiRequest(
-            userId,
-            LoaiChucNangAI.SINH_BAI_TAP,
-            `[CACHE_HIT] ${dto.chuDe} - ${dto.trinhDo} - ${count} câu`,
-            '[CACHED_RESULT]',
-            responseData,
-            TrangThaiYeuCauAI.THANH_CONG,
-            duration,
-          );
-
-          return {
-            success: true,
-            mode: 'AI_CACHE',
-            cached: true,
-            data: responseData,
-          };
-        }
-      }
-    } catch (cacheErr: any) {
-      this.logger.warn('Lỗi kiểm tra cache:', cacheErr?.message);
-    }
-
-    // 2. NẾU CHƯA CÓ TRONG CACHE -> GỌI GOOGLE GEMINI FLASH
+    // GỌI GOOGLE GEMINI FLASH VỚI UNIQUE SESSION NONCE ĐỂ LUÔN TẠO BỘ ĐỀ MỚI MẺ
+    const sessionNonce = `${Date.now()}_${Math.floor(Math.random() * 10000)}`;
     const prompt = `
 Bạn là giáo viên tiếng Anh chuyên nghiệp.
-Nhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm đúng ${count} câu về chủ đề "${dto.chuDe}", độ khó chuẩn CEFR "${dto.trinhDo}".
-RÀNG BUỘC:
+Nhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng ${count} câu về chủ đề "${dto.chuDe}", độ khó chuẩn CEFR "${dto.trinhDo}".
+Mã phiên sinh đề ngẫu nhiên: #${sessionNonce}.
+RÀNG BUỘC NGHIÊM NGẶT:
+- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.
 - Đúng ${count} câu hỏi trắc nghiệm (4 lựa chọn A, B, C, D) được đánh số id từ 1 đến ${count}.
 - Bắt buộc có đáp án đúng và giải thích ngắn gọn bằng tiếng Việt.
 - Trả về JSON hợp lệ:

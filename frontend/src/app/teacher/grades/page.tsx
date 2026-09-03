@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, gradesService } from '../../../services/api';
-import { Save, CheckCircle, Sparkles, BookOpen } from 'lucide-react';
+import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle } from 'lucide-react';
 
 export default function TeacherGradesPage() {
   const [classes, setClasses] = useState<any[]>([]);
@@ -107,8 +107,14 @@ export default function TeacherGradesPage() {
     return final >= 50.0 && cc >= 80.0;
   };
 
+  const isClassRecruiting = classDetail?.trangThai === 'DANG_MO_DANG_KY' || classDetail?.trangThai === 'SAP_MO';
+
   const handleSaveGrades = async () => {
     if (!selectedClassId) return;
+    if (isClassRecruiting) {
+      alert('Lớp học đang mở tuyển sinh, chưa vào học chính thức. Không thể nhập bảng điểm!');
+      return;
+    }
     setSaving(true);
     try {
       const payload = Object.entries(gradesMap).map(([studentId, val]) => ({
@@ -159,13 +165,30 @@ export default function TeacherGradesPage() {
 
           <button
             onClick={handleSaveGrades}
-            disabled={saving || !selectedClassId || !classDetail?.dangKyHoc?.length}
+            disabled={saving || !selectedClassId || !classDetail?.dangKyHoc?.length || isClassRecruiting}
             className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer"
+            title={isClassRecruiting ? 'Lớp đang mở tuyển sinh, chưa bắt đầu học. Không thể nhập bảng điểm!' : 'Lưu & Tính Điểm Tổng Kết'}
           >
             <Save className="w-4 h-4" />
-            <span>{saving ? 'Đang Lưu...' : 'Lưu & Tính Điểm Tổng Kết'}</span>
+            <span>{saving ? 'Đang Lưu...' : isClassRecruiting ? 'Chưa Khai Giảng' : 'Lưu & Tính Điểm Tổng Kết'}</span>
           </button>
         </div>
+
+        {/* Cảnh báo lớp đang tuyển sinh */}
+        {isClassRecruiting && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3 shadow-xs animate-fadeIn">
+            <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="text-xs space-y-1">
+              <div className="font-bold text-sm text-amber-950">
+                Lớp học đang trong giai đoạn Mở Tuyển Sinh (Chưa Khai Giảng Chính Thức)
+              </div>
+              <p className="text-amber-800 leading-relaxed">
+                Lớp <strong className="font-mono">[{classDetail?.maLopHoc}] {classDetail?.tenLopHoc}</strong> hiện đang tiếp nhận học viên (Sĩ số: <strong>{classDetail?.siSoHienTai || 0} / {classDetail?.siSoToiDa || 25} HV</strong>).
+                Bảng điểm đánh giá kết quả (Chuyên Cần, Giữa Kỳ, Cuối Kỳ) sẽ được kích hoạt khi lớp hoàn tất tuyển sinh và chuyển sang trạng thái <strong>"Đang Học"</strong>.
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Business Rule Alert */}
         <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 text-xs text-teal-800 flex items-center space-x-2">

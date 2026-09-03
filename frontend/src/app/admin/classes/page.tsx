@@ -2,9 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
-import { classesService, coursesService, usersService } from '../../../services/api';
+import { classesService, coursesService, usersService, attendancesService } from '../../../services/api';
 import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
-import { GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle } from 'lucide-react';
+import { 
+  GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
+  Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock
+} from 'lucide-react';
 
 const DAYS_OF_WEEK = [
   { value: 2, label: 'Thứ Hai', short: 'T2' },
@@ -35,12 +38,35 @@ export default function AdminClassesPage() {
   const [showAddSchedule, setShowAddSchedule] = useState<number | null>(null);
   const [showAssignTeacher, setShowAssignTeacher] = useState<number | null>(null);
 
+  // Quản lý buổi học của lớp
+  const [showSessionsClassId, setShowSessionsClassId] = useState<number | null>(null);
+  const [classSessions, setClassSessions] = useState<any[]>([]);
+  const [loadingSessions, setLoadingSessions] = useState(false);
+  const [generatingSessions, setGeneratingSessions] = useState(false);
+  const [showAddSessionForm, setShowAddSessionForm] = useState(false);
+  const [newSessionForm, setNewSessionForm] = useState({
+    soThuTu: 1,
+    ngayHoc: '',
+    gioBatDau: '18:00',
+    gioKetThuc: '20:30',
+    chuDe: '',
+  });
+  const [editingSessionId, setEditingSessionId] = useState<number | null>(null);
+  const [editSessionForm, setEditSessionForm] = useState({
+    chuDe: '',
+    ngayHoc: '',
+    gioBatDau: '18:00',
+    gioKetThuc: '20:30',
+  });
+  const [savingEditSession, setSavingEditSession] = useState(false);
+
   // Form states
   const [classForm, setClassForm] = useState({
     khoaHocId: 1,
     maLopHoc: '',
     tenLopHoc: '',
     siSoToiDa: 25,
+    soBuoiHoc: 12,
     ngayBatDau: '',
     ngayKetThuc: '',
     phongHoc: 'Phòng A101',
@@ -99,6 +125,15 @@ export default function AdminClassesPage() {
 
   const handleCreateClass = async (e: React.FormEvent) => {
     e.preventDefault();
+    const selectedCourse = courses.find((c) => Number(c.id) === Number(classForm.khoaHocId));
+    if (selectedCourse?.trangThai === 'NGUNG_HOAT_DONG') {
+      setMessage({
+        type: 'error',
+        text: `Khóa học "${selectedCourse.tenKhoaHoc}" hiện đang tạm ngừng tuyển sinh. Không thể mở lớp mới cho khóa này!`,
+      });
+      return;
+    }
+
     try {
       await classesService.create(classForm);
       setMessage({ type: 'success', text: 'Mở lớp học mới thành công!' });
@@ -189,6 +224,143 @@ export default function AdminClassesPage() {
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
       setMessage({ type: 'error', text: err.response?.data?.message || 'Không thể cập nhật trạng thái lớp.' });
+    }
+  };
+
+  // Quản lý buổi học của lớp
+  const handleOpenSessions = async (classId: number) => {
+    setShowSessionsClassId(classId);
+    setLoadingSessions(true);
+    setShowAddSessionForm(false);
+    setEditingSessionId(null);
+    try {
+      const data = await attendancesService.getClassSessions(classId);
+      setClassSessions(data || []);
+      const nextSeq = data && data.length > 0 ? Math.max(...data.map((s: any) => s.soThuTu || 0)) + 1 : 1;
+      const targetClass = classes.find((c) => Number(c.id) === Number(classId));
+      setNewSessionForm({
+        soThuTu: nextSeq,
+        ngayHoc: targetClass?.ngayBatDau?.slice(0, 10) || new Date().toISOString().slice(0, 10),
+        gioBatDau: '18:00',
+        gioKetThuc: '20:30',
+        chuDe: `Buổi ${nextSeq}: Kỹ năng tiếng Anh thực hành`,
+      });
+    } catch (err) {
+      console.error(err);
+      alert('Không thể tải danh sách buổi học.');
+    } finally {
+      setLoadingSessions(false);
+    }
+  };
+
+  const handleGenerateSessions = async (classId: number, count = 12) => {
+    setGeneratingSessions(true);
+    try {
+      await attendancesService.generateSessions(classId, { soBuoiHoc: count });
+      setMessage({
+        type: 'success',
+        text: `Đã tự động khởi tạo ${count} buổi học theo lịch trình lớp thành công!`,
+      });
+      const data = await attendancesService.getClassSessions(classId);
+      setClassSessions(data || []);
+      fetchData();
+      setTimeout(() => setMessage(null), 4000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi khi tự động sinh buổi học.');
+    } finally {
+      setGeneratingSessions(false);
+    }
+  };
+
+  const handleCreateSingleSession = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!showSessionsClassId) return;
+    try {
+      await attendancesService.createSession(showSessionsClassId, newSessionForm);
+      setMessage({ type: 'success', text: 'Thêm buổi học mới thành công!' });
+      setShowAddSessionForm(false);
+      const data = await attendancesService.getClassSessions(showSessionsClassId);
+      setClassSessions(data || []);
+      const nextSeq = data && data.length > 0 ? Math.max(...data.map((s: any) => s.soThuTu || 0)) + 1 : 1;
+      setNewSessionForm((prev) => ({
+        ...prev,
+        soThuTu: nextSeq,
+        chuDe: `Buổi ${nextSeq}: Kỹ năng tiếng Anh thực hành`,
+      }));
+      fetchData();
+      setTimeout(() => setMessage(null), 3500);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi khi tạo buổi học.');
+    }
+  };
+
+  const handleStartEditSession = (s: any) => {
+    setEditingSessionId(Number(s.id));
+    const d = s.ngayHoc ? new Date(s.ngayHoc) : null;
+    const dateStr = d
+      ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+      : '';
+    const startStr = s.gioBatDau ? new Date(s.gioBatDau).toISOString().substring(11, 16) : '18:00';
+    const endStr = s.gioKetThuc ? new Date(s.gioKetThuc).toISOString().substring(11, 16) : '20:30';
+
+    setEditSessionForm({
+      chuDe: s.chuDe || `Buổi ${s.soThuTu}`,
+      ngayHoc: dateStr,
+      gioBatDau: startStr,
+      gioKetThuc: endStr,
+    });
+  };
+
+  const handleSaveSession = async (sessionId: number) => {
+    if (!editSessionForm.chuDe.trim()) {
+      alert('Vui lòng nhập tiêu đề buổi học.');
+      return;
+    }
+    setSavingEditSession(true);
+    try {
+      await attendancesService.updateSession(sessionId, editSessionForm);
+      if (showSessionsClassId) {
+        const data = await attendancesService.getClassSessions(showSessionsClassId);
+        setClassSessions(data || []);
+      }
+      setEditingSessionId(null);
+      setMessage({ type: 'success', text: 'Cập nhật ngày học, khung giờ và tiêu đề thành công!' });
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi khi cập nhật buổi học.');
+    } finally {
+      setSavingEditSession(false);
+    }
+  };
+
+  const handleDeleteSession = async (sessionId: number, soThuTu: number, isCompleted: boolean) => {
+    if (isCompleted) {
+      alert(
+        `Buổi ${soThuTu} đã hoàn thành hoặc có dữ liệu điểm danh, không thể xóa để bảo toàn dữ liệu tính điểm và chuyên cần!`
+      );
+      return;
+    }
+    if (
+      !confirm(
+        `Bạn có chắc muốn xóa Buổi ${soThuTu}? Sau khi xóa, các buổi học phía sau sẽ tự động được dồn lại số thứ tự (Buổi ${soThuTu + 1} sẽ trở thành Buổi ${soThuTu}).`
+      )
+    )
+      return;
+
+    try {
+      const res = await attendancesService.deleteSession(sessionId);
+      if (showSessionsClassId) {
+        const data = await attendancesService.getClassSessions(showSessionsClassId);
+        setClassSessions(data || []);
+      }
+      setMessage({
+        type: 'success',
+        text: res?.message || `Đã xóa Buổi ${soThuTu} và tự động dồn số thứ tự các buổi tiếp theo!`,
+      });
+      fetchData();
+      setTimeout(() => setMessage(null), 4000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi khi xóa buổi học.');
     }
   };
 
@@ -318,6 +490,20 @@ export default function AdminClassesPage() {
                           ) : (
                             <>
                               <button
+                                onClick={() => handleOpenSessions(Number(c.id))}
+                                className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer ${
+                                  (c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0
+                                    ? 'bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white border-amber-300'
+                                    : 'bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border-indigo-200'
+                                }`}
+                                title="Xem và quản lý các buổi học để điểm danh"
+                              >
+                                <Calendar className="w-3.5 h-3.5" />
+                                <span>
+                                  {(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0 ? '⚠️ 0 Buổi (Tạo)' : `${c._count?.buoiHoc ?? c.buoiHoc?.length} Buổi`}
+                                </span>
+                              </button>
+                              <button
                                 onClick={() => handleOpenAddSchedule(c.id)}
                                 className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
                               >
@@ -355,8 +541,12 @@ export default function AdminClassesPage() {
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
                   >
                     {courses.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        [{c.maKhoaHoc}] {c.tenKhoaHoc} (CEFR {c.trinhDoYeuCau})
+                      <option
+                        key={c.id}
+                        value={c.id}
+                        disabled={c.trangThai === 'NGUNG_HOAT_DONG'}
+                      >
+                        [{c.maKhoaHoc}] {c.tenKhoaHoc} (CEFR {c.trinhDoYeuCau}) {c.trangThai === 'NGUNG_HOAT_DONG' ? '— [🔴 TẠM NGỪNG TUYỂN SINH]' : '— [🟢 Đang tuyển sinh]'}
                       </option>
                     ))}
                   </select>
@@ -419,6 +609,48 @@ export default function AdminClassesPage() {
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
                     />
                   </div>
+                </div>
+
+                {/* Cấu hình số buổi học dự kiến */}
+                <div className="p-3 bg-teal-50/70 border border-teal-200 rounded-xl space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-teal-900 font-bold block flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-teal-600" />
+                      Số Buổi Học Dự Kiến & Tự Động Sinh Giáo Trình
+                    </label>
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-teal-100 text-teal-800">
+                      Tự tạo {classForm.soBuoiHoc || 12} buổi
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min={1}
+                      max={100}
+                      value={classForm.soBuoiHoc || 12}
+                      onChange={(e) => setClassForm({ ...classForm, soBuoiHoc: +e.target.value })}
+                      className="w-20 bg-white border border-teal-300 rounded-lg px-2.5 py-1.5 text-slate-900 font-bold text-center focus:outline-none focus:ring-1 focus:ring-teal-500"
+                    />
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {[10, 12, 16, 24].map((num) => (
+                        <button
+                          key={num}
+                          type="button"
+                          onClick={() => setClassForm({ ...classForm, soBuoiHoc: num })}
+                          className={`px-2 py-1 rounded-md text-[11px] font-bold border transition cursor-pointer ${
+                            classForm.soBuoiHoc === num
+                              ? 'bg-teal-600 text-white border-teal-600'
+                              : 'bg-white text-teal-700 border-teal-200 hover:bg-teal-100'
+                          }`}
+                        >
+                          {num} buổi
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-teal-700 leading-tight">
+                    ✨ Hệ thống tự động tạo danh mục buổi học giáo trình tương ứng để giáo viên có thể điểm danh từng buổi ngay lập tức!
+                  </p>
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
@@ -705,6 +937,347 @@ export default function AdminClassesPage() {
                       </button>
                     </div>
                   </form>
+                );
+              })()}
+            </div>
+          </div>
+        )}
+
+        {/* MODAL QUẢN LÝ DANH SÁCH BUỔI HỌC CỦA LỚP */}
+        {showSessionsClassId && (
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-800 p-6 space-y-5">
+              {(() => {
+                const targetClass = classes.find((c) => Number(c.id) === Number(showSessionsClassId));
+                return (
+                  <>
+                    {/* Header */}
+                    <div className="flex items-start justify-between pb-4 border-b border-slate-100">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-700 text-xs font-bold font-mono border border-teal-200">
+                            {targetClass?.maLopHoc}
+                          </span>
+                          <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold">
+                            {classSessions.length} buổi học hiện có
+                          </span>
+                        </div>
+                        <h3 className="text-lg font-bold text-slate-900">
+                          Quản Lý Buổi Học — {targetClass?.tenLopHoc}
+                        </h3>
+                        <p className="text-xs text-slate-500">
+                          Khởi tạo, sắp xếp và tùy chỉnh giáo trình từng buổi học phục vụ giáo viên điểm danh chuyên cần
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setShowSessionsClassId(null)}
+                        className="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    {/* Toolbar Buttons */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200/80">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-700">Tự động sinh:</span>
+                        {[10, 12, 16, 24].map((cnt) => (
+                          <button
+                            key={cnt}
+                            disabled={generatingSessions}
+                            onClick={() => handleGenerateSessions(Number(targetClass?.id), cnt)}
+                            className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                          >
+                            <Sparkles className="w-3 h-3" />
+                            <span>+{cnt} Buổi Chuẩn</span>
+                          </button>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={() => setShowAddSessionForm(!showAddSessionForm)}
+                        className="px-3 py-1.5 rounded-xl bg-white hover:bg-teal-50 text-teal-700 border border-teal-300 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>{showAddSessionForm ? 'Đóng Form' : 'Thêm 1 Buổi Học'}</span>
+                      </button>
+                    </div>
+
+                    {/* Single Add Form */}
+                    {showAddSessionForm && (
+                      <form onSubmit={handleCreateSingleSession} className="p-4 bg-teal-50/50 border border-teal-200 rounded-xl space-y-3 animate-fadeIn text-xs">
+                        <div className="font-bold text-teal-900 flex items-center gap-1.5">
+                          <Plus className="w-4 h-4 text-teal-600" />
+                          Thêm Buổi Học Mới Cho Lớp
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                          <div>
+                            <label className="block text-slate-700 font-bold mb-1">Số Thứ Tự</label>
+                            <input
+                              type="number"
+                              required
+                              min={1}
+                              value={newSessionForm.soThuTu}
+                              onChange={(e) => setNewSessionForm({ ...newSessionForm, soThuTu: +e.target.value })}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-teal-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-700 font-bold mb-1">Ngày Học</label>
+                            <input
+                              type="date"
+                              required
+                              value={newSessionForm.ngayHoc}
+                              onChange={(e) => setNewSessionForm({ ...newSessionForm, ngayHoc: e.target.value })}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-teal-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-700 font-bold mb-1">Giờ Bắt Đầu</label>
+                            <input
+                              type="time"
+                              required
+                              value={newSessionForm.gioBatDau}
+                              onChange={(e) => setNewSessionForm({ ...newSessionForm, gioBatDau: e.target.value })}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-teal-500"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-slate-700 font-bold mb-1">Giờ Kết Thúc</label>
+                            <input
+                              type="time"
+                              required
+                              value={newSessionForm.gioKetThuc}
+                              onChange={(e) => setNewSessionForm({ ...newSessionForm, gioKetThuc: e.target.value })}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-teal-500"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-slate-700 font-bold mb-1">Tiêu Đề / Chủ Đề Buổi Học</label>
+                          <input
+                            type="text"
+                            required
+                            value={newSessionForm.chuDe}
+                            onChange={(e) => setNewSessionForm({ ...newSessionForm, chuDe: e.target.value })}
+                            className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-900 focus:outline-none focus:border-teal-500"
+                            placeholder="VD: Buổi 1: Orientation & Diagnostic Placement Test"
+                          />
+                        </div>
+
+                        <div className="flex justify-end gap-2 pt-2">
+                          <button
+                            type="button"
+                            onClick={() => setShowAddSessionForm(false)}
+                            className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold cursor-pointer"
+                          >
+                            Hủy
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-4 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold cursor-pointer shadow-sm"
+                          >
+                            Lưu Buổi Học
+                          </button>
+                        </div>
+                      </form>
+                    )}
+
+                    {/* Sessions List */}
+                    {loadingSessions ? (
+                      <div className="py-12 flex justify-center items-center">
+                        <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
+                      </div>
+                    ) : classSessions.length > 0 ? (
+                      <div className="border border-slate-200 rounded-xl overflow-hidden max-h-[50vh] overflow-y-auto">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead className="bg-slate-50 text-slate-600 font-bold sticky top-0 border-b border-slate-200 z-10">
+                            <tr>
+                              <th className="py-2.5 px-3 w-16 text-center">Buổi</th>
+                              <th className="py-2.5 px-3 w-28">Ngày Học</th>
+                              <th className="py-2.5 px-3 w-28">Khung Giờ</th>
+                              <th className="py-2.5 px-3">Tiêu Đề / Chủ Đề Buổi Học</th>
+                              <th className="py-2.5 px-3 w-24">Trạng Thái</th>
+                              <th className="py-2.5 px-3 w-20 text-right">Thao Tác</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {classSessions.map((s) => {
+                              const isEditing = editingSessionId === Number(s.id);
+                              const formattedDate = s.ngayHoc ? new Date(s.ngayHoc).toLocaleDateString('vi-VN') : '—';
+                              const startTime = s.gioBatDau ? new Date(s.gioBatDau).toISOString().substring(11, 16) : '18:00';
+                              const endTime = s.gioKetThuc ? new Date(s.gioKetThuc).toISOString().substring(11, 16) : '20:30';
+
+                              return (
+                                <tr key={s.id} className={`hover:bg-slate-50/80 transition ${isEditing ? 'bg-teal-50/30' : ''}`}>
+                                  <td className="py-2.5 px-3 text-center font-bold text-slate-900">
+                                    <span className="w-6 h-6 rounded-full bg-teal-50 text-teal-700 border border-teal-200 inline-flex items-center justify-center font-mono text-[11px]">
+                                      {s.soThuTu}
+                                    </span>
+                                  </td>
+                                  <td className="py-2.5 px-3 font-medium text-slate-800">
+                                    {isEditing ? (
+                                      <input
+                                        type="date"
+                                        required
+                                        value={editSessionForm.ngayHoc}
+                                        onChange={(e) => setEditSessionForm({ ...editSessionForm, ngayHoc: e.target.value })}
+                                        className="w-full bg-white border border-teal-400 rounded-lg px-2 py-1 text-slate-900 text-xs focus:outline-none focus:ring-1 focus:ring-teal-500 font-medium"
+                                      />
+                                    ) : (
+                                      formattedDate
+                                    )}
+                                  </td>
+                                  <td className="py-2.5 px-3 font-mono text-slate-600 text-[11px]">
+                                    {isEditing ? (
+                                      <div className="flex items-center gap-1">
+                                        <input
+                                          type="time"
+                                          required
+                                          value={editSessionForm.gioBatDau}
+                                          onChange={(e) => setEditSessionForm({ ...editSessionForm, gioBatDau: e.target.value })}
+                                          className="w-18 bg-white border border-teal-400 rounded-lg px-1.5 py-1 text-slate-900 text-xs focus:outline-none font-mono"
+                                        />
+                                        <span className="text-slate-400">-</span>
+                                        <input
+                                          type="time"
+                                          required
+                                          value={editSessionForm.gioKetThuc}
+                                          onChange={(e) => setEditSessionForm({ ...editSessionForm, gioKetThuc: e.target.value })}
+                                          className="w-18 bg-white border border-teal-400 rounded-lg px-1.5 py-1 text-slate-900 text-xs focus:outline-none font-mono"
+                                        />
+                                      </div>
+                                    ) : (
+                                      `${startTime} - ${endTime}`
+                                    )}
+                                  </td>
+                                  <td className="py-2.5 px-3">
+                                    {isEditing ? (
+                                      <input
+                                        type="text"
+                                        required
+                                        value={editSessionForm.chuDe}
+                                        onChange={(e) => setEditSessionForm({ ...editSessionForm, chuDe: e.target.value })}
+                                        className="w-full bg-white border border-teal-400 rounded-lg px-2 py-1 text-slate-900 focus:outline-none focus:ring-1 focus:ring-teal-500 text-xs"
+                                        placeholder="Tiêu đề buổi học..."
+                                      />
+                                    ) : (
+                                      <div className="flex items-center justify-between group">
+                                        <span className="font-medium text-slate-800">{s.chuDe || `Buổi ${s.soThuTu}`}</span>
+                                        <button
+                                          onClick={() => handleStartEditSession(s)}
+                                          className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-slate-200 text-slate-500 transition cursor-pointer"
+                                          title="Chỉnh sửa ngày, giờ & tiêu đề buổi này"
+                                        >
+                                          <Edit3 className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    )}
+                                  </td>
+                                  <td className="py-2.5 px-3">
+                                    <span
+                                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                                        s.trangThai === 'DA_KET_THUC'
+                                          ? 'bg-slate-100 text-slate-600'
+                                          : s.trangThai === 'DANG_DIEN_RA'
+                                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                                          : 'bg-teal-50 text-teal-700 border border-teal-200'
+                                      }`}
+                                    >
+                                      {s.trangThai === 'DA_KET_THUC'
+                                        ? 'Đã học'
+                                        : s.trangThai === 'DANG_DIEN_RA'
+                                        ? 'Đang diễn ra'
+                                        : 'Chưa học'}
+                                    </span>
+                                  </td>
+                                  <td className="py-2.5 px-3 text-right">
+                                    {isEditing ? (
+                                      <div className="flex items-center justify-end gap-1">
+                                        <button
+                                          onClick={() => handleSaveSession(Number(s.id))}
+                                          disabled={savingEditSession}
+                                          className="px-2 py-1 rounded-md bg-teal-600 hover:bg-teal-700 text-white font-bold text-[11px] cursor-pointer shadow-xs inline-flex items-center gap-1"
+                                          title="Lưu ngày, giờ và tiêu đề"
+                                        >
+                                          <Check className="w-3.5 h-3.5" />
+                                          <span>{savingEditSession ? '...' : 'Lưu'}</span>
+                                        </button>
+                                        <button
+                                          onClick={() => setEditingSessionId(null)}
+                                          className="p-1 rounded-md bg-slate-200 hover:bg-slate-300 text-slate-700 cursor-pointer"
+                                          title="Hủy"
+                                        >
+                                          <X className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center justify-end gap-1">
+                                        <button
+                                          onClick={() => handleStartEditSession(s)}
+                                          className="p-1 rounded-lg text-slate-400 hover:text-teal-600 hover:bg-teal-50 transition cursor-pointer"
+                                          title="Chỉnh sửa ngày, giờ & tiêu đề"
+                                        >
+                                          <Edit3 className="w-3.5 h-3.5" />
+                                        </button>
+                                        {s.trangThai === 'DA_KET_THUC' ? (
+                                          <button
+                                            disabled
+                                            className="p-1 rounded-lg text-slate-300 cursor-not-allowed opacity-40"
+                                            title="Buổi học đã hoàn thành / có điểm danh, không thể xóa để bảo toàn dữ liệu chuyên cần"
+                                          >
+                                            <Lock className="w-3.5 h-3.5" />
+                                          </button>
+                                        ) : (
+                                          <button
+                                            onClick={() => handleDeleteSession(Number(s.id), s.soThuTu, false)}
+                                            className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
+                                            title={`Xóa Buổi ${s.soThuTu} (các buổi sau sẽ tự động dồn số thứ tự)`}
+                                          >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                          </button>
+                                        )}
+                                      </div>
+                                    )}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="p-8 rounded-xl border-2 border-dashed border-amber-200 bg-amber-50/50 text-center space-y-3">
+                        <AlertCircle className="w-8 h-8 text-amber-500 mx-auto" />
+                        <div>
+                          <h4 className="text-sm font-bold text-amber-900">Lớp học này chưa có buổi học nào</h4>
+                          <p className="text-xs text-amber-700 mt-1 max-w-md mx-auto">
+                            Khi chưa có buổi học, giáo viên phụ trách sẽ không thể điểm danh chuyên cần từng buổi. Hãy bấm nút dưới đây để khởi tạo tự động 12 buổi học giáo trình ngay tức thì!
+                          </p>
+                        </div>
+                        <button
+                          disabled={generatingSessions}
+                          onClick={() => handleGenerateSessions(Number(targetClass?.id), 12)}
+                          className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-md shadow-teal-600/20 transition inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                        >
+                          <Sparkles className="w-4 h-4" />
+                          <span>Khởi Tạo 12 Buổi Học Chuẩn Cho Lớp Này</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Footer Actions */}
+                    <div className="flex justify-end pt-3 border-t border-slate-100">
+                      <button
+                        type="button"
+                        onClick={() => setShowSessionsClassId(null)}
+                        className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition text-xs cursor-pointer"
+                      >
+                        Hoàn Tất & Đóng
+                      </button>
+                    </div>
+                  </>
                 );
               })()}
             </div>

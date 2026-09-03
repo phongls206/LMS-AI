@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { statisticsService } from '../../../services/api';
+import Link from 'next/link';
 import {
   Users,
   GraduationCap,
@@ -11,6 +12,7 @@ import {
   TrendingUp,
   Award,
   Sparkles,
+  ArrowUpRight,
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
@@ -45,68 +47,114 @@ export default function AdminDashboardPage() {
         <div className="space-y-6">
           {/* Key Metric Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
+            {/* 1. Tổng Học Viên -> /admin/students */}
+            <Link
+              href="/admin/students"
+              className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/10 hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer relative overflow-hidden block"
+              title="Xem danh sách quản lý học viên"
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tổng Học Viên</p>
-                  <p className="text-2xl font-black text-slate-900 mt-1">{stats?.tongQuan?.tongHocVien || 0}</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider group-hover:text-teal-600 transition-colors">
+                      Tổng Học Viên
+                    </p>
+                    <ArrowUpRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:text-teal-600 transition-all -translate-x-1 group-hover:translate-x-0" />
+                  </div>
+                  <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 group-hover:text-teal-600 transition-colors">
+                    {stats?.tongQuan?.tongHocVien || 0}
+                  </p>
                 </div>
-                <div className="p-3 rounded-xl bg-teal-50 text-teal-600">
+                <div className="p-3 rounded-xl bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 group-hover:scale-110 group-hover:bg-teal-600 group-hover:text-white transition-all duration-200">
                   <Users className="w-6 h-6" />
                 </div>
               </div>
-              <div className="mt-3 flex items-center text-xs text-teal-700 font-semibold">
-                <TrendingUp className="w-3.5 h-3.5 mr-1 text-teal-600" />
+              <div className="mt-3 flex items-center text-xs text-teal-700 dark:text-teal-400 font-semibold">
+                <TrendingUp className="w-3.5 h-3.5 mr-1 text-teal-600 dark:text-teal-400" />
                 <span>Đang theo học tại trung tâm</span>
               </div>
-            </div>
+            </Link>
 
-            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
+            {/* 2. Lớp Đang Mở -> /admin/classes */}
+            <Link
+              href="/admin/classes"
+              className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-sky-500 hover:shadow-lg hover:shadow-sky-500/10 hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer relative overflow-hidden block"
+              title="Xem danh sách quản lý lớp học"
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Lớp Đang Mở</p>
-                  <p className="text-2xl font-black text-slate-900 mt-1">{stats?.tongQuan?.lopDangMo || 0}</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider group-hover:text-sky-600 transition-colors">
+                      Lớp Đang Mở
+                    </p>
+                    <ArrowUpRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:text-sky-600 transition-all -translate-x-1 group-hover:translate-x-0" />
+                  </div>
+                  <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 group-hover:text-sky-600 transition-colors">
+                    {stats?.tongQuan?.lopDangMo || 0}
+                  </p>
                 </div>
-                <div className="p-3 rounded-xl bg-sky-50 text-sky-600">
+                <div className="p-3 rounded-xl bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 group-hover:scale-110 group-hover:bg-sky-600 group-hover:text-white transition-all duration-200">
                   <GraduationCap className="w-6 h-6" />
                 </div>
               </div>
-              <div className="mt-3 flex items-center text-xs text-sky-700 font-semibold">
+              <div className="mt-3 flex items-center text-xs text-sky-700 dark:text-sky-400 font-semibold">
                 <span>{stats?.tongQuan?.tongKhoaHoc || 0} chương trình đào tạo</span>
               </div>
-            </div>
+            </Link>
 
-            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
+            {/* 3. Đội Ngũ Giáo Viên -> /admin/teachers */}
+            <Link
+              href="/admin/teachers"
+              className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-amber-500 hover:shadow-lg hover:shadow-amber-500/10 hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer relative overflow-hidden block"
+              title="Xem danh sách đội ngũ giáo viên"
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Đội Ngũ Giáo Viên</p>
-                  <p className="text-2xl font-black text-slate-900 mt-1">{stats?.tongQuan?.tongGiaoVien || 0}</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider group-hover:text-amber-600 transition-colors">
+                      Đội Ngũ Giáo Viên
+                    </p>
+                    <ArrowUpRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:text-amber-600 transition-all -translate-x-1 group-hover:translate-x-0" />
+                  </div>
+                  <p className="text-2xl font-black text-slate-900 dark:text-white mt-1 group-hover:text-amber-600 transition-colors">
+                    {stats?.tongQuan?.tongGiaoVien || 0}
+                  </p>
                 </div>
-                <div className="p-3 rounded-xl bg-amber-50 text-amber-600">
+                <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 group-hover:scale-110 group-hover:bg-amber-600 group-hover:text-white transition-all duration-200">
                   <BookOpen className="w-6 h-6" />
                 </div>
               </div>
-              <div className="mt-3 flex items-center text-xs text-amber-700 font-semibold">
+              <div className="mt-3 flex items-center text-xs text-amber-700 dark:text-amber-400 font-semibold">
                 <span>Trình độ đạt chuẩn quốc tế</span>
               </div>
-            </div>
+            </Link>
 
-            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
+            {/* 4. Tổng Doanh Thu -> /admin/fees */}
+            <Link
+              href="/admin/fees"
+              className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-emerald-500 hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer relative overflow-hidden block"
+              title="Xem quản lý học phí & hóa đơn"
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tổng Doanh Thu</p>
-                  <p className="text-2xl font-black text-emerald-700 mt-1">
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider group-hover:text-emerald-600 transition-colors">
+                      Tổng Doanh Thu
+                    </p>
+                    <ArrowUpRight className="w-3 h-3 text-slate-400 opacity-0 group-hover:opacity-100 group-hover:text-emerald-600 transition-all -translate-x-1 group-hover:translate-x-0" />
+                  </div>
+                  <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">
                     {(stats?.tongQuan?.tongDoanhThu || 0).toLocaleString()} đ
                   </p>
                 </div>
-                <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600">
+                <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200">
                   <DollarSign className="w-6 h-6" />
                 </div>
               </div>
-              <div className="mt-3 flex items-center text-xs text-emerald-700 font-semibold">
+              <div className="mt-3 flex items-center text-xs text-emerald-700 dark:text-emerald-400 font-semibold">
                 <span>Thanh toán thực tế đã thu</span>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Sĩ số các lớp & Tỷ lệ đạt */}

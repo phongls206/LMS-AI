@@ -130,6 +130,14 @@ export const attendancesService = {
   getClassAttendanceMatrix: async (classId: number) => (await api.get(`/classes/${classId}/attendance-matrix`)).data,
   submitAttendance: async (sessionId: number, danhSach: any[]) =>
     (await api.post(`/sessions/${sessionId}/attendance`, { danhSach })).data,
+  generateSessions: async (classId: number, data?: { soBuoiHoc?: number; chuDeMoi?: string }) =>
+    (await api.post(`/classes/${classId}/generate-sessions`, data || {})).data,
+  createSession: async (classId: number, data: any) =>
+    (await api.post(`/classes/${classId}/sessions`, data)).data,
+  updateSession: async (sessionId: number, data: any) =>
+    (await api.put(`/sessions/${sessionId}`, data)).data,
+  deleteSession: async (sessionId: number) =>
+    (await api.delete(`/sessions/${sessionId}`)).data,
 };
 
 export const gradesService = {

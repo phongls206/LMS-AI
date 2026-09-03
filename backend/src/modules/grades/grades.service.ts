@@ -46,6 +46,14 @@ export class GradesService {
     if (classRecord.trangThai === TrangThaiLopHoc.DA_HUY) {
       throw new BadRequestException('Không thể nhập điểm cho lớp học đã bị hủy.');
     }
+    if (
+      classRecord.trangThai === TrangThaiLopHoc.DANG_MO_DANG_KY ||
+      classRecord.trangThai === TrangThaiLopHoc.SAP_MO
+    ) {
+      throw new BadRequestException(
+        'Lớp học đang trong giai đoạn mở tuyển sinh, chưa chính thức vào học. Không thể nhập bảng điểm!',
+      );
+    }
 
     // Nếu người thực hiện là Giáo viên, bắt buộc phải được phân công phụ trách lớp học này
     if (user && user.vaiTro === VaiTro.GIAO_VIEN) {
@@ -160,21 +168,32 @@ export class GradesService {
     const enrollments = await this.prisma.dangKyHoc.findMany({
       where: {
         hocVienId: student.id,
-        trangThai: { in: [TrangThaiDangKy.CHO_THANH_TOAN, TrangThaiDangKy.DA_XAC_NHAN] },
+        trangThai: { in: [TrangThaiDangKy.CHO_THANH_TOAN, TrangThaiDangKy.DA_XAC_NHAN, TrangThaiDangKy.HOAN_THANH] },
       },
       include: {
         lopHoc: {
           include: {
-            khoaHoc: { select: { tenKhoaHoc: true } },
+            khoaHoc: { select: { tenKhoaHoc: true, maKhoaHoc: true, trinhDoYeuCau: true, thoiLuongGio: true } },
             lichHoc: true,
-            phanCong: {
+            buoiHoc: {
+              orderBy: { soThuTu: 'asc' },
               include: {
-                giaoVien: { select: { hoTen: true } },
+                diemDanh: {
+                  where: { hocVienId: student.id },
+                  select: { trangThai: true, thoiGianDiemDanh: true, ghiChu: true },
+                },
+              },
+            },
+            phanCong: {
+              where: { trangThai: TrangThaiPhanCong.DANG_PHU_TRACH },
+              include: {
+                giaoVien: { select: { hoTen: true, chuyenMon: true } },
               },
             },
           },
         },
       },
+      orderBy: { id: 'desc' },
     });
 
     return this.serializeBigInt(enrollments);

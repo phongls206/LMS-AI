@@ -21,6 +21,8 @@ import {
   Percent,
   X,
   AlertTriangle,
+  Sparkles,
+  AlertCircle,
 } from 'lucide-react';
 
 export default function TeacherAttendancePage() {
@@ -33,6 +35,7 @@ export default function TeacherAttendancePage() {
   const [notes, setNotes] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [generatingSessions, setGeneratingSessions] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [searchStudent, setSearchStudent] = useState('');
 
@@ -183,6 +186,10 @@ export default function TeacherAttendancePage() {
   // Lưu điểm danh buổi học
   const handleSaveAttendance = async () => {
     if (!selectedSessionId || !classDetail) return;
+    if (classDetail.trangThai === 'DANG_MO_DANG_KY' || classDetail.trangThai === 'SAP_MO') {
+      alert('Lớp học đang trong giai đoạn mở tuyển sinh, chưa vào học chính thức. Không thể điểm danh!');
+      return;
+    }
     setSaving(true);
     setMessage(null);
 
@@ -213,6 +220,27 @@ export default function TeacherAttendancePage() {
       setSaving(false);
     }
   };
+
+  const handleAutoGenerateSessions = async () => {
+    if (!selectedClassId) return;
+    setGeneratingSessions(true);
+    try {
+      await attendancesService.generateSessions(selectedClassId, { soBuoiHoc: 12 });
+      setMessage('Đã khởi tạo thành công 12 buổi học giáo trình cho lớp!');
+      const classSessions = await attendancesService.getClassSessions(selectedClassId);
+      setSessions(classSessions || []);
+      if (classSessions && classSessions.length > 0) {
+        setSelectedSessionId(classSessions[0].id);
+      }
+      setTimeout(() => setMessage(null), 4000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi khi khởi tạo buổi học.');
+    } finally {
+      setGeneratingSessions(false);
+    }
+  };
+
+  const isClassRecruiting = classDetail?.trangThai === 'DANG_MO_DANG_KY' || classDetail?.trangThai === 'SAP_MO';
 
   // Thống kê nhanh buổi học đang chọn
   const totalStudents = classDetail?.dangKyHoc?.length || 0;
@@ -285,20 +313,36 @@ export default function TeacherAttendancePage() {
               )}
             </div>
 
-            {activeTab === 'take_attendance' && sessions.length > 0 && (
+            {activeTab === 'take_attendance' && sessions.length > 0 ? (
               <div className="flex items-center space-x-2">
                 <label className="text-xs font-bold text-slate-700 whitespace-nowrap">Buổi Điểm Danh:</label>
                 <select
                   value={selectedSessionId || ''}
                   onChange={(e) => setSelectedSessionId(+e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-bold max-w-[260px] truncate cursor-pointer"
+                  className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-bold max-w-[340px] truncate cursor-pointer"
                 >
                   {sessions.map((s) => (
                     <option key={s.id} value={s.id}>
-                      Buổi {s.soThuTu} — {s.chuDe ? s.chuDe.substring(0, 25) + '...' : new Date(s.ngayHoc).toLocaleDateString('vi-VN')} ({s.trangThai === 'DA_KET_THUC' ? 'Đã điểm danh' : 'Chưa điểm danh'})
+                      Buổi {s.soThuTu}: {s.chuDe || 'Bài học'} — {s.ngayHoc ? new Date(s.ngayHoc).toLocaleDateString('vi-VN') : ''} ({s.trangThai === 'DA_KET_THUC' ? '✓ Đã điểm danh' : 'Chưa điểm danh'})
                     </option>
                   ))}
                 </select>
+              </div>
+            ) : activeTab === 'take_attendance' && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-2 rounded-xl border border-amber-200 flex items-center gap-1.5">
+                  <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                  Lớp chưa có buổi học
+                </span>
+                <button
+                  type="button"
+                  onClick={handleAutoGenerateSessions}
+                  disabled={generatingSessions}
+                  className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-teal-600/20 cursor-pointer disabled:opacity-50"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>{generatingSessions ? 'Đang tạo...' : '⚡ Khởi Tạo 12 Buổi Cho Lớp'}</span>
+                </button>
               </div>
             )}
           </div>
@@ -319,16 +363,33 @@ export default function TeacherAttendancePage() {
 
                 <button
                   onClick={handleSaveAttendance}
-                  disabled={saving || !selectedSessionId || !classDetail?.dangKyHoc?.length}
+                  disabled={saving || !selectedSessionId || !classDetail?.dangKyHoc?.length || isClassRecruiting}
                   className="flex items-center space-x-2 px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer"
+                  title={isClassRecruiting ? 'Lớp đang mở tuyển sinh, chưa bắt đầu học. Không thể điểm danh!' : 'Lưu kết quả điểm danh'}
                 >
                   <Save className="w-4 h-4" />
-                  <span>{saving ? 'Đang Lưu...' : 'Lưu Điểm Danh'}</span>
+                  <span>{saving ? 'Đang Lưu...' : isClassRecruiting ? 'Chưa Khai Giảng' : 'Lưu Điểm Danh'}</span>
                 </button>
               </>
             )}
           </div>
         </div>
+
+        {/* Cảnh báo lớp đang tuyển sinh */}
+        {isClassRecruiting && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-start gap-3 shadow-xs animate-fadeIn">
+            <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="text-xs space-y-1">
+              <div className="font-bold text-sm text-amber-950">
+                Lớp học đang trong giai đoạn Mở Tuyển Sinh (Chưa Khai Giảng Chính Thức)
+              </div>
+              <p className="text-amber-800 leading-relaxed">
+                Lớp <strong className="font-mono">[{classDetail?.maLopHoc}] {classDetail?.tenLopHoc}</strong> hiện đang tiếp nhận ghi danh (Sĩ số hiện tại: <strong>{classDetail?.siSoHienTai || 0} / {classDetail?.siSoToiDa || 25} HV</strong>).
+                Để bảo toàn dữ liệu tính điểm và chuyên cần, chức năng điểm danh sẽ được kích hoạt khi lớp học chuyển sang trạng thái <strong>"Đang Học"</strong> (sau khi chốt sĩ số ổn định).
+              </p>
+            </div>
+          </div>
+        )}
 
         {message && (
           <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center space-x-2 animate-fadeIn shadow-sm">
@@ -453,6 +514,29 @@ export default function TeacherAttendancePage() {
                 </div>
               </div>
             </div>
+
+            {sessions.length === 0 && (
+              <div className="p-8 text-center bg-amber-50/70 border-b border-amber-200 space-y-3">
+                <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
+                <div>
+                  <h4 className="text-sm font-bold text-amber-900">
+                    Lớp [{classDetail?.maLopHoc}] {classDetail?.tenLopHoc} chưa có danh sách buổi học
+                  </h4>
+                  <p className="text-xs text-amber-700 mt-1 max-w-lg mx-auto leading-relaxed">
+                    Để điểm danh chuyên cần từng buổi (Buổi 1, Buổi 2...), hệ thống cần danh mục buổi học giáo trình. Hãy bấm nút dưới đây để khởi tạo tự động 12 buổi học chuẩn theo lịch của lớp ngay lập tức!
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAutoGenerateSessions}
+                  disabled={generatingSessions}
+                  className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition inline-flex items-center gap-2 shadow-md shadow-teal-600/20 cursor-pointer disabled:opacity-50"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>{generatingSessions ? 'Đang khởi tạo...' : 'Khởi Tạo 12 Buổi Học Chuẩn Cho Lớp Này'}</span>
+                </button>
+              </div>
+            )}
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs text-slate-700">

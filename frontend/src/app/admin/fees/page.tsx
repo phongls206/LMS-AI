@@ -30,9 +30,11 @@ export default function AdminFeesPage() {
       ]);
       setInvoices(invList);
       setStudents(stuRes.data);
-      // Lọc các lớp có thể ghi danh: Chỉ lớp đang mở tuyển sinh hoặc sắp mở (loại bỏ hoàn toàn lớp ĐÃ HỦY, ĐÃ KẾT THÚC, ĐANG HỌC)
+      // Lọc các lớp có thể ghi danh: Chỉ lớp đang mở tuyển sinh hoặc sắp mở và Khóa học đang hoạt động
       const enrollableClasses = (classList || []).filter(
-        (c: LopHoc) => c.trangThai === 'DANG_MO_DANG_KY' || c.trangThai === 'SAP_MO'
+        (c: LopHoc) =>
+          (c.trangThai === 'DANG_MO_DANG_KY' || c.trangThai === 'SAP_MO') &&
+          c.khoaHoc?.trangThai !== 'NGUNG_HOAT_DONG'
       );
       setClasses(enrollableClasses);
       if (stuRes.data.length > 0) setSelectedStudentId(stuRes.data[0].id);

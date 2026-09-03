@@ -63,6 +63,12 @@ export interface LopHoc {
   lichHoc?: LichHoc[];
   phanCong?: any[];
   dangKyHoc?: any[];
+  buoiHoc?: any[];
+  _count?: {
+    buoiHoc?: number;
+    dangKyHoc?: number;
+    lopHoc?: number;
+  };
 }
 
 export interface HocVien {

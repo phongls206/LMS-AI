@@ -20,7 +20,9 @@ export default function StudentEnrollPage() {
         authService.getMe(),
       ]);
       const openClasses = (list || []).filter(
-        (c: LopHoc) => c.trangThai === 'DANG_MO_DANG_KY'
+        (c: LopHoc) =>
+          c.trangThai === 'DANG_MO_DANG_KY' &&
+          c.khoaHoc?.trangThai !== 'NGUNG_HOAT_DONG'
       );
       setClasses(openClasses);
       setUser(me);
@@ -111,6 +113,7 @@ export default function StudentEnrollPage() {
               classes.map((c) => {
               const isEnrolled = c.dangKyHoc?.some((dk: any) => dk.hocVienId === user?.hoSoHocVien?.id);
               const isFull = c.siSoHienTai >= c.siSoToiDa;
+              const isCourseSuspended = c.khoaHoc?.trangThai === 'NGUNG_HOAT_DONG';
 
               return (
                 <div key={c.id} className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between hover:border-teal-300 hover:shadow-md transition">
@@ -152,9 +155,11 @@ export default function StudentEnrollPage() {
                   <button
                     type="button"
                     onClick={() => handleEnroll(c.id)}
-                    disabled={isFull || isEnrolled || enrollingId === c.id}
+                    disabled={isFull || isEnrolled || isCourseSuspended || enrollingId === c.id}
                     className={`w-full py-2.5 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer ${
-                      isEnrolled
+                      isCourseSuspended
+                        ? 'bg-rose-50 text-rose-600 border border-rose-200 cursor-not-allowed'
+                        : isEnrolled
                         ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
                         : isFull
                         ? 'bg-rose-50 text-rose-600 border border-rose-200 cursor-not-allowed'
@@ -162,7 +167,9 @@ export default function StudentEnrollPage() {
                     }`}
                   >
                     <span>
-                      {isEnrolled
+                      {isCourseSuspended
+                        ? 'Khóa Học Tạm Ngừng Tuyển Sinh'
+                        : isEnrolled
                         ? 'Đã Đăng Ký Lớp Này'
                         : isFull
                         ? 'Lớp Đã Đầy Sĩ Số'
@@ -170,7 +177,7 @@ export default function StudentEnrollPage() {
                         ? 'Đang Đăng Ký...'
                         : 'Xác Nhận Đăng Ký Lớp'}
                     </span>
-                    {!isEnrolled && !isFull && <ArrowRight className="w-3.5 h-3.5" />}
+                    {!isEnrolled && !isFull && !isCourseSuspended && <ArrowRight className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               );

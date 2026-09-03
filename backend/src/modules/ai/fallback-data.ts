@@ -304,7 +304,7 @@ export function getFallbackExercises(topic: string, cefr: string, count: number 
     .filter(([key]) => key !== bankKey)
     .flatMap(([, qs]) => qs);
 
-  const combined = [...primaryList, ...allOtherQuestions];
+  const combined = [...primaryList, ...allOtherQuestions].sort(() => Math.random() - 0.5);
   const targetCount = [5, 10, 15].includes(count) ? count : 5;
   const selectedQuestions = combined.slice(0, targetCount);
 

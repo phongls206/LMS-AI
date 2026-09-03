@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateClassDto, CreateScheduleDto, AssignTeacherDto } from './dto/classes.dto';
-import { TrangThaiLopHoc, VaiTroPhanCong } from '@prisma/client';
+import { TrangThaiLopHoc, TrangThaiKhoaHoc, VaiTroPhanCong, TrangThaiPhanCong } from '@prisma/client';
 
 @Injectable()
 export class ClassesService {
@@ -37,6 +37,8 @@ export class ClassesService {
       include: {
         khoaHoc: { select: { tenKhoaHoc: true, hocPhi: true, trinhDoYeuCau: true } },
         lichHoc: true,
+        buoiHoc: { select: { id: true, soThuTu: true, ngayHoc: true, chuDe: true, trangThai: true } },
+        _count: { select: { buoiHoc: true, dangKyHoc: true } },
         phanCong: {
           where: { trangThai: 'DANG_PHU_TRACH' },
           orderBy: { id: 'desc' },
@@ -60,6 +62,7 @@ export class ClassesService {
       include: {
         khoaHoc: true,
         lichHoc: true,
+        buoiHoc: { orderBy: { soThuTu: 'asc' } },
         phanCong: {
           where: { trangThai: 'DANG_PHU_TRACH' },
           orderBy: { id: 'desc' },
@@ -89,6 +92,12 @@ export class ClassesService {
     });
     if (!course) throw new NotFoundException('Khóa học không tồn tại.');
 
+    if (course.trangThai === TrangThaiKhoaHoc.NGUNG_HOAT_DONG) {
+      throw new BadRequestException(
+        `Khóa học "${course.tenKhoaHoc}" hiện đang tạm ngừng tuyển sinh. Không thể mở lớp học mới cho khóa này.`
+      );
+    }
+
     // Kiểm tra mã lớp duy nhất
     const existing = await this.prisma.lopHoc.findUnique({
       where: { maLopHoc: dto.maLopHoc },
@@ -112,6 +121,40 @@ export class ClassesService {
         trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY,
       },
     });
+
+    // Tự động sinh danh sách buổi học giáo trình cho lớp học mới
+    const soBuoi = dto.soBuoiHoc && dto.soBuoiHoc > 0 ? dto.soBuoiHoc : 12;
+    const defaultSyllabus = [
+      'Orientation, Placement Test & Study Guide',
+      'Unit 1: Pronunciation & Core Vocabulary',
+      'Unit 2: Listening Strategies & Audio Comprehension',
+      'Unit 3: Reading Techniques (Skimming & Scanning)',
+      'Unit 4: Grammar Mastery & Sentence Building',
+      'Mid-term Assessment & Instructor Feedback (Kiểm tra giữa kỳ)',
+      'Unit 5: Interactive Speaking & Conversational Flow',
+      'Unit 6: Idioms, Collocations & Advanced Lexicon',
+      'Unit 7: Practical Writing & Paragraph Coherence',
+      'Unit 8: Presentation Skills & Critical Debating',
+      'Comprehensive Course Review & Final Exam Prep',
+      'Final Proficiency Test & Performance Evaluation (Kiểm tra cuối kỳ)',
+    ];
+
+    let sessDate = new Date(dto.ngayBatDau);
+    if (isNaN(sessDate.getTime())) sessDate = new Date();
+    for (let i = 0; i < soBuoi; i++) {
+      const topic = defaultSyllabus[i % defaultSyllabus.length] || `Kỹ năng tiếng Anh thực hành`;
+      await this.prisma.buoiHoc.create({
+        data: {
+          lopHocId: newClass.id,
+          soThuTu: i + 1,
+          ngayHoc: new Date(sessDate),
+          gioBatDau: new Date('1970-01-01T18:00:00'),
+          gioKetThuc: new Date('1970-01-01T20:30:00'),
+          chuDe: `Buổi ${i + 1}: ${topic}`,
+        },
+      });
+      sessDate.setDate(sessDate.getDate() + (i % 2 === 0 ? 2 : 3));
+    }
 
     return this.serializeBigInt(newClass);
   }
@@ -273,16 +316,25 @@ export class ClassesService {
     const assignments = await this.prisma.phanCongGiaoVien.findMany({
       where: {
         giaoVienId: teacher.id,
+        trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
         lopHoc: { trangThai: { not: TrangThaiLopHoc.DA_HUY } },
       },
       include: {
         lopHoc: {
           include: {
-            khoaHoc: { select: { tenKhoaHoc: true } },
+            khoaHoc: { select: { tenKhoaHoc: true, maKhoaHoc: true, trinhDoYeuCau: true } },
             lichHoc: true,
+            buoiHoc: {
+              orderBy: { soThuTu: 'asc' },
+              include: {
+                _count: { select: { diemDanh: true } },
+              },
+            },
+            _count: { select: { dangKyHoc: true } },
           },
         },
       },
+      orderBy: { id: 'desc' },
     });
 
     return this.serializeBigInt(assignments);

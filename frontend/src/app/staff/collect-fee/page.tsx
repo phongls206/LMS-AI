@@ -123,12 +123,13 @@ export default function StaffCollectFeePage() {
       ]);
       setStudents(stuRes.data || []);
       setInvoices(invoiceList || []);
-      // Lọc các lớp có thể ghi danh: Các lớp chưa bị hủy, chưa kết thúc và còn chỗ trống (siSoHienTai < siSoToiDa)
+      // Lọc các lớp có thể ghi danh: Các lớp chưa bị hủy, chưa kết thúc, còn chỗ trống và Khóa học không tạm ngừng tuyển sinh
       const enrollableClasses = (classList || []).filter(
         (c: LopHoc) =>
           c.trangThai !== 'DA_HUY' &&
           c.trangThai !== 'DA_KET_THUC' &&
-          Number(c.siSoHienTai) < Number(c.siSoToiDa)
+          Number(c.siSoHienTai) < Number(c.siSoToiDa) &&
+          c.khoaHoc?.trangThai !== 'NGUNG_HOAT_DONG'
       );
       setClasses(enrollableClasses);
       if (stuRes.data && stuRes.data.length > 0) setSelectedStudentId(stuRes.data[0].id);
