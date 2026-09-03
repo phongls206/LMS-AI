@@ -19,7 +19,10 @@ export default function StudentEnrollPage() {
         classesService.getAll(undefined, 'DANG_MO_DANG_KY'),
         authService.getMe(),
       ]);
-      setClasses(list);
+      const openClasses = (list || []).filter(
+        (c: LopHoc) => c.trangThai === 'DANG_MO_DANG_KY'
+      );
+      setClasses(openClasses);
       setUser(me);
     } catch (err) {
       console.error(err);
@@ -96,7 +99,16 @@ export default function StudentEnrollPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {classes.map((c) => {
+            {classes.length === 0 ? (
+              <div className="col-span-full py-16 text-center bg-white rounded-2xl border border-slate-200/90 p-8 shadow-sm">
+                <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                <h4 className="text-base font-bold text-slate-800 mb-1">Hiện Không Có Lớp Học Mở Tuyển Sinh</h4>
+                <p className="text-xs text-slate-500 max-w-md mx-auto">
+                  Các lớp học đã kết thúc, đã hủy hoặc đang trong giai đoạn chuẩn bị sẽ không hiển thị tại đây. Vui lòng quay lại sau hoặc liên hệ bộ phận Tư Vấn Viên để được hỗ trợ mở lớp.
+                </p>
+              </div>
+            ) : (
+              classes.map((c) => {
               const isEnrolled = c.dangKyHoc?.some((dk: any) => dk.hocVienId === user?.hoSoHocVien?.id);
               const isFull = c.siSoHienTai >= c.siSoToiDa;
 
@@ -162,7 +174,8 @@ export default function StudentEnrollPage() {
                   </button>
                 </div>
               );
-            })}
+            })
+          )}
           </div>
         )}
       </div>

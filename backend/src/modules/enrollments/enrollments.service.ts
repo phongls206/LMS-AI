@@ -50,8 +50,16 @@ export class EnrollmentsService {
 
     if (!classRecord) throw new NotFoundException('Lớp học không tồn tại.');
 
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_HUY) {
+      throw new BadRequestException('Lớp học này đã bị hủy, không thể tiếp nhận đăng ký mới.');
+    }
+
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_KET_THUC) {
+      throw new BadRequestException('Lớp học này đã kết thúc khóa học, không thể đăng ký mới.');
+    }
+
     if (classRecord.trangThai !== TrangThaiLopHoc.DANG_MO_DANG_KY) {
-      throw new BadRequestException('Lớp học hiện không trong thời gian mở đăng ký.');
+      throw new BadRequestException(`Lớp học hiện ở trạng thái "${classRecord.trangThai}", chưa mở tuyển sinh.`);
     }
 
     if (classRecord.siSoHienTai >= classRecord.siSoToiDa) {

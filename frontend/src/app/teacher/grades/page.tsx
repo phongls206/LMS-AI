@@ -37,9 +37,10 @@ export default function TeacherGradesPage() {
           assignedClasses = all || [];
         }
 
-        setClasses(assignedClasses);
-        if (assignedClasses.length > 0) {
-          setSelectedClassId(assignedClasses[0].id);
+        const validClasses = (assignedClasses || []).filter((c: any) => c.trangThai !== 'DA_HUY');
+        setClasses(validClasses);
+        if (validClasses.length > 0) {
+          setSelectedClassId(validClasses[0].id);
         }
       } catch (err) {
         console.error(err);

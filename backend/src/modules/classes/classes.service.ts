@@ -120,7 +120,13 @@ export class ClassesService {
    * UC004 — Thêm lịch học tuần & Kiểm tra CHỐNG TRÙNG PHÒNG
    */
   async addSchedule(classId: number, dto: CreateScheduleDto) {
-    await this.findById(classId);
+    const classRecord = await this.findById(classId);
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_HUY) {
+      throw new BadRequestException('Không thể thêm lịch học cho lớp học đã bị hủy.');
+    }
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_KET_THUC) {
+      throw new BadRequestException('Không thể thêm lịch học cho lớp học đã kết thúc.');
+    }
 
     const gioBatDau = this.parseTimeString(dto.gioBatDau);
     const gioKetThuc = this.parseTimeString(dto.gioKetThuc);
@@ -166,6 +172,12 @@ export class ClassesService {
    */
   async assignTeacher(classId: number, dto: AssignTeacherDto) {
     const classRecord = await this.findById(classId);
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_HUY) {
+      throw new BadRequestException('Không thể phân công giáo viên cho lớp học đã bị hủy.');
+    }
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_KET_THUC) {
+      throw new BadRequestException('Không thể phân công giáo viên cho lớp học đã kết thúc.');
+    }
 
     const teacher = await this.prisma.hoSoGiaoVien.findUnique({
       where: { id: BigInt(dto.giaoVienId) },
@@ -259,7 +271,10 @@ export class ClassesService {
     if (!teacher) throw new NotFoundException('Hồ sơ giáo viên không tồn tại.');
 
     const assignments = await this.prisma.phanCongGiaoVien.findMany({
-      where: { giaoVienId: teacher.id },
+      where: {
+        giaoVienId: teacher.id,
+        lopHoc: { trangThai: { not: TrangThaiLopHoc.DA_HUY } },
+      },
       include: {
         lopHoc: {
           include: {

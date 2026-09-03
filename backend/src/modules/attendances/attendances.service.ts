@@ -2,10 +2,11 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SubmitAttendanceDto } from './dto/attendances.dto';
-import { TrangThaiBuoiHoc, TrangThaiPhanCong } from '@prisma/client';
+import { TrangThaiBuoiHoc, TrangThaiPhanCong, TrangThaiLopHoc } from '@prisma/client';
 
 @Injectable()
 export class AttendancesService {
@@ -84,8 +85,12 @@ export class AttendancesService {
   async submitAttendance(sessionId: number, dto: SubmitAttendanceDto, teacherUserId: number) {
     const session = await this.prisma.buoiHoc.findUnique({
       where: { id: BigInt(sessionId) },
+      include: { lopHoc: true },
     });
     if (!session) throw new NotFoundException('Buổi học không tồn tại.');
+    if (session.lopHoc?.trangThai === TrangThaiLopHoc.DA_HUY) {
+      throw new BadRequestException('Không thể điểm danh cho lớp học đã bị hủy.');
+    }
 
     const teacher = await this.prisma.hoSoGiaoVien.findUnique({
       where: { nguoiDungId: BigInt(teacherUserId) },

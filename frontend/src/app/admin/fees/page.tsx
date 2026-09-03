@@ -30,12 +30,14 @@ export default function AdminFeesPage() {
       ]);
       setInvoices(invList);
       setStudents(stuRes.data);
-      const activeClasses = (classList || []).filter(
-        (c: LopHoc) => c.trangThai !== 'DA_HUY' && c.trangThai !== 'DA_KET_THUC'
+      // Lọc các lớp có thể ghi danh: Chỉ lớp đang mở tuyển sinh hoặc sắp mở (loại bỏ hoàn toàn lớp ĐÃ HỦY, ĐÃ KẾT THÚC, ĐANG HỌC)
+      const enrollableClasses = (classList || []).filter(
+        (c: LopHoc) => c.trangThai === 'DANG_MO_DANG_KY' || c.trangThai === 'SAP_MO'
       );
-      setClasses(activeClasses.length > 0 ? activeClasses : classList);
+      setClasses(enrollableClasses);
       if (stuRes.data.length > 0) setSelectedStudentId(stuRes.data[0].id);
-      if (classList.length > 0) setSelectedClassId(classList[0].id);
+      if (enrollableClasses.length > 0) setSelectedClassId(enrollableClasses[0].id);
+      else setSelectedClassId(0);
     } catch (err) {
       console.error(err);
     } finally {
@@ -147,20 +149,25 @@ export default function AdminFeesPage() {
               <select
                 value={selectedClassId}
                 onChange={(e) => setSelectedClassId(+e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-semibold focus:outline-none focus:border-teal-500"
+                disabled={classes.length === 0}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-semibold focus:outline-none focus:border-teal-500 disabled:opacity-60 cursor-pointer"
               >
-                {classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    [{c.maLopHoc}] {c.tenLopHoc} — {formatTrangThaiLopHoc(c.trangThai)} ({c.siSoHienTai}/{c.siSoToiDa} HV)
-                  </option>
-                ))}
+                {classes.length === 0 ? (
+                  <option value={0}>Không có lớp nào đang mở tuyển sinh</option>
+                ) : (
+                  classes.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      [{c.maLopHoc}] {c.tenLopHoc} — {formatTrangThaiLopHoc(c.trangThai)} ({c.siSoHienTai}/{c.siSoToiDa} HV)
+                    </option>
+                  ))
+                )}
               </select>
             </div>
 
             <div className="flex items-end">
               <button
                 type="submit"
-                disabled={submittingEnroll}
+                disabled={submittingEnroll || classes.length === 0 || !selectedClassId}
                 className="w-full py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white font-bold rounded-xl shadow-md shadow-teal-600/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
               >
                 <Receipt className="w-4 h-4" />

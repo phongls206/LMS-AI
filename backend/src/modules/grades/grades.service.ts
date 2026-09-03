@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SubmitGradesDto } from './dto/grades.dto';
@@ -42,6 +43,9 @@ export class GradesService {
       where: { id: BigInt(classId) },
     });
     if (!classRecord) throw new NotFoundException('Lớp học không tồn tại.');
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_HUY) {
+      throw new BadRequestException('Không thể nhập điểm cho lớp học đã bị hủy.');
+    }
 
     // Nếu người thực hiện là Giáo viên, bắt buộc phải được phân công phụ trách lớp học này
     if (user && user.vaiTro === VaiTro.GIAO_VIEN) {
