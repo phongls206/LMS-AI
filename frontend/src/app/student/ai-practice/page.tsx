@@ -155,14 +155,19 @@ export default function StudentAiPracticePage() {
   const getQuestionTypeInfo = (q: any) => {
     const isMulti = q.loaiCauHoi === 'MULTIPLE' || Array.isArray(q.dapAnDung);
     const isTrueFalse =
-      q.loaiCauHoi === 'TRUE_FALSE' ||
-      (q.luaChon &&
-        Object.keys(q.luaChon).length === 2 &&
-        Object.values(q.luaChon).some(
-          (v: any) =>
-            typeof v === 'string' &&
-            (v.toLowerCase().includes('true') || v.toLowerCase().includes('đúng')),
-        ));
+      !isMulti &&
+      (q.loaiCauHoi === 'TRUE_FALSE' ||
+        (typeof q.noiDung === 'string' &&
+          (q.noiDung.includes('(True or False)') ||
+            q.noiDung.includes('True/False') ||
+            q.noiDung.includes('(Đúng hay Sai)'))) ||
+        (q.luaChon &&
+          Object.keys(q.luaChon).length === 2 &&
+          Object.values(q.luaChon).some(
+            (v: any) =>
+              typeof v === 'string' &&
+              (v.toLowerCase().includes('true') || v.toLowerCase().includes('đúng')),
+          )));
 
     if (isMulti) {
       return {
@@ -191,6 +196,31 @@ export default function StudentAiPracticePage() {
     };
   };
 
+  const getRenderOptions = (q: any, isTrueFalse: boolean): [string, any][] => {
+    if (isTrueFalse) {
+      // Dạng Đúng / Sai BẮT BUỘC chỉ hiển thị 2 lựa chọn A (True) và B (False)
+      const trueVal =
+        q.luaChon?.['A'] || q.luaChon?.['True'] || q.luaChon?.['TRUE'] || 'True (Đúng)';
+      const falseVal =
+        q.luaChon?.['B'] || q.luaChon?.['False'] || q.luaChon?.['FALSE'] || 'False (Sai)';
+      return [
+        [
+          'A',
+          typeof trueVal === 'string' && trueVal.toLowerCase().includes('true')
+            ? trueVal
+            : 'True (Đúng)',
+        ],
+        [
+          'B',
+          typeof falseVal === 'string' && falseVal.toLowerCase().includes('false')
+            ? falseVal
+            : 'False (Sai)',
+        ],
+      ];
+    }
+    return q.luaChon ? (Object.entries(q.luaChon) as [string, any][]) : [];
+  };
+
   const handleSelectOption = (qIdx: number, optionKey: string, isMultiple: boolean) => {
     if (submitted) return;
     let newAnswers: Record<number, string | string[]>;
@@ -215,6 +245,23 @@ export default function StudentAiPracticePage() {
 
   const isQuestionCorrect = (q: any, userAns: any) => {
     if (!userAns) return false;
+    const typeInfo = getQuestionTypeInfo(q);
+
+    if (typeInfo.isTrueFalse) {
+      let correctKey = typeof q.dapAnDung === 'string' ? q.dapAnDung.trim().toUpperCase() : 'A';
+      if (correctKey.includes('TRUE')) correctKey = 'A';
+      else if (correctKey.includes('FALSE')) correctKey = 'B';
+      else if (correctKey !== 'A' && correctKey !== 'B') correctKey = 'A';
+
+      const userKey =
+        typeof userAns === 'string'
+          ? userAns.trim().toUpperCase()
+          : Array.isArray(userAns)
+          ? userAns[0]
+          : '';
+      return userKey === correctKey;
+    }
+
     const correctAns = q.dapAnDung;
 
     if (Array.isArray(correctAns)) {
@@ -238,9 +285,14 @@ export default function StudentAiPracticePage() {
     return userAns === correctAns;
   };
 
-  const formatCorrectAnswer = (correctAns: any) => {
-    if (Array.isArray(correctAns)) return correctAns.join(', ');
-    return String(correctAns);
+  const formatCorrectAnswer = (q: any) => {
+    const typeInfo = getQuestionTypeInfo(q);
+    if (typeInfo.isTrueFalse) {
+      const isA = q.dapAnDung === 'A' || String(q.dapAnDung).toUpperCase().includes('TRUE');
+      return isA ? 'A — True (Đúng)' : 'B — False (Sai)';
+    }
+    if (Array.isArray(q.dapAnDung)) return q.dapAnDung.join(', ');
+    return String(q.dapAnDung);
   };
 
   const calculateScore = () => {
@@ -493,13 +545,19 @@ export default function StudentAiPracticePage() {
                         typeInfo.isTrueFalse ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'
                       }`}
                     >
-                      {q.luaChon &&
-                        Object.entries(q.luaChon).map(([optKey, optVal]: [string, any]) => {
+                      {getRenderOptions(q, typeInfo.isTrueFalse).map(([optKey, optVal]: [string, any]) => {
                           const isChosen = Array.isArray(selected)
                             ? selected.includes(optKey)
                             : selected === optKey;
 
-                          const isAnswerKey = Array.isArray(q.dapAnDung)
+                          const isAnswerKey = typeInfo.isTrueFalse
+                            ? (optKey === 'A' &&
+                                (q.dapAnDung === 'A' ||
+                                  String(q.dapAnDung).toUpperCase().includes('TRUE'))) ||
+                              (optKey === 'B' &&
+                                (q.dapAnDung === 'B' ||
+                                  String(q.dapAnDung).toUpperCase().includes('FALSE')))
+                            : Array.isArray(q.dapAnDung)
                             ? q.dapAnDung.includes(optKey)
                             : typeof q.dapAnDung === 'string' && q.dapAnDung.includes(',')
                             ? q.dapAnDung
@@ -570,9 +628,7 @@ export default function StudentAiPracticePage() {
                           <span>
                             {isCorrect
                               ? 'Chính xác!'
-                              : `Chưa đúng. Đáp án chuẩn là: [${formatCorrectAnswer(
-                                  q.dapAnDung,
-                                )}]`}
+                              : `Chưa đúng. Đáp án chuẩn là: [${formatCorrectAnswer(q)}]`}
                           </span>
                         </div>
                         <p className="text-slate-700 text-[11px] leading-relaxed">

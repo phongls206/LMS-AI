@@ -373,12 +373,12 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
     const sessionNonce = `${Date.now()}_${Math.floor(Math.random() * 10000)}`;
     const formatInstruction =
       dto.loaiCauHoi === 'TRUE_FALSE'
-        ? 'Tất cả các câu hỏi phải ở dạng ĐÚNG / SAI (True/False): trường "luaChon" chỉ gồm {"A": "True (Đúng)", "B": "False (Sai)"}, "dapAnDung" là "A" hoặc "B", "loaiCauHoi": "TRUE_FALSE".'
+        ? 'Tất cả các câu hỏi phải ở dạng ĐÚNG / SAI (True/False): trường "luaChon" BẮT BUỘC CHỈ CÓ ĐÚNG 2 LỰA CHỌN là {"A": "True", "B": "False"} (hoặc {"A": "True (Đúng)", "B": "False (Sai)"}). TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D (không tạo Not Given, None). "dapAnDung" bắt buộc chỉ là "A" hoặc "B", "loaiCauHoi": "TRUE_FALSE".'
         : dto.loaiCauHoi === 'MULTIPLE'
         ? 'Tất cả các câu hỏi phải ở dạng CHỌN NHIỀU ĐÁP ÁN ĐÚNG: trường "luaChon" gồm 4 lựa chọn {A, B, C, D}, "dapAnDung" là mảng gồm 2 hoặc 3 đáp án đúng (ví dụ: ["A", "C"]), "loaiCauHoi": "MULTIPLE". Cuối noiDung câu hỏi ghi rõ "(Chọn tất cả đáp án đúng)".'
         : dto.loaiCauHoi === 'SINGLE'
         ? 'Tất cả các câu hỏi ở dạng TRẮC NGHIỆM 1 ĐÁP ÁN ĐÚNG: trường "luaChon" gồm 4 lựa chọn {A, B, C, D}, "dapAnDung" là 1 ký tự ("A"|"B"|"C"|"D"), "loaiCauHoi": "SINGLE".'
-        : 'Hãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án ("SINGLE"), câu hỏi Đúng/Sai ("TRUE_FALSE" với lựa chọn A: True / B: False), và câu hỏi chọn nhiều đáp án đúng ("MULTIPLE" với dapAnDung là mảng như ["A", "C"]).';
+        : 'Hãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án ("SINGLE" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai ("TRUE_FALSE" với BẮT BUỘC CHỈ 2 LỰA CHỌN là "A": "True" và "B": "False", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng ("MULTIPLE" với dapAnDung là mảng như ["A", "C"]).';
 
     const prompt = `
 Bạn là giáo viên tiếng Anh chuyên nghiệp.
@@ -391,6 +391,7 @@ ${formatInstruction}
 RÀNG BUỘC NGHIÊM NGẶT:
 - Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.
 - Đúng ${count} câu hỏi được đánh số id từ 1 đến ${count}.
+- QUY TẮC BẮT BUỘC: Với câu hỏi Đúng/Sai (True/False), "luaChon" CHỈ ĐƯỢC CÓ 2 ĐÁP ÁN A VÀ B (True và False), KHÔNG ĐƯỢC TẠO C, D.
 - Bắt buộc có đáp án đúng ("dapAnDung") và giải thích ngắn gọn ("giaiThich") bằng tiếng Việt.
 - Trả về JSON hợp lệ:
 {
@@ -401,7 +402,7 @@ RÀNG BUỘC NGHIÊM NGẶT:
       "id": 1,
       "noiDung": "...",
       "loaiCauHoi": "SINGLE" | "TRUE_FALSE" | "MULTIPLE",
-      "luaChon": { "A": "...", "B": "...", "C": "...", "D": "..." },
+      "luaChon": { "A": "...", "B": "..." },
       "dapAnDung": "A" hoặc ["A", "C"],
       "giaiThich": "..."
     }
@@ -436,18 +437,52 @@ RÀNG BUỘC NGHIÊM NGẶT:
             if (!loai) {
               if (Array.isArray(dapAn)) {
                 loai = 'MULTIPLE';
-              } else if (q.luaChon && Object.keys(q.luaChon).length === 2) {
+              } else if (
+                (q.luaChon && Object.keys(q.luaChon).length === 2) ||
+                (typeof q.noiDung === 'string' &&
+                  (q.noiDung.includes('(True or False)') ||
+                    q.noiDung.includes('True/False') ||
+                    q.noiDung.includes('(Đúng hay Sai)')))
+              ) {
                 loai = 'TRUE_FALSE';
               } else {
                 loai = 'SINGLE';
               }
             }
 
+            const isTF =
+              loai === 'TRUE_FALSE' ||
+              (typeof q.noiDung === 'string' &&
+                (q.noiDung.includes('(True or False)') ||
+                  q.noiDung.includes('True/False') ||
+                  q.noiDung.includes('(Đúng hay Sai)')));
+
+            let finalLuaChon = q.luaChon || {};
+
+            if (isTF) {
+              loai = 'TRUE_FALSE';
+              // BẮT BUỘC CHỈ GIỮ ĐÚNG 2 LỰA CHỌN A VÀ B, CẮT BỎ C VÀ D
+              const trueVal =
+                finalLuaChon['A'] || finalLuaChon['True'] || finalLuaChon['TRUE'] || 'True';
+              const falseVal =
+                finalLuaChon['B'] || finalLuaChon['False'] || finalLuaChon['FALSE'] || 'False';
+              finalLuaChon = {
+                A: typeof trueVal === 'string' && trueVal.toLowerCase().includes('true') ? trueVal : 'True',
+                B: typeof falseVal === 'string' && falseVal.toLowerCase().includes('false') ? falseVal : 'False',
+              };
+
+              let d = typeof dapAn === 'string' ? dapAn.trim().toUpperCase() : 'A';
+              if (d.includes('TRUE')) d = 'A';
+              else if (d.includes('FALSE')) d = 'B';
+              else if (d !== 'A' && d !== 'B') d = 'A';
+              dapAn = d;
+            }
+
             return {
               id: q.id || idx + 1,
               noiDung: q.noiDung || '',
               loaiCauHoi: loai,
-              luaChon: q.luaChon || {},
+              luaChon: finalLuaChon,
               dapAnDung: dapAn,
               giaiThich: q.giaiThich || '',
             };
