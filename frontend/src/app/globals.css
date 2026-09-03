@@ -216,9 +216,9 @@ html.dark table tr {
 
 html.dark :where(.divide-slate-100 > *),
 html.dark :where(.divide-slate-200 > *),
-html.dark .divide-slate-100 > *,
-html.dark .divide-slate-200 > *,
-html.dark .divide-y > * {
+html.dark .divide-slate-100>*,
+html.dark .divide-slate-200>*,
+html.dark .divide-y>* {
   border-color: #1e2d45 !important;
 }
 

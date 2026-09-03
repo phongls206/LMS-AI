@@ -87,7 +87,7 @@ export default function StudentAiProgressPage() {
               if (parsed.selectedStudentId) setSelectedStudentId(parsed.selectedStudentId);
             }
           }
-        } catch (e) {}
+        } catch (e) { }
       } catch (err) {
         console.error('Lỗi khởi tạo dữ liệu tóm tắt:', err);
       }
@@ -163,7 +163,7 @@ export default function StudentAiProgressPage() {
             selectedStudentId,
           }),
         );
-      } catch (e) {}
+      } catch (e) { }
     } catch (err: any) {
       setErrorMsg(err.response?.data?.message || 'Không thể tạo báo cáo tóm tắt tiến độ.');
     } finally {
