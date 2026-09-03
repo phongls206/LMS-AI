@@ -143,20 +143,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Role Badge - Ẩn hoàn toàn khi thu nhỏ Sidebar */}
       {showFull && (
         <div
-          className="py-2.5 px-4 bg-teal-50/70 border-b border-teal-100/80 flex items-center justify-between"
+          className="
+      py-2.5 px-4
+      bg-slate-50 dark:bg-slate-800/70
+      border-b border-slate-200 dark:border-slate-700
+      flex items-center justify-between
+    "
           title={`Vai trò: ${getRoleLabel()}`}
         >
           <div>
-            <p className="text-[10px] text-teal-800 uppercase tracking-wider font-bold">Vai trò hệ thống</p>
-            <p className="text-xs font-bold text-teal-700 truncate">{getRoleLabel()}</p>
+            <p className="text-[10px] text-slate-500 dark:text-teal-300 uppercase tracking-wider font-bold">
+              Vai trò hệ thống
+            </p>
+
+            <p className="text-xs font-bold text-teal-600 dark:text-teal-400 truncate">
+              {getRoleLabel()}
+            </p>
           </div>
+
           <span
-            className="w-2 h-2 rounded-full bg-teal-500 animate-pulse shrink-0"
+            className="
+        w-2 h-2 rounded-full
+        bg-teal-500 dark:bg-teal-400
+        animate-pulse shrink-0
+      "
             title={`Đang hoạt động: ${getRoleLabel()}`}
-          ></span>
+          />
         </div>
       )}
-
       {/* Navigation Links */}
       <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto overflow-x-hidden">
         {navItems.map((item) => {

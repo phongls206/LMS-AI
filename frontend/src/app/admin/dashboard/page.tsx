@@ -125,7 +125,7 @@ export default function AdminDashboardPage() {
                       <div key={c.id} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
                         <div className="flex justify-between items-center mb-2">
                           <div>
-                            <span className="text-xs font-bold text-teal-700 bg-teal-100/70 border border-teal-200/60 px-2 py-0.5 rounded mr-2">
+                            <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded mr-2">
                               {c.maLopHoc}
                             </span>
                             <span className="text-sm font-bold text-slate-800">{c.tenLopHoc}</span>
@@ -136,13 +136,12 @@ export default function AdminDashboardPage() {
                         </div>
                         <div className="w-full h-2.5 rounded-full bg-slate-200 overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all duration-300 ${
-                              percent >= 90
-                                ? 'bg-rose-500'
-                                : percent >= 60
+                            className={`h-full rounded-full transition-all duration-300 ${percent >= 90
+                              ? 'bg-rose-500'
+                              : percent >= 60
                                 ? 'bg-amber-500'
                                 : 'bg-teal-600'
-                            }`}
+                              }`}
                             style={{ width: `${percent}%` }}
                           ></div>
                         </div>
