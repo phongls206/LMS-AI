@@ -16,7 +16,6 @@ import {
   ClipboardList,
   Award,
   UserPlus,
-  ChevronLeft,
   X,
 } from 'lucide-react';
 import { VaiTro } from '../types';
@@ -137,17 +136,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         >
           <X className="w-5 h-5" />
         </button>
-
-        {/* Desktop Collapse Button */}
-        {!isCollapsed && onToggleCollapse && (
-          <button
-            onClick={onToggleCollapse}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition hidden md:block"
-            title="Thu gọn thanh bên"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-        )}
       </div>
 
       {/* Role Badge - Ẩn hoàn toàn khi thu nhỏ Sidebar */}
