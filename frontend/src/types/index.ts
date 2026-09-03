@@ -105,15 +105,20 @@ export interface GiaoVien {
 export interface HoaDon {
   id: number;
   maHoaDon: string;
+  hocVienId?: number;
+  dangKyHocId?: number;
   soTienPhaiTra: string | number;
   soTienDaTra: string | number;
   hanThanhToan: string;
   ngayLap?: string;
   createdAt?: string;
   trangThai: TrangThaiHoaDon;
-  hocVien?: { maHocVien: string; hoTen: string };
+  hocVien?: { id?: number; maHocVien: string; hoTen: string };
   dangKyHoc?: {
-    lopHoc?: { maLopHoc: string; tenLopHoc: string };
+    id?: number;
+    lopHocId?: number;
+    hocVienId?: number;
+    lopHoc?: { id?: number; maLopHoc: string; tenLopHoc: string };
   };
   thanhToan?: any[];
 }

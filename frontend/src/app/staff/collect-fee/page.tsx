@@ -54,13 +54,14 @@ export default function StaffCollectFeePage() {
         classesService.getAll(), // Lấy tất cả lớp học trên hệ thống
         enrollmentsService.getInvoices(),
       ]);
-      setStudents(stuRes.data);
+      setStudents(stuRes.data || []);
+      setInvoices(invoiceList || []);
       // Lọc các lớp có thể ghi danh: Chỉ lớp đang mở tuyển sinh hoặc sắp mở (loại bỏ hoàn toàn lớp ĐÃ HỦY, ĐÃ KẾT THÚC, ĐANG HỌC)
       const enrollableClasses = (classList || []).filter(
         (c: LopHoc) => c.trangThai === 'DANG_MO_DANG_KY' || c.trangThai === 'SAP_MO'
       );
       setClasses(enrollableClasses);
-      if (stuRes.data.length > 0) setSelectedStudentId(stuRes.data[0].id);
+      if (stuRes.data && stuRes.data.length > 0) setSelectedStudentId(stuRes.data[0].id);
       if (enrollableClasses.length > 0) setSelectedClassId(enrollableClasses[0].id);
       else setSelectedClassId(0);
     } catch (err) {
@@ -116,6 +117,14 @@ export default function StaffCollectFeePage() {
     URL.revokeObjectURL(url);
   };
 
+  const currentStudent = students.find((s) => s.id === selectedStudentId);
+  const currentClass = classes.find((c) => c.id === selectedClassId);
+  const alreadyEnrolledInvoice = invoices.find(
+    (inv) =>
+      (Number(inv.hocVienId) === Number(selectedStudentId) || (currentStudent && inv.hocVien?.maHocVien === currentStudent.maHocVien)) &&
+      (Number(inv.dangKyHoc?.lopHocId) === Number(selectedClassId) || (currentClass && inv.dangKyHoc?.lopHoc?.maLopHoc === currentClass.maLopHoc))
+  );
+
   const handleEnrollAndInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -125,9 +134,12 @@ export default function StaffCollectFeePage() {
       const res = await enrollmentsService.enroll(selectedStudentId, selectedClassId);
       setMessage({
         type: 'success',
-        text: `Ghi danh thành công! Đã tạo hóa đơn ${res.invoice?.maHoaDon} với số tiền ${Number(res.invoice?.soTienPhaiTra).toLocaleString()} đ. Bạn có thể thu tiền ngay ở bảng phía dưới.`,
+        text: `Ghi danh thành công! Đã tạo hóa đơn ${res.invoice?.maHoaDon} với số tiền ${Number(res.invoice?.soTienPhaiTra).toLocaleString()} đ. Bạn có thể thu học phí ngay.`,
       });
-      fetchData();
+      await fetchData();
+      if (res.invoice) {
+        handleOpenPayment(res.invoice);
+      }
     } catch (err: any) {
       setMessage({
         type: 'error',
@@ -240,13 +252,38 @@ export default function StaffCollectFeePage() {
             <div className="flex items-end">
               <button
                 type="submit"
-                disabled={submitting || classes.length === 0 || !selectedClassId}
-                className="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl shadow-md shadow-teal-600/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+                disabled={submitting || classes.length === 0 || !selectedClassId || !!alreadyEnrolledInvoice}
+                className="w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl shadow-md shadow-teal-600/20 transition flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <Receipt className="w-4 h-4" />
-                <span>{submitting ? 'Đang Ghi Danh...' : 'Ghi Danh & Tạo Hóa Đơn'}</span>
+                <span>
+                  {submitting
+                    ? 'Đang Ghi Danh...'
+                    : alreadyEnrolledInvoice
+                    ? 'Đã Ghi Danh Lớp Này'
+                    : 'Ghi Danh & Tạo Hóa Đơn'}
+                </span>
               </button>
             </div>
+
+            {/* Thông báo nếu học viên đã ghi danh lớp này trước đó */}
+            {alreadyEnrolledInvoice && (
+              <div className="md:col-span-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span>
+                  ⚠️ Học viên <strong>{currentStudent?.hoTen}</strong> đã ghi danh lớp <strong>{currentClass?.tenLopHoc}</strong> (Hóa đơn: <strong>{alreadyEnrolledInvoice.maHoaDon}</strong> — Trạng thái: <strong>{formatTrangThaiHoaDon(alreadyEnrolledInvoice.trangThai)}</strong>).
+                </span>
+                {Number(alreadyEnrolledInvoice.soTienPhaiTra) - Number(alreadyEnrolledInvoice.soTienDaTra) > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => handleOpenPayment(alreadyEnrolledInvoice)}
+                    className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg text-xs cursor-pointer shrink-0 inline-flex items-center space-x-1"
+                  >
+                    <DollarSign className="w-3.5 h-3.5" />
+                    <span>Thu Tiền Ngay</span>
+                  </button>
+                )}
+              </div>
+            )}
           </form>
         </div>
 
@@ -294,14 +331,14 @@ export default function StaffCollectFeePage() {
               <table className="w-full text-left text-xs text-slate-700">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="px-4 py-3">Mã Hóa Đơn</th>
-                    <th className="px-4 py-3">Học Viên</th>
-                    <th className="px-4 py-3">Lớp Học</th>
-                    <th className="px-4 py-3">Phải Trả</th>
-                    <th className="px-4 py-3">Đã Thu</th>
-                    <th className="px-4 py-3">Còn Nợ</th>
-                    <th className="px-4 py-3">Trạng Thái</th>
-                    <th className="px-4 py-3 text-right">Thao Tác</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Mã Hóa Đơn</th>
+                    <th className="px-4 py-3 whitespace-nowrap min-w-[150px]">Học Viên</th>
+                    <th className="px-4 py-3 min-w-[200px]">Lớp Học</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Phải Trả</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Đã Thu</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Còn Nợ</th>
+                    <th className="px-4 py-3 whitespace-nowrap text-center min-w-[140px]">Trạng Thái</th>
+                    <th className="px-4 py-3 whitespace-nowrap text-right min-w-[110px]">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -316,21 +353,21 @@ export default function StaffCollectFeePage() {
                       const remaining = Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra);
                       return (
                         <tr key={inv.id} className="hover:bg-teal-50/30 transition">
-                          <td className="px-4 py-3 font-mono font-bold text-teal-700">{inv.maHoaDon}</td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3 font-mono font-bold text-teal-700 whitespace-nowrap">{inv.maHoaDon}</td>
+                          <td className="px-4 py-3 whitespace-nowrap">
                             <p className="font-bold text-slate-900">{inv.hocVien?.hoTen}</p>
                             <p className="text-[11px] font-mono text-slate-400">{inv.hocVien?.maHocVien}</p>
                           </td>
-                          <td className="px-4 py-3 text-slate-700">
+                          <td className="px-4 py-3 text-slate-700 font-medium">
                             {inv.dangKyHoc?.lopHoc?.tenLopHoc || 'N/A'}
                           </td>
-                          <td className="px-4 py-3 font-mono font-bold text-slate-900">
+                          <td className="px-4 py-3 font-mono font-bold text-slate-900 whitespace-nowrap">
                             {Number(inv.soTienPhaiTra).toLocaleString()} đ
                           </td>
-                          <td className="px-4 py-3 font-mono font-bold text-emerald-700">
+                          <td className="px-4 py-3 font-mono font-bold text-emerald-700 whitespace-nowrap">
                             {Number(inv.soTienDaTra).toLocaleString()} đ
                           </td>
-                          <td className="px-4 py-3 font-mono font-bold text-rose-700">
+                          <td className="px-4 py-3 font-mono font-bold text-rose-700 whitespace-nowrap">
                             {remaining.toLocaleString()} đ
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-center">
@@ -346,17 +383,17 @@ export default function StaffCollectFeePage() {
                               {formatTrangThaiHoaDon(inv.trangThai)}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-right">
+                          <td className="px-4 py-3 text-right whitespace-nowrap">
                             {remaining > 0 ? (
                               <button
                                 onClick={() => handleOpenPayment(inv)}
-                                className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition text-xs flex items-center space-x-1 ml-auto shadow-sm cursor-pointer"
+                                className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition text-xs inline-flex items-center space-x-1 shadow-sm cursor-pointer whitespace-nowrap"
                               >
                                 <DollarSign className="w-3.5 h-3.5" />
                                 <span>Thu Tiền</span>
                               </button>
                             ) : (
-                              <span className="text-emerald-700 font-bold text-xs flex items-center justify-end">
+                              <span className="text-emerald-700 font-bold text-xs inline-flex items-center justify-end whitespace-nowrap">
                                 <CheckCircle className="w-3.5 h-3.5 mr-1 text-emerald-600" />
                                 Đã Hoàn Tất
                               </span>
