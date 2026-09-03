@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { authService } from '../../services/api';
 import { Footer } from '../../components/Footer';
 import { EtcLogo } from '../../components/EtcLogo';
-import { Sparkles, Lock, User, AlertCircle, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Sparkles, Lock, User, AlertCircle, AlertTriangle, ArrowRight, Sun, Moon } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,6 +14,32 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [wasKicked, setWasKicked] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('etc_theme');
+    if (savedTheme === 'dark') {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDark(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const handleToggleTheme = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('etc_theme', 'dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('etc_theme', 'light');
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -48,15 +74,37 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between relative font-sans">
-      {/* Background ambient lighting - strictly contained so it cannot create vertical scroll overflow */}
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0a0e1a] flex flex-col justify-between relative font-sans transition-colors">
+      {/* Dark / Light Mode Switcher */}
+      <div className="absolute top-4 right-4 z-20">
+        <button
+          type="button"
+          onClick={handleToggleTheme}
+          className="p-2.5 rounded-xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border border-slate-200/90 dark:border-slate-700/80 shadow-md text-slate-700 dark:text-slate-200 hover:scale-105 transition cursor-pointer flex items-center space-x-2 text-xs font-bold"
+          title={isDark ? 'Chuyển sang Giao diện Sáng (Light Mode)' : 'Chuyển sang Giao diện Tối (Dark Mode)'}
+        >
+          {isDark ? (
+            <>
+              <Sun className="w-4 h-4 text-amber-400 hover:rotate-45 transition-transform" />
+              <span className="hidden sm:inline">Chế độ Sáng</span>
+            </>
+          ) : (
+            <>
+              <Moon className="w-4 h-4 text-slate-600 hover:text-teal-600 transition-colors" />
+              <span className="hidden sm:inline">Chế độ Tối</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Background ambient lighting */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -left-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute -top-40 -left-40 w-96 h-96 bg-teal-500/10 dark:bg-teal-500/5 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-500/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="flex-1 flex flex-col justify-center items-center px-4 py-8 sm:py-12 z-10">
-        <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-2xl shadow-xl p-8">
+        <div className="w-full max-w-md bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-[#1e2d45] rounded-2xl shadow-xl dark:shadow-2xl dark:shadow-black/60 p-8 transition-colors">
           {/* Brand */}
           <div className="text-center mb-8">
             <div className="flex justify-center mb-2">
@@ -90,34 +138,34 @@ export default function LoginPage() {
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Tên đăng nhập
               </label>
               <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <User className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition"
+                  className="w-full bg-slate-50/50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-500 transition"
                   placeholder="VD: admin01, teacher01..."
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Mật khẩu
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full bg-slate-50/50 border border-slate-200 rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition"
+                  className="w-full bg-slate-50/50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-500 transition"
                   placeholder="Mật khẩu của bạn"
                 />
               </div>
@@ -140,7 +188,7 @@ export default function LoginPage() {
 
             {/* Support note */}
             <div className="pt-2 text-center">
-              <p className="text-[11px] text-slate-500 leading-relaxed">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
                 Quên mật khẩu? Vui lòng liên hệ với Quản trị viên
               </p>
             </div>

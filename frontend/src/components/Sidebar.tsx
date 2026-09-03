@@ -176,11 +176,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className={`flex items-center rounded-xl text-xs font-semibold transition-all duration-200 group relative ${!showFull ? 'justify-center px-0 py-2.5' : 'space-x-3 px-3 py-2.5'
                 } ${isActive
                   ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
-                  : 'text-slate-600 hover:bg-teal-50/80 hover:text-teal-700'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:text-slate-900 dark:hover:text-teal-300'
                 }`}
             >
               <Icon
-                className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-teal-600'
+                className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-teal-600 dark:group-hover:text-teal-400'
                   }`}
               />
               {showFull && <span className="truncate">{item.label}</span>}

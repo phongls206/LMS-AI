@@ -469,41 +469,41 @@ export default function StudentAiProgressPage() {
 
               {/* Tóm tắt chung */}
               {summary.data.aiPhanTich?.tomTatChung && (
-                <div className="p-4 rounded-xl bg-teal-50 dark:bg-[#0b2528] border border-teal-200 dark:border-teal-800/80 text-xs text-slate-800 dark:text-slate-100 leading-relaxed font-medium shadow-sm">
+                <div className="p-4 rounded-xl bg-teal-50 dark:bg-[#151f33] border border-teal-200 dark:border-teal-600/40 text-xs text-slate-800 dark:text-slate-100 leading-relaxed font-medium shadow-sm">
                   📝 <strong className="text-teal-900 dark:text-teal-300 font-bold">Tóm tắt chung:</strong> {summary.data.aiPhanTich.tomTatChung}
                 </div>
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* 1. Điểm mạnh */}
-                <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-[#0d281e] border border-emerald-200 dark:border-[#14532d] space-y-3 shadow-sm">
-                  <div className="flex items-center space-x-2 text-emerald-800 dark:text-emerald-300 font-bold text-xs uppercase tracking-wider">
+                <div className="p-5 rounded-2xl bg-emerald-50/70 dark:bg-[#151f33] border border-emerald-200 dark:border-emerald-600/40 space-y-3 shadow-sm">
+                  <div className="flex items-center space-x-2 text-emerald-800 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span>1. Điểm Mạnh Nổi Bật</span>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-100 leading-relaxed whitespace-pre-line font-medium">
+                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line font-medium">
                     {summary.data.aiPhanTich?.diemManh || 'Duy trì tốt kỷ luật học tập.'}
                   </p>
                 </div>
 
                 {/* 2. Điểm cần khắc phục */}
-                <div className="p-5 rounded-2xl bg-amber-50 dark:bg-[#2e1d0d] border border-amber-200 dark:border-[#78350f] space-y-3 shadow-sm">
-                  <div className="flex items-center space-x-2 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider">
+                <div className="p-5 rounded-2xl bg-amber-50/70 dark:bg-[#151f33] border border-amber-200 dark:border-amber-600/40 space-y-3 shadow-sm">
+                  <div className="flex items-center space-x-2 text-amber-800 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
                     <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     <span>2. Điểm Cần Khắc Phục</span>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-100 leading-relaxed whitespace-pre-line font-medium">
+                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line font-medium">
                     {summary.data.aiPhanTich?.canKhacPhuc || 'Cần nỗ lực hơn trong các bài kiểm tra định kỳ.'}
                   </p>
                 </div>
 
                 {/* 3. Lời khuyên ôn tập */}
-                <div className="p-5 rounded-2xl bg-cyan-50 dark:bg-[#0c2636] border border-cyan-200 dark:border-[#164e63] space-y-3 shadow-sm">
-                  <div className="flex items-center space-x-2 text-cyan-800 dark:text-cyan-300 font-bold text-xs uppercase tracking-wider">
+                <div className="p-5 rounded-2xl bg-cyan-50/70 dark:bg-[#151f33] border border-cyan-200 dark:border-cyan-600/40 space-y-3 shadow-sm">
+                  <div className="flex items-center space-x-2 text-cyan-800 dark:text-cyan-400 font-bold text-xs uppercase tracking-wider">
                     <Lightbulb className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
                     <span>3. Lời Khuyên Ôn Tập Kỳ Tới</span>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-100 leading-relaxed whitespace-pre-line font-medium">
+                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line font-medium">
                     {summary.data.aiPhanTich?.loiKhuyen || 'Tập trung củng cố kiến thức ngữ pháp và từ vựng.'}
                   </p>
                 </div>

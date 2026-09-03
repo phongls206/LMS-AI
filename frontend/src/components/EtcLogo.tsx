@@ -18,12 +18,14 @@ export const EtcLogo: React.FC<EtcLogoProps> = ({
     return (
       <div
         onClick={onClick}
-        className={`w-12 h-9 rounded-xl bg-slate-900/90 border border-slate-700/60 flex items-center justify-center font-black text-xs tracking-tight shadow-sm hover:scale-105 transition-transform cursor-pointer shrink-0 ${className}`}
+        className={`w-10 h-9 rounded-xl flex items-center justify-center hover:scale-105 transition-transform cursor-pointer shrink-0 ${className}`}
         title="ETC ENGLISH CENTER"
       >
-        <span className="bg-gradient-to-r from-[#14d8e4] via-[#3d84c4] to-[#7259c9] bg-clip-text text-transparent select-none">
-          ETC
-        </span>
+        <img
+          src="/etc-logo.png"
+          alt="ETC Logo"
+          className="w-9 h-7 object-contain rounded-md select-none"
+        />
       </div>
     );
   }
@@ -31,17 +33,17 @@ export const EtcLogo: React.FC<EtcLogoProps> = ({
   // Sizing configurations
   const sizeStyles = {
     sm: {
-      etc: 'text-xl tracking-tighter',
+      img: 'w-8 h-6.5',
       text: 'text-[10px] tracking-wider leading-none',
       gap: 'space-x-2',
     },
     md: {
-      etc: 'text-2xl tracking-tighter',
+      img: 'w-10 h-8',
       text: 'text-[12px] tracking-wider leading-none',
       gap: 'space-x-2.5',
     },
     lg: {
-      etc: 'text-4xl sm:text-5xl tracking-tighter',
+      img: 'w-16 h-13',
       text: 'text-base sm:text-lg tracking-wider leading-none',
       gap: 'space-x-3.5',
     },
@@ -52,21 +54,17 @@ export const EtcLogo: React.FC<EtcLogoProps> = ({
       onClick={onClick}
       className={`inline-flex items-center ${sizeStyles.gap} ${onClick ? 'cursor-pointer' : ''} ${className}`}
     >
-      {/* Gradient ETC */}
-      <span
-        className={`${sizeStyles.etc} font-black bg-gradient-to-r from-[#14d8e4] via-[#3d84c4] to-[#7259c9] bg-clip-text text-transparent select-none shrink-0 drop-shadow-sm`}
-        style={{
-          fontFamily:
-            "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Arial Black', sans-serif",
-        }}
-      >
-        ETC
-      </span>
+      {/* Exact Logo from File Image 1 */}
+      <img
+        src="/etc-logo.png"
+        alt="ETC Logo"
+        className={`${sizeStyles.img} object-contain shrink-0 rounded-md select-none drop-shadow-sm`}
+      />
 
-      {/* Stacked ENGLISH / CENTER */}
+      {/* Stacked ENGLISH / CENTER — 100% visible on both dark and light mode */}
       <div className="flex flex-col text-left select-none leading-none justify-center">
         <span
-          className={`${sizeStyles.text} font-black text-slate-900 dark:text-white uppercase transition-colors`}
+          className={`${sizeStyles.text} etc-brand-text font-black uppercase transition-colors`}
           style={{
             fontFamily:
               "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Arial Black', sans-serif",
@@ -75,7 +73,7 @@ export const EtcLogo: React.FC<EtcLogoProps> = ({
           ENGLISH
         </span>
         <span
-          className={`${sizeStyles.text} font-black text-slate-900 dark:text-white uppercase mt-0.5 transition-colors`}
+          className={`${sizeStyles.text} etc-brand-text font-black uppercase mt-0.5 transition-colors`}
           style={{
             fontFamily:
               "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Arial Black', sans-serif",
