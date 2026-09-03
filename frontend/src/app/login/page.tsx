@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authService } from '../../services/api';
+import { Footer } from '../../components/Footer';
 import { Sparkles, Lock, User, AlertCircle, AlertTriangle, ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
@@ -46,12 +47,13 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center px-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-between relative overflow-x-hidden font-sans">
       {/* Background ambient lighting - Soft Teal & Sky */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-2xl shadow-xl p-8 z-10">
+      <div className="flex-1 flex flex-col justify-center items-center px-4 py-12 z-10">
+        <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-2xl shadow-xl p-8">
         {/* Brand */}
         <div className="text-center mb-8">
           <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-tr from-teal-600 via-cyan-600 to-blue-500 flex items-center justify-center font-black text-white text-2xl shadow-md shadow-teal-500/25">
@@ -147,7 +149,10 @@ export default function LoginPage() {
             </p>
           </div>
         </form>
+        </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

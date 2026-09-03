@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
+import { Footer } from './Footer';
 import { authService } from '../services/api';
 import { VaiTro } from '../types';
 import {
@@ -153,9 +154,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         onCloseMobile={() => setMobileOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden w-full">
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto w-full min-h-screen">
         {/* Top Header Navbar */}
-        <header className="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-3 sm:px-6 flex items-center justify-between sticky top-0 z-30">
+        <header className="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-3 sm:px-6 flex items-center justify-between sticky top-0 z-30 shrink-0">
           {/* Left: Sidebar Toggle + Title */}
           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
             {/* Mobile Toggle Button */}
@@ -211,9 +212,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         </header>
 
         {/* Main Content Area - Light theme container */}
-        <main className="flex-1 p-3 sm:p-5 md:p-6 overflow-y-auto max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-3 sm:p-5 md:p-6 max-w-7xl w-full mx-auto">
           {children}
         </main>
+
+        {/* System Footer */}
+        <Footer />
       </div>
 
       {/* Profile Modal */}
