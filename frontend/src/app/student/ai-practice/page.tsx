@@ -86,9 +86,28 @@ export default function StudentAiPracticePage() {
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeTopic) {
-      alert('Vui lòng chọn hoặc nhập chủ đề bài tập.');
+    if (!activeTopic || activeTopic.length < 3) {
+      alert('Chủ đề bài tập quá ngắn! Vui lòng nhập tối thiểu 3 ký tự.');
       return;
+    }
+
+    // Kiểm tra chủ đề rác / vô nghĩa ngay tại Frontend
+    if (selectedTopic === 'CUSTOM') {
+      if (/(.)\1{4,}/.test(activeTopic) || !/[a-zA-ZÀ-ỹ]/.test(activeTopic)) {
+        alert('Chủ đề chứa ký tự không hợp lệ hoặc chuỗi vô nghĩa. Vui lòng nhập chủ đề tiếng Anh cụ thể.');
+        return;
+      }
+      const words = activeTopic.split(/\s+/);
+      for (const word of words) {
+        const clean = word.replace(/[^a-zA-ZÀ-ỹ]/g, '').toLowerCase();
+        if (clean.length >= 6) {
+          const hasVowel = /[aeiouyáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ]/.test(clean);
+          if (!hasVowel) {
+            alert(`Phát hiện từ không có nghĩa: "${word}". Vui lòng nhập chủ đề ngữ pháp / từ vựng tiếng Anh hợp lệ.`);
+            return;
+          }
+        }
+      }
     }
 
     setLoading(true);
@@ -210,18 +229,46 @@ export default function StudentAiPracticePage() {
 
             {/* Custom topic input if selected */}
             {selectedTopic === 'CUSTOM' && (
-              <div className="pt-2">
-                <label className="block font-semibold text-purple-300 uppercase tracking-wider mb-1.5">
-                  Nhập Chủ Đề Tùy Chỉnh Của Bạn:
-                </label>
+              <div className="pt-2 space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="block font-semibold text-purple-300 uppercase tracking-wider text-[11px]">
+                    Nhập Chủ Đề Tùy Chỉnh Của Bạn:
+                  </label>
+                  <span className={`text-[10px] font-mono ${customTopic.length > 80 ? 'text-amber-400' : 'text-slate-500'}`}>
+                    {customTopic.length}/100 ký tự
+                  </span>
+                </div>
                 <input
                   type="text"
                   required
+                  maxLength={100}
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
                   placeholder="VD: Inversion, Subjunctive Mood, Phrasal Verbs with 'Look'..."
-                  className="w-full bg-slate-950 border border-purple-500/50 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400"
+                  className="w-full bg-slate-950 border border-purple-500/50 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-purple-400 text-xs"
                 />
+
+                {/* Gợi ý chủ đề nhanh & lọc rác */}
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="text-[10px] text-slate-400 font-medium">💡 Gợi ý nhanh:</span>
+                  {[
+                    'Đảo ngữ (Inversion)',
+                    'Câu giả định (Subjunctive Mood)',
+                    'Phrasal verbs with "Look"',
+                    'Mạo từ A / An / The',
+                    'Gerund vs Infinitive',
+                    'IELTS Writing Task 2 Vocab',
+                  ].map((sug) => (
+                    <button
+                      key={sug}
+                      type="button"
+                      onClick={() => setCustomTopic(sug)}
+                      className="px-2 py-0.5 rounded-md bg-purple-950/50 hover:bg-purple-900/60 text-purple-300 border border-purple-800/40 text-[10px] transition cursor-pointer"
+                    >
+                      +{sug}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </form>

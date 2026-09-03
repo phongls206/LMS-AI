@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ConsultClassDto, GenerateExercisesDto, SummarizeProgressDto } from './dto/ai.dto';
@@ -30,6 +30,68 @@ export class AiService {
       this.ai = new GoogleGenAI({ apiKey });
     }
     this.timeoutMs = Number(this.configService.get<string>('GEMINI_TIMEOUT_MS')) || 30000;
+  }
+
+  /**
+   * Kiểm tra tính hợp lệ và lọc rác (Sanitization & Anti-Gibberish) cho chủ đề bài tập
+   * Ngăn chặn người dùng nhập chuỗi vô nghĩa hoặc prompt injection làm tiêu tốn quota token vô ích.
+   */
+  private validateTopic(rawTopic: string): string {
+    const topic = (rawTopic || '').trim();
+
+    // 1. Kiểm tra độ dài tối thiểu & tối đa
+    if (topic.length < 3) {
+      throw new BadRequestException('Chủ đề bài tập quá ngắn! Vui lòng nhập tối thiểu 3 ký tự (Ví dụ: Thì hiện tại hoàn thành, Mệnh đề quan hệ...).');
+    }
+    if (topic.length > 100) {
+      throw new BadRequestException('Chủ đề bài tập không được vượt quá 100 ký tự để tránh lãng phí tài nguyên hệ thống.');
+    }
+
+    // 2. Bắt buộc phải chứa ký tự chữ cái (không được chỉ gồm số hoặc ký tự đặc biệt)
+    if (!/[a-zA-ZÀ-ỹ]/.test(topic)) {
+      throw new BadRequestException('Chủ đề không hợp lệ! Vui lòng nhập bằng chữ có nghĩa thay vì chỉ nhập số hoặc ký hiệu vô nghĩa.');
+    }
+
+    // 3. Chặn ký tự lặp vô nghĩa (ví dụ: aaaaaaa, zzzzzzzz, 1111111)
+    if (/(.)\1{4,}/i.test(topic)) {
+      throw new BadRequestException('Chủ đề chứa chuỗi ký tự lặp vô nghĩa! Vui lòng nhập nội dung ôn tập tiếng Anh thực tế.');
+    }
+
+    // 4. Chặn bàn phím gõ loạn / bàn phím rác (Keyboard Mash: từ dài >= 6 ký tự không chứa bất kỳ nguyên âm nào)
+    const words = topic.split(/\s+/);
+    for (const word of words) {
+      const cleanWord = word.replace(/[^a-zA-ZÀ-ỹ]/g, '').toLowerCase();
+      if (cleanWord.length >= 6) {
+        const hasVowels = /[aeiouyáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ]/.test(cleanWord);
+        if (!hasVowels) {
+          throw new BadRequestException(`Phát hiện từ không có nghĩa: "${word}". Vui lòng nhập chủ đề tiếng Anh hợp lệ.`);
+        }
+      }
+    }
+
+    // 5. Chặn Prompt Injection / Hack / Jailbreak
+    const INJECTION_PATTERNS = [
+      /ignore\s+(all\s+)?(previous\s+)?instructions/i,
+      /system\s+prompt/i,
+      /jailbreak/i,
+      /dan\s+mode/i,
+      /developer\s+mode/i,
+      /override\s+instructions/i,
+      /bỏ\s+qua\s+(toàn\s+bộ\s+)?(chỉ\s+thị|chỉ\s+dẫn|câu\s+lệnh)/i,
+      /đóng\s+vai/i,
+      /roleplay\s+as/i,
+      /delete\s+from/i,
+      /drop\s+table/i,
+      /hack\s+system/i,
+    ];
+
+    for (const pattern of INJECTION_PATTERNS) {
+      if (pattern.test(topic)) {
+        throw new BadRequestException('Chủ đề vi phạm chính sách an toàn của hệ thống (Prompt Injection bị chặn). Vui lòng chỉ nhập chủ đề học tập tiếng Anh.');
+      }
+    }
+
+    return topic;
   }
 
   /**
@@ -302,6 +364,8 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
    */
   async generateExercises(dto: GenerateExercisesDto, userId: number) {
     this.checkAntiSpam(userId);
+    const cleanTopic = this.validateTopic(dto.chuDe);
+    dto.chuDe = cleanTopic;
     const startTime = Date.now();
     const count = dto.soLuong && [5, 10, 15].includes(Number(dto.soLuong)) ? Number(dto.soLuong) : 5;
 
