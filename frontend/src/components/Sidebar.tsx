@@ -150,24 +150,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Role Badge */}
-      <div
-        className={`py-2.5 bg-slate-950/40 border-b border-slate-800/60 flex items-center ${
-          isCollapsed && !mobileOpen ? 'justify-center px-2' : 'justify-between px-4'
-        }`}
-        title={`Vai trò: ${getRoleLabel()}`}
-      >
-        {!isCollapsed || mobileOpen ? (
+      {/* Role Badge - Ẩn hoàn toàn khi thu nhỏ Sidebar */}
+      {(!isCollapsed || mobileOpen) && (
+        <div
+          className="py-2.5 px-4 bg-slate-950/40 border-b border-slate-800/60 flex items-center justify-between"
+          title={`Vai trò: ${getRoleLabel()}`}
+        >
           <div>
             <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Vai trò</p>
             <p className="text-xs font-semibold text-emerald-400 truncate">{getRoleLabel()}</p>
           </div>
-        ) : null}
-        <span
-          className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"
-          title={`Đang hoạt động: ${getRoleLabel()}`}
-        ></span>
-      </div>
+          <span
+            className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"
+            title={`Đang hoạt động: ${getRoleLabel()}`}
+          ></span>
+        </div>
+      )}
 
       {/* Navigation Links */}
       <nav className="flex-1 px-2.5 py-4 space-y-1.5 overflow-y-auto overflow-x-hidden">
