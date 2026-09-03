@@ -26,11 +26,11 @@ export class CreateClassDto {
   @IsNotEmpty()
   tenLopHoc: string;
 
-  @ApiPropertyOptional({ example: 25, description: 'Sĩ số tối đa (1-25)' })
+  @ApiPropertyOptional({ example: 25, description: 'Sĩ số tối đa (tùy chỉnh linh hoạt)' })
   @IsOptional()
   @IsNumber()
   @Min(1)
-  @Max(25)
+  @Max(200)
   siSoToiDa?: number;
 
   @ApiProperty({ example: '2024-10-01', description: 'Ngày bắt đầu' })

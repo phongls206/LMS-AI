@@ -281,10 +281,10 @@ export default function AdminClassesPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-300 font-semibold mb-1">Sĩ Số Tối Đa (Mặc định 25)</label>
+                    <label className="block text-slate-300 font-semibold mb-1">Sĩ Số Tối Đa</label>
                     <input
                       type="number"
-                      max={25}
+                      max={200}
                       min={1}
                       value={classForm.siSoToiDa}
                       onChange={(e) => setClassForm({ ...classForm, siSoToiDa: +e.target.value })}

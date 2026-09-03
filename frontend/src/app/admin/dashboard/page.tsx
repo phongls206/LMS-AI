@@ -114,8 +114,7 @@ export default function AdminDashboardPage() {
             {/* Sĩ số lớp học */}
             <div className="lg:col-span-2 p-6 rounded-2xl bg-slate-900 border border-slate-800">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-white text-base">Tình Trạng Sĩ Số Các Lớp Đang Mở (Tối đa 25/lớp)</h3>
-                <span className="text-xs text-slate-400 font-medium">Quy chuẩn Business Rule 25 học viên</span>
+                <h3 className="font-bold text-white text-base">Tình Trạng Sĩ Số Các Lớp Đang Mở</h3>
               </div>
 
               <div className="space-y-4">
