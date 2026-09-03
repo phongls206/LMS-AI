@@ -15,18 +15,25 @@ import {
   Sparkles,
   ClipboardList,
   Award,
-  LogOut,
   UserPlus,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
-import { authService } from '../services/api';
 import { VaiTro } from '../types';
 
 interface SidebarProps {
   role?: VaiTro;
   userName?: string;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ role = 'QUAN_LY', userName = 'Người dùng' }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  role = 'QUAN_LY',
+  userName = 'Người dùng',
+  isCollapsed = false,
+  onToggleCollapse,
+}) => {
   const pathname = usePathname();
 
   // Menu tương ứng cho 4 nhóm vai trò RBAC
@@ -87,29 +94,67 @@ export const Sidebar: React.FC<SidebarProps> = ({ role = 'QUAN_LY', userName = '
   };
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-200 min-h-screen flex flex-col border-r border-slate-800 shrink-0">
+    <aside
+      className={`bg-slate-900 text-slate-200 min-h-screen flex flex-col border-r border-slate-800 shrink-0 transition-all duration-300 ease-in-out ${
+        isCollapsed ? 'w-20' : 'w-64'
+      }`}
+    >
       {/* Brand Header */}
-      <div className="p-5 border-b border-slate-800 flex items-center space-x-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-cyan-400 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-indigo-500/30">
-          E
+      <div
+        className={`p-4 border-b border-slate-800 flex items-center ${
+          isCollapsed ? 'justify-center' : 'justify-between'
+        }`}
+      >
+        <div className="flex items-center space-x-3 overflow-hidden">
+          <div
+            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-blue-600 to-cyan-400 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-indigo-500/30 shrink-0 cursor-pointer hover:scale-105 transition-transform"
+            onClick={onToggleCollapse}
+            title={isCollapsed ? 'Nhấp để mở rộng menu' : 'ETC ENGLISH'}
+          >
+            E
+          </div>
+          {!isCollapsed && (
+            <div className="overflow-hidden">
+              <h1 className="font-bold text-white text-base tracking-wide leading-tight truncate">
+                ETC ENGLISH
+              </h1>
+              <p className="text-xs text-indigo-400 font-medium truncate">LMS + GenAI Platform</p>
+            </div>
+          )}
         </div>
-        <div>
-          <h1 className="font-bold text-white text-base tracking-wide leading-tight">ETC ENGLISH</h1>
-          <p className="text-xs text-indigo-400 font-medium">LMS + GenAI Platform</p>
-        </div>
+
+        {!isCollapsed && onToggleCollapse && (
+          <button
+            onClick={onToggleCollapse}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+            title="Thu gọn thanh bên"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        )}
       </div>
 
       {/* Role Badge */}
-      <div className="px-5 py-3 bg-slate-950/40 border-b border-slate-800/60 flex items-center justify-between">
-        <div>
-          <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">Vai trò</p>
-          <p className="text-sm font-medium text-emerald-400">{getRoleLabel()}</p>
-        </div>
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+      <div
+        className={`py-2.5 bg-slate-950/40 border-b border-slate-800/60 flex items-center ${
+          isCollapsed ? 'justify-center px-2' : 'justify-between px-4'
+        }`}
+        title={`Vai trò: ${getRoleLabel()}`}
+      >
+        {!isCollapsed ? (
+          <div>
+            <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Vai trò</p>
+            <p className="text-xs font-semibold text-emerald-400 truncate">{getRoleLabel()}</p>
+          </div>
+        ) : null}
+        <span
+          className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"
+          title={`Đang hoạt động: ${getRoleLabel()}`}
+        ></span>
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-2.5 py-4 space-y-1.5 overflow-y-auto overflow-x-hidden">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -117,35 +162,52 @@ export const Sidebar: React.FC<SidebarProps> = ({ role = 'QUAN_LY', userName = '
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+              title={isCollapsed ? item.label : undefined}
+              className={`flex items-center rounded-xl text-sm font-medium transition-all duration-200 group relative ${
+                isCollapsed ? 'justify-center px-0 py-3' : 'space-x-3 px-3 py-2.5'
+              } ${
                 isActive
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-semibold'
-                  : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                  : 'text-slate-300 hover:bg-slate-800/90 hover:text-white'
               }`}
             >
-              <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-              <span className="truncate">{item.label}</span>
+              <Icon
+                className={`w-5 h-5 shrink-0 transition-transform group-hover:scale-110 ${
+                  isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'
+                }`}
+              />
+              {!isCollapsed && <span className="truncate">{item.label}</span>}
+
+              {/* Floating Tooltip when Collapsed */}
+              {isCollapsed && (
+                <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-950 text-slate-100 text-xs font-medium rounded-lg shadow-xl border border-slate-800 whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50">
+                  {item.label}
+                </div>
+              )}
             </Link>
           );
         })}
       </nav>
 
-      {/* User Info & Logout */}
-      <div className="p-4 border-t border-slate-800 bg-slate-950/60">
-        <div className="flex items-center justify-between mb-3">
-          <div className="truncate">
-            <p className="text-xs text-slate-400 font-medium truncate">Đăng nhập bởi</p>
-            <p className="text-sm font-semibold text-slate-100 truncate">{userName}</p>
-          </div>
+      {/* Bottom Toggle Rail Button */}
+      {onToggleCollapse && (
+        <div className="p-3 border-t border-slate-800/80 bg-slate-950/30 flex items-center justify-center">
+          <button
+            onClick={onToggleCollapse}
+            className="w-full flex items-center justify-center py-2 px-2 rounded-xl bg-slate-800/50 hover:bg-slate-800 text-slate-400 hover:text-white transition-all text-xs font-medium border border-slate-700/40"
+            title={isCollapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar'}
+          >
+            {isCollapsed ? (
+              <ChevronRight className="w-4 h-4" />
+            ) : (
+              <div className="flex items-center space-x-2">
+                <ChevronLeft className="w-4 h-4" />
+                <span className="truncate">Thu gọn sidebar</span>
+              </div>
+            )}
+          </button>
         </div>
-        <button
-          onClick={() => authService.logout()}
-          className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-xs font-semibold rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white border border-rose-500/20 transition-all duration-150"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          <span>Đăng Xuất</span>
-        </button>
-      </div>
+      )}
     </aside>
   );
 };

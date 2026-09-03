@@ -16,6 +16,7 @@ import {
   X,
   GraduationCap,
   Award,
+  PanelLeft,
 } from 'lucide-react';
 
 interface AppLayoutProps {
@@ -35,6 +36,23 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Khôi phục trạng thái thu gọn sidebar từ localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem('etc_sidebar_collapsed');
+    if (saved !== null) {
+      setIsCollapsed(saved === 'true');
+    }
+  }, []);
+
+  const handleToggleSidebar = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      localStorage.setItem('etc_sidebar_collapsed', String(next));
+      return next;
+    });
+  };
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -83,11 +101,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       case 'QUAN_LY':
         return <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 font-bold text-xs">Quản Trị Viên (Admin)</span>;
       case 'GIAO_VIEN':
-        return <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold text-xs">Giảng Viên / Giáo Viên</span>;
+        return <span className="px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-bold text-xs">Giảng Viên</span>;
       case 'HOC_VIEN':
-        return <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs">Học Viên Trung Tâm</span>;
+        return <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold text-xs">Học Viên</span>;
       case 'TU_VAN_VIEN':
-        return <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold text-xs">Tư Vấn Viên / Thu Ngân</span>;
+        return <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-bold text-xs">Tư Vấn Viên</span>;
       default:
         return null;
     }
@@ -97,36 +115,81 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
   return (
     <div className="flex min-h-screen bg-slate-950 text-slate-100 antialiased font-sans">
-      <Sidebar role={user.vaiTro} userName={displayName} />
+      {/* Sidebar with collapse support */}
+      <Sidebar
+        role={user.vaiTro}
+        userName={displayName}
+        isCollapsed={isCollapsed}
+        onToggleCollapse={handleToggleSidebar}
+      />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Header */}
-        <header className="h-16 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-6 flex items-center justify-between sticky top-0 z-10">
-          <div>
-            {title && <h2 className="text-lg font-bold text-white leading-tight">{title}</h2>}
-            {subtitle && <p className="text-xs text-slate-400">{subtitle}</p>}
+        {/* Top Header Navbar */}
+        <header className="h-16 bg-slate-900/80 backdrop-blur-md border-b border-slate-800/80 px-4 md:px-6 flex items-center justify-between sticky top-0 z-20">
+          {/* Left: Sidebar Toggle + Title */}
+          <div className="flex items-center space-x-3 min-w-0">
+            <button
+              onClick={handleToggleSidebar}
+              className="p-2 -ml-1 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+              title={isCollapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar'}
+              aria-label="Toggle Sidebar"
+            >
+              <PanelLeft className="w-5 h-5" />
+            </button>
+
+            <div className="min-w-0">
+              {title && (
+                <h2 className="text-base md:text-lg font-bold text-white leading-tight truncate">
+                  {title}
+                </h2>
+              )}
+              {subtitle && (
+                <p className="text-[11px] md:text-xs text-slate-400 truncate hidden sm:block">
+                  {subtitle}
+                </p>
+              )}
+            </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            {/* Click avatar to open Profile Modal */}
+          {/* Right: User Profile & Quick Logout on Navbar */}
+          <div className="flex items-center space-x-2 md:space-x-3 shrink-0">
+            {/* Click avatar/name to open Profile Modal */}
             <button
               onClick={() => setShowProfileModal(true)}
-              className="flex items-center space-x-3 hover:opacity-80 transition cursor-pointer text-left focus:outline-none"
+              className="flex items-center space-x-2.5 p-1.5 md:px-3 md:py-1.5 rounded-xl hover:bg-slate-800/80 border border-transparent hover:border-slate-700/60 transition cursor-pointer text-left focus:outline-none"
               title="Xem thông tin tài khoản"
             >
-              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-xs text-white uppercase shadow-md shadow-indigo-600/30">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-cyan-500 flex items-center justify-center font-bold text-xs text-white uppercase shadow-md shadow-indigo-600/30 shrink-0">
                 {user.tenDangNhap?.slice(0, 2) || 'AD'}
               </div>
-              <div className="hidden md:block text-left">
+              <div className="hidden lg:block text-left max-w-[140px]">
                 <p className="text-xs font-semibold text-slate-200 truncate">{displayName}</p>
-                <p className="text-[11px] text-slate-400 truncate">{user.email || user.tenDangNhap}</p>
+                <p className="text-[10px] text-slate-400 truncate">{user.tenDangNhap}</p>
               </div>
+            </button>
+
+            {/* Role Chip (Desktop) */}
+            <div className="hidden md:block">
+              {getRoleBadge(user.vaiTro)}
+            </div>
+
+            {/* Vertical Divider */}
+            <div className="h-6 w-px bg-slate-800/90 mx-1"></div>
+
+            {/* Nút Đăng Xuất Tinh Gọn Trên Navbar */}
+            <button
+              onClick={() => authService.logout()}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/20 hover:border-rose-500 text-xs font-semibold transition-all duration-200 shadow-sm cursor-pointer group"
+              title="Đăng xuất khỏi hệ thống"
+            >
+              <LogOut className="w-3.5 h-3.5 text-rose-400 group-hover:text-white transition-colors" />
+              <span className="hidden sm:inline">Đăng Xuất</span>
             </button>
           </div>
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-6 overflow-y-auto max-w-7xl w-full mx-auto">
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>
