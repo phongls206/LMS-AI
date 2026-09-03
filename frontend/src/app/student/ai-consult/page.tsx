@@ -14,6 +14,7 @@ import {
   CheckCircle,
   Lightbulb,
   PlusCircle,
+  Clock,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -26,6 +27,14 @@ export default function StudentAiConsultPage() {
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [mode, setMode] = useState<string>('');
+  const [cooldown, setCooldown] = useState(0);
+
+  // Bộ đếm ngược chống spam AI
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((prev) => prev - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   const quickGoals = [
     {
@@ -119,6 +128,7 @@ export default function StudentAiConsultPage() {
       alert(err.response?.data?.message || 'Có lỗi khi gọi AI tư vấn.');
     } finally {
       setLoading(false);
+      setCooldown(5); // 5s cooldown chống spam
     }
   };
 
@@ -213,15 +223,25 @@ export default function StudentAiConsultPage() {
 
             <button
               type="submit"
-              disabled={loading}
-              className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 hover:opacity-95 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2 text-sm disabled:opacity-50"
+              disabled={loading || cooldown > 0}
+              className="w-full py-3.5 bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 hover:opacity-95 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center space-x-2 text-sm disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             >
-              <Sparkles className="w-5 h-5 animate-spin" />
-              <span>
-                {loading
-                  ? 'Hệ Thống AI Đang Phân Tích Ngữ Cảnh & So Khớp Lớp Học...'
-                  : 'AI Phân Tích Toàn Diện & Đề Xuất Lộ Trình Lớp Học'}
-              </span>
+              {loading ? (
+                <>
+                  <Sparkles className="w-5 h-5 animate-spin" />
+                  <span>Hệ Thống AI Đang Phân Tích Ngữ Cảnh & So Khớp Lớp Học...</span>
+                </>
+              ) : cooldown > 0 ? (
+                <span className="flex items-center space-x-2 text-amber-300 font-semibold">
+                  <Clock className="w-4 h-4 animate-spin text-amber-400" />
+                  <span>Vui lòng chờ {cooldown}s trước khi yêu cầu AI tiếp tục...</span>
+                </span>
+              ) : (
+                <>
+                  <Sparkles className="w-5 h-5" />
+                  <span>AI Phân Tích Toàn Diện & Đề Xuất Lộ Trình Lớp Học</span>
+                </>
+              )}
             </button>
           </form>
         </div>

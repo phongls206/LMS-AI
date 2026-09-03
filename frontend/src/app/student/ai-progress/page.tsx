@@ -30,6 +30,14 @@ export default function StudentAiProgressPage() {
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
   const [summary, setSummary] = useState<any>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+
+  // Bộ đếm ngược chống spam AI
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((prev) => prev - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   // Khởi tạo lấy thông tin User & danh sách Lớp học theo phân quyền
   useEffect(() => {
@@ -162,6 +170,7 @@ export default function StudentAiProgressPage() {
       setErrorMsg(err.response?.data?.message || 'Có lỗi xảy ra khi yêu cầu AI tóm tắt tiến độ.');
     } finally {
       setLoading(false);
+      setCooldown(5); // 5s cooldown chống spam
     }
   };
 
@@ -236,11 +245,25 @@ export default function StudentAiProgressPage() {
           {/* Nút Kích Hoạt Tóm Tắt AI */}
           <button
             onClick={handleGenerateSummary}
-            disabled={loading || !selectedClassId || !selectedStudentId}
-            className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:opacity-90 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition disabled:opacity-40 shrink-0"
+            disabled={loading || cooldown > 0 || !selectedClassId || !selectedStudentId}
+            className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-500 hover:opacity-90 text-white text-xs font-bold shadow-lg shadow-indigo-600/30 transition disabled:opacity-40 shrink-0 cursor-pointer disabled:cursor-not-allowed"
           >
-            <Sparkles className="w-4 h-4" />
-            <span>{loading ? 'AI Đang Phân Tích & Đối Soát...' : 'Tạo Báo Cáo Tóm Tắt AI'}</span>
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                <span>AI Đang Phân Tích & Đối Soát...</span>
+              </>
+            ) : cooldown > 0 ? (
+              <span className="flex items-center space-x-1 text-amber-300 font-bold">
+                <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                <span>Chờ {cooldown}s</span>
+              </span>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4" />
+                <span>Tạo Báo Cáo Tóm Tắt AI</span>
+              </>
+            )}
           </button>
         </div>
 

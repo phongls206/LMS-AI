@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService } from '../../../services/api';
-import { Sparkles, CheckCircle2, XCircle, RotateCcw, BookOpen, Layers, Eye, PlayCircle, PlusCircle } from 'lucide-react';
+import { Sparkles, CheckCircle2, XCircle, RotateCcw, BookOpen, Layers, Eye, PlayCircle, PlusCircle, Clock } from 'lucide-react';
 
 const PREDEFINED_TOPICS = [
   'Thì Hiện Tại Hoàn Thành (Present Perfect Tense)',
@@ -33,6 +33,14 @@ export default function TeacherAiExercisesPage() {
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [teacherViewKey, setTeacherViewKey] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  // Bộ đếm ngược chống spam AI
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setTimeout(() => setCooldown((prev) => prev - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [cooldown]);
 
   // Khôi phục phiên bài tập từ sessionStorage khi chuyển qua lại giữa các trang
   useEffect(() => {
@@ -102,6 +110,7 @@ export default function TeacherAiExercisesPage() {
       alert(err.response?.data?.message || 'Lỗi gọi AI sinh bài tập.');
     } finally {
       setLoading(false);
+      setCooldown(5); // 5s cooldown chống spam
     }
   };
 
@@ -184,11 +193,22 @@ export default function TeacherAiExercisesPage() {
                   </select>
                   <button
                     type="submit"
-                    disabled={loading}
-                    className="px-4 h-10 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl flex items-center justify-center space-x-1 shadow-lg shadow-purple-600/30 transition disabled:opacity-50 shrink-0"
+                    disabled={loading || cooldown > 0}
+                    className="px-4 h-10 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl flex items-center justify-center space-x-1.5 shadow-lg shadow-purple-600/30 transition disabled:opacity-50 shrink-0 cursor-pointer disabled:cursor-not-allowed"
                   >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>{loading ? '...' : 'Sinh Đề'}</span>
+                    {loading ? (
+                      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                    ) : cooldown > 0 ? (
+                      <span className="flex items-center space-x-1 text-amber-300 text-[11px] font-bold">
+                        <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                        <span>Chờ {cooldown}s</span>
+                      </span>
+                    ) : (
+                      <>
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span>Sinh Đề</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>

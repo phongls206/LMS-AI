@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ConsultClassDto, GenerateExercisesDto, SummarizeProgressDto } from './dto/ai.dto';
@@ -16,6 +16,11 @@ export class AiService {
   private ai: GoogleGenAI | null = null;
   private readonly timeoutMs: number;
 
+  // Anti-spam configuration (Rate Limiting & Cooldown)
+  private readonly COOLDOWN_SECONDS = 5; // 5 giây giữa 2 yêu cầu AI liên tiếp
+  private readonly MAX_REQUESTS_PER_MINUTE = 10; // Tối đa 10 yêu cầu trong 60 giây
+  private userRateLimitMap = new Map<number, { lastRequestTime: number; timestamps: number[] }>();
+
   constructor(
     private prisma: PrismaService,
     private configService: ConfigService,
@@ -25,6 +30,69 @@ export class AiService {
       this.ai = new GoogleGenAI({ apiKey });
     }
     this.timeoutMs = Number(this.configService.get<string>('GEMINI_TIMEOUT_MS')) || 30000;
+  }
+
+  /**
+   * Kiểm tra cơ chế chống spam (Rate Limiting & Cooldown) cho các tác vụ AI
+   */
+  private checkAntiSpam(userId: number): void {
+    if (!userId) return;
+    const now = Date.now();
+    const userLog = this.userRateLimitMap.get(userId);
+
+    if (userLog) {
+      // 1. Kiểm tra Cooldown liên tiếp (5s)
+      const elapsedSeconds = (now - userLog.lastRequestTime) / 1000;
+      if (elapsedSeconds < this.COOLDOWN_SECONDS) {
+        const remaining = Math.ceil(this.COOLDOWN_SECONDS - elapsedSeconds);
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.TOO_MANY_REQUESTS,
+            message: `Bạn đang gửi yêu cầu AI quá nhanh! Vui lòng chờ thêm ${remaining}s trước khi thử lại.`,
+            retryAfter: remaining,
+          },
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+
+      // 2. Kiểm tra Sliding Window (Tối đa 10 yêu cầu trong 60 giây)
+      const oneMinuteAgo = now - 60000;
+      const recentTimestamps = userLog.timestamps.filter((ts) => ts > oneMinuteAgo);
+
+      if (recentTimestamps.length >= this.MAX_REQUESTS_PER_MINUTE) {
+        const oldestRecent = recentTimestamps[0];
+        const waitTime = Math.ceil((oldestRecent + 60000 - now) / 1000);
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.TOO_MANY_REQUESTS,
+            message: `Bạn đã thực hiện ${this.MAX_REQUESTS_PER_MINUTE} yêu cầu AI trong 1 phút. Vui lòng đợi ${waitTime}s để hệ thống hồi phục.`,
+            retryAfter: waitTime,
+          },
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
+
+      recentTimestamps.push(now);
+      this.userRateLimitMap.set(userId, {
+        lastRequestTime: now,
+        timestamps: recentTimestamps,
+      });
+    } else {
+      this.userRateLimitMap.set(userId, {
+        lastRequestTime: now,
+        timestamps: [now],
+      });
+    }
+
+    // Dọn dẹp cache nếu có nhiều hơn 500 người dùng
+    if (this.userRateLimitMap.size > 500) {
+      const expiry = now - 120000;
+      for (const [id, log] of this.userRateLimitMap.entries()) {
+        if (log.lastRequestTime < expiry) {
+          this.userRateLimitMap.delete(id);
+        }
+      }
+    }
   }
 
   private serializeBigInt(obj: any) {
@@ -90,6 +158,7 @@ export class AiService {
    * UC012 — AI Tư vấn lớp học phù hợp (có Validation lọc ảo giác & Fallback Rule-based)
    */
   async consultClasses(dto: ConsultClassDto, userId: number) {
+    this.checkAntiSpam(userId);
     const startTime = Date.now();
 
     // 1. Lấy danh sách lớp đang mở và còn chỗ thực tế trong CSDL
@@ -232,6 +301,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
    * UC013 — AI Sinh bài luyện tập trắc nghiệm (Smart Caching + Gemini API + Fallback)
    */
   async generateExercises(dto: GenerateExercisesDto, userId: number) {
+    this.checkAntiSpam(userId);
     const startTime = Date.now();
     const count = dto.soLuong && [5, 10, 15].includes(Number(dto.soLuong)) ? Number(dto.soLuong) : 5;
 
@@ -363,6 +433,7 @@ RÀNG BUỘC:
    * UC014 — AI Tóm tắt tiến độ học tập (Phân biệt dữ liệu gốc, Zero-Trust Validation & Fallback quy tắc)
    */
   async summarizeProgress(dto: SummarizeProgressDto, userId: number) {
+    this.checkAntiSpam(userId);
     const startTime = Date.now();
 
     const [student, lopHoc, attendances, grade] = await Promise.all([
