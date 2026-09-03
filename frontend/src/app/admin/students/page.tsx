@@ -1,10 +1,9 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
 import { HocVien, TrinhDoCEFR } from '../../../types';
-import { formatTrangThaiHocVien } from '../../../utils/formatters';
+import { formatTrangThaiHocVien, formatTrangThaiDangKy } from '../../../utils/formatters';
 import {
   Plus,
   Search,
@@ -864,7 +863,7 @@ export default function AdminStudentsPage() {
                           )}
                         </div>
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                          {dk.trangThai || 'Đã Xác Nhận'}
+                          {formatTrangThaiDangKy(dk.trangThai)}
                         </span>
                       </div>
                     ))}

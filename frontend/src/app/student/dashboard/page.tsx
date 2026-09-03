@@ -5,7 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { gradesService, authService } from '../../../services/api';
 import { BookOpen, Calendar, Award, Sparkles, Receipt, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { formatTrangThaiLopHoc } from '../../../utils/formatters';
+import { formatTrangThaiDangKy } from '../../../utils/formatters';
 
 export default function StudentDashboardPage() {
   const [user, setUser] = useState<any>(null);
@@ -114,8 +114,16 @@ export default function StudentDashboardPage() {
                     <span className="font-mono text-xs font-bold text-indigo-300 px-2 py-0.5 rounded bg-indigo-500/10">
                       {item.lopHoc?.maLopHoc}
                     </span>
-                    <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold">
-                      {formatTrangThaiLopHoc(item.trangThai)}
+                    <span
+                      className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border ${
+                        item.trangThai === 'DA_XAC_NHAN' || item.trangThai === 'HOAN_THANH'
+                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          : item.trangThai === 'CHO_THANH_TOAN' || item.trangThai === 'CHO_XAC_NHAN'
+                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                          : 'bg-slate-800 text-slate-400 border-slate-700'
+                      }`}
+                    >
+                      {formatTrangThaiDangKy(item.trangThai)}
                     </span>
                   </div>
                   <h4 className="font-bold text-white text-sm">{item.lopHoc?.tenLopHoc}</h4>

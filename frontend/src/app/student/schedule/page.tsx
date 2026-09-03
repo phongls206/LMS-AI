@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { gradesService } from '../../../services/api';
 import { Calendar, Clock, MapPin } from 'lucide-react';
-import { formatTrangThaiLopHoc } from '../../../utils/formatters';
+import { formatTrangThaiDangKy } from '../../../utils/formatters';
 
 export default function StudentSchedulePage() {
   const [enrollments, setEnrollments] = useState<any[]>([]);
@@ -45,8 +45,16 @@ export default function StudentSchedulePage() {
                     <span className="font-mono text-xs font-bold text-indigo-400 px-2.5 py-1 rounded bg-indigo-500/10">
                       {lop?.maLopHoc}
                     </span>
-                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold">
-                      {formatTrangThaiLopHoc(enr.trangThai)}
+                    <span
+                      className={`text-xs px-2.5 py-0.5 rounded-full font-semibold border ${
+                        enr.trangThai === 'DA_XAC_NHAN' || enr.trangThai === 'HOAN_THANH'
+                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          : enr.trangThai === 'CHO_THANH_TOAN' || enr.trangThai === 'CHO_XAC_NHAN'
+                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                          : 'bg-slate-800 text-slate-400 border-slate-700'
+                      }`}
+                    >
+                      {formatTrangThaiDangKy(enr.trangThai)}
                     </span>
                   </div>
 
