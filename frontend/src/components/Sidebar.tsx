@@ -125,7 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <h1 className="font-bold text-slate-900 text-base tracking-tight leading-tight truncate">
                 ETC ENGLISH
               </h1>
-              <p className="text-xs text-teal-600 font-semibold truncate">Smart Center Management</p>
+              <p className="text-xs text-teal-600 font-semibold truncate">LMS + Smart AI</p>
             </div>
           )}
         </div>
@@ -168,18 +168,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
               href={item.href}
               onClick={onCloseMobile}
               title={!showFull ? item.label : undefined}
-              className={`flex items-center rounded-xl text-xs font-semibold transition-all duration-200 group relative ${
-                !showFull ? 'justify-center px-0 py-2.5' : 'space-x-3 px-3 py-2.5'
-              } ${
-                isActive
+              className={`flex items-center rounded-xl text-xs font-semibold transition-all duration-200 group relative ${!showFull ? 'justify-center px-0 py-2.5' : 'space-x-3 px-3 py-2.5'
+                } ${isActive
                   ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
                   : 'text-slate-600 hover:bg-teal-50/80 hover:text-teal-700'
-              }`}
+                }`}
             >
               <Icon
-                className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${
-                  isActive ? 'text-white' : 'text-slate-400 group-hover:text-teal-600'
-                }`}
+                className={`w-4 h-4 shrink-0 transition-transform group-hover:scale-110 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-teal-600'
+                  }`}
               />
               {showFull && <span className="truncate">{item.label}</span>}
 
@@ -198,9 +195,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="border-t border-slate-200/90 p-3 bg-slate-50/80 shrink-0 mt-auto">
         <button
           onClick={() => authService.logout()}
-          className={`w-full flex items-center justify-center rounded-xl text-xs font-bold text-rose-600 bg-white hover:bg-rose-600 hover:text-white border border-rose-200 hover:border-rose-600 transition-all duration-200 cursor-pointer shadow-sm group ${
-            !showFull ? 'p-2.5' : 'space-x-2 py-2.5 px-3'
-          }`}
+          className={`w-full flex items-center justify-center rounded-xl text-xs font-bold text-rose-600 bg-white hover:bg-rose-600 hover:text-white border border-rose-200 hover:border-rose-600 transition-all duration-200 cursor-pointer shadow-sm group ${!showFull ? 'p-2.5' : 'space-x-2 py-2.5 px-3'
+            }`}
           title="Đăng xuất khỏi hệ thống"
         >
           <LogOut className="w-4 h-4 text-rose-500 group-hover:text-white transition-colors shrink-0" />
