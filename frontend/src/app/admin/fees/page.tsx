@@ -252,14 +252,14 @@ export default function AdminFeesPage() {
               <table className="w-full text-left text-xs text-slate-700">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="px-4 py-3">Mã Hóa Đơn</th>
-                    <th className="px-4 py-3">Học Viên</th>
-                    <th className="px-4 py-3">Lớp Học</th>
-                    <th className="px-4 py-3">Phải Trả</th>
-                    <th className="px-4 py-3">Đã Thu</th>
-                    <th className="px-4 py-3">Còn Nợ</th>
-                    <th className="px-4 py-3">Trạng Thái</th>
-                    <th className="px-4 py-3 text-right">Thao Tác</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Mã Hóa Đơn</th>
+                    <th className="px-4 py-3 whitespace-nowrap min-w-[150px]">Học Viên</th>
+                    <th className="px-4 py-3 min-w-[200px]">Lớp Học</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Phải Trả</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Đã Thu</th>
+                    <th className="px-4 py-3 whitespace-nowrap">Còn Nợ</th>
+                    <th className="px-4 py-3 whitespace-nowrap text-center min-w-[140px]">Trạng Thái</th>
+                    <th className="px-4 py-3 whitespace-nowrap text-right min-w-[110px]">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -267,26 +267,26 @@ export default function AdminFeesPage() {
                     const remaining = Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra);
                     return (
                       <tr key={inv.id} className="hover:bg-teal-50/30 transition">
-                        <td className="px-4 py-3 font-mono font-bold text-teal-700">{inv.maHoaDon}</td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 font-mono font-bold text-teal-700 whitespace-nowrap">{inv.maHoaDon}</td>
+                        <td className="px-4 py-3 whitespace-nowrap">
                           <p className="font-bold text-slate-900">{inv.hocVien?.hoTen}</p>
                           <p className="text-[11px] font-mono text-slate-500">{inv.hocVien?.maHocVien}</p>
                         </td>
                         <td className="px-4 py-3 text-slate-700 font-medium">
                           {inv.dangKyHoc?.lopHoc?.tenLopHoc || 'N/A'}
                         </td>
-                        <td className="px-4 py-3 font-mono font-bold text-slate-900">
+                        <td className="px-4 py-3 font-mono font-bold text-slate-900 whitespace-nowrap">
                           {Number(inv.soTienPhaiTra).toLocaleString()} đ
                         </td>
-                        <td className="px-4 py-3 font-mono font-bold text-emerald-700">
+                        <td className="px-4 py-3 font-mono font-bold text-emerald-700 whitespace-nowrap">
                           {Number(inv.soTienDaTra).toLocaleString()} đ
                         </td>
-                        <td className="px-4 py-3 font-mono font-bold text-rose-700">
+                        <td className="px-4 py-3 font-mono font-bold text-rose-700 whitespace-nowrap">
                           {remaining.toLocaleString()} đ
                         </td>
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 whitespace-nowrap text-center">
                           <span
-                            className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+                            className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${
                               inv.trangThai === 'DA_HOAN_THANH'
                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                 : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
@@ -297,17 +297,17 @@ export default function AdminFeesPage() {
                             {formatTrangThaiHoaDon(inv.trangThai)}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-right">
+                        <td className="px-4 py-3 text-right whitespace-nowrap">
                           {remaining > 0 ? (
                             <button
                               onClick={() => handleOpenPayment(inv)}
-                              className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition text-xs flex items-center space-x-1 ml-auto shadow-sm cursor-pointer"
+                              className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition text-xs inline-flex items-center space-x-1 shadow-sm cursor-pointer whitespace-nowrap"
                             >
                               <DollarSign className="w-3.5 h-3.5" />
                               <span>Thu Tiền</span>
                             </button>
                           ) : (
-                            <span className="text-emerald-700 font-bold text-xs flex items-center justify-end">
+                            <span className="text-emerald-700 font-bold text-xs inline-flex items-center justify-end whitespace-nowrap">
                               <CheckCircle className="w-3.5 h-3.5 mr-1" />
                               Đã Hoàn Tất
                             </span>

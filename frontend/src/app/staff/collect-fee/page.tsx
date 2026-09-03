@@ -333,9 +333,9 @@ export default function StaffCollectFeePage() {
                           <td className="px-4 py-3 font-mono font-bold text-rose-700">
                             {remaining.toLocaleString()} đ
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3 whitespace-nowrap text-center">
                             <span
-                              className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+                              className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${
                                 inv.trangThai === 'DA_HOAN_THANH'
                                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                   : inv.trangThai === 'THANH_TOAN_MOT_PHAN'

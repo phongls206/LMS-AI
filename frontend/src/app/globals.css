@@ -226,54 +226,103 @@ html.dark tr:hover {
   background-color: rgba(45, 212, 191, 0.04) !important;
 }
 
-/* ── Stat / KPI Cards ─────────────────────────────────────────────────── */
-html.dark .bg-teal-50 {
-  background-color: rgba(15, 118, 110, 0.15) !important;
+/* ── Stat / KPI Cards & AI Progress Blocks ────────────────────────────── */
+html.dark .bg-teal-50,
+html.dark [class*="bg-teal-50"] {
+  background-color: #0b2528 !important;
+  border-color: rgba(45, 212, 191, 0.25) !important;
 }
 
-html.dark .bg-emerald-50 {
-  background-color: rgba(16, 90, 61, 0.15) !important;
+html.dark .bg-emerald-50,
+html.dark [class*="bg-emerald-50"] {
+  background-color: #0d281e !important;
+  border-color: rgba(52, 211, 153, 0.25) !important;
 }
 
-html.dark .bg-cyan-50 {
-  background-color: rgba(8, 97, 116, 0.15) !important;
+html.dark .bg-cyan-50,
+html.dark [class*="bg-cyan-50"] {
+  background-color: #0c2636 !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
 }
 
-html.dark .bg-sky-50 {
-  background-color: rgba(7, 89, 133, 0.15) !important;
+html.dark .bg-sky-50,
+html.dark [class*="bg-sky-50"] {
+  background-color: #0c2636 !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
 }
 
-html.dark .bg-rose-50 {
-  background-color: rgba(136, 19, 55, 0.15) !important;
+html.dark .bg-rose-50,
+html.dark [class*="bg-rose-50"] {
+  background-color: #2b111a !important;
+  border-color: rgba(251, 113, 133, 0.25) !important;
 }
 
-html.dark .bg-amber-50 {
-  background-color: rgba(120, 53, 15, 0.15) !important;
+html.dark .bg-amber-50,
+html.dark [class*="bg-amber-50"] {
+  background-color: #2e1d0d !important;
+  border-color: rgba(251, 191, 36, 0.25) !important;
 }
 
 html.dark .bg-slate-200 {
   background-color: #1e2d45 !important;
 }
 
-/* ── Borders for colored accent cards ─────────────────────────────────── */
-html.dark .border-teal-200 {
-  border-color: rgba(15, 118, 110, 0.4) !important;
+/* Ensure high contrast readable text inside colored cards and AI summaries in dark mode */
+html.dark [class*="bg-emerald-50"] p,
+html.dark [class*="bg-amber-50"] p,
+html.dark [class*="bg-teal-50"] p,
+html.dark [class*="bg-cyan-50"] p,
+html.dark [class*="bg-rose-50"] p,
+html.dark .bg-emerald-50 p,
+html.dark .bg-amber-50 p,
+html.dark .bg-teal-50 p,
+html.dark .bg-cyan-50 p,
+html.dark .bg-rose-50 p {
+  color: #f1f5f9 !important;
 }
 
-html.dark .border-emerald-200 {
-  border-color: rgba(16, 90, 61, 0.4) !important;
+html.dark [class*="bg-emerald-50"] .text-emerald-800,
+html.dark .bg-emerald-50 .text-emerald-800 {
+  color: #34d399 !important;
 }
 
-html.dark .border-cyan-200 {
-  border-color: rgba(8, 97, 116, 0.4) !important;
+html.dark [class*="bg-amber-50"] .text-amber-800,
+html.dark .bg-amber-50 .text-amber-800 {
+  color: #fbbf24 !important;
 }
 
-html.dark .border-rose-200 {
-  border-color: rgba(136, 19, 55, 0.4) !important;
+html.dark [class*="bg-teal-50"] .text-teal-800,
+html.dark [class*="bg-teal-50"] .text-teal-900,
+html.dark .bg-teal-50 .text-teal-800,
+html.dark .bg-teal-50 .text-teal-900 {
+  color: #2dd4bf !important;
 }
 
-html.dark .border-amber-200 {
-  border-color: rgba(120, 53, 15, 0.4) !important;
+html.dark [class*="bg-cyan-50"] .text-cyan-800,
+html.dark .bg-cyan-50 .text-cyan-800 {
+  color: #38bdf8 !important;
+}
+
+/* ── Table Badges in Dark Mode ────────────────────────────────────────── */
+html.dark td span.bg-emerald-50,
+html.dark td span[class*="bg-emerald-50"] {
+  background-color: rgba(16, 90, 61, 0.35) !important;
+  color: #34d399 !important;
+  border-color: rgba(52, 211, 153, 0.4) !important;
+}
+
+html.dark td span.bg-amber-50,
+html.dark td span[class*="bg-amber-50"] {
+  background-color: rgba(120, 53, 15, 0.35) !important;
+  color: #fbbf24 !important;
+  border-color: rgba(251, 191, 36, 0.4) !important;
+}
+
+html.dark td span.bg-rose-50,
+html.dark td span[class*="bg-rose-50"] {
+  background-color: rgba(136, 19, 55, 0.35) !important;
+  color: #fb7185 !important;
+  border-color: rgba(251, 113, 133, 0.4) !important;
 }
 
 /* ── Form Inputs ──────────────────────────────────────────────────────── */
