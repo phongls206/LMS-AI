@@ -281,7 +281,7 @@ export default function AdminTeachersPage() {
                                 <span>{t.hoTen}</span>
                               </button>
                               <span className="text-[11px] text-slate-500 block mt-0.5">
-                                Giảng viên cơ hữu
+                                Giảng viên
                               </span>
                             </div>
                           </div>
@@ -404,11 +404,10 @@ export default function AdminTeachersPage() {
                       <button
                         key={p}
                         onClick={() => setPage(p)}
-                        className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
-                          page === p
+                        className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${page === p
                             ? 'bg-teal-600 text-white shadow-sm'
                             : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                        }`}
+                          }`}
                       >
                         {p}
                       </button>
@@ -475,11 +474,11 @@ export default function AdminTeachersPage() {
                     <Award className="w-4 h-4 text-teal-600" />
                     <span>Hồ Sơ Năng Lực & Bằng Cấp</span>
                   </span>
-                  
+
                   <div className="space-y-2">
                     <div>
                       <span className="text-slate-500 text-[11px] block">Chuyên môn giảng dạy:</span>
-                      <span className="inline-block mt-1 px-2.5 py-1 rounded-md bg-teal-100/70 border border-teal-200 text-teal-800 font-bold text-xs">
+                      <span className="inline-block mt-1 px-2.5 py-1 rounded-md bg-teal-50 border border-teal-200 text-teal-800 font-bold text-xs">
                         {detailTeacher.chuyenMon}
                       </span>
                     </div>
@@ -499,7 +498,7 @@ export default function AdminTeachersPage() {
                     <Mail className="w-4 h-4 text-teal-600" />
                     <span>Thông Tin Liên Hệ & Phân Quyền</span>
                   </span>
-                  
+
                   <div className="space-y-2.5 text-slate-600">
                     <div className="flex justify-between items-center py-1 border-b border-slate-200/60">
                       <span className="text-slate-500">Email công vụ:</span>
@@ -511,7 +510,7 @@ export default function AdminTeachersPage() {
                     </div>
                     <div className="flex justify-between items-center py-1">
                       <span className="text-slate-500">Vị trí công tác:</span>
-                      <span className="text-teal-700 font-bold">Giảng viên cơ hữu</span>
+                      <span className="text-teal-700 font-bold">Giảng viên</span>
                     </div>
                   </div>
                 </div>
@@ -537,7 +536,7 @@ export default function AdminTeachersPage() {
                         className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex justify-between items-center text-xs hover:border-teal-300 transition"
                       >
                         <div className="flex items-center space-x-2">
-                          <span className="font-mono font-bold text-teal-700 bg-teal-100/70 px-2 py-0.5 rounded border border-teal-200">
+                          <span className="font-mono font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
                             [{pc.lopHoc?.maLopHoc}]
                           </span>
                           <span className="font-bold text-slate-900">{pc.lopHoc?.tenLopHoc}</span>
