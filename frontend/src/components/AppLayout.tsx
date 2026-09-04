@@ -166,7 +166,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const displayName = user.hoSoHocVien?.hoTen || user.hoSoGiaoVien?.hoTen || user.tenDangNhap;
 
   return (
-    <div className="flex min-h-screen bg-slate-50 text-slate-900 antialiased font-sans relative">
+    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 antialiased font-sans relative">
       {/* Mobile Backdrop Overlay */}
       {mobileOpen && (
         <div
@@ -185,7 +185,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         onCloseMobile={() => setMobileOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto w-full min-h-screen">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto w-full">
         {/* Top Header Navbar */}
         <header className="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200/80 px-3 sm:px-6 flex items-center justify-between sticky top-0 z-30 shrink-0">
           {/* Left: Sidebar Toggle + Title */}

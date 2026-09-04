@@ -106,25 +106,25 @@ export default function LoginPage() {
         <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-cyan-500/10 dark:bg-cyan-500/5 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center items-center px-4 py-3 sm:py-4 z-10 min-h-0 w-full">
-        <div className="w-full max-w-sm sm:max-w-md bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-[#1e2d45] rounded-2xl shadow-xl dark:shadow-2xl dark:shadow-black/60 p-5 sm:p-7 transition-colors">
+      <div className="flex-1 flex flex-col justify-center items-center px-4 py-6 sm:py-8 z-10 min-h-0 w-full">
+        <div className="w-full max-w-md bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-[#1e2d45] rounded-3xl shadow-2xl dark:shadow-black/80 p-8 sm:p-10 transition-colors">
           {/* Brand */}
-          <div className="text-center mb-4 sm:mb-5">
-            <div className="flex justify-center mb-1.5">
-              <EtcLogo size="md" />
+          <div className="text-center mb-7 sm:mb-8">
+            <div className="flex justify-center mb-3">
+              <EtcLogo size="lg" />
             </div>
-            <p className="text-xs text-teal-600 font-semibold flex items-center justify-center space-x-1.5 mt-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
+            <p className="text-sm text-teal-600 dark:text-teal-400 font-bold flex items-center justify-center space-x-2 mt-2">
+              <Sparkles className="w-4 h-4 text-teal-500" />
               <span>Hệ Thống LMS Tích Hợp AI</span>
             </p>
           </div>
 
           {wasKicked && (
-            <div className="mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start space-x-2.5 shadow-sm">
-              <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
+            <div className="mb-4 p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 text-xs flex items-start space-x-2.5 shadow-sm">
+              <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
               <div>
-                <p className="font-bold text-amber-900">Phiên Đăng Nhập Đã Bị Ngắt!</p>
-                <p className="text-[11px] text-amber-800/90 mt-0.5 leading-relaxed">
+                <p className="font-bold text-amber-900 dark:text-amber-200">Phiên Đăng Nhập Đã Bị Ngắt!</p>
+                <p className="text-[11px] text-amber-800/90 dark:text-amber-300/80 mt-0.5 leading-relaxed">
                   Tài khoản của bạn vừa được đăng nhập từ một thiết bị hoặc trình duyệt khác. Để bảo mật thông tin, hệ thống tự động đăng xuất phiên làm việc này.
                 </p>
               </div>
@@ -132,16 +132,16 @@ export default function LoginPage() {
           )}
 
           {error && (
-            <div className="mb-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center space-x-2 shadow-sm">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+            <div className="mb-4 p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs flex items-center space-x-2 shadow-sm">
+              <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400" />
               <span>{error}</span>
             </div>
           )}
 
           {/* Login Form */}
-          <form onSubmit={handleLogin} className="space-y-3">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Tên đăng nhập
               </label>
               <div className="relative">
@@ -151,14 +151,14 @@ export default function LoginPage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="w-full bg-slate-50/50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-4 py-2 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-500 transition"
+                  className="w-full bg-slate-50/70 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-500 transition"
                   placeholder="Nhập tên đăng nhập của bạn..."
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Mật khẩu
               </label>
               <div className="relative">
@@ -168,7 +168,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full bg-slate-50/50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-4 py-2 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-500 transition"
+                  className="w-full bg-slate-50/70 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 dark:focus:border-teal-400 focus:ring-1 focus:ring-teal-500 transition"
                   placeholder="Mật khẩu của bạn"
                 />
               </div>
@@ -177,7 +177,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-1.5 bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 hover:opacity-95 text-white font-bold py-2.5 rounded-xl shadow-lg shadow-teal-600/25 transition duration-150 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+              className="w-full mt-2 bg-gradient-to-r from-teal-600 via-cyan-600 to-blue-600 hover:opacity-95 text-white font-bold py-3 rounded-xl shadow-lg shadow-teal-600/25 transition duration-150 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer text-sm"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -190,8 +190,8 @@ export default function LoginPage() {
             </button>
 
             {/* Support note */}
-            <div className="pt-1 text-center">
-              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div className="pt-2 text-center">
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
                 Quên mật khẩu? Vui lòng liên hệ với Quản trị viên
               </p>
             </div>

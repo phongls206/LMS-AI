@@ -117,3 +117,63 @@ export const formatTrangThaiDiemDanh = (status?: string): string => {
   if (!status) return 'Chưa Điểm Danh';
   return formatStatus(status);
 };
+
+/**
+ * Đọc số tiền Việt Nam Đồng thành chữ chuẩn xác
+ */
+export function docSoThanhChu(num: number): string {
+  if (num === 0) return 'Không đồng';
+  const chuSo = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+  const tien = ['', 'nghìn', 'triệu', 'tỷ', 'nghìn tỷ', 'triệu tỷ'];
+
+  function readGroup(group: number, full: boolean) {
+    const tr = Math.floor(group / 100);
+    const ch = Math.floor((group % 100) / 10);
+    const dv = group % 10;
+    let res = '';
+    if (full || tr > 0) {
+      res += chuSo[tr] + ' trăm ';
+      if (ch === 0 && dv > 0) res += 'lẻ ';
+    }
+    if (ch > 1) {
+      res += chuSo[ch] + ' mươi ';
+      if (dv === 1) res += 'mốt ';
+    } else if (ch === 1) {
+      res += 'mười ';
+      if (dv === 1) res += 'một ';
+    }
+    if (ch !== 1 && dv === 5 && (tr > 0 || ch > 0)) {
+      res += 'lăm ';
+    } else if (dv > 0 && !(ch > 1 && dv === 1) && !(ch === 1 && dv === 1)) {
+      res += chuSo[dv] + ' ';
+    }
+    return res.trim();
+  }
+
+  let s = '';
+  let n = Math.floor(num);
+  let groupIdx = 0;
+  while (n > 0) {
+    const g = n % 1000;
+    if (g > 0) {
+      const gStr = readGroup(g, n >= 1000 && g < 100);
+      s = gStr + ' ' + tien[groupIdx] + ' ' + s;
+    }
+    groupIdx++;
+    n = Math.floor(n / 1000);
+  }
+  s = s.trim().replace(/\s+/g, ' ');
+  if (!s) return 'Không đồng';
+  return s.charAt(0).toUpperCase() + s.slice(1) + ' đồng chẵn.';
+}
+
+export function formatReceiptDate(d: Date | string): string {
+  const date = new Date(d);
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear();
+  const hours = date.getHours().toString().padStart(2, '0');
+  const mins = date.getMinutes().toString().padStart(2, '0');
+  return `Ngày ${day} tháng ${month} năm ${year} (lúc ${hours}:${mins})`;
+}
+

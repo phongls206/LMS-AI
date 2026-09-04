@@ -104,7 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={`
-        fixed inset-y-0 left-0 z-50 md:sticky md:top-0 md:h-screen
+        fixed inset-y-0 left-0 z-50 md:static md:h-screen
         bg-white text-slate-700 h-screen flex flex-col border-r border-slate-200/90 shrink-0
         transition-all duration-300 ease-in-out shadow-xl md:shadow-none
         ${mobileOpen ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0'}
@@ -112,7 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       `}
     >
       {/* Brand Header */}
-      <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+      <div className="p-4 border-b border-slate-100 flex items-center justify-between shrink-0">
         <div className="overflow-hidden">
           <EtcLogo
             size="md"
@@ -135,7 +135,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {showFull && (
         <div
           className="
-      py-2.5 px-4
+      py-2.5 px-4 shrink-0
       bg-slate-50 dark:bg-slate-800/70
       border-b border-slate-200 dark:border-slate-700
       flex items-center justify-between
