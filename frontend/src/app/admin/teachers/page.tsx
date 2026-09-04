@@ -299,7 +299,7 @@ export default function AdminTeachersPage() {
         ) : (
           <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-700 table-fixed">
+              <table className="w-full text-left text-xs text-slate-700 table-fixed min-w-[800px] lg:min-w-0">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
                     <th className="w-[80px] px-3 py-3 whitespace-nowrap">Mã GV</th>
@@ -418,8 +418,8 @@ export default function AdminTeachersPage() {
             </div>
 
             {/* Pagination Controls */}
-            <div className="px-5 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-              <div className="flex items-center gap-2 text-slate-600">
+            <div className="px-4 sm:px-5 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-slate-600">
                 <span>Hiển thị</span>
                 <span className="font-bold text-slate-900">
                   {totalTeachers > 0 ? (page - 1) * limit + 1 : 0} - {Math.min(page * limit, totalTeachers)}
