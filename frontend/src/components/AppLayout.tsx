@@ -40,17 +40,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
 
-  // Đọc theme từ localStorage khi khởi tạo
+  // Đọc theme từ localStorage khi khởi tạo (mặc định là Dark Theme)
   useEffect(() => {
     const savedTheme = localStorage.getItem('etc_theme');
-    if (savedTheme === 'dark') {
-      setIsDark(true);
-      document.documentElement.classList.add('dark');
-    } else {
+    if (savedTheme === 'light') {
       setIsDark(false);
       document.documentElement.classList.remove('dark');
+    } else {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
+      if (!savedTheme) {
+        localStorage.setItem('etc_theme', 'dark');
+      }
     }
   }, []);
 

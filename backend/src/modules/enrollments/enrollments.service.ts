@@ -254,30 +254,35 @@ export class EnrollmentsService {
    * UC007 — Ghi nhận thanh toán học phí (Phiếu thu)
    */
   async createPayment(invoiceId: number, dto: CreatePaymentDto, collectorUserId?: number) {
-    const invoice = await this.prisma.hoaDon.findUnique({
-      where: { id: BigInt(invoiceId) },
-      include: { dangKyHoc: true },
-    });
-
-    if (!invoice) throw new NotFoundException('Hóa đơn không tồn tại.');
-
-    const soTienConLai = Number(invoice.soTienPhaiTra) - Number(invoice.soTienDaTra);
-    if (soTienConLai <= 0) {
-      throw new BadRequestException('Hóa đơn này đã được thanh toán hoàn tất.');
-    }
-
-    if (dto.soTien > soTienConLai) {
-      throw new BadRequestException(
-        `Số tiền thanh toán (${dto.soTien.toLocaleString()} đ) vượt quá số tiền còn lại (${soTienConLai.toLocaleString()} đ).`,
-      );
-    }
-
     const maGiaoDich = `GD-${Date.now().toString().slice(-8)}`;
-    const soTienDaTraMoi = Number(invoice.soTienDaTra) + dto.soTien;
-    const isFullPayment = soTienDaTraMoi >= Number(invoice.soTienPhaiTra);
 
     const result = await this.prisma.$transaction(async (tx) => {
-      // 1. Tạo bản ghi thanh toán
+      // 1. Đọc hóa đơn hiện tại bên trong Transaction để bảo đảm tính Atomic
+      const invoice = await tx.hoaDon.findUnique({
+        where: { id: BigInt(invoiceId) },
+        include: { dangKyHoc: true },
+      });
+
+      if (!invoice) throw new NotFoundException('Hóa đơn không tồn tại.');
+
+      const soTienPhaiTra = Number(invoice.soTienPhaiTra);
+      const soTienDaTraHienTai = Number(invoice.soTienDaTra);
+      const soTienConLai = Math.max(0, soTienPhaiTra - soTienDaTraHienTai);
+
+      if (soTienConLai <= 0) {
+        throw new BadRequestException('Hóa đơn này đã được thanh toán hoàn tất trước đó.');
+      }
+
+      if (dto.soTien > soTienConLai) {
+        throw new BadRequestException(
+          `Số tiền thanh toán (${dto.soTien.toLocaleString()} đ) vượt quá số tiền còn nợ (${soTienConLai.toLocaleString()} đ).`,
+        );
+      }
+
+      const soTienDaTraMoi = soTienDaTraHienTai + dto.soTien;
+      const isFullPayment = soTienDaTraMoi >= soTienPhaiTra;
+
+      // 2. Tạo bản ghi thanh toán (Phiếu thu)
       const payment = await tx.thanhToan.create({
         data: {
           hoaDonId: BigInt(invoiceId),
@@ -290,7 +295,7 @@ export class EnrollmentsService {
         },
       });
 
-      // 2. Cập nhật hóa đơn
+      // 3. Cập nhật hóa đơn
       const updatedInvoice = await tx.hoaDon.update({
         where: { id: BigInt(invoiceId) },
         data: {
@@ -301,8 +306,8 @@ export class EnrollmentsService {
         },
       });
 
-      // 3. Nếu đóng đủ tiền -> Xác nhận trạng thái đăng ký học
-      if (isFullPayment) {
+      // 4. Nếu đóng đủ tiền -> Xác nhận trạng thái đăng ký học
+      if (isFullPayment && invoice.dangKyHocId) {
         await tx.dangKyHoc.update({
           where: { id: invoice.dangKyHocId },
           data: { trangThai: TrangThaiDangKy.DA_XAC_NHAN },

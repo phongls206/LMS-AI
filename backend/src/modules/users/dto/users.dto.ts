@@ -3,10 +3,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { TrinhDoCEFR, TrangThaiHocVien, TrangThaiGiaoVien } from '@prisma/client';
 
 export class CreateStudentDto {
-  @ApiProperty({ example: 'student03', description: 'Tên đăng nhập' })
+  @ApiPropertyOptional({ example: 'student03', description: 'Tên đăng nhập (để trống hệ thống tự tạo duy nhất)' })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  tenDangNhap: string;
+  tenDangNhap?: string;
 
   @ApiProperty({ example: '123456', description: 'Mật khẩu khởi tạo' })
   @IsString()
@@ -22,10 +22,10 @@ export class CreateStudentDto {
   @IsString()
   soDienThoai?: string;
 
-  @ApiProperty({ example: 'HV003', description: 'Mã học viên (duy nhất)' })
+  @ApiPropertyOptional({ example: 'HV003', description: 'Mã học viên (duy nhất, để trống hệ thống tự cấp)' })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  maHocVien: string;
+  maHocVien?: string;
 
   @ApiProperty({ example: 'Nguyễn Văn An', description: 'Họ và tên' })
   @IsString()
@@ -103,10 +103,10 @@ export class UpdateStudentDto {
 }
 
 export class CreateTeacherDto {
-  @ApiProperty({ example: 'teacher04', description: 'Tên đăng nhập' })
+  @ApiPropertyOptional({ example: 'teacher04', description: 'Tên đăng nhập (để trống hệ thống tự tạo duy nhất)' })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  tenDangNhap: string;
+  tenDangNhap?: string;
 
   @ApiProperty({ example: '123456', description: 'Mật khẩu' })
   @IsString()
@@ -122,10 +122,10 @@ export class CreateTeacherDto {
   @IsString()
   soDienThoai?: string;
 
-  @ApiProperty({ example: 'GV004', description: 'Mã giáo viên (duy nhất)' })
+  @ApiPropertyOptional({ example: 'GV004', description: 'Mã giáo viên (duy nhất, để trống hệ thống tự cấp)' })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  maGiaoVien: string;
+  maGiaoVien?: string;
 
   @ApiProperty({ example: 'Hoàng Văn Thái', description: 'Họ và tên giảng viên' })
   @IsString()

@@ -584,8 +584,8 @@ export default function AdminClassesPage() {
 
         {/* Modal Mở Lớp Mới */}
         {showCreateClass && (
-          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 shadow-2xl text-slate-800">
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-4 sm:p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
               <h3 className="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">Mở Lớp Học Mới</h3>
               <form onSubmit={handleCreateClass} className="space-y-4 text-xs">
                 <div>
@@ -607,7 +607,7 @@ export default function AdminClassesPage() {
                   </select>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Mã Lớp Học (VD: IELTS-B1-02)</label>
                     <input
@@ -631,7 +631,7 @@ export default function AdminClassesPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Tên Lớp Học</label>
                     <input
@@ -656,7 +656,7 @@ export default function AdminClassesPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Ngày Bắt Đầu</label>
                     <input
@@ -740,8 +740,8 @@ export default function AdminClassesPage() {
 
         {/* Modal Chỉnh Sửa Thông Tin & Phòng Học Lớp */}
         {editingClass && (
-          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 shadow-2xl text-slate-800">
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-4 sm:p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
                 <div>
                   <h3 className="text-lg font-bold text-slate-900">Chỉnh Sửa Lớp Học & Phòng Học</h3>
@@ -757,7 +757,7 @@ export default function AdminClassesPage() {
               </div>
 
               <form onSubmit={handleSaveClass} className="space-y-4 text-xs">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Tên Lớp Học</label>
                     <input
@@ -793,7 +793,7 @@ export default function AdminClassesPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Ngày Bắt Đầu</label>
                     <input
@@ -837,8 +837,8 @@ export default function AdminClassesPage() {
 
         {/* Modal Thêm Lịch Học (Chọn Nhiều Ngày Linh Hoạt) */}
         {showAddSchedule && (
-          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 shadow-2xl text-slate-800 space-y-4">
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-4 sm:p-6 shadow-2xl text-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-start pb-2 border-b border-slate-100">
                 <div>
                   <h3 className="text-lg font-bold text-slate-900">Xếp Lịch Học Tuần</h3>
@@ -965,7 +965,7 @@ export default function AdminClassesPage() {
                 </div>
 
                 {/* Giờ học */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Giờ Bắt Đầu</label>
                     <input
@@ -1036,8 +1036,8 @@ export default function AdminClassesPage() {
 
         {/* Modal Phân Công Giáo Viên */}
         {showAssignTeacher && (
-          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4 text-slate-800">
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-4 sm:p-6 shadow-2xl space-y-4 text-slate-800 max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center pb-2 border-b border-slate-100">
                 <h3 className="text-base font-bold text-slate-900">Phân Công Giáo Viên Giảng Dạy</h3>
                 <button onClick={() => setShowAssignTeacher(null)} className="text-slate-400 hover:text-slate-700 p-1">
@@ -1110,8 +1110,8 @@ export default function AdminClassesPage() {
 
         {/* MODAL QUẢN LÝ DANH SÁCH BUỔI HỌC CỦA LỚP */}
         {showSessionsClassId && (
-          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-800 p-6 space-y-5">
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-y-auto shadow-2xl text-slate-800 p-4 sm:p-6 space-y-5">
               {(() => {
                 const targetClass = classes.find((c) => Number(c.id) === Number(showSessionsClassId));
                 return (
@@ -1270,7 +1270,7 @@ export default function AdminClassesPage() {
                         <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
                       </div>
                     ) : classSessions.length > 0 ? (
-                      <div className="border border-slate-200 rounded-xl overflow-hidden max-h-[50vh] overflow-y-auto">
+                      <div className="border border-slate-200 rounded-xl max-h-[50vh] overflow-auto">
                         <table className="w-full text-left text-xs border-collapse">
                           <thead className="bg-slate-50 text-slate-600 font-bold sticky top-0 border-b border-slate-200 z-10">
                             <tr>

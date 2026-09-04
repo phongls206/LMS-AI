@@ -72,6 +72,7 @@ export default function StaffCollectFeePage() {
   const [selectedClassId, setSelectedClassId] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [submittingPayment, setSubmittingPayment] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Search & Pagination cho Invoices
@@ -242,7 +243,8 @@ export default function StaffCollectFeePage() {
 
   const handleSubmitPayment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedInvoice) return;
+    if (!selectedInvoice || submittingPayment) return;
+    setSubmittingPayment(true);
 
     try {
       const paymentRes = await enrollmentsService.createPayment(selectedInvoice.id, {
@@ -274,6 +276,8 @@ export default function StaffCollectFeePage() {
       fetchData();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Có lỗi xảy ra khi thu tiền.');
+    } finally {
+      setSubmittingPayment(false);
     }
   };
 
@@ -618,8 +622,12 @@ export default function StaffCollectFeePage() {
                   >
                     Hủy
                   </button>
-                  <button type="submit" className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold shadow-md shadow-teal-600/20 cursor-pointer transition">
-                    Xác Nhận & Xuất Phiếu Thu
+                  <button
+                    type="submit"
+                    disabled={submittingPayment}
+                    className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold shadow-md shadow-teal-600/20 cursor-pointer transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {submittingPayment ? 'Đang Ghi Nhận Thu Tiền...' : 'Xác Nhận & Xuất Phiếu Thu'}
                   </button>
                 </div>
               </form>

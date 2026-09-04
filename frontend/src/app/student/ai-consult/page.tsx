@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService, authService } from '../../../services/api';
+import { validateAiPrompt } from '../../../utils/ai-validator';
 import {
   Sparkles,
   ArrowRight,
@@ -96,6 +97,15 @@ export default function StudentAiConsultPage() {
 
   const handleConsult = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (mucTieu && mucTieu.trim().length > 0) {
+      const validation = validateAiPrompt(mucTieu, 'GOAL');
+      if (!validation.isValid) {
+        alert(validation.errorMessage);
+        return;
+      }
+    }
+
     setLoading(true);
     sessionStorage.removeItem('etc_ai_consult_session');
 

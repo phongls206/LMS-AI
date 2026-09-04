@@ -33,43 +33,103 @@ export class AiService {
   }
 
   /**
-   * Kiểm tra tính hợp lệ và lọc rác (Sanitization & Anti-Gibberish) cho chủ đề bài tập
-   * Ngăn chặn người dùng nhập chuỗi vô nghĩa hoặc prompt injection làm tiêu tốn quota token vô ích.
+   * Kiểm tra tính hợp lệ và lọc rác (Sanitization, Anti-Gibberish & Anti-Spam) cho prompt AI
+   * Ngăn chặn người dùng nhập chuỗi số vô nghĩa, bàn phím gõ loạn hoặc prompt injection làm tiêu tốn quota token vô ích.
    */
-  private validateTopic(rawTopic: string): string {
-    const topic = (rawTopic || '').trim();
+  private validateAiPromptInput(rawInput: string, type: 'TOPIC' | 'GOAL'): string {
+    const text = (rawInput || '').trim();
+    const fieldName = type === 'TOPIC' ? 'Chủ đề bài tập' : 'Mục tiêu học tập';
 
     // 1. Kiểm tra độ dài tối thiểu & tối đa
-    if (topic.length < 3) {
-      throw new BadRequestException('Chủ đề bài tập quá ngắn! Vui lòng nhập tối thiểu 3 ký tự (Ví dụ: Thì hiện tại hoàn thành, Mệnh đề quan hệ...).');
+    const minLen = type === 'TOPIC' ? 3 : 5;
+    const maxLen = type === 'TOPIC' ? 100 : 300;
+    if (text.length < minLen) {
+      throw new BadRequestException(
+        `${fieldName} quá ngắn! Vui lòng nhập tối thiểu ${minLen} ký tự (Ví dụ: ${
+          type === 'TOPIC'
+            ? 'Thì hiện tại hoàn thành, Mệnh đề quan hệ...'
+            : 'Muốn nâng cao kỹ năng Nói để phỏng vấn xin việc...'
+        }).`,
+      );
     }
-    if (topic.length > 100) {
-      throw new BadRequestException('Chủ đề bài tập không được vượt quá 100 ký tự để tránh lãng phí tài nguyên hệ thống.');
+    if (text.length > maxLen) {
+      throw new BadRequestException(
+        `${fieldName} không được vượt quá ${maxLen} ký tự để tránh lãng phí tài nguyên hệ thống.`,
+      );
     }
 
-    // 2. Bắt buộc phải chứa ký tự chữ cái (không được chỉ gồm số hoặc ký tự đặc biệt)
-    if (!/[a-zA-ZÀ-ỹ]/.test(topic)) {
-      throw new BadRequestException('Chủ đề không hợp lệ! Vui lòng nhập bằng chữ có nghĩa thay vì chỉ nhập số hoặc ký hiệu vô nghĩa.');
+    // 2. Bắt buộc phải chứa ký tự chữ cái (chặn chuỗi chỉ toàn số hoặc ký tự đặc biệt)
+    if (!/[a-zA-ZÀ-ỹ]/.test(text)) {
+      throw new BadRequestException(
+        `${fieldName} không hợp lệ! Vui lòng nhập bằng từ ngữ có nghĩa thay vì chỉ nhập số hoặc ký hiệu vô nghĩa.`,
+      );
     }
 
-    // 3. Chặn ký tự lặp vô nghĩa (ví dụ: aaaaaaa, zzzzzzzz, 1111111)
-    if (/(.)\1{4,}/i.test(topic)) {
-      throw new BadRequestException('Chủ đề chứa chuỗi ký tự lặp vô nghĩa! Vui lòng nhập nội dung ôn tập tiếng Anh thực tế.');
+    // 3. Chặn chuỗi chứa dãy số dài bất thường (>= 5 chữ số liên tiếp, ví dụ: 12345667764563253252, 213213213213123)
+    const longDigitsMatch = text.match(/\d{5,}/);
+    if (longDigitsMatch) {
+      throw new BadRequestException(
+        `${fieldName} chứa dãy số không phù hợp ("${longDigitsMatch[0]}"). Vui lòng nhập nội dung tiếng Anh hoặc mục tiêu học tập rõ ràng.`,
+      );
     }
 
-    // 4. Chặn bàn phím gõ loạn / bàn phím rác (Keyboard Mash: từ dài >= 6 ký tự không chứa bất kỳ nguyên âm nào)
-    const words = topic.split(/\s+/);
+    // 4. Chặn chữ dính liền với >= 3 số không có dấu cách (ví dụ: aiúdhiuahsd2312321, àbbabsđáh213123)
+    const gluedMatch = text.match(/[a-zA-ZÀ-ỹ]+\d{3,}|\d{3,}[a-zA-ZÀ-ỹ]+/i);
+    if (gluedMatch) {
+      throw new BadRequestException(
+        `Phát hiện chuỗi ký tự và số dính liền vô nghĩa ("${gluedMatch[0]}"). Vui lòng nhập từ ngữ học tập thực tế.`,
+      );
+    }
+
+    // 5. Chặn ký tự lặp vô nghĩa (ví dụ: aaaaa, zzzzz, 1111)
+    if (/(.)\1{3,}/i.test(text)) {
+      throw new BadRequestException(
+        `${fieldName} chứa chuỗi ký tự lặp vô nghĩa! Vui lòng nhập nội dung ôn tập tiếng Anh thực tế.`,
+      );
+    }
+
+    // 6. Chặn cụm n-gram lặp vô nghĩa (nhóm 2-4 ký tự lặp >= 3 lần, ví dụ: 213213213, asdasdasd, ababab)
+    const repeatedNgram = text.match(/(.{2,4})\1{2,}/i);
+    if (repeatedNgram) {
+      throw new BadRequestException(
+        `Phát hiện chuỗi lặp lại vô nghĩa ("${repeatedNgram[0]}"). Vui lòng nhập nội dung học tập thực tế.`,
+      );
+    }
+
+    // 7. Chặn chuỗi phím gõ loạn phổ biến (Keyboard Mash)
+    const KEYBOARD_MASH_PATTERNS = /(?:asdf|sdfg|dfgh|fghj|ghjk|hjkl|jkl;|qwerty|werty|ertyu|rtyui|tyuio|yuio|zxcv|xcvb|cvbn|vbnm)/i;
+    if (KEYBOARD_MASH_PATTERNS.test(text)) {
+      throw new BadRequestException(
+        `Phát hiện chuỗi gõ loạn phím không có nghĩa. Vui lòng nhập nội dung học tiếng Anh thực tế.`,
+      );
+    }
+
+    // 8. Chặn từ quá dài không dấu cách hoặc chứa cụm phụ âm bất thường
+    const words = text.split(/\s+/);
     for (const word of words) {
       const cleanWord = word.replace(/[^a-zA-ZÀ-ỹ]/g, '').toLowerCase();
+      // Từ đơn quá dài không có dấu gạch ngang (>= 15 ký tự)
+      if (cleanWord.length >= 15 && !word.includes('-')) {
+        throw new BadRequestException(
+          `Phát hiện từ không hợp lệ quá dài: "${word}". Vui lòng nhập nội dung tiếng Anh hoặc tiếng Việt rõ nghĩa.`,
+        );
+      }
+      // Cụm phụ âm liên tiếp >= 5 phụ âm (gõ loạn phím)
+      if (/[bcdfghjklmnpqrstvwxyz]{5,}/i.test(cleanWord)) {
+        throw new BadRequestException(
+          `Phát hiện từ chứa chuỗi phụ âm bất thường: "${word}". Vui lòng nhập từ ngữ học tập hợp lệ.`,
+        );
+      }
+      // Từ dài >= 6 ký tự nhưng không có nguyên âm nào
       if (cleanWord.length >= 6) {
         const hasVowels = /[aeiouyáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ]/.test(cleanWord);
         if (!hasVowels) {
-          throw new BadRequestException(`Phát hiện từ không có nghĩa: "${word}". Vui lòng nhập chủ đề tiếng Anh hợp lệ.`);
+          throw new BadRequestException(`Phát hiện từ không có nghĩa: "${word}". Vui lòng nhập nội dung hợp lệ.`);
         }
       }
     }
 
-    // 5. Chặn Prompt Injection / Hack / Jailbreak
+    // 9. Chặn Prompt Injection / Hack / Jailbreak
     const INJECTION_PATTERNS = [
       /ignore\s+(all\s+)?(previous\s+)?instructions/i,
       /system\s+prompt/i,
@@ -86,12 +146,16 @@ export class AiService {
     ];
 
     for (const pattern of INJECTION_PATTERNS) {
-      if (pattern.test(topic)) {
-        throw new BadRequestException('Chủ đề vi phạm chính sách an toàn của hệ thống (Prompt Injection bị chặn). Vui lòng chỉ nhập chủ đề học tập tiếng Anh.');
+      if (pattern.test(text)) {
+        throw new BadRequestException(`${fieldName} vi phạm chính sách an toàn của hệ thống (Prompt Injection bị chặn).`);
       }
     }
 
-    return topic;
+    return text;
+  }
+
+  private validateTopic(rawTopic: string): string {
+    return this.validateAiPromptInput(rawTopic, 'TOPIC');
   }
 
   /**
@@ -221,6 +285,9 @@ export class AiService {
    */
   async consultClasses(dto: ConsultClassDto, userId: number) {
     this.checkAntiSpam(userId);
+    if (dto.mucTieu && dto.mucTieu.trim().length > 0) {
+      dto.mucTieu = this.validateAiPromptInput(dto.mucTieu, 'GOAL');
+    }
     const startTime = Date.now();
 
     // 1. Lấy danh sách lớp đang mở và còn chỗ thực tế trong CSDL

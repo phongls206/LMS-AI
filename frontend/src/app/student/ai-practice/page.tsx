@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService } from '../../../services/api';
+import { validateAiPrompt } from '../../../utils/ai-validator';
 import {
   Sparkles,
   CheckCircle2,
@@ -114,23 +115,17 @@ export default function StudentAiPracticePage() {
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!activeTopic || activeTopic.length < 3) {
-      alert('Chủ đề bài tập quá ngắn! Vui lòng nhập tối thiểu 3 ký tự.');
-      return;
-    }
 
     // Kiểm tra chủ đề rác / vô nghĩa ngay tại Frontend
     if (selectedTopic === 'CUSTOM') {
-      if (/(.)\1{4,}/.test(activeTopic) || !/[a-zA-ZÀ-ỹ]/.test(activeTopic)) {
-        alert('Chủ đề chứa ký tự không hợp lệ hoặc chuỗi vô nghĩa. Vui lòng nhập chủ đề tiếng Anh cụ thể.');
+      const validation = validateAiPrompt(activeTopic, 'TOPIC');
+      if (!validation.isValid) {
+        alert(validation.errorMessage);
         return;
       }
-      const words = activeTopic.split(/\s+/);
-      const isGibberish = words.some((w) => w.length > 18 && !w.includes('-'));
-      if (isGibberish) {
-        alert('Chủ đề chứa từ vô nghĩa quá dài. Vui lòng nhập chủ đề học thuật rõ ràng.');
-        return;
-      }
+    } else if (!activeTopic || activeTopic.length < 3) {
+      alert('Chủ đề bài tập quá ngắn! Vui lòng chọn chủ đề hợp lệ.');
+      return;
     }
 
     setLoading(true);

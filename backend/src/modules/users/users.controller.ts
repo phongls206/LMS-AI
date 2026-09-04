@@ -64,6 +64,31 @@ export class UsersController {
   }
 
   /**
+   * GET /api/v1/students/next-code — Lấy mã học viên & tên đăng nhập khả dụng kế tiếp
+   */
+  @Get('students/next-code')
+  @Roles(VaiTro.QUAN_LY, VaiTro.TU_VAN_VIEN)
+  @ApiOperation({ summary: 'Lấy mã học viên và tên đăng nhập đề xuất duy nhất tiếp theo' })
+  getNextStudentCode() {
+    return this.usersService.getNextStudentCode();
+  }
+
+  /**
+   * GET /api/v1/students/check-duplicate — Kiểm tra trùng lặp thông tin học viên
+   */
+  @Get('students/check-duplicate')
+  @Roles(VaiTro.QUAN_LY, VaiTro.TU_VAN_VIEN)
+  @ApiOperation({ summary: 'Kiểm tra trùng lặp tên đăng nhập, email, mã hoặc số điện thoại học viên' })
+  checkStudentDuplicate(
+    @Query('tenDangNhap') tenDangNhap?: string,
+    @Query('email') email?: string,
+    @Query('maHocVien') maHocVien?: string,
+    @Query('soDienThoai') soDienThoai?: string,
+  ) {
+    return this.usersService.checkStudentDuplicate({ tenDangNhap, email, maHocVien, soDienThoai });
+  }
+
+  /**
    * GET /api/v1/students/:id — UC002 (Quản lý, TVV, Học viên xem hồ sơ mình)
    */
   @Get('students/:id')
@@ -118,6 +143,30 @@ export class UsersController {
   @ApiOperation({ summary: 'Thêm mới giáo viên' })
   createTeacher(@Body() dto: CreateTeacherDto) {
     return this.usersService.createTeacher(dto);
+  }
+
+  /**
+   * GET /api/v1/teachers/next-code — Lấy mã giáo viên & tên đăng nhập khả dụng kế tiếp
+   */
+  @Get('teachers/next-code')
+  @Roles(VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Lấy mã giáo viên và tên đăng nhập đề xuất duy nhất tiếp theo' })
+  getNextTeacherCode() {
+    return this.usersService.getNextTeacherCode();
+  }
+
+  /**
+   * GET /api/v1/teachers/check-duplicate — Kiểm tra trùng lặp giáo viên
+   */
+  @Get('teachers/check-duplicate')
+  @Roles(VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Kiểm tra trùng lặp tên đăng nhập, email, mã giáo viên' })
+  checkTeacherDuplicate(
+    @Query('tenDangNhap') tenDangNhap?: string,
+    @Query('email') email?: string,
+    @Query('maGiaoVien') maGiaoVien?: string,
+  ) {
+    return this.usersService.checkTeacherDuplicate({ tenDangNhap, email, maGiaoVien });
   }
 
   /**

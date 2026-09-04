@@ -102,11 +102,24 @@ export const usersService = {
   getStudents: async (page = 1, limit = 10, search?: string, cefr?: string) =>
     (await api.get('/students', { params: { page, limit, search, cefr } })).data,
   getStudentById: async (id: number) => (await api.get(`/students/${id}`)).data,
+  getNextStudentCode: async () => (await api.get('/students/next-code')).data,
+  checkStudentDuplicate: async (params: {
+    tenDangNhap?: string;
+    email?: string;
+    maHocVien?: string;
+    soDienThoai?: string;
+  }) => (await api.get('/students/check-duplicate', { params })).data,
   createStudent: async (data: any) => (await api.post('/students', data)).data,
   updateStudent: async (id: number, data: any) => (await api.put(`/students/${id}`, data)).data,
   deleteStudent: async (id: number) => (await api.delete(`/students/${id}`)).data,
   getTeachers: async () => (await api.get('/teachers')).data,
   getTeacherById: async (id: number) => (await api.get(`/teachers/${id}`)).data,
+  getNextTeacherCode: async () => (await api.get('/teachers/next-code')).data,
+  checkTeacherDuplicate: async (params: {
+    tenDangNhap?: string;
+    email?: string;
+    maGiaoVien?: string;
+  }) => (await api.get('/teachers/check-duplicate', { params })).data,
   createTeacher: async (data: any) => (await api.post('/teachers', data)).data,
   updateTeacher: async (id: number, data: any) => (await api.put(`/teachers/${id}`, data)).data,
   deleteTeacher: async (id: number) => (await api.delete(`/teachers/${id}`)).data,

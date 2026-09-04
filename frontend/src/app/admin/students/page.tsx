@@ -27,6 +27,8 @@ import {
   MapPin,
   DollarSign,
   UserCheck,
+  RefreshCw,
+  AlertCircle,
 } from 'lucide-react';
 
 export default function AdminStudentsPage() {
@@ -92,8 +94,60 @@ export default function AdminStudentsPage() {
     fetchStudents();
   }, [page, limit, search, cefrFilter]);
 
+  // Duplicate check states cho modal thêm học viên
+  const [createDuplicateErrors, setCreateDuplicateErrors] = useState<Record<string, string>>({});
+  const [fetchingNextCode, setFetchingNextCode] = useState(false);
+
+  const handleOpenCreateModal = async () => {
+    setShowCreateModal(true);
+    setCreateDuplicateErrors({});
+    try {
+      setFetchingNextCode(true);
+      const res = await usersService.getNextStudentCode();
+      setCreateFormData((prev) => ({
+        ...prev,
+        maHocVien: res.nextMaHocVien || '',
+        tenDangNhap: res.suggestedUsername || '',
+      }));
+    } catch (err) {
+      console.error('Không thể lấy mã học viên đề xuất:', err);
+    } finally {
+      setFetchingNextCode(false);
+    }
+  };
+
+  // Debounced duplicate check khi nhập form tạo mới
+  useEffect(() => {
+    if (!showCreateModal) return;
+    const timer = setTimeout(async () => {
+      if (!createFormData.tenDangNhap && !createFormData.email && !createFormData.maHocVien) {
+        setCreateDuplicateErrors({});
+        return;
+      }
+
+      try {
+        const res = await usersService.checkStudentDuplicate({
+          tenDangNhap: createFormData.tenDangNhap || undefined,
+          email: createFormData.email || undefined,
+          maHocVien: createFormData.maHocVien || undefined,
+          soDienThoai: createFormData.soDienThoai || undefined,
+        });
+        setCreateDuplicateErrors(res.errors || {});
+      } catch (err) {
+        console.error('Lỗi kiểm tra trùng lặp:', err);
+      }
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [showCreateModal, createFormData.tenDangNhap, createFormData.email, createFormData.maHocVien, createFormData.soDienThoai]);
+
   const handleCreateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (Object.keys(createDuplicateErrors).length > 0) {
+      alert('Vui lòng sửa các thông tin đang bị trùng lặp trước khi lưu!');
+      return;
+    }
+
     try {
       await usersService.createStudent(createFormData);
       setMessage('Tiếp nhận học viên mới thành công!');
@@ -109,6 +163,7 @@ export default function AdminStudentsPage() {
         trinhDoCEFR: 'B1',
         nguonDanhGia: 'Placement Test',
       });
+      setCreateDuplicateErrors({});
       fetchStudents();
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
@@ -199,7 +254,7 @@ export default function AdminStudentsPage() {
           </div>
 
           <button
-            onClick={() => setShowCreateModal(true)}
+            onClick={handleOpenCreateModal}
             className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer"
           >
             <Plus className="w-4 h-4" />
@@ -459,8 +514,8 @@ export default function AdminStudentsPage() {
 
         {/* Modal Thêm Học Viên */}
         {showCreateModal && (
-          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4 text-slate-800">
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-4 sm:p-6 shadow-2xl space-y-4 text-slate-800 max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center pb-2 border-b border-slate-100">
                 <h3 className="text-base font-bold text-slate-900">Tiếp Nhận & Tạo Hồ Sơ Học Viên Mới</h3>
                 <button onClick={() => setShowCreateModal(false)} className="text-slate-400 hover:text-slate-700 p-1">
@@ -469,16 +524,39 @@ export default function AdminStudentsPage() {
               </div>
 
               <form onSubmit={handleCreateStudent} className="space-y-3 text-xs">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Mã Học Viên (VD: HV007)</label>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="block text-slate-700 font-bold">Mã Học Viên (Tự cấp)</label>
+                      <button
+                        type="button"
+                        onClick={handleOpenCreateModal}
+                        disabled={fetchingNextCode}
+                        className="text-[10px] text-teal-600 hover:text-teal-700 flex items-center space-x-1 cursor-pointer"
+                        title="Cấp mã mới"
+                      >
+                        <RefreshCw className={`w-3 h-3 ${fetchingNextCode ? 'animate-spin' : ''}`} />
+                        <span>Cấp mới</span>
+                      </button>
+                    </div>
                     <input
                       type="text"
                       required
                       value={createFormData.maHocVien}
-                      onChange={(e) => setCreateFormData({ ...createFormData, maHocVien: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      onChange={(e) => setCreateFormData({ ...createFormData, maHocVien: e.target.value.toUpperCase() })}
+                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-mono ${
+                        createDuplicateErrors.maHocVien
+                          ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
+                          : 'border-slate-200 focus:border-teal-500'
+                      }`}
+                      placeholder="VD: HV055"
                     />
+                    {createDuplicateErrors.maHocVien && (
+                      <p className="text-[10px] text-rose-600 mt-1 flex items-center space-x-1">
+                        <AlertCircle className="w-3 h-3 shrink-0" />
+                        <span>{createDuplicateErrors.maHocVien}</span>
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Họ Và Tên</label>
@@ -488,20 +566,32 @@ export default function AdminStudentsPage() {
                       value={createFormData.hoTen}
                       onChange={(e) => setCreateFormData({ ...createFormData, hoTen: e.target.value })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      placeholder="VD: Nguyễn Văn An"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Tên Đăng Nhập</label>
                     <input
                       type="text"
                       required
                       value={createFormData.tenDangNhap}
-                      onChange={(e) => setCreateFormData({ ...createFormData, tenDangNhap: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      onChange={(e) => setCreateFormData({ ...createFormData, tenDangNhap: e.target.value.toLowerCase() })}
+                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${
+                        createDuplicateErrors.tenDangNhap
+                          ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
+                          : 'border-slate-200 focus:border-teal-500'
+                      }`}
+                      placeholder="VD: student55"
                     />
+                    {createDuplicateErrors.tenDangNhap && (
+                      <p className="text-[10px] text-rose-600 mt-1 flex items-center space-x-1">
+                        <AlertCircle className="w-3 h-3 shrink-0" />
+                        <span>{createDuplicateErrors.tenDangNhap}</span>
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Mật Khẩu Khởi Tạo</label>
@@ -511,20 +601,32 @@ export default function AdminStudentsPage() {
                       value={createFormData.matKhau}
                       onChange={(e) => setCreateFormData({ ...createFormData, matKhau: e.target.value })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      placeholder="Mặc định: 123456"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Email</label>
+                    <label className="block text-slate-700 font-bold mb-1">Email (Duy nhất)</label>
                     <input
                       type="email"
                       required
                       value={createFormData.email}
                       onChange={(e) => setCreateFormData({ ...createFormData, email: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${
+                        createDuplicateErrors.email
+                          ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
+                          : 'border-slate-200 focus:border-teal-500'
+                      }`}
+                      placeholder="VD: student55@gmail.com"
                     />
+                    {createDuplicateErrors.email && (
+                      <p className="text-[10px] text-rose-600 mt-1 flex items-center space-x-1">
+                        <AlertCircle className="w-3 h-3 shrink-0" />
+                        <span>{createDuplicateErrors.email}</span>
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Số Điện Thoại</label>
@@ -533,11 +635,12 @@ export default function AdminStudentsPage() {
                       value={createFormData.soDienThoai}
                       onChange={(e) => setCreateFormData({ ...createFormData, soDienThoai: e.target.value })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      placeholder="VD: 0901234567"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Trình Độ CEFR</label>
                     <select
@@ -572,8 +675,12 @@ export default function AdminStudentsPage() {
                   >
                     Hủy
                   </button>
-                  <button type="submit" className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold cursor-pointer transition shadow-sm">
-                    Lưu Học Viên
+                  <button
+                    type="submit"
+                    disabled={Object.keys(createDuplicateErrors).length > 0}
+                    className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold cursor-pointer transition shadow-sm disabled:opacity-50"
+                  >
+                    {Object.keys(createDuplicateErrors).length > 0 ? 'Dữ liệu bị trùng lặp' : 'Lưu Học Viên'}
                   </button>
                 </div>
               </form>
@@ -583,8 +690,8 @@ export default function AdminStudentsPage() {
 
         {/* Modal Sửa Học Viên & Reset Mật Khẩu */}
         {editingStudent && (
-          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-6 shadow-2xl space-y-4 text-slate-800">
+          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-4 sm:p-6 shadow-2xl space-y-4 text-slate-800 max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center pb-2 border-b border-slate-100">
                 <h3 className="text-base font-bold text-slate-900">
                   Cập Nhật Hồ Sơ: <span className="text-teal-700 font-mono">{editingStudent.maHocVien}</span>
@@ -606,7 +713,7 @@ export default function AdminStudentsPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Số Điện Thoại</label>
                     <input
@@ -633,7 +740,7 @@ export default function AdminStudentsPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Nguồn Đánh Giá</label>
                     <input

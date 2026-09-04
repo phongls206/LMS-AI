@@ -220,7 +220,7 @@ export default function StudentSchedulePage() {
 
                       {sessions.length > 0 ? (
                         <div className="border border-slate-200 rounded-xl overflow-hidden bg-white">
-                          <div className="max-h-72 overflow-y-auto">
+                          <div className="max-h-72 overflow-auto">
                             <table className="w-full text-left text-xs border-collapse">
                               <thead className="bg-slate-50 text-slate-600 font-bold sticky top-0 border-b border-slate-200 z-10">
                                 <tr>
