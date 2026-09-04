@@ -215,21 +215,21 @@ export default function AdminTeachersPage() {
       case 'DANG_LAM_VIEC':
         return (
           <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold whitespace-nowrap">
-            <UserCheck className="w-3 h-3" />
+            <UserCheck className="w-3.5 h-3.5 shrink-0" />
             <span>Đang Làm Việc</span>
           </span>
         );
       case 'TAM_NGHI':
         return (
           <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-bold whitespace-nowrap">
-            <Clock className="w-3 h-3" />
+            <Clock className="w-3.5 h-3.5 shrink-0" />
             <span>Tạm Nghỉ</span>
           </span>
         );
       case 'DA_NGHI_VIEC':
         return (
           <span className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[11px] font-bold whitespace-nowrap">
-            <UserX className="w-3 h-3" />
+            <UserX className="w-3.5 h-3.5 shrink-0" />
             <span>Đã Nghỉ Việc</span>
           </span>
         );
@@ -302,12 +302,12 @@ export default function AdminTeachersPage() {
               <table className="w-full text-left text-xs text-slate-700 table-fixed">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="w-[85px] px-3.5 py-3 whitespace-nowrap">Mã GV</th>
-                    <th className="w-[26%] px-3.5 py-3">Họ Và Tên</th>
-                    <th className="w-[28%] px-3.5 py-3">Lớp Đang Phụ Trách</th>
-                    <th className="w-[23%] px-3.5 py-3">Email & SĐT</th>
-                    <th className="w-[115px] px-2 py-3 whitespace-nowrap text-center">Trạng Thái</th>
-                    <th className="w-[95px] px-3.5 py-3 whitespace-nowrap text-right">Thao Tác</th>
+                    <th className="w-[80px] px-3 py-3 whitespace-nowrap">Mã GV</th>
+                    <th className="w-[26%] px-3 py-3">Họ Và Tên</th>
+                    <th className="w-[26%] px-3 py-3">Lớp Đang Phụ Trách</th>
+                    <th className="w-[22%] px-3 py-3">Email & SĐT</th>
+                    <th className="w-[145px] px-2 py-3 whitespace-nowrap text-center">Trạng Thái</th>
+                    <th className="w-[120px] px-3 py-3 whitespace-nowrap text-right">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -385,26 +385,26 @@ export default function AdminTeachersPage() {
                           {getStatusBadge(t.trangThai || 'DANG_LAM_VIEC')}
                         </td>
 
-                        <td className="px-3.5 py-3 align-middle text-right whitespace-nowrap">
+                        <td className="px-3 py-3 align-middle text-right whitespace-nowrap">
                           <div className="flex items-center justify-end space-x-1.5">
                             <button
                               onClick={() => setDetailTeacher(t)}
                               title="Xem hồ sơ chi tiết & bằng cấp"
-                              className="p-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 transition cursor-pointer"
+                              className="p-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 transition cursor-pointer shrink-0"
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => openEditModal(t, '123456')}
                               title="Reset mật khẩu về 123456"
-                              className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white border border-amber-200 hover:border-amber-600 transition cursor-pointer"
+                              className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white border border-amber-200 hover:border-amber-600 transition cursor-pointer shrink-0"
                             >
                               <KeyRound className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => openEditModal(t)}
                               title="Sửa thông tin & Trạng thái"
-                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer"
+                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer shrink-0"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
                             </button>
@@ -447,60 +447,70 @@ export default function AdminTeachersPage() {
                 </div>
               </div>
 
-              {totalPages > 1 && (
-                <div className="flex items-center space-x-1.5">
-                  <button
-                    onClick={() => setPage(1)}
-                    disabled={page === 1}
-                    title="Trang đầu"
-                    className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
-                  >
-                    <ChevronsLeft className="w-4 h-4" />
-                  </button>
+              <div className="flex items-center space-x-1.5">
+                <button
+                  onClick={() => setPage(1)}
+                  disabled={page === 1}
+                  title="Trang đầu"
+                  className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronsLeft className="w-4 h-4" />
+                </button>
 
-                  <button
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                    title="Trang trước"
-                    className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  title="Trang trước"
+                  className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
 
-                  <div className="flex items-center space-x-1 px-1">
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                      <button
-                        key={p}
-                        onClick={() => setPage(p)}
-                        className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${page === p
-                          ? 'bg-teal-600 text-white shadow-sm'
-                          : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                <div className="flex items-center space-x-1 px-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((p) => {
+                      if (totalPages <= 5) return true;
+                      if (p === 1 || p === totalPages) return true;
+                      return Math.abs(p - page) <= 1;
+                    })
+                    .map((p, idx, arr) => (
+                      <React.Fragment key={p}>
+                        {idx > 0 && arr[idx - 1] !== p - 1 && (
+                          <span className="px-1 text-slate-400 text-[11px]">...</span>
+                        )}
+                        <button
+                          key={p}
+                          onClick={() => setPage(p)}
+                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            page === p
+                              ? 'bg-teal-600 text-white shadow-sm'
+                              : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                           }`}
-                      >
-                        {p}
-                      </button>
+                        >
+                          {p}
+                        </button>
+                      </React.Fragment>
                     ))}
-                  </div>
-
-                  <button
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page >= totalPages}
-                    title="Trang kế tiếp"
-                    className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-
-                  <button
-                    onClick={() => setPage(totalPages)}
-                    disabled={page >= totalPages}
-                    title="Trang cuối"
-                    className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
-                  >
-                    <ChevronsRight className="w-4 h-4" />
-                  </button>
                 </div>
-              )}
+
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                  title="Trang kế tiếp"
+                  className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => setPage(totalPages)}
+                  disabled={page >= totalPages}
+                  title="Trang cuối"
+                  className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronsRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}
