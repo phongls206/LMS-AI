@@ -607,20 +607,20 @@ export default function AdminFeesPage() {
 
         {/* Modal Phiếu Thu Học Phí Riêng Cho Đơn & Xem Chi Tiết */}
         {receiptData && (
-          <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl shadow-2xl p-6 sm:p-8 space-y-6 text-slate-800 my-8">
+          <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto animate-fadeIn">
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-xl shadow-2xl p-4 sm:p-5 space-y-3 text-slate-800 my-auto max-h-[96vh] overflow-y-auto">
               {/* Header Modal Bar (ẩn khi in) */}
-              <div className="flex justify-between items-center pb-3 border-b border-slate-200 print:hidden">
-                <div className="flex items-center space-x-2 text-teal-600 font-bold text-sm">
-                  <Receipt className="w-5 h-5" />
+              <div className="flex justify-between items-center pb-2 border-b border-slate-200 print:hidden">
+                <div className="flex items-center space-x-2 text-teal-600 font-bold text-xs sm:text-sm">
+                  <Receipt className="w-4 h-4" />
                   <span>CHI TIẾT HÓA ĐƠN & PHIẾU THU HỌC PHÍ</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => window.print()}
-                    className="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition cursor-pointer"
+                    className="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition cursor-pointer"
                   >
-                    <Printer className="w-4 h-4" />
+                    <Printer className="w-3.5 h-3.5" />
                     <span>In Phiếu Thu</span>
                   </button>
                   <button
@@ -628,7 +628,7 @@ export default function AdminFeesPage() {
                     className="p-1.5 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-900 transition cursor-pointer"
                     title="Đóng cửa sổ"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -636,22 +636,22 @@ export default function AdminFeesPage() {
               {/* PHẦN NỘI DUNG PHIẾU THU (Printable Container) */}
               <div
                 id="etc-printable-receipt"
-                className="space-y-6 p-6 sm:p-8 rounded-xl bg-slate-50/70 border border-slate-200/90 text-slate-900 font-sans print:border-none print:p-0 print:bg-white print:text-black"
+                className="space-y-3 p-4 sm:p-5 rounded-xl bg-slate-50/70 border border-slate-200/90 text-slate-900 font-sans print:border-none print:p-0 print:bg-white print:text-black"
               >
                 {/* Header trung tâm */}
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b-2 border-slate-300 space-y-3 sm:space-y-0">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2.5 border-b-2 border-slate-300 gap-2">
                   <div>
-                    <h2 className="text-base font-black text-teal-700 uppercase tracking-wide">
+                    <h2 className="text-sm sm:text-base font-black text-teal-700 uppercase tracking-wide">
                       TRUNG TÂM NGOẠI NGỮ QUỐC TẾ ETC
                     </h2>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      📍 123 Đường Cầu Giấy, Hà Nội • ☎️ Hotline: 0988.123.456
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      📍 Tổ 1, P. Phan Đình Phùng, Thái Nguyên • ☎️ Hotline: 0787304341
                     </p>
                     <p className="text-[11px] text-slate-500">
-                      ✉️ Email: contact@etc.edu.vn • 🌐 Website: https://etc.edu.vn
+                      ✉️ Email: lehongphong2108@outlook.com • 🌐 Website: https://etcedu.vercel.app
                     </p>
                   </div>
-                  <div className="text-left sm:text-right text-xs">
+                  <div className="text-left sm:text-right text-xs shrink-0">
                     <p className="font-bold text-slate-700">
                       Mẫu số: <span className="font-mono">01-TT/ETC</span>
                     </p>
@@ -662,39 +662,39 @@ export default function AdminFeesPage() {
                 </div>
 
                 {/* Tiêu đề phiếu */}
-                <div className="text-center space-y-1">
-                  <h1 className="text-xl sm:text-2xl font-black text-slate-900 uppercase tracking-wider">
+                <div className="text-center space-y-0.5">
+                  <h1 className="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-wider">
                     PHIẾU THU HỌC PHÍ
                   </h1>
-                  <p className="text-xs italic text-slate-500">
+                  <p className="text-[11px] italic text-slate-500">
                     {formatReceiptDate(receiptData.date)}
                   </p>
                 </div>
 
                 {/* Thông tin học viên & lớp */}
-                <div className="space-y-2.5 text-xs text-slate-800">
-                  <div className="flex flex-col sm:flex-row sm:justify-between py-1 border-b border-dashed border-slate-200">
+                <div className="space-y-1.5 text-xs text-slate-800">
+                  <div className="flex flex-col sm:flex-row sm:justify-between py-0.5 border-b border-dashed border-slate-200">
                     <span className="text-slate-500">Họ và tên người nộp:</span>
-                    <span className="font-bold text-slate-900 text-sm">
+                    <span className="font-bold text-slate-900">
                       {receiptData.invoice.hocVien?.hoTen || 'Học viên'} (Mã HV: {receiptData.invoice.hocVien?.maHocVien})
                     </span>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:justify-between py-1 border-b border-dashed border-slate-200">
+                  <div className="flex flex-col sm:flex-row sm:justify-between py-0.5 border-b border-dashed border-slate-200">
                     <span className="text-slate-500">Lớp học đăng ký:</span>
                     <span className="font-bold text-teal-700">
                       {receiptData.invoice.dangKyHoc?.lopHoc?.tenLopHoc} ({receiptData.invoice.dangKyHoc?.lopHoc?.maLopHoc})
                     </span>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:justify-between py-1 border-b border-dashed border-slate-200">
+                  <div className="flex flex-col sm:flex-row sm:justify-between py-0.5 border-b border-dashed border-slate-200">
                     <span className="text-slate-500">Hình thức thanh toán:</span>
                     <span className="font-semibold text-slate-900">
                       {receiptData.paymentMethod === 'CHUYEN_KHOAN' ? '💳 Chuyển khoản Ngân hàng / QR' : '💵 Tiền mặt tại quầy'}
                     </span>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:justify-between py-1 border-b border-dashed border-slate-200">
+                  <div className="flex flex-col sm:flex-row sm:justify-between py-0.5 border-b border-dashed border-slate-200">
                     <span className="text-slate-500">Nội dung thu:</span>
                     <span className="font-medium text-slate-700">
                       {receiptData.note || 'Thu học phí khóa học tiếng Anh chuẩn quốc tế'}
@@ -702,23 +702,23 @@ export default function AdminFeesPage() {
                   </div>
 
                   {/* Bảng kê số tiền */}
-                  <div className="mt-4 p-4 rounded-xl bg-white border border-slate-200 space-y-2">
+                  <div className="mt-2 p-3 rounded-xl bg-white border border-slate-200 space-y-1.5">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-500">Tổng học phí khóa học:</span>
                       <span className="font-mono font-bold text-slate-800">
                         {Number(receiptData.invoice.soTienPhaiTra).toLocaleString()} đ
                       </span>
                     </div>
-                    <div className="flex justify-between items-center text-sm font-bold text-teal-700 pt-1 border-t border-slate-100">
+                    <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-teal-700 pt-1 border-t border-slate-100">
                       <span>SỐ TIỀN THỰC THU KỲ NÀY:</span>
-                      <span className="font-mono text-base">
+                      <span className="font-mono text-sm sm:text-base font-black">
                         {Number(receiptData.paymentAmount).toLocaleString()} đ
                       </span>
                     </div>
-                    <p className="text-[11px] italic text-slate-600 pt-1">
+                    <p className="text-[11px] italic text-slate-600 pt-0.5">
                       (Viết bằng chữ: <strong className="text-slate-800">{docSoThanhChu(receiptData.paymentAmount)}</strong>)
                     </p>
-                    <div className="flex justify-between items-center text-xs pt-2 border-t border-slate-100">
+                    <div className="flex justify-between items-center text-[11px] pt-1 border-t border-slate-100">
                       <span className="text-slate-500">Tình trạng công nợ sau thanh toán:</span>
                       <span
                         className={`font-bold font-mono ${
@@ -745,18 +745,18 @@ export default function AdminFeesPage() {
                 </div>
 
                 {/* Ký tên */}
-                <div className="grid grid-cols-2 gap-4 pt-6 text-center text-xs">
+                <div className="grid grid-cols-2 gap-3 pt-2.5 text-center text-xs">
                   <div>
                     <p className="font-bold text-slate-800 uppercase">Người Nộp Tiền</p>
-                    <p className="text-[11px] text-slate-400 italic">(Ký và ghi rõ họ tên)</p>
-                    <div className="h-14 flex items-end justify-center font-semibold text-slate-700">
+                    <p className="text-[10px] text-slate-400 italic">(Ký và ghi rõ họ tên)</p>
+                    <div className="h-9 flex items-end justify-center font-semibold text-slate-700">
                       {receiptData.invoice.hocVien?.hoTen}
                     </div>
                   </div>
                   <div>
                     <p className="font-bold text-slate-800 uppercase">Người Lập Phiếu / Thủ Quỹ</p>
-                    <p className="text-[11px] text-slate-400 italic">(Ký và ghi rõ họ tên)</p>
-                    <div className="h-14 flex items-end justify-center font-semibold text-teal-700">
+                    <p className="text-[10px] text-slate-400 italic">(Ký và ghi rõ họ tên)</p>
+                    <div className="h-9 flex items-end justify-center font-semibold text-teal-700">
                       Bộ phận Tài vụ ETC
                     </div>
                   </div>
@@ -764,23 +764,23 @@ export default function AdminFeesPage() {
               </div>
 
               {/* Footer modal buttons (ẩn khi in) */}
-              <div className="flex justify-between items-center pt-2 print:hidden">
-                <span className="text-[11px] text-slate-400">
+              <div className="flex justify-between items-center pt-1 print:hidden text-[11px]">
+                <span className="text-slate-400 text-[10px] sm:text-[11px]">
                   Hóa đơn gốc được lưu trữ bảo mật trên hệ thống LMS ETC
                 </span>
                 <div className="flex space-x-2">
                   <button
                     onClick={() => setReceiptData(null)}
-                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
                   >
                     Đóng
                   </button>
                   <button
                     onClick={() => window.print()}
-                    className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition cursor-pointer flex items-center space-x-1.5 shadow-sm"
+                    className="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition cursor-pointer flex items-center space-x-1.5 shadow-sm"
                   >
                     <Printer className="w-3.5 h-3.5" />
-                    <span>In Ngay</span>
+                    <span>In Phiếu Thu</span>
                   </button>
                 </div>
               </div>
