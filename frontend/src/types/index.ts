@@ -9,19 +9,25 @@ export interface UserSession {
   id: number;
   tenDangNhap: string;
   email: string;
+  soDienThoai?: string;
   vaiTro: VaiTro;
   accessToken: string;
+  hoTen?: string;
   hoSoHocVien?: {
     id: number;
     maHocVien: string;
     hoTen: string;
     trinhDoCEFR: TrinhDoCEFR;
+    ngaySinh?: string;
+    gioiTinh?: string;
+    diaChi?: string;
   };
   hoSoGiaoVien?: {
     id: number;
     maGiaoVien: string;
     hoTen: string;
     chuyenMon: string;
+    bangCap?: string;
   };
 }
 
@@ -100,6 +106,7 @@ export interface HocVien {
     tenDangNhap?: string;
     email: string;
     soDienThoai?: string;
+    hoTen?: string;
     dangHoatDong?: boolean;
   };
 }
@@ -116,6 +123,7 @@ export interface GiaoVien {
     tenDangNhap?: string;
     email: string;
     soDienThoai?: string;
+    hoTen?: string;
     dangHoatDong?: boolean;
   };
 }

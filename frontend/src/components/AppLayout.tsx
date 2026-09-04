@@ -18,6 +18,10 @@ import {
   KeyRound,
   Sun,
   Moon,
+  Calendar,
+  MapPin,
+  CreditCard,
+  Briefcase,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -163,7 +167,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     }
   };
 
-  const displayName = user.hoSoHocVien?.hoTen || user.hoSoGiaoVien?.hoTen || user.tenDangNhap;
+  const hoTen = user.hoTen || user.hoSoHocVien?.hoTen || user.hoSoGiaoVien?.hoTen;
+  const displayName = hoTen || user.tenDangNhap;
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 antialiased font-sans relative">
@@ -291,6 +296,88 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </div>
 
             <div className="space-y-2 text-xs text-slate-600">
+              <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-1">
+                Thông Tin Hồ Sơ
+              </div>
+
+              {hoTen && (
+                <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                  <span className="text-slate-500 flex items-center space-x-1.5">
+                    <User className="w-3.5 h-3.5 text-teal-600" />
+                    <span>Họ Và Tên:</span>
+                  </span>
+                  <span className="font-bold text-slate-900">{hoTen}</span>
+                </div>
+              )}
+
+              {user.hoSoHocVien && (
+                <>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    <span className="text-slate-500 flex items-center space-x-1.5">
+                      <GraduationCap className="w-3.5 h-3.5 text-teal-600" />
+                      <span>Mã Học Viên:</span>
+                    </span>
+                    <span className="font-mono font-bold text-teal-700">{user.hoSoHocVien.maHocVien}</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                      <span className="text-slate-500 flex items-center space-x-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-teal-600" />
+                        <span>Ngày Sinh:</span>
+                      </span>
+                      <span className="font-bold text-slate-800">
+                        {user.hoSoHocVien.ngaySinh ? new Date(user.hoSoHocVien.ngaySinh).toLocaleDateString('vi-VN') : 'Chưa cập nhật'}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                      <span className="text-slate-500">Giới Tính:</span>
+                      <span className="font-bold text-slate-800">{user.hoSoHocVien.gioiTinh || 'Nam'}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-start p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    <span className="text-slate-500 flex items-center space-x-1.5 shrink-0 mr-2">
+                      <MapPin className="w-3.5 h-3.5 text-teal-600" />
+                      <span>Địa Chỉ:</span>
+                    </span>
+                    <span className="font-semibold text-slate-800 text-right">{user.hoSoHocVien.diaChi || 'Chưa cập nhật'}</span>
+                  </div>
+
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    <span className="text-slate-500">Trình Độ Đầu Vào:</span>
+                    <span className="font-mono font-bold text-emerald-700">CEFR {user.hoSoHocVien.trinhDoCEFR}</span>
+                  </div>
+                </>
+              )}
+
+              {user.hoSoGiaoVien && (
+                <>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    <span className="text-slate-500 flex items-center space-x-1.5">
+                      <Award className="w-3.5 h-3.5 text-teal-600" />
+                      <span>Mã Giáo Viên:</span>
+                    </span>
+                    <span className="font-mono font-bold text-teal-700">{user.hoSoGiaoVien.maGiaoVien}</span>
+                  </div>
+
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    <span className="text-slate-500">Chuyên Môn:</span>
+                    <span className="font-bold text-slate-800">{user.hoSoGiaoVien.chuyenMon}</span>
+                  </div>
+
+                  <div className="flex justify-between items-start p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    <span className="text-slate-500 shrink-0 mr-2">Bằng Cấp:</span>
+                    <span className="font-semibold text-slate-800 text-right">{user.hoSoGiaoVien.bangCap || 'Cử nhân Sư phạm Tiếng Anh'}</span>
+                  </div>
+                </>
+              )}
+
+              <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-2">
+                Liên Hệ & Tài Khoản
+              </div>
+
               <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
                 <span className="text-slate-500 flex items-center space-x-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
@@ -318,6 +405,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               {/* Thông tin mở rộng theo vai trò */}
               {user.hoSoHocVien && (
                 <>
+                  <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-2">
+                    Hồ Sơ Học Viên
+                  </div>
                   <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
                     <span className="text-slate-500 flex items-center space-x-1.5">
                       <GraduationCap className="w-3.5 h-3.5 text-teal-600" />
@@ -339,6 +429,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
               {user.hoSoGiaoVien && (
                 <>
+                  <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-2">
+                    Hồ Sơ Giảng Dạy
+                  </div>
                   <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
                     <span className="text-slate-500 flex items-center space-x-1.5">
                       <Award className="w-3.5 h-3.5 text-teal-600" />
@@ -349,6 +442,31 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
                     <span className="text-slate-500">Chuyên Môn:</span>
                     <span className="font-semibold text-slate-800">{user.hoSoGiaoVien.chuyenMon}</span>
+                  </div>
+                  {user.hoSoGiaoVien.bangCap && (
+                    <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                      <span className="text-slate-500">Bằng Cấp:</span>
+                      <span className="font-semibold text-slate-800">{user.hoSoGiaoVien.bangCap}</span>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {user.vaiTro === 'TU_VAN_VIEN' && (
+                <>
+                  <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-2">
+                    Phân Công Công Tác
+                  </div>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    <span className="text-slate-500 flex items-center space-x-1.5">
+                      <Briefcase className="w-3.5 h-3.5 text-teal-600" />
+                      <span>Vị Trí:</span>
+                    </span>
+                    <span className="font-bold text-cyan-800">Chuyên Viên Tư Vấn Tuyển Sinh</span>
+                  </div>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    <span className="text-slate-500">Bộ Phận:</span>
+                    <span className="font-semibold text-slate-800">Phòng Tuyển Sinh & CSKH ETC</span>
                   </div>
                 </>
               )}

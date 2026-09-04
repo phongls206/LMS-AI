@@ -30,6 +30,7 @@ model NguoiDung {
   vaiTro           VaiTro
   email            String   @unique @db.VarChar(100)
   soDienThoai      String?  @db.VarChar(20)
+  hoTen            String?  @db.VarChar(100)
   dangHoatDong     Boolean  @default(true)
 
   // Relations

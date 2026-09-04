@@ -129,7 +129,7 @@ export default function AdminTeachersPage() {
   useEffect(() => {
     if (!showCreateModal) return;
     const timer = setTimeout(async () => {
-      if (!createFormData.tenDangNhap && !createFormData.email && !createFormData.maGiaoVien) {
+      if (!createFormData.tenDangNhap && !createFormData.email && !createFormData.maGiaoVien && !createFormData.soDienThoai) {
         setCreateDuplicateErrors({});
         return;
       }
@@ -139,6 +139,7 @@ export default function AdminTeachersPage() {
           tenDangNhap: createFormData.tenDangNhap || undefined,
           email: createFormData.email || undefined,
           maGiaoVien: createFormData.maGiaoVien || undefined,
+          soDienThoai: createFormData.soDienThoai || undefined,
         });
         setCreateDuplicateErrors(res.errors || {});
       } catch (err) {
@@ -147,7 +148,7 @@ export default function AdminTeachersPage() {
     }, 350);
 
     return () => clearTimeout(timer);
-  }, [showCreateModal, createFormData.tenDangNhap, createFormData.email, createFormData.maGiaoVien]);
+  }, [showCreateModal, createFormData.tenDangNhap, createFormData.email, createFormData.maGiaoVien, createFormData.soDienThoai]);
 
   const handleCreateTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -178,11 +179,11 @@ export default function AdminTeachersPage() {
     }
   };
 
-  const openEditModal = (t: GiaoVien, defaultPassword?: string) => {
+  const openEditModal = (t: any, defaultPassword?: string) => {
     setEditingTeacher(t);
     setEditFormData({
-      hoTen: t.hoTen,
-      chuyenMon: t.chuyenMon,
+      hoTen: t.hoTen || '',
+      chuyenMon: t.chuyenMon || '',
       bangCap: t.bangCap || '',
       soDienThoai: t.nguoiDung?.soDienThoai || '',
       trangThai: (t as any).trangThai || 'DANG_LAM_VIEC',
@@ -193,6 +194,7 @@ export default function AdminTeachersPage() {
   const handleUpdateTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingTeacher) return;
+
     try {
       await usersService.updateTeacher(Number(editingTeacher.id), editFormData);
       setMessage(
@@ -334,9 +336,15 @@ export default function AdminTeachersPage() {
                               >
                                 <span>{t.hoTen}</span>
                               </button>
-                              <span className="text-[11px] text-slate-500 block mt-0.5">
-                                Giảng viên
-                              </span>
+                              <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 mt-0.5">
+                                <span>Giảng viên</span>
+                                {t.chuyenMon && (
+                                  <>
+                                    <span>•</span>
+                                    <span className="text-teal-700 font-medium">{t.chuyenMon}</span>
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </td>
@@ -520,37 +528,38 @@ export default function AdminTeachersPage() {
                 </button>
               </div>
 
-              {/* Grid Thông Tin Chuyên Môn, Bằng Cấp & Liên Hệ */}
+              {/* Grid Thông Tin Chuyên Môn & Liên Hệ */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
-                {/* Chuyên môn & Chứng chỉ */}
+                {/* Thông tin chuyên môn & Học vị */}
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                   <span className="text-[11px] font-bold text-teal-700 uppercase tracking-wider flex items-center space-x-1.5">
                     <Award className="w-4 h-4 text-teal-600" />
-                    <span>Hồ Sơ Năng Lực & Bằng Cấp</span>
+                    <span>Hồ Sơ Chuyên Môn & Học Vị</span>
                   </span>
 
-                  <div className="space-y-2">
-                    <div>
-                      <span className="text-slate-500 text-[11px] block">Chuyên môn giảng dạy:</span>
-                      <span className="inline-block mt-1 px-2.5 py-1 rounded-md bg-teal-50 border border-teal-200 text-teal-800 font-bold text-xs">
-                        {detailTeacher.chuyenMon}
-                      </span>
+                  <div className="space-y-2.5 text-slate-600">
+                    <div className="flex justify-between items-center py-1 border-b border-slate-200/60">
+                      <span className="text-slate-500">Mã giảng viên:</span>
+                      <strong className="font-mono font-bold text-teal-700">{detailTeacher.maGiaoVien}</strong>
                     </div>
-
-                    <div>
-                      <span className="text-slate-500 text-[11px] block">Bằng cấp & Chứng chỉ quốc tế:</span>
-                      <div className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-800 mt-1 font-semibold leading-relaxed shadow-sm">
-                        🎓 {detailTeacher.bangCap || 'Cử nhân Sư phạm Tiếng Anh'}
-                      </div>
+                    <div className="flex justify-between items-center py-1 border-b border-slate-200/60">
+                      <span className="text-slate-500">Chuyên môn:</span>
+                      <strong className="font-bold text-slate-800">{detailTeacher.chuyenMon || 'Tiếng Anh Tổng Quát'}</strong>
+                    </div>
+                    <div className="flex justify-between items-start py-1">
+                      <span className="text-slate-500 shrink-0 mr-2">Bằng cấp:</span>
+                      <span className="font-semibold text-slate-800 text-right">
+                        {detailTeacher.bangCap || 'Cử nhân Sư phạm Tiếng Anh'}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Thông tin liên hệ & Vị trí */}
+                {/* Thông tin liên hệ & Trạng thái */}
                 <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
                   <span className="text-[11px] font-bold text-teal-700 uppercase tracking-wider flex items-center space-x-1.5">
                     <Mail className="w-4 h-4 text-teal-600" />
-                    <span>Thông Tin Liên Hệ & Phân Quyền</span>
+                    <span>Thông Tin Liên Hệ & Trạng Thái</span>
                   </span>
 
                   <div className="space-y-2.5 text-slate-600">
@@ -563,8 +572,8 @@ export default function AdminTeachersPage() {
                       <span className="font-bold text-slate-800">{detailTeacher.nguoiDung?.soDienThoai || 'Chưa cập nhật'}</span>
                     </div>
                     <div className="flex justify-between items-center py-1">
-                      <span className="text-slate-500">Vị trí công tác:</span>
-                      <span className="text-teal-700 font-bold">Giảng viên</span>
+                      <span className="text-slate-500">Trạng thái:</span>
+                      {getStatusBadge(detailTeacher.trangThai || 'DANG_LAM_VIEC')}
                     </div>
                   </div>
                 </div>
@@ -749,27 +758,28 @@ export default function AdminTeachersPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">Chuyên Môn Giảng Dạy</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="VD: IELTS Academic, TOEIC 4 Kỹ Năng, Giao Tiếp..."
-                    value={createFormData.chuyenMon}
-                    onChange={(e) => setCreateFormData({ ...createFormData, chuyenMon: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">Bằng Cấp / Chứng Chỉ</label>
-                  <input
-                    type="text"
-                    placeholder="VD: Thạc sĩ Ngôn ngữ Anh, IELTS 8.5, Chứng chỉ CELTA..."
-                    value={createFormData.bangCap}
-                    onChange={(e) => setCreateFormData({ ...createFormData, bangCap: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Chuyên Môn Giảng Dạy</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="VD: IELTS Academic, TOEIC 4 Kỹ Năng, Giao Tiếp..."
+                      value={createFormData.chuyenMon}
+                      onChange={(e) => setCreateFormData({ ...createFormData, chuyenMon: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Bằng Cấp / Chứng Chỉ</label>
+                    <input
+                      type="text"
+                      placeholder="VD: Thạc sĩ Ngôn ngữ Anh, IELTS 8.5, Chứng chỉ CELTA..."
+                      value={createFormData.bangCap}
+                      onChange={(e) => setCreateFormData({ ...createFormData, bangCap: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
@@ -829,25 +839,26 @@ export default function AdminTeachersPage() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">Chuyên Môn</label>
-                  <input
-                    type="text"
-                    required
-                    value={editFormData.chuyenMon}
-                    onChange={(e) => setEditFormData({ ...editFormData, chuyenMon: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">Bằng Cấp</label>
-                  <input
-                    type="text"
-                    value={editFormData.bangCap}
-                    onChange={(e) => setEditFormData({ ...editFormData, bangCap: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Chuyên Môn</label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.chuyenMon}
+                      onChange={(e) => setEditFormData({ ...editFormData, chuyenMon: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Bằng Cấp</label>
+                    <input
+                      type="text"
+                      value={editFormData.bangCap}
+                      onChange={(e) => setEditFormData({ ...editFormData, bangCap: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-teal-50/60 border border-teal-200 space-y-1.5">

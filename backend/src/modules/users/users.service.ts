@@ -55,7 +55,14 @@ export class UsersService {
         take: limit,
         include: {
           nguoiDung: {
-            select: { id: true, tenDangNhap: true, email: true, soDienThoai: true, dangHoatDong: true },
+            select: {
+              id: true,
+              tenDangNhap: true,
+              email: true,
+              soDienThoai: true,
+              dangHoatDong: true,
+              hoTen: true,
+            },
           },
           dangKyHoc: {
             include: {
@@ -109,7 +116,14 @@ export class UsersService {
       where: { id: BigInt(id) },
       include: {
         nguoiDung: {
-          select: { id: true, tenDangNhap: true, email: true, soDienThoai: true, dangHoatDong: true },
+          select: {
+            id: true,
+            tenDangNhap: true,
+            email: true,
+            soDienThoai: true,
+            dangHoatDong: true,
+            hoTen: true,
+          },
         },
         dangKyHoc: {
           include: {
@@ -274,6 +288,9 @@ export class UsersService {
     const email = dto.email.trim().toLowerCase();
     const soDienThoai = dto.soDienThoai?.trim() || null;
     const matKhau = dto.matKhau?.trim() || '123456';
+    const ngaySinh = dto.ngaySinh ? new Date(dto.ngaySinh) : null;
+    const diaChi = dto.diaChi?.trim() || null;
+    const gioiTinh = dto.gioiTinh?.trim() || null;
 
     // 2. Kiểm tra trùng lặp chính xác từng trường
     const existingUser = await this.prisma.nguoiDung.findFirst({
@@ -312,6 +329,7 @@ export class UsersService {
             vaiTro: VaiTro.HOC_VIEN,
             email,
             soDienThoai,
+            hoTen: dto.hoTen.trim(),
           },
         });
 
@@ -320,9 +338,9 @@ export class UsersService {
             nguoiDungId: user.id,
             maHocVien,
             hoTen: dto.hoTen.trim(),
-            ngaySinh: dto.ngaySinh ? new Date(dto.ngaySinh) : null,
-            gioiTinh: dto.gioiTinh || null,
-            diaChi: dto.diaChi || null,
+            ngaySinh,
+            gioiTinh,
+            diaChi,
             trinhDoCEFR: dto.trinhDoCEFR,
             nguonDanhGia: dto.nguonDanhGia || null,
             lichRanhJson: dto.lichRanhJson || null,
@@ -362,7 +380,8 @@ export class UsersService {
 
     const updated = await this.prisma.$transaction(async (tx) => {
       const userUpdateData: any = {};
-      if (dto.soDienThoai) userUpdateData.soDienThoai = dto.soDienThoai;
+      if (dto.soDienThoai !== undefined) userUpdateData.soDienThoai = dto.soDienThoai?.trim() || null;
+      if (dto.hoTen !== undefined) userUpdateData.hoTen = dto.hoTen?.trim();
       if (dto.matKhauMoi) userUpdateData.matKhauMaHoa = await argon2.hash(dto.matKhauMoi);
 
       if (Object.keys(userUpdateData).length > 0 && student.nguoiDungId) {
@@ -372,16 +391,19 @@ export class UsersService {
         });
       }
 
+      const studentUpdateData: any = {};
+      if (dto.hoTen !== undefined) studentUpdateData.hoTen = dto.hoTen?.trim();
+      if (dto.ngaySinh !== undefined) studentUpdateData.ngaySinh = dto.ngaySinh ? new Date(dto.ngaySinh) : null;
+      if (dto.gioiTinh !== undefined) studentUpdateData.gioiTinh = dto.gioiTinh || null;
+      if (dto.diaChi !== undefined) studentUpdateData.diaChi = dto.diaChi?.trim() || null;
+      if (dto.trinhDoCEFR !== undefined) studentUpdateData.trinhDoCEFR = dto.trinhDoCEFR;
+      if (dto.nguonDanhGia !== undefined) studentUpdateData.nguonDanhGia = dto.nguonDanhGia;
+      if (dto.lichRanhJson !== undefined) studentUpdateData.lichRanhJson = dto.lichRanhJson;
+      if (dto.trangThai !== undefined) studentUpdateData.trangThai = dto.trangThai;
+
       return tx.hoSoHocVien.update({
         where: { id: BigInt(id) },
-        data: {
-          hoTen: dto.hoTen,
-          trinhDoCEFR: dto.trinhDoCEFR,
-          diaChi: dto.diaChi,
-          nguonDanhGia: dto.nguonDanhGia,
-          lichRanhJson: dto.lichRanhJson,
-          trangThai: dto.trangThai,
-        },
+        data: studentUpdateData,
       });
     });
 
@@ -430,7 +452,14 @@ export class UsersService {
     const teachers = await this.prisma.hoSoGiaoVien.findMany({
       include: {
         nguoiDung: {
-          select: { id: true, tenDangNhap: true, email: true, soDienThoai: true, dangHoatDong: true },
+          select: {
+            id: true,
+            tenDangNhap: true,
+            email: true,
+            soDienThoai: true,
+            dangHoatDong: true,
+            hoTen: true,
+          },
         },
         phanCong: {
           where: { trangThai: 'DANG_PHU_TRACH' },
@@ -453,7 +482,14 @@ export class UsersService {
       where: { id: BigInt(id) },
       include: {
         nguoiDung: {
-          select: { id: true, tenDangNhap: true, email: true, soDienThoai: true, dangHoatDong: true },
+          select: {
+            id: true,
+            tenDangNhap: true,
+            email: true,
+            soDienThoai: true,
+            dangHoatDong: true,
+            hoTen: true,
+          },
         },
         phanCong: {
           include: {
@@ -505,13 +541,12 @@ export class UsersService {
     };
   }
 
-  /**
-   * Kiểm tra trùng lặp thông tin tài khoản giáo viên trước khi tạo (Real-time check)
-   */
+
   async checkTeacherDuplicate(query: {
     tenDangNhap?: string;
     email?: string;
     maGiaoVien?: string;
+    soDienThoai?: string;
   }) {
     const errors: Record<string, string> = {};
 
@@ -603,6 +638,7 @@ export class UsersService {
             vaiTro: VaiTro.GIAO_VIEN,
             email,
             soDienThoai,
+            hoTen: dto.hoTen.trim(),
           },
         });
 
@@ -649,7 +685,8 @@ export class UsersService {
 
     const updated = await this.prisma.$transaction(async (tx) => {
       const userUpdateData: any = {};
-      if (dto.soDienThoai) userUpdateData.soDienThoai = dto.soDienThoai;
+      if (dto.soDienThoai !== undefined) userUpdateData.soDienThoai = dto.soDienThoai?.trim() || null;
+      if (dto.hoTen !== undefined) userUpdateData.hoTen = dto.hoTen?.trim();
       if (dto.matKhauMoi) userUpdateData.matKhauMaHoa = await argon2.hash(dto.matKhauMoi);
 
       if (Object.keys(userUpdateData).length > 0 && teacher.nguoiDungId) {
@@ -659,14 +696,15 @@ export class UsersService {
         });
       }
 
+      const teacherUpdateData: any = {};
+      if (dto.hoTen !== undefined) teacherUpdateData.hoTen = dto.hoTen?.trim();
+      if (dto.chuyenMon !== undefined) teacherUpdateData.chuyenMon = dto.chuyenMon.trim();
+      if (dto.bangCap !== undefined) teacherUpdateData.bangCap = dto.bangCap?.trim() || null;
+      if (dto.trangThai !== undefined) teacherUpdateData.trangThai = dto.trangThai;
+
       return tx.hoSoGiaoVien.update({
         where: { id: BigInt(id) },
-        data: {
-          hoTen: dto.hoTen,
-          chuyenMon: dto.chuyenMon,
-          bangCap: dto.bangCap,
-          trangThai: dto.trangThai,
-        },
+        data: teacherUpdateData,
       });
     });
 

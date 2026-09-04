@@ -57,6 +57,8 @@ export default function AdminStudentsPage() {
     soDienThoai: '',
     maHocVien: '',
     hoTen: '',
+    ngaySinh: '',
+    gioiTinh: 'Nam',
     diaChi: '',
     trinhDoCEFR: 'B1' as TrinhDoCEFR,
     nguonDanhGia: 'Placement Test',
@@ -64,8 +66,10 @@ export default function AdminStudentsPage() {
 
   const [editFormData, setEditFormData] = useState({
     hoTen: '',
-    soDienThoai: '',
+    ngaySinh: '',
+    gioiTinh: 'Nam',
     diaChi: '',
+    soDienThoai: '',
     trinhDoCEFR: 'B1' as TrinhDoCEFR,
     nguonDanhGia: '',
     trangThai: 'DANG_HOC',
@@ -120,7 +124,7 @@ export default function AdminStudentsPage() {
   useEffect(() => {
     if (!showCreateModal) return;
     const timer = setTimeout(async () => {
-      if (!createFormData.tenDangNhap && !createFormData.email && !createFormData.maHocVien) {
+      if (!createFormData.tenDangNhap && !createFormData.email && !createFormData.maHocVien && !createFormData.soDienThoai) {
         setCreateDuplicateErrors({});
         return;
       }
@@ -159,6 +163,8 @@ export default function AdminStudentsPage() {
         soDienThoai: '',
         maHocVien: '',
         hoTen: '',
+        ngaySinh: '',
+        gioiTinh: 'Nam',
         diaChi: '',
         trinhDoCEFR: 'B1',
         nguonDanhGia: 'Placement Test',
@@ -175,8 +181,10 @@ export default function AdminStudentsPage() {
     setEditingStudent(student);
     setEditFormData({
       hoTen: student.hoTen,
-      soDienThoai: student.nguoiDung?.soDienThoai || '',
+      ngaySinh: student.ngaySinh ? new Date(student.ngaySinh).toISOString().slice(0, 10) : '',
+      gioiTinh: student.gioiTinh || 'Nam',
       diaChi: student.diaChi || '',
+      soDienThoai: student.nguoiDung?.soDienThoai || '',
       trinhDoCEFR: student.trinhDoCEFR,
       nguonDanhGia: student.nguonDanhGia || '',
       trangThai: student.trangThai || 'DANG_HOC',
@@ -187,6 +195,7 @@ export default function AdminStudentsPage() {
   const handleUpdateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingStudent) return;
+
     try {
       await usersService.updateStudent(editingStudent.id, editFormData);
       setMessage('Cập nhật hồ sơ học viên thành công!');
@@ -315,7 +324,8 @@ export default function AdminStudentsPage() {
                             <span>{s.hoTen}</span>
                           </button>
                           <span className="text-[11px] text-slate-500 block mt-0.5">
-                            {s.gioiTinh === 'NAM' || s.gioiTinh === 'Nam' ? 'Nam' : 'Nữ'}
+                            {s.gioiTinh === 'Nữ' || s.gioiTinh === 'NU' ? 'Nữ' : 'Nam'}
+                            {s.ngaySinh && ` • ${new Date(s.ngaySinh).toLocaleDateString('vi-VN')}`}
                           </span>
                         </td>
                         <td className="px-5 py-4 whitespace-nowrap text-center">
@@ -642,11 +652,35 @@ export default function AdminStudentsPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
+                    <label className="block text-slate-700 font-bold mb-1">Ngày Sinh</label>
+                    <input
+                      type="date"
+                      required
+                      value={createFormData.ngaySinh}
+                      onChange={(e) => setCreateFormData({ ...createFormData, ngaySinh: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Giới Tính</label>
+                    <select
+                      value={createFormData.gioiTinh}
+                      onChange={(e) => setCreateFormData({ ...createFormData, gioiTinh: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 cursor-pointer"
+                    >
+                      <option value="Nam">Nam</option>
+                      <option value="Nữ">Nữ</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
                     <label className="block text-slate-700 font-bold mb-1">Trình Độ CEFR</label>
                     <select
                       value={createFormData.trinhDoCEFR}
                       onChange={(e) => setCreateFormData({ ...createFormData, trinhDoCEFR: e.target.value as TrinhDoCEFR })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 cursor-pointer"
                     >
                       <option value="A1">A1 - Sơ Cấp</option>
                       <option value="A2">A2 - Tiền Trung Cấp</option>
@@ -665,6 +699,18 @@ export default function AdminStudentsPage() {
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Địa Chỉ Thường Trú</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="VD: Tổ 1, P. Phan Đình Phùng, Thái Nguyên"
+                    value={createFormData.diaChi}
+                    onChange={(e) => setCreateFormData({ ...createFormData, diaChi: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                  />
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
@@ -702,18 +748,17 @@ export default function AdminStudentsPage() {
               </div>
 
               <form onSubmit={handleUpdateStudent} className="space-y-3 text-xs">
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1">Họ Và Tên</label>
-                  <input
-                    type="text"
-                    required
-                    value={editFormData.hoTen}
-                    onChange={(e) => setEditFormData({ ...editFormData, hoTen: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
-                  />
-                </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Họ Và Tên</label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.hoTen}
+                      onChange={(e) => setEditFormData({ ...editFormData, hoTen: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Số Điện Thoại</label>
                     <input
@@ -723,12 +768,38 @@ export default function AdminStudentsPage() {
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
                     />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Ngày Sinh</label>
+                    <input
+                      type="date"
+                      value={editFormData.ngaySinh}
+                      onChange={(e) => setEditFormData({ ...editFormData, ngaySinh: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-bold mb-1">Giới Tính</label>
+                    <select
+                      value={editFormData.gioiTinh}
+                      onChange={(e) => setEditFormData({ ...editFormData, gioiTinh: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 cursor-pointer"
+                    >
+                      <option value="Nam">Nam</option>
+                      <option value="Nữ">Nữ</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Trình Độ CEFR</label>
                     <select
                       value={editFormData.trinhDoCEFR}
                       onChange={(e) => setEditFormData({ ...editFormData, trinhDoCEFR: e.target.value as TrinhDoCEFR })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 cursor-pointer"
                     >
                       <option value="A1">A1 - Sơ Cấp</option>
                       <option value="A2">A2 - Tiền Trung Cấp</option>
@@ -738,9 +809,6 @@ export default function AdminStudentsPage() {
                       <option value="C2">C2 - Thành Thạo</option>
                     </select>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-slate-700 font-bold mb-1">Nguồn Đánh Giá</label>
                     <input
@@ -750,19 +818,31 @@ export default function AdminStudentsPage() {
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
                     />
                   </div>
-                  <div>
-                    <label className="block text-slate-700 font-bold mb-1">Trạng Thái</label>
-                    <select
-                      value={editFormData.trangThai}
-                      onChange={(e) => setEditFormData({ ...editFormData, trangThai: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
-                    >
-                      <option value="DANG_HOC">Đang Học</option>
-                      <option value="DA_TOT_NGHIEP">Đã Tốt Nghiệp</option>
-                      <option value="BAO_LUU">Bảo Lưu</option>
-                      <option value="NGHI_HOC">Nghỉ Học</option>
-                    </select>
-                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Địa Chỉ Thường Trú</label>
+                  <input
+                    type="text"
+                    placeholder="VD: Tổ 1, P. Phan Đình Phùng, Thái Nguyên"
+                    value={editFormData.diaChi}
+                    onChange={(e) => setEditFormData({ ...editFormData, diaChi: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Trạng Thái Học Viên</label>
+                  <select
+                    value={editFormData.trangThai}
+                    onChange={(e) => setEditFormData({ ...editFormData, trangThai: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 cursor-pointer"
+                  >
+                    <option value="DANG_HOC">Đang Học</option>
+                    <option value="DA_TOT_NGHIEP">Đã Tốt Nghiệp</option>
+                    <option value="BAO_LUU">Bảo Lưu</option>
+                    <option value="NGHI_HOC">Nghỉ Học</option>
+                  </select>
                 </div>
 
                 {/* Phần Reset Mật Khẩu */}
@@ -880,13 +960,13 @@ export default function AdminStudentsPage() {
                   <div className="space-y-1.5 text-slate-600">
                     <p className="flex justify-between">
                       <span className="text-slate-500">Giới tính:</span>
-                      <span className="font-bold text-slate-800">{detailStudent.gioiTinh || 'Nam'}</span>
+                      <span className="font-bold text-slate-800">{detailStudent.gioiTinh || detailStudent.nguoiDung?.gioiTinh || 'Nam'}</span>
                     </p>
                     <p className="flex justify-between">
                       <span className="text-slate-500">Ngày sinh:</span>
                       <span className="font-bold text-slate-800">
-                        {detailStudent.ngaySinh
-                          ? new Date(detailStudent.ngaySinh).toLocaleDateString('vi-VN')
+                        {detailStudent.ngaySinh || detailStudent.nguoiDung?.ngaySinh
+                          ? new Date(detailStudent.ngaySinh || detailStudent.nguoiDung?.ngaySinh).toLocaleDateString('vi-VN')
                           : 'Chưa cập nhật'}
                       </span>
                     </p>
@@ -917,9 +997,9 @@ export default function AdminStudentsPage() {
                       <span className="text-slate-500">Số điện thoại:</span>
                       <span className="font-bold text-slate-800">{detailStudent.nguoiDung?.soDienThoai || 'Chưa có'}</span>
                     </p>
-                    <p className="flex justify-between">
-                      <span className="text-slate-500">Địa chỉ:</span>
-                      <span className="font-bold text-slate-800 truncate max-w-[150px]">{detailStudent.diaChi || 'Hà Nội'}</span>
+                    <p className="flex justify-between items-start">
+                      <span className="text-slate-500 shrink-0 mr-2">Địa chỉ:</span>
+                      <span className="font-bold text-slate-800 text-right">{detailStudent.diaChi || detailStudent.nguoiDung?.diaChi || 'Chưa cập nhật'}</span>
                     </p>
                     <p className="flex justify-between">
                       <span className="text-slate-500">Tài khoản:</span>

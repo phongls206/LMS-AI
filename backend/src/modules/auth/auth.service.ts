@@ -90,11 +90,35 @@ export class AuthService {
         soDienThoai: true,
         vaiTro: true,
         dangHoatDong: true,
+        hoTen: true,
+        cccd: true,
+        ngaySinh: true,
+        gioiTinh: true,
+        diaChi: true,
         hoSoHocVien: {
-          select: { id: true, maHocVien: true, hoTen: true, trinhDoCEFR: true },
+          select: {
+            id: true,
+            maHocVien: true,
+            hoTen: true,
+            trinhDoCEFR: true,
+            cccd: true,
+            ngaySinh: true,
+            gioiTinh: true,
+            diaChi: true,
+          },
         },
         hoSoGiaoVien: {
-          select: { id: true, maGiaoVien: true, hoTen: true, chuyenMon: true },
+          select: {
+            id: true,
+            maGiaoVien: true,
+            hoTen: true,
+            chuyenMon: true,
+            bangCap: true,
+            cccd: true,
+            ngaySinh: true,
+            gioiTinh: true,
+            diaChi: true,
+          },
         },
       },
     });
@@ -109,16 +133,19 @@ export class AuthService {
         data: {
           nguoiDung: { connect: { id: user.id } },
           maHocVien: maHV,
-          hoTen: user.tenDangNhap,
+          hoTen: user.hoTen || user.tenDangNhap,
           trinhDoCEFR: 'B1',
           nguonDanhGia: 'Tài khoản đăng ký trực tiếp',
         },
       });
-      user.hoSoHocVien = {
+      (user as any).hoSoHocVien = {
         id: newProfile.id,
         maHocVien: newProfile.maHocVien,
         hoTen: newProfile.hoTen,
         trinhDoCEFR: newProfile.trinhDoCEFR,
+        ngaySinh: newProfile.ngaySinh,
+        gioiTinh: newProfile.gioiTinh,
+        diaChi: newProfile.diaChi,
       };
     }
 
@@ -130,15 +157,16 @@ export class AuthService {
         data: {
           nguoiDung: { connect: { id: user.id } },
           maGiaoVien: maGV,
-          hoTen: user.tenDangNhap,
+          hoTen: user.hoTen || user.tenDangNhap,
           chuyenMon: 'Tiếng Anh Tổng Quát',
         },
       });
-      user.hoSoGiaoVien = {
+      (user as any).hoSoGiaoVien = {
         id: newProfile.id,
         maGiaoVien: newProfile.maGiaoVien,
         hoTen: newProfile.hoTen,
         chuyenMon: newProfile.chuyenMon,
+        bangCap: newProfile.bangCap,
       };
     }
 

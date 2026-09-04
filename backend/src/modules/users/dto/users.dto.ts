@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsEnum, IsDateString, IsEmail } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsEnum, IsDateString, IsEmail, Matches } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { TrinhDoCEFR, TrangThaiHocVien, TrangThaiGiaoVien } from '@prisma/client';
 
@@ -67,6 +67,21 @@ export class UpdateStudentDto {
   @IsString()
   hoTen?: string;
 
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsDateString()
+  ngaySinh?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  gioiTinh?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  diaChi?: string;
+
   @ApiPropertyOptional({ enum: TrinhDoCEFR })
   @IsOptional()
   @IsEnum(TrinhDoCEFR)
@@ -76,11 +91,6 @@ export class UpdateStudentDto {
   @IsOptional()
   @IsString()
   soDienThoai?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  diaChi?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -174,3 +184,4 @@ export class UpdateTeacherDto {
   @IsString()
   matKhauMoi?: string;
 }
+

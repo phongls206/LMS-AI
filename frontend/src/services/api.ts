@@ -119,6 +119,7 @@ export const usersService = {
     tenDangNhap?: string;
     email?: string;
     maGiaoVien?: string;
+    soDienThoai?: string;
   }) => (await api.get('/teachers/check-duplicate', { params })).data,
   createTeacher: async (data: any) => (await api.post('/teachers', data)).data,
   updateTeacher: async (id: number, data: any) => (await api.put(`/teachers/${id}`, data)).data,

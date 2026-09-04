@@ -15,6 +15,9 @@ export default function StaffNewStudentPage() {
     soDienThoai: '',
     maHocVien: '',
     hoTen: '',
+    ngaySinh: '',
+    gioiTinh: 'Nam',
+    diaChi: '',
     trinhDoCEFR: 'B1' as TrinhDoCEFR,
     nguonDanhGia: 'Placement Test tại Quầy',
   });
@@ -126,6 +129,19 @@ export default function StaffNewStudentPage() {
                 <span className="text-slate-500">Mã học viên:</span>
                 <strong className="text-teal-700 font-mono font-bold">{createdStudent.maHocVien}</strong>
               </div>
+
+              {createdStudent.ngaySinh && (
+                <div className="flex justify-between border-b border-slate-200 pb-1">
+                  <span className="text-slate-500">Ngày sinh:</span>
+                  <strong className="text-slate-900 font-bold">{new Date(createdStudent.ngaySinh).toLocaleDateString('vi-VN')}</strong>
+                </div>
+              )}
+              {createdStudent.diaChi && (
+                <div className="flex justify-between border-b border-slate-200 pb-1">
+                  <span className="text-slate-500">Địa chỉ:</span>
+                  <strong className="text-slate-900 font-bold">{createdStudent.diaChi}</strong>
+                </div>
+              )}
               <div className="flex justify-between border-b border-slate-200 pb-1">
                 <span className="text-slate-500">Trình độ đầu vào:</span>
                 <strong className="text-emerald-700 font-mono font-bold">CEFR {createdStudent.trinhDoCEFR}</strong>
@@ -147,6 +163,9 @@ export default function StaffNewStudentPage() {
                     soDienThoai: '',
                     maHocVien: '',
                     hoTen: '',
+                    ngaySinh: '',
+                    gioiTinh: 'Nam',
+                    diaChi: '',
                     trinhDoCEFR: 'B1',
                     nguonDanhGia: 'Placement Test tại Quầy',
                   });
@@ -319,6 +338,43 @@ export default function StaffNewStudentPage() {
                     placeholder="VD: 0901234567"
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Ngày Sinh</label>
+                  <input
+                    type="date"
+                    required
+                    value={formData.ngaySinh}
+                    onChange={(e) => setFormData({ ...formData, ngaySinh: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-700 font-bold mb-1">Giới Tính</label>
+                  <select
+                    value={formData.gioiTinh}
+                    onChange={(e) => setFormData({ ...formData, gioiTinh: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500 cursor-pointer"
+                  >
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-slate-700 font-bold mb-1">Địa Chỉ Thường Trú</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="VD: Tổ 1, P. Phan Đình Phùng, Thái Nguyên"
+                  value={formData.diaChi}
+                  onChange={(e) => setFormData({ ...formData, diaChi: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500"
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
