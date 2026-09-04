@@ -299,15 +299,15 @@ export default function AdminTeachersPage() {
         ) : (
           <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-700">
+              <table className="w-full text-left text-xs text-slate-700 table-fixed">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Mã GV</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Họ Và Tên</th>
-                    <th className="px-5 py-3.5 min-w-[200px]">Lớp Đang Phụ Trách</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Email & SĐT</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap text-center">Trạng Thái</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap text-right">Thao Tác</th>
+                    <th className="w-[85px] px-3.5 py-3 whitespace-nowrap">Mã GV</th>
+                    <th className="w-[26%] px-3.5 py-3">Họ Và Tên</th>
+                    <th className="w-[28%] px-3.5 py-3">Lớp Đang Phụ Trách</th>
+                    <th className="w-[23%] px-3.5 py-3">Email & SĐT</th>
+                    <th className="w-[115px] px-2 py-3 whitespace-nowrap text-center">Trạng Thái</th>
+                    <th className="w-[95px] px-3.5 py-3 whitespace-nowrap text-right">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -316,70 +316,76 @@ export default function AdminTeachersPage() {
 
                     return (
                       <tr key={t.id} className="hover:bg-teal-50/30 transition">
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <span className="font-mono font-bold text-teal-700 block">{t.maGiaoVien}</span>
-                          <span className="font-mono text-[11px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 inline-block mt-0.5">
+                        <td className="px-3.5 py-3 whitespace-nowrap align-middle">
+                          <span className="font-mono font-bold text-teal-700 text-xs block">{t.maGiaoVien}</span>
+                          <span className="font-mono text-[10px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 inline-block mt-0.5">
                             {t.nguoiDung?.tenDangNhap || t.maGiaoVien.toLowerCase()}
                           </span>
                         </td>
 
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center font-bold text-teal-700 text-xs shrink-0">
+                        <td className="px-3.5 py-3 align-middle min-w-0">
+                          <div className="flex items-center space-x-2.5 min-w-0">
+                            <div className="w-7 h-7 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center font-bold text-teal-700 text-xs shrink-0">
                               {t.hoTen?.split(' ').slice(-1)[0][0] || 'G'}
                             </div>
-                            <div>
+                            <div className="min-w-0 flex-1">
                               <button
                                 onClick={() => setDetailTeacher(t)}
-                                className="font-bold text-slate-900 hover:text-teal-600 text-left transition block whitespace-nowrap cursor-pointer"
-                                title="Bấm để xem hồ sơ chuyên môn & chứng chỉ"
+                                className="font-bold text-slate-900 hover:text-teal-600 text-left transition block truncate w-full cursor-pointer"
+                                title={`Bấm để xem hồ sơ: ${t.hoTen}`}
                               >
-                                <span>{t.hoTen}</span>
+                                {t.hoTen}
                               </button>
-                              <div className="flex items-center space-x-1.5 text-[11px] text-slate-500 mt-0.5">
-                                <span>Giảng viên</span>
-                                {t.chuyenMon && (
-                                  <>
-                                    <span>•</span>
-                                    <span className="text-teal-700 font-medium">{t.chuyenMon}</span>
-                                  </>
-                                )}
-                              </div>
+                              <p className="text-[11px] text-teal-700 truncate font-medium mt-0.5" title={t.chuyenMon}>
+                                {t.chuyenMon || 'Giảng viên'}
+                              </p>
                             </div>
                           </div>
                         </td>
 
-                        <td className="px-5 py-4 min-w-[200px]">
+                        <td className="px-3.5 py-3 align-middle min-w-0">
                           {classes.length > 0 ? (
                             <div className="space-y-1">
-                              {classes.map((pc: any) => (
-                                <div key={pc.id || pc.lopHoc?.id} className="flex flex-col">
-                                  <span className="font-mono font-bold text-teal-700 text-xs block whitespace-nowrap">
-                                    [{pc.lopHoc?.maLopHoc}]
+                              {classes.slice(0, 2).map((pc: any) => (
+                                <div key={pc.id || pc.lopHoc?.id} className="flex items-center space-x-1.5 min-w-0">
+                                  <span className="font-mono font-bold text-teal-700 text-[10px] bg-teal-50 px-1.5 py-0.5 rounded border border-teal-200 shrink-0">
+                                    {pc.lopHoc?.maLopHoc}
                                   </span>
-                                  <span className="text-slate-800 text-xs font-semibold block" title={pc.lopHoc?.tenLopHoc}>
+                                  <span className="text-slate-800 text-xs font-semibold truncate block" title={pc.lopHoc?.tenLopHoc}>
                                     {pc.lopHoc?.tenLopHoc}
                                   </span>
                                 </div>
                               ))}
+                              {classes.length > 2 && (
+                                <button
+                                  onClick={() => setDetailTeacher(t)}
+                                  className="text-[10px] font-bold text-teal-700 hover:underline bg-teal-50/60 px-1.5 py-0.5 rounded border border-teal-200 inline-block cursor-pointer"
+                                >
+                                  +{classes.length - 2} lớp khác (xem tất cả)
+                                </button>
+                              )}
                             </div>
                           ) : (
-                            <span className="inline-block whitespace-nowrap text-slate-400 italic text-[11px] bg-slate-50 px-2.5 py-1 rounded border border-slate-200">
+                            <span className="inline-block text-slate-400 italic text-[11px] bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
                               Chưa phân công
                             </span>
                           )}
                         </td>
 
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <p className="text-slate-800 font-medium">{t.nguoiDung?.email}</p>
-                          <p className="text-[11px] text-slate-500 mt-0.5">{t.nguoiDung?.soDienThoai || 'Chưa cập nhật'}</p>
+                        <td className="px-3.5 py-3 align-middle min-w-0">
+                          <p className="text-slate-800 font-medium truncate block text-xs" title={t.nguoiDung?.email}>
+                            {t.nguoiDung?.email || 'Chưa có email'}
+                          </p>
+                          <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                            {t.nguoiDung?.soDienThoai || 'Chưa cập nhật'}
+                          </p>
                         </td>
 
-                        <td className="px-5 py-4 whitespace-nowrap text-center">
+                        <td className="px-2 py-3 align-middle whitespace-nowrap text-center">
                           {getStatusBadge(t.trangThai || 'DANG_LAM_VIEC')}
                         </td>
 
-                        <td className="px-5 py-4 text-right whitespace-nowrap">
+                        <td className="px-3.5 py-3 align-middle text-right whitespace-nowrap">
                           <div className="flex items-center justify-end space-x-1.5">
                             <button
                               onClick={() => setDetailTeacher(t)}
