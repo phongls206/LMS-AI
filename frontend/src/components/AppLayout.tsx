@@ -123,12 +123,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
     // Heartbeat định kỳ (15s) và kiểm tra khi chuyển lại tab để kịp thời phát hiện Single Session Kickout
     const heartbeatInterval = setInterval(() => {
-      authService.getMe().catch(() => {});
+      authService.getMe().catch(() => { });
     }, 15000);
 
     const handleVisibility = () => {
       if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
-        authService.getMe().catch(() => {});
+        authService.getMe().catch(() => { });
       }
     };
     document.addEventListener('visibilitychange', handleVisibility);
@@ -420,7 +420,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                       <Award className="w-3.5 h-3.5 text-teal-600" />
                       <span>Trình Độ CEFR:</span>
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-teal-100 text-teal-800 font-bold text-[11px]">
+                    <span className="px-2 py-0.5 rounded bg-teal-50 text-teal-800 font-bold text-[11px]">
                       {user.hoSoHocVien.trinhDoCEFR}
                     </span>
                   </div>
