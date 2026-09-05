@@ -13,6 +13,7 @@ export interface UserSession {
   vaiTro: VaiTro;
   accessToken: string;
   hoTen?: string;
+  maTuVanVien?: string;
   hoSoHocVien?: {
     id: number;
     maHocVien: string;

@@ -11,6 +11,7 @@ import { JwtPayload } from '../../common/interfaces/jwt-payload.interface';
 import { SessionManagerService } from './session-manager.service';
 import { randomUUID } from 'crypto';
 import * as argon2 from 'argon2';
+import { VaiTro } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -58,6 +59,11 @@ export class AuthService {
 
     const accessToken = this.jwtService.sign(payload);
 
+    const maTuVanVien =
+      user.vaiTro === VaiTro.TU_VAN_VIEN
+        ? `TVV${String(user.tenDangNhap.replace(/\D/g, '') || user.id).padStart(3, '0')}`
+        : undefined;
+
     return {
       accessToken,
       user: {
@@ -65,6 +71,8 @@ export class AuthService {
         tenDangNhap: user.tenDangNhap,
         email: user.email,
         vaiTro: user.vaiTro,
+        hoTen: user.hoTen,
+        maTuVanVien,
       },
     };
   }
@@ -159,6 +167,11 @@ export class AuthService {
         chuyenMon: newProfile.chuyenMon,
         bangCap: newProfile.bangCap,
       };
+    }
+
+    if (user.vaiTro === VaiTro.TU_VAN_VIEN) {
+      const num = user.tenDangNhap.replace(/\D/g, '') || String(user.id);
+      (user as any).maTuVanVien = `TVV${String(num).padStart(3, '0')}`;
     }
 
     return this.serializeBigInt(user);

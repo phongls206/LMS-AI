@@ -459,6 +459,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   </div>
                   <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
                     <span className="text-slate-500 flex items-center space-x-1.5">
+                      <Award className="w-3.5 h-3.5 text-teal-600" />
+                      <span>Mã Tư Vấn Viên:</span>
+                    </span>
+                    <span className="font-mono font-bold text-teal-700">
+                      {user.maTuVanVien || `TVV${String(user.tenDangNhap?.replace(/\D/g, '') || '01').padStart(3, '0')}`}
+                    </span>
+                  </div>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
+                    <span className="text-slate-500 flex items-center space-x-1.5">
                       <Briefcase className="w-3.5 h-3.5 text-teal-600" />
                       <span>Vị Trí:</span>
                     </span>

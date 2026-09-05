@@ -14,8 +14,6 @@ entity "NGUOI_DUNG" as nguoi_dung {
   * email : VARCHAR(100) <<UQ>>
   so_dien_thoai : VARCHAR(20)
   * dang_hoat_dong : BOOLEAN
-  * so_lan_sai : INT
-  khoa_den : TIMESTAMP
 }
 
 entity "HO_SO_HOC_VIEN" as hoc_vien {

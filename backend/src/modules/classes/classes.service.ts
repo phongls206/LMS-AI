@@ -12,6 +12,51 @@ import { TrangThaiLopHoc, TrangThaiKhoaHoc, VaiTroPhanCong, TrangThaiPhanCong } 
 export class ClassesService {
   constructor(private prisma: PrismaService) {}
 
+  // Quản lý trạng thái lớp học hoàn toàn thủ công theo chỉ đạo quản trị viên
+
+  /**
+   * Tự động kích hoạt trạng thái lớp học theo tiến độ thời gian thực:
+   * 1. Khi LopHoc đến ngày ngayBatDau (ngayBatDau <= today):
+   *    Tự động chuyển từ DANG_MO_DANG_KY sang DANG_HOC.
+   * 2. Khi hết ngày ngayKetThuc (ngayKetThuc < today):
+   *    Tự động chuyển từ DANG_HOC sang DA_KET_THUC.
+   */
+  async autoUpdateClassStatuses(): Promise<{ startedCount: number; endedCount: number }> {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // 1. Chuyển DANG_MO_DANG_KY -> DANG_HOC khi ngayBatDau <= today
+    const started = await this.prisma.lopHoc.updateMany({
+      where: {
+        trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY,
+        ngayBatDau: {
+          lte: today,
+        },
+      },
+      data: {
+        trangThai: TrangThaiLopHoc.DANG_HOC,
+      },
+    });
+
+    // 2. Chuyển DANG_HOC -> DA_KET_THUC khi hết ngày ngayKetThuc (ngayKetThuc < today)
+    const ended = await this.prisma.lopHoc.updateMany({
+      where: {
+        trangThai: TrangThaiLopHoc.DANG_HOC,
+        ngayKetThuc: {
+          lt: today,
+        },
+      },
+      data: {
+        trangThai: TrangThaiLopHoc.DA_KET_THUC,
+      },
+    });
+
+    return {
+      startedCount: started.count,
+      endedCount: ended.count,
+    };
+  }
+
   private serializeBigInt(obj: any) {
     return JSON.parse(
       JSON.stringify(obj, (key, value) =>

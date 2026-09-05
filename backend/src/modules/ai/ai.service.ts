@@ -560,11 +560,25 @@ RÀNG BUỘC NGHIÊM NGẶT:
 
       if (!validatedJson) throw new Error('PARSE_ERROR');
     } catch (error: any) {
-      this.logger.warn('AI Sinh bài tập thất bại, áp dụng Đề mẫu Fallback:', error?.message);
+      this.logger.warn('AI Gemini sinh bài tập gặp sự cố:', error?.message);
       status = error?.message === 'TIMEOUT' ? TrangThaiYeuCauAI.TIMEOUT : TrangThaiYeuCauAI.FALLBACK_APPLIED;
 
-      // FALLBACK ĐỀ MẪU TĨNH ĐA DẠNG THEO CHỦ ĐỀ & KHUNG CEFR (HỖ TRỢ IT, ENTERTAINMENT, TOURISM & MULTIPLE/TRUE_FALSE)
-      validatedJson = getFallbackExercises(dto.chuDe, dto.trinhDo, count, dto.loaiCauHoi);
+      // 1. TÌM KIẾM TRONG KHO DỮ LIỆU ĐỀ ĐÃ TẠO TỪ CÁC LẦN SINH ĐỀ TRƯỚC (COMMUNITY AI CACHE)
+      let matchedCommunity: any = null;
+      try {
+        matchedCommunity = await this.findCommunityExerciseMatch(dto.chuDe, dto.trinhDo, count);
+      } catch (e: any) {
+        this.logger.error('Lỗi tra cứu đề bài từ kho cộng đồng:', e?.message);
+      }
+
+      if (matchedCommunity) {
+        this.logger.log(`[AI FALLBACK] Tận dụng đề bài tương thích đã tạo từ kho cộng đồng cho chủ đề "${dto.chuDe}"`);
+        validatedJson = matchedCommunity;
+      } else {
+        // 2. NẾU CHƯA TỪNG CÓ AI TẠO CHỦ ĐỀ NÀY (HOẶC ĐÃ BỊ XÓA HẾT), SỬ DỤNG BỘ ĐỀ MẪU SEED FALLBACK
+        this.logger.log(`[AI FALLBACK] Chưa có ai tạo đề tương tự cho "${dto.chuDe}", áp dụng bộ đề mẫu dự phòng`);
+        validatedJson = getFallbackExercises(dto.chuDe, dto.trinhDo, count, dto.loaiCauHoi);
+      }
     }
 
     const duration = Date.now() - startTime;
@@ -578,11 +592,188 @@ RÀNG BUỘC NGHIÊM NGẶT:
       duration,
     );
 
+    const isCommunity = status !== TrangThaiYeuCauAI.THANH_CONG && Boolean(validatedJson?.__isCommunityMatch);
+    if (validatedJson?.__isCommunityMatch) {
+      delete validatedJson.__isCommunityMatch;
+    }
+
     return {
       success: true,
-      mode: status === TrangThaiYeuCauAI.THANH_CONG ? 'AI_GEMINI' : 'TEMPLATE_FALLBACK',
+      mode: status === TrangThaiYeuCauAI.THANH_CONG
+        ? 'AI_GEMINI'
+        : isCommunity
+        ? 'AI_COMMUNITY_CACHE'
+        : 'TEMPLATE_FALLBACK',
       data: validatedJson,
     };
+  }
+
+  /**
+   * UC013 — Lấy lịch sử các bộ đề luyện tập đã sinh của người dùng
+   */
+  async getExerciseHistory(userId: number, limit: number = 30) {
+    const records = await this.prisma.yeuCauAI.findMany({
+      where: {
+        nguoiDungId: BigInt(userId),
+        loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
+        trangThai: {
+          in: [TrangThaiYeuCauAI.THANH_CONG, TrangThaiYeuCauAI.FALLBACK_APPLIED],
+        },
+      },
+      orderBy: { thoiGianGoi: 'desc' },
+      take: limit,
+      select: {
+        id: true,
+        thoiGianGoi: true,
+        thoiGianXuLyMs: true,
+        trangThai: true,
+        validatedOutputJson: true,
+      },
+    });
+
+    const history = records
+      .filter((r) => r.validatedOutputJson && typeof r.validatedOutputJson === 'object')
+      .map((r) => {
+        const json: any = r.validatedOutputJson;
+        const cauHoi = Array.isArray(json?.cauHoi) ? json.cauHoi : [];
+        return {
+          id: Number(r.id),
+          thoiGianGoi: r.thoiGianGoi,
+          thoiGianXuLyMs: r.thoiGianXuLyMs,
+          trangThai: r.trangThai,
+          mode: r.trangThai === TrangThaiYeuCauAI.THANH_CONG ? 'AI_GEMINI' : 'TEMPLATE_FALLBACK',
+          chuDe: json.chuDe || 'Bài luyện tập tiếng Anh',
+          trinhDo: json.trinhDo || 'B1',
+          soCau: cauHoi.length,
+          data: json,
+        };
+      });
+
+    return history;
+  }
+
+  /**
+   * Xóa 1 đề bài tập cụ thể trong lịch sử của người dùng
+   */
+  async deleteExerciseHistoryItem(userId: number, recordId: number) {
+    const record = await this.prisma.yeuCauAI.findFirst({
+      where: {
+        id: BigInt(recordId),
+        nguoiDungId: BigInt(userId),
+        loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
+      },
+    });
+
+    if (!record) {
+      throw new NotFoundException('Không tìm thấy đề bài tập trong lịch sử hoặc bạn không có quyền xóa.');
+    }
+
+    await this.prisma.yeuCauAI.delete({
+      where: { id: BigInt(recordId) },
+    });
+
+    return {
+      success: true,
+      message: 'Đã xóa đề bài tập khỏi lịch sử thành công.',
+    };
+  }
+
+  /**
+   * Xóa toàn bộ lịch sử các đề bài tập đã tạo của người dùng
+   */
+  async clearExerciseHistory(userId: number) {
+    const count = await this.prisma.yeuCauAI.count({
+      where: {
+        nguoiDungId: BigInt(userId),
+        loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
+      },
+    });
+
+    if (count === 0) {
+      throw new BadRequestException('Bạn chưa từng tạo đề bài tập nào trong lịch sử để xóa.');
+    }
+
+    const res = await this.prisma.yeuCauAI.deleteMany({
+      where: {
+        nguoiDungId: BigInt(userId),
+        loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
+      },
+    });
+
+    return {
+      success: true,
+      count: res.count,
+      message: `Đã xóa sạch toàn bộ ${res.count} đề bài tập trong lịch sử.`,
+    };
+  }
+
+  /**
+   * Tìm kiếm bộ đề tương thích từ các lần sinh đề trước đó của bất kỳ người dùng nào trong hệ thống
+   * (Chỉ xét các bản ghi còn tồn tại trong DB, chưa bị người dùng xóa)
+   */
+  private async findCommunityExerciseMatch(
+    chuDe: string,
+    trinhDo: string,
+    count: number,
+  ): Promise<any | null> {
+    const normTopic = this.normalizeSearchText(chuDe);
+    if (!normTopic) return null;
+
+    const pastExercises = await this.prisma.yeuCauAI.findMany({
+      where: {
+        loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
+        trangThai: TrangThaiYeuCauAI.THANH_CONG,
+        validatedOutputJson: { not: null as any },
+      },
+      orderBy: { id: 'desc' },
+      take: 100,
+      select: {
+        promptInput: true,
+        validatedOutputJson: true,
+      },
+    });
+
+    for (const record of pastExercises) {
+      const json: any = record.validatedOutputJson;
+      if (!json || !Array.isArray(json.cauHoi) || json.cauHoi.length === 0) continue;
+
+      const recordTopic = this.normalizeSearchText(json.chuDe || '');
+      const recordPrompt = this.normalizeSearchText(record.promptInput || '');
+
+      const isMatch =
+        recordTopic === normTopic ||
+        (normTopic.length >= 3 && recordTopic.includes(normTopic)) ||
+        (recordTopic.length >= 3 && normTopic.includes(recordTopic)) ||
+        recordPrompt.includes(normTopic);
+
+      if (isMatch) {
+        const cloned = JSON.parse(JSON.stringify(json));
+        cloned.chuDe = chuDe;
+        cloned.trinhDo = trinhDo || json.trinhDo || 'B1';
+
+        if (cloned.cauHoi.length > count) {
+          cloned.cauHoi = cloned.cauHoi.slice(0, count);
+        }
+        cloned.cauHoi = cloned.cauHoi.map((q: any, idx: number) => ({
+          ...q,
+          id: idx + 1,
+        }));
+        cloned.__isCommunityMatch = true;
+        return cloned;
+      }
+    }
+
+    return null;
+  }
+
+  private normalizeSearchText(text: string): string {
+    return (text || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   /**

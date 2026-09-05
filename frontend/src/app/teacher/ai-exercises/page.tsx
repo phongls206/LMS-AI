@@ -14,7 +14,11 @@ import {
   Eye,
   PlusCircle,
   Clock,
+  History,
+  Printer,
 } from 'lucide-react';
+import { ExerciseHistoryModal } from '../../../components/ai/ExerciseHistoryModal';
+import { PaperExamModal } from '../../../components/ai/PaperExamModal';
 
 const PREDEFINED_TOPICS = [
   'Thì Hiện Tại Hoàn Thành (Present Perfect Tense)',
@@ -61,6 +65,30 @@ export default function TeacherAiExercisesPage() {
   const [submitted, setSubmitted] = useState(false);
   const [teacherViewKey, setTeacherViewKey] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [printExamData, setPrintExamData] = useState<any>(null);
+
+  const handleSelectPastExercise = (item: any) => {
+    const loadedResult = {
+      success: true,
+      mode: item.mode || 'AI_GEMINI',
+      data: item.data,
+    };
+    setResult(loadedResult);
+    setUserAnswers({});
+    setSubmitted(false);
+    if (item.chuDe) setSelectedTopic(item.chuDe);
+    if (item.trinhDo) setCefr(item.trinhDo);
+    if (item.soCau) setSoLuong(item.soCau);
+    saveToSession(loadedResult, {}, false, teacherViewKey);
+    setTimeout(() => {
+      window.scrollTo({ top: 350, behavior: 'smooth' });
+    }, 100);
+  };
+
+  const handlePrintPastExercise = (item: any) => {
+    setPrintExamData(item.data);
+  };
 
   // Bộ đếm ngược chống spam AI
   useEffect(() => {
@@ -326,7 +354,24 @@ export default function TeacherAiExercisesPage() {
     >
       <div className="space-y-6">
         {/* Generator Form */}
-        <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
+        <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-teal-600" />
+              <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                Biên Soạn Bộ Đề Bài Tập AI
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowHistoryModal(true)}
+              className="px-3.5 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer self-start sm:self-auto shadow-2xs"
+            >
+              <History className="w-3.5 h-3.5 text-teal-600" />
+              <span>Lịch Sử Đề Đã Tạo</span>
+            </button>
+          </div>
+
           <form onSubmit={handleGenerate} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
               <div className="md:col-span-5">
@@ -496,27 +541,29 @@ export default function TeacherAiExercisesPage() {
                 </button>
                 <span
                   className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${
-                    result.mode === 'AI_CACHE'
+                    result.mode === 'AI_CACHE' || result.mode === 'AI_COMMUNITY_CACHE'
                       ? 'bg-amber-100 text-amber-800 border-amber-300'
-                      : result.mode === 'AI_GEMINI'
+                      : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
                       ? 'bg-teal-100 text-teal-800 border-teal-300'
                       : 'bg-slate-100 text-slate-700 border-slate-300'
                   }`}
                 >
                   {result.mode === 'AI_CACHE'
                     ? '⚡ Bộ Nhớ Đệm AI (Tức Thì)'
-                    : result.mode === 'AI_GEMINI'
+                    : result.mode === 'AI_COMMUNITY_CACHE'
+                    ? '⚡ Đề Tương Thích (Kho AI)'
+                    : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
                     ? '✨ Trí Tuệ Nhân Tạo (AI)'
                     : '📦 Mẫu Dự Phòng (Fallback)'}
                 </span>
                 <button
                   type="button"
-                  onClick={handleResetSession}
-                  className="px-2.5 py-1 rounded-lg bg-white hover:bg-slate-50 text-slate-700 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 transition cursor-pointer shadow-xs"
-                  title="Xóa đề hiện tại để tạo phiên bài mới"
+                  onClick={() => setPrintExamData(result.data)}
+                  className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-teal-800 text-xs font-bold flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer shadow-xs"
+                  title="In phiếu bài tập ra giấy A4 hoặc lưu file PDF để phát cho học viên"
                 >
-                  <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
-                  <span>Tạo Phiên Mới</span>
+                  <Printer className="w-3.5 h-3.5 text-teal-600" />
+                  <span>In Phiếu Bài Tập</span>
                 </button>
               </div>
             </div>
@@ -665,6 +712,15 @@ export default function TeacherAiExercisesPage() {
                   <div className="flex items-center space-x-2">
                     <button
                       type="button"
+                      onClick={() => setPrintExamData(result.data)}
+                      className="px-3.5 py-2 bg-white hover:bg-slate-50 text-teal-800 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer"
+                      title="In phiếu bài tập này ra giấy A4 hoặc lưu PDF"
+                    >
+                      <Printer className="w-3.5 h-3.5 text-teal-600" />
+                      <span>In Phiếu Bài Tập</span>
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => {
                         setSubmitted(false);
                         setUserAnswers({});
@@ -718,6 +774,19 @@ export default function TeacherAiExercisesPage() {
             </div>
           </div>
         )}
+        {/* Modals for Exercise History and Paper Exam Print */}
+        <ExerciseHistoryModal
+          isOpen={showHistoryModal}
+          onClose={() => setShowHistoryModal(false)}
+          onSelectExercise={handleSelectPastExercise}
+          onPrintExercise={handlePrintPastExercise}
+        />
+
+        <PaperExamModal
+          isOpen={!!printExamData}
+          onClose={() => setPrintExamData(null)}
+          examData={printExamData}
+        />
       </div>
     </AppLayout>
   );

@@ -111,6 +111,16 @@ export class ClassesController {
   }
 
   /**
+   * POST /api/v1/classes/auto-update-statuses — Tự động cập nhật trạng thái lớp theo ngày
+   */
+  @Post('classes/auto-update-statuses')
+  @Roles(VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Kích hoạt cập nhật tự động trạng thái lớp học theo ngày khai giảng và kết thúc' })
+  autoUpdateStatuses() {
+    return this.classesService.autoUpdateClassStatuses();
+  }
+
+  /**
    * GET /api/v1/teachers/me/schedule — UC005/UC010 (Giáo viên)
    */
   @Get('teachers/me/schedule')

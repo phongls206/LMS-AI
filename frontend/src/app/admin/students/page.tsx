@@ -30,6 +30,7 @@ import {
   RefreshCw,
   AlertCircle,
 } from 'lucide-react';
+import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<HocVien[]>([]);
@@ -43,6 +44,27 @@ export default function AdminStudentsPage() {
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+
+  // Dynamic Column Sorting
+  const {
+    sortKey,
+    sortOrder,
+    toggleSort,
+    sortedData: sortedStudents,
+  } = useTableSort(students, null, null, {
+    maHocVien: (s: any) => s.maHocVien,
+    hoTen: (s: any) => s.hoTen,
+    trinhDoCEFR: (s: any) => s.trinhDoCEFR,
+    lopHoc: (s: any) => s.dangKyHoc?.[0]?.lopHoc?.tenLopHoc || '',
+    email: (s: any) => s.nguoiDung?.email || '',
+    hocPhi: (s: any) => {
+      const invoices = s.hoaDon || [];
+      const totalFee = invoices.reduce((sum: number, inv: any) => sum + Number(inv.soTienPhaiTra || 0), 0);
+      const paidFee = invoices.reduce((sum: number, inv: any) => sum + Number(inv.soTienDaTra || 0), 0);
+      return totalFee > 0 ? (paidFee / totalFee) : 0;
+    },
+    trangThai: (s: any) => s.trangThai,
+  });
 
   // Modals state
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -289,18 +311,81 @@ export default function AdminStudentsPage() {
               <table className="w-full text-left text-xs text-slate-700">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Mã HV</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Họ Và Tên</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap text-center">Trình Độ</th>
-                    <th className="px-5 py-3.5 min-w-[220px]">Lớp & Khóa Đang Học</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap">Email & SĐT</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap text-center">Học Phí</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap text-center">Trạng Thái</th>
-                    <th className="px-5 py-3.5 whitespace-nowrap text-right">Thao Tác</th>
+                    <th
+                      onClick={() => toggleSort('maHocVien')}
+                      className="px-5 py-3.5 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Mã học viên"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>MÃ HV</span>
+                        <SortIndicator sortKey="maHocVien" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('hoTen')}
+                      className="px-5 py-3.5 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Họ và tên"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>HỌ VÀ TÊN</span>
+                        <SortIndicator sortKey="hoTen" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('trinhDoCEFR')}
+                      className="px-5 py-3.5 whitespace-nowrap text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Trình độ CEFR"
+                    >
+                      <div className="flex items-center justify-center space-x-1">
+                        <span>TRÌNH ĐỘ</span>
+                        <SortIndicator sortKey="trinhDoCEFR" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('lopHoc')}
+                      className="px-5 py-3.5 min-w-[220px] cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Lớp & khóa đang học"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>LỚP & KHÓA ĐANG HỌC</span>
+                        <SortIndicator sortKey="lopHoc" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('email')}
+                      className="px-5 py-3.5 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Email & SĐT"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>EMAIL & SĐT</span>
+                        <SortIndicator sortKey="email" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('hocPhi')}
+                      className="px-5 py-3.5 whitespace-nowrap text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Tình trạng học phí"
+                    >
+                      <div className="flex items-center justify-center space-x-1">
+                        <span>HỌC PHÍ</span>
+                        <SortIndicator sortKey="hocPhi" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('trangThai')}
+                      className="px-5 py-3.5 whitespace-nowrap text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Trạng thái học viên"
+                    >
+                      <div className="flex items-center justify-center space-x-1">
+                        <span>TRẠNG THÁI</span>
+                        <SortIndicator sortKey="trangThai" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th className="px-5 py-3.5 whitespace-nowrap text-right">THAO TÁC</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {students.map((s: any) => {
+                  {sortedStudents.map((s: any) => {
                     const enrollments = s.dangKyHoc || [];
                     const invoices = s.hoaDon || [];
                     const totalFee = invoices.reduce((sum: number, inv: any) => sum + Number(inv.soTienPhaiTra || 0), 0);

@@ -3,7 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, gradesService } from '../../../services/api';
-import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle } from 'lucide-react';
+import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download } from 'lucide-react';
+import { exportClassGradeBookExcel } from '../../../utils/excel-exporter';
+import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
 export default function TeacherGradesPage() {
   const [classes, setClasses] = useState<any[]>([]);
@@ -135,6 +137,32 @@ export default function TeacherGradesPage() {
     }
   };
 
+  const enrollments = classDetail?.dangKyHoc || [];
+  const {
+    sortKey,
+    sortOrder,
+    toggleSort,
+    sortedData: sortedEnrollments,
+  } = useTableSort(enrollments, {
+    valueExtractors: {
+      maHocVien: (dk: any) => dk.hocVien?.maHocVien || '',
+      hoTen: (dk: any) => dk.hocVien?.hoTen || '',
+      cc: (dk: any) => Number(gradesMap[dk.hocVien?.id]?.cc ?? 0),
+      gk: (dk: any) => Number(gradesMap[dk.hocVien?.id]?.gk ?? 0),
+      ck: (dk: any) => Number(gradesMap[dk.hocVien?.id]?.ck ?? 0),
+      final: (dk: any) => {
+        const g = gradesMap[dk.hocVien?.id] || { cc: 0, gk: 0, ck: 0 };
+        const f = calculateFinal(g.cc, g.gk, g.ck);
+        return f ? Number(f) : 0;
+      },
+      xepLoai: (dk: any) => {
+        const g = gradesMap[dk.hocVien?.id] || { cc: 0, gk: 0, ck: 0 };
+        const f = calculateFinal(g.cc, g.gk, g.ck);
+        return f && isPass(g.cc, Number(f)) ? 1 : 0;
+      },
+    },
+  });
+
   return (
     <AppLayout
       allowedRoles={['GIAO_VIEN', 'QUAN_LY']}
@@ -163,15 +191,28 @@ export default function TeacherGradesPage() {
             )}
           </div>
 
-          <button
-            onClick={handleSaveGrades}
-            disabled={saving || !selectedClassId || !classDetail?.dangKyHoc?.length || isClassRecruiting}
-            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer"
-            title={isClassRecruiting ? 'Lớp đang mở tuyển sinh, chưa bắt đầu học. Không thể nhập bảng điểm!' : 'Lưu & Tính Điểm Tổng Kết'}
-          >
-            <Save className="w-4 h-4" />
-            <span>{saving ? 'Đang Lưu...' : isClassRecruiting ? 'Chưa Khai Giảng' : 'Lưu & Tính Điểm Tổng Kết'}</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => exportClassGradeBookExcel({ classDetail, gradesMap })}
+              disabled={!selectedClassId || !classDetail?.dangKyHoc?.length}
+              className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition disabled:opacity-50 cursor-pointer shadow-xs"
+              title="Xuất bảng điểm tổng kết (20% - 30% - 50%) ra file Excel .xlsx để nộp"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+              <span>Xuất Excel Bảng Điểm</span>
+            </button>
+
+            <button
+              onClick={handleSaveGrades}
+              disabled={saving || !selectedClassId || !classDetail?.dangKyHoc?.length || isClassRecruiting}
+              className="flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer"
+              title={isClassRecruiting ? 'Lớp đang mở tuyển sinh, chưa bắt đầu học. Không thể nhập bảng điểm!' : 'Lưu & Tính Điểm Tổng Kết'}
+            >
+              <Save className="w-4 h-4" />
+              <span>{saving ? 'Đang Lưu...' : isClassRecruiting ? 'Chưa Khai Giảng' : 'Lưu & Tính Điểm Tổng Kết'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Cảnh báo lớp đang tuyển sinh */}
@@ -211,19 +252,82 @@ export default function TeacherGradesPage() {
             <table className="w-full text-left text-xs text-slate-700">
               <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                 <tr>
-                  <th className="px-5 py-3.5">Mã HV</th>
-                  <th className="px-5 py-3.5">Họ Và Tên</th>
-                  <th className="px-5 py-3.5 text-center">Chuyên Cần (20%)</th>
-                  <th className="px-5 py-3.5 text-center">Giữa Kỳ (30%)</th>
-                  <th className="px-5 py-3.5 text-center">Cuối Kỳ (50%)</th>
-                  <th className="px-5 py-3.5 text-center font-bold text-slate-900">Tổng Kết</th>
-                  <th className="px-5 py-3.5 text-center">Xếp Loại</th>
+                  <th
+                    onClick={() => toggleSort('maHocVien')}
+                    className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                    title="Nhấn để sắp xếp theo Mã HV"
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>Mã HV</span>
+                      <SortIndicator sortKey="maHocVien" activeKey={sortKey} sortOrder={sortOrder} />
+                    </div>
+                  </th>
+                  <th
+                    onClick={() => toggleSort('hoTen')}
+                    className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                    title="Nhấn để sắp xếp theo Họ và tên"
+                  >
+                    <div className="flex items-center space-x-1">
+                      <span>Họ Và Tên</span>
+                      <SortIndicator sortKey="hoTen" activeKey={sortKey} sortOrder={sortOrder} />
+                    </div>
+                  </th>
+                  <th
+                    onClick={() => toggleSort('cc')}
+                    className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                    title="Nhấn để sắp xếp theo Điểm Chuyên Cần"
+                  >
+                    <div className="flex items-center justify-center space-x-1">
+                      <span>Chuyên Cần (20%)</span>
+                      <SortIndicator sortKey="cc" activeKey={sortKey} sortOrder={sortOrder} />
+                    </div>
+                  </th>
+                  <th
+                    onClick={() => toggleSort('gk')}
+                    className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                    title="Nhấn để sắp xếp theo Điểm Giữa Kỳ"
+                  >
+                    <div className="flex items-center justify-center space-x-1">
+                      <span>Giữa Kỳ (30%)</span>
+                      <SortIndicator sortKey="gk" activeKey={sortKey} sortOrder={sortOrder} />
+                    </div>
+                  </th>
+                  <th
+                    onClick={() => toggleSort('ck')}
+                    className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                    title="Nhấn để sắp xếp theo Điểm Cuối Kỳ"
+                  >
+                    <div className="flex items-center justify-center space-x-1">
+                      <span>Cuối Kỳ (50%)</span>
+                      <SortIndicator sortKey="ck" activeKey={sortKey} sortOrder={sortOrder} />
+                    </div>
+                  </th>
+                  <th
+                    onClick={() => toggleSort('final')}
+                    className="px-5 py-3.5 text-center font-bold text-slate-900 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                    title="Nhấn để sắp xếp theo Điểm Tổng Kết"
+                  >
+                    <div className="flex items-center justify-center space-x-1">
+                      <span>Tổng Kết</span>
+                      <SortIndicator sortKey="final" activeKey={sortKey} sortOrder={sortOrder} />
+                    </div>
+                  </th>
+                  <th
+                    onClick={() => toggleSort('xepLoai')}
+                    className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                    title="Nhấn để sắp xếp theo Xếp Loại"
+                  >
+                    <div className="flex items-center justify-center space-x-1">
+                      <span>Xếp Loại</span>
+                      <SortIndicator sortKey="xepLoai" activeKey={sortKey} sortOrder={sortOrder} />
+                    </div>
+                  </th>
                   <th className="px-5 py-3.5">Nhận Xét</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {classDetail?.dangKyHoc?.length > 0 ? (
-                  classDetail.dangKyHoc.map((dk: any) => {
+                {sortedEnrollments.length > 0 ? (
+                  sortedEnrollments.map((dk: any) => {
                     const student = dk.hocVien;
                     const grade = gradesMap[student.id] || { cc: 0, gk: 0, ck: 0, nhanXet: '' };
                     const final = calculateFinal(grade.cc, grade.gk, grade.ck);

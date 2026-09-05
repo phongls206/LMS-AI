@@ -23,6 +23,7 @@ import {
   X,
 } from 'lucide-react';
 import { formatTrangThaiHoaDon, formatTrangThaiLopHoc, docSoThanhChu, formatReceiptDate } from '../../../utils/formatters';
+import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
 export default function AdminFeesPage() {
   const [invoices, setInvoices] = useState<HoaDon[]>([]);
@@ -95,9 +96,26 @@ export default function AdminFeesPage() {
     );
   });
 
+  const {
+    sortKey,
+    sortOrder,
+    toggleSort,
+    sortedData: sortedInvoices,
+  } = useTableSort(filteredInvoices, {
+    valueExtractors: {
+      maHoaDon: (inv) => inv.maHoaDon,
+      hocVien: (inv) => inv.hocVien?.hoTen || '',
+      lopHoc: (inv) => inv.dangKyHoc?.lopHoc?.tenLopHoc || '',
+      soTienPhaiTra: (inv) => Number(inv.soTienPhaiTra || 0),
+      soTienDaTra: (inv) => Number(inv.soTienDaTra || 0),
+      conNo: (inv) => Number(inv.soTienPhaiTra || 0) - Number(inv.soTienDaTra || 0),
+      trangThai: (inv) => inv.trangThai,
+    },
+  });
+
   const totalInvoices = filteredInvoices.length;
   const totalPages = Math.max(1, Math.ceil(totalInvoices / limit));
-  const displayedInvoices = filteredInvoices.slice((page - 1) * limit, page * limit);
+  const displayedInvoices = sortedInvoices.slice((page - 1) * limit, page * limit);
 
   useEffect(() => {
     setPage(1);
@@ -370,13 +388,76 @@ export default function AdminFeesPage() {
               <table className="w-full text-left text-xs text-slate-700">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="px-4 py-3 whitespace-nowrap">Mã Hóa Đơn</th>
-                    <th className="px-4 py-3 whitespace-nowrap min-w-[150px]">Học Viên</th>
-                    <th className="px-4 py-3 min-w-[200px]">Lớp Học</th>
-                    <th className="px-4 py-3 whitespace-nowrap">Phải Trả</th>
-                    <th className="px-4 py-3 whitespace-nowrap">Đã Thu</th>
-                    <th className="px-4 py-3 whitespace-nowrap">Còn Nợ</th>
-                    <th className="px-4 py-3 whitespace-nowrap text-center min-w-[140px]">Trạng Thái</th>
+                    <th
+                      onClick={() => toggleSort('maHoaDon')}
+                      className="px-4 py-3 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Mã Hóa Đơn"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Mã Hóa Đơn</span>
+                        <SortIndicator sortKey="maHoaDon" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('hocVien')}
+                      className="px-4 py-3 whitespace-nowrap min-w-[150px] cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Học Viên"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Học Viên</span>
+                        <SortIndicator sortKey="hocVien" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('lopHoc')}
+                      className="px-4 py-3 min-w-[200px] cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Lớp Học"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Lớp Học</span>
+                        <SortIndicator sortKey="lopHoc" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('soTienPhaiTra')}
+                      className="px-4 py-3 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Phải Trả"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Phải Trả</span>
+                        <SortIndicator sortKey="soTienPhaiTra" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('soTienDaTra')}
+                      className="px-4 py-3 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Đã Thu"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Đã Thu</span>
+                        <SortIndicator sortKey="soTienDaTra" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('conNo')}
+                      className="px-4 py-3 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Còn Nợ"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Còn Nợ</span>
+                        <SortIndicator sortKey="conNo" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('trangThai')}
+                      className="px-4 py-3 whitespace-nowrap text-center min-w-[140px] cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Trạng Thái"
+                    >
+                      <div className="flex items-center justify-center space-x-1">
+                        <span>Trạng Thái</span>
+                        <SortIndicator sortKey="trangThai" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
                     <th className="px-4 py-3 whitespace-nowrap text-right min-w-[120px]">Thao Tác</th>
                   </tr>
                 </thead>

@@ -31,12 +31,8 @@ class NguoiDung {
   - email: String
   - soDienThoai: String
   - dangHoatDong: Boolean
-  - soLanSai: Integer
-  - khoaDen: DateTime
   + xacThuc(matKhau: String): Boolean
   + kiemTraQuyen(maQuyen: String): Boolean
-  + doiMatKhau(mkCu: String, mkMoi: String): Boolean
-  + khoaTaiKhoan(thoiGianPhut: Integer): Void
 }
 
 class HoSoHocVien {
@@ -67,6 +63,15 @@ class HoSoGiaoVien {
   - trangThai: String
   + capNhatHoSo(chuyenMon, bangCap): Boolean
   + kiemTraTrangThaiDay(): Boolean
+}
+
+class TuVanVien {
+  - id: Long
+  - nguoiDungId: Long
+  - maTVV: String
+  + themHocVien(hoTen, sdt, trinhDo): Boolean
+  + dangKyLopChoHV(hocVienId, lopHocId): Boolean
+  + thuHocPhi(hoaDonId, soTien, phuongThuc): Boolean
 }
 
 class KhoaHoc {
@@ -228,6 +233,7 @@ class DichVuAI {
 
 NguoiDung "1" -- "0..1" HoSoHocVien
 NguoiDung "1" -- "0..1" HoSoGiaoVien
+NguoiDung <|-- TuVanVien
 NguoiDung "1" -- "0..*" YeuCauAI
 DichVuAI ..> YeuCauAI : <<creates>>
 

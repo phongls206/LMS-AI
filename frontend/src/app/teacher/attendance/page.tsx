@@ -23,7 +23,10 @@ import {
   AlertTriangle,
   Sparkles,
   AlertCircle,
+  FileSpreadsheet,
 } from 'lucide-react';
+import { exportClassAttendanceExcel } from '../../../utils/excel-exporter';
+import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
 export default function TeacherAttendancePage() {
   const [classes, setClasses] = useState<any[]>([]);
@@ -284,6 +287,38 @@ export default function TeacherAttendancePage() {
     return { totalSessions: pastSessions, attended, late, excused, absent, rate };
   };
 
+  // Sắp xếp bảng điểm danh buổi học
+  const {
+    sortKey: sortKeyAttend,
+    sortOrder: sortOrderAttend,
+    toggleSort: toggleSortAttend,
+    sortedData: sortedEnrollments,
+  } = useTableSort(filteredEnrollments, {
+    valueExtractors: {
+      maHocVien: (dk: any) => dk.hocVien?.maHocVien || '',
+      hoTen: (dk: any) => dk.hocVien?.hoTen || '',
+      trinhDoCEFR: (dk: any) => dk.hocVien?.trinhDoCEFR || '',
+      trangThai: (dk: any) => attendanceRecords[dk.hocVien?.id] || 'CO_MAT',
+    },
+  });
+
+  // Sắp xếp ma trận điểm danh toàn khóa
+  const matrixEnrollments = matrixData?.dangKyHoc || [];
+  const {
+    sortKey: sortKeyMatrix,
+    sortOrder: sortOrderMatrix,
+    toggleSort: toggleSortMatrix,
+    sortedData: sortedMatrixEnrollments,
+  } = useTableSort(matrixEnrollments, {
+    valueExtractors: {
+      hoTen: (dk: any) => dk.hocVien?.hoTen || '',
+      coMat: (dk: any) => calculateStudentAttendanceRate(dk.hocVien?.id).attended,
+      vang: (dk: any) => calculateStudentAttendanceRate(dk.hocVien?.id).absent,
+      rate: (dk: any) => calculateStudentAttendanceRate(dk.hocVien?.id).rate,
+      danhGia: (dk: any) => (calculateStudentAttendanceRate(dk.hocVien?.id).rate >= 80 ? 1 : 0),
+    },
+  });
+
   return (
     <AppLayout
       allowedRoles={['GIAO_VIEN', 'QUAN_LY']}
@@ -348,7 +383,25 @@ export default function TeacherAttendancePage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center space-x-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                exportClassAttendanceExcel({
+                  classDetail,
+                  sessions,
+                  matrixData,
+                  selectedSessionId: activeTab === 'take_attendance' ? selectedSessionId : null,
+                })
+              }
+              disabled={!selectedClassId || !classDetail?.dangKyHoc?.length}
+              className="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition flex items-center space-x-1.5 shadow-xs cursor-pointer disabled:opacity-50"
+              title="Xuất kết quả điểm danh ra file Excel .xlsx"
+            >
+              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+              <span>Xuất Excel Điểm Danh</span>
+            </button>
+
             {activeTab === 'take_attendance' && (
               <>
                 <button
@@ -542,17 +595,53 @@ export default function TeacherAttendancePage() {
               <table className="w-full text-left text-xs text-slate-700">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="px-5 py-3.5">Mã HV</th>
-                    <th className="px-5 py-3.5">Họ Và Tên</th>
-                    <th className="px-5 py-3.5">Trình Độ</th>
-                    <th className="px-5 py-3.5 text-center">Trạng Thái Điểm Danh (4 Trạng Thái)</th>
+                    <th
+                      onClick={() => toggleSortAttend('maHocVien')}
+                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Mã HV"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Mã HV</span>
+                        <SortIndicator sortKey="maHocVien" activeKey={sortKeyAttend} sortOrder={sortOrderAttend} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSortAttend('hoTen')}
+                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Họ và tên"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Họ Và Tên</span>
+                        <SortIndicator sortKey="hoTen" activeKey={sortKeyAttend} sortOrder={sortOrderAttend} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSortAttend('trinhDoCEFR')}
+                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Trình độ CEFR"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Trình Độ</span>
+                        <SortIndicator sortKey="trinhDoCEFR" activeKey={sortKeyAttend} sortOrder={sortOrderAttend} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSortAttend('trangThai')}
+                      className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Trạng thái điểm danh"
+                    >
+                      <div className="flex items-center justify-center space-x-1">
+                        <span>Trạng Thái Điểm Danh (4 Trạng Thái)</span>
+                        <SortIndicator sortKey="trangThai" activeKey={sortKeyAttend} sortOrder={sortOrderAttend} />
+                      </div>
+                    </th>
                     <th className="px-5 py-3.5">Ghi Chú Buổi Học</th>
                     <th className="px-4 py-3.5 text-right">Chi Tiết</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredEnrollments.length > 0 ? (
-                    filteredEnrollments.map((dk: any) => {
+                  {sortedEnrollments.length > 0 ? (
+                    sortedEnrollments.map((dk: any) => {
                       const student = dk.hocVien;
                       const currentStatus = attendanceRecords[student.id] || 'CO_MAT';
                       return (
@@ -657,14 +746,33 @@ export default function TeacherAttendancePage() {
         {activeTab === 'matrix_view' && (
           <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm space-y-4 p-5">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-                  <BarChart3 className="w-4 h-4 text-teal-600" />
-                  <span>Ma Trận Chuyên Cần & Tiến Độ Lớp Học</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Bấm vào tên học viên để xem chi tiết lịch sử các buổi học.
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
+                    <BarChart3 className="w-4 h-4 text-teal-600" />
+                    <span>Ma Trận Chuyên Cần & Tiến Độ Lớp Học</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Bấm vào tên học viên để xem chi tiết lịch sử các buổi học.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    exportClassAttendanceExcel({
+                      classDetail,
+                      sessions,
+                      matrixData,
+                      selectedSessionId: null,
+                    })
+                  }
+                  disabled={!selectedClassId || !classDetail?.dangKyHoc?.length}
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition flex items-center space-x-1.5 shadow-xs cursor-pointer self-start sm:self-auto disabled:opacity-50"
+                  title="Xuất ma trận điểm danh toàn khóa học ra file Excel .xlsx"
+                >
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                  <span>Xuất Ma Trận Excel</span>
+                </button>
               </div>
 
               {/* Chú giải trạng thái */}
@@ -696,8 +804,15 @@ export default function TeacherAttendancePage() {
                 <table className="w-full text-left text-xs text-slate-700 border-collapse">
                   <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] font-bold tracking-wider">
                     <tr>
-                      <th className="px-4 py-3 sticky left-0 bg-slate-50 z-10 border-b border-slate-200">
-                        Học Viên
+                      <th
+                        onClick={() => toggleSortMatrix('hoTen')}
+                        className="px-4 py-3 sticky left-0 bg-slate-50 z-10 border-b border-slate-200 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                        title="Nhấn để sắp xếp theo Tên học viên"
+                      >
+                        <div className="flex items-center space-x-1">
+                          <span>Học Viên</span>
+                          <SortIndicator sortKey="hoTen" activeKey={sortKeyMatrix} sortOrder={sortOrderMatrix} />
+                        </div>
                       </th>
                       {(matrixData?.buoiHoc || []).map((b: any) => (
                         <th
@@ -708,22 +823,50 @@ export default function TeacherAttendancePage() {
                           B{b.soThuTu}
                         </th>
                       ))}
-                      <th className="px-3 py-3 text-center border-b border-slate-200 whitespace-nowrap">
-                        Có Mặt
+                      <th
+                        onClick={() => toggleSortMatrix('coMat')}
+                        className="px-3 py-3 text-center border-b border-slate-200 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                        title="Nhấn để sắp xếp theo Số buổi có mặt"
+                      >
+                        <div className="flex items-center justify-center space-x-1">
+                          <span>Có Mặt</span>
+                          <SortIndicator sortKey="coMat" activeKey={sortKeyMatrix} sortOrder={sortOrderMatrix} />
+                        </div>
                       </th>
-                      <th className="px-3 py-3 text-center border-b border-slate-200 whitespace-nowrap">
-                        Vắng
+                      <th
+                        onClick={() => toggleSortMatrix('vang')}
+                        className="px-3 py-3 text-center border-b border-slate-200 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                        title="Nhấn để sắp xếp theo Số buổi vắng"
+                      >
+                        <div className="flex items-center justify-center space-x-1">
+                          <span>Vắng</span>
+                          <SortIndicator sortKey="vang" activeKey={sortKeyMatrix} sortOrder={sortOrderMatrix} />
+                        </div>
                       </th>
-                      <th className="px-4 py-3 text-center border-b border-slate-200 whitespace-nowrap">
-                        Tỷ Lệ %
+                      <th
+                        onClick={() => toggleSortMatrix('rate')}
+                        className="px-4 py-3 text-center border-b border-slate-200 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                        title="Nhấn để sắp xếp theo Tỷ lệ % chuyên cần"
+                      >
+                        <div className="flex items-center justify-center space-x-1">
+                          <span>Tỷ Lệ %</span>
+                          <SortIndicator sortKey="rate" activeKey={sortKeyMatrix} sortOrder={sortOrderMatrix} />
+                        </div>
                       </th>
-                      <th className="px-3 py-3 text-center border-b border-slate-200 whitespace-nowrap">
-                        Đánh Giá
+                      <th
+                        onClick={() => toggleSortMatrix('danhGia')}
+                        className="px-3 py-3 text-center border-b border-slate-200 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                        title="Nhấn để sắp xếp theo Đánh giá"
+                      >
+                        <div className="flex items-center justify-center space-x-1">
+                          <span>Đánh Giá</span>
+                          <SortIndicator sortKey="danhGia" activeKey={sortKeyMatrix} sortOrder={sortOrderMatrix} />
+                        </div>
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {(matrixData?.dangKyHoc || []).map((dk: any) => {
+                    {(sortedMatrixEnrollments || []).map((dk: any) => {
                       const st = dk.hocVien;
                       const stats = calculateStudentAttendanceRate(st.id);
                       return (

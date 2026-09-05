@@ -1,6 +1,10 @@
 import {
   Controller,
   Post,
+  Get,
+  Delete,
+  Param,
+  Query,
   Body,
   UseGuards,
 } from '@nestjs/common';
@@ -19,6 +23,42 @@ import { VaiTro } from '@prisma/client';
 @ApiBearerAuth()
 export class AiController {
   constructor(private readonly aiService: AiService) {}
+
+  /**
+   * GET /api/v1/ai/exercises/history — UC013 (Giáo viên, Học viên, Quản lý)
+   */
+  @Get('exercises/history')
+  @Roles(VaiTro.GIAO_VIEN, VaiTro.HOC_VIEN, VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Lấy lịch sử các bộ đề luyện tập đã sinh trước đó của người dùng' })
+  getExerciseHistory(
+    @CurrentUser() user: any,
+    @Query('limit') limit?: number,
+  ) {
+    return this.aiService.getExerciseHistory(user.id, limit ? +limit : 30);
+  }
+
+  /**
+   * DELETE /api/v1/ai/exercises/history — Xóa toàn bộ lịch sử đề bài tập của người dùng
+   */
+  @Delete('exercises/history')
+  @Roles(VaiTro.GIAO_VIEN, VaiTro.HOC_VIEN, VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Xóa toàn bộ lịch sử các đề bài tập đã tạo của người dùng' })
+  clearExerciseHistory(@CurrentUser() user: any) {
+    return this.aiService.clearExerciseHistory(user.id);
+  }
+
+  /**
+   * DELETE /api/v1/ai/exercises/history/:id — Xóa một đề bài tập cụ thể trong lịch sử
+   */
+  @Delete('exercises/history/:id')
+  @Roles(VaiTro.GIAO_VIEN, VaiTro.HOC_VIEN, VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Xóa một đề bài tập cụ thể trong lịch sử theo id' })
+  deleteExerciseHistoryItem(
+    @CurrentUser() user: any,
+    @Param('id') id: string,
+  ) {
+    return this.aiService.deleteExerciseHistoryItem(user.id, +id);
+  }
 
   /**
    * POST /api/v1/ai/consult-classes — UC012 (Tư vấn viên, Học viên)

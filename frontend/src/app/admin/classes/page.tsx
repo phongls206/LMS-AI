@@ -8,6 +8,7 @@ import {
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
   Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock
 } from 'lucide-react';
+import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
 const DAYS_OF_WEEK = [
   { value: 2, label: 'Thứ Hai', short: 'T2' },
@@ -32,6 +33,23 @@ export default function AdminClassesPage() {
   const [courses, setCourses] = useState<KhoaHoc[]>([]);
   const [teachers, setTeachers] = useState<GiaoVien[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Sorting
+  const {
+    sortKey,
+    sortOrder,
+    toggleSort,
+    sortedData: sortedClasses,
+  } = useTableSort(classes, {
+    valueExtractors: {
+      maLopHoc: (c) => c.maLopHoc,
+      tenLopHoc: (c) => c.tenLopHoc,
+      siSo: (c) => c.siSoHienTai,
+      thoiGian: (c) => c.ngayBatDau || '',
+      giaoVien: (c) => c.phanCong?.[0]?.giaoVien?.hoTen || '',
+      trangThai: (c) => c.trangThai,
+    },
+  });
 
   // Modals state
   const [showCreateClass, setShowCreateClass] = useState(false);
@@ -459,17 +477,71 @@ export default function AdminClassesPage() {
               <table className="w-full text-left text-xs text-slate-700">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
-                    <th className="px-5 py-3.5">Mã Lớp</th>
-                    <th className="px-5 py-3.5">Tên Lớp & Khóa Học</th>
-                    <th className="px-5 py-3.5">Sĩ Số</th>
-                    <th className="px-5 py-3.5">Thời Khóa Biểu</th>
-                    <th className="px-5 py-3.5">Giáo Viên</th>
-                    <th className="px-5 py-3.5">Trạng Thái (Đổi Nhanh)</th>
+                    <th
+                      onClick={() => toggleSort('maLopHoc')}
+                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Mã Lớp"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Mã Lớp</span>
+                        <SortIndicator sortKey="maLopHoc" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('tenLopHoc')}
+                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Tên Lớp"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Tên Lớp & Khóa Học</span>
+                        <SortIndicator sortKey="tenLopHoc" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('siSo')}
+                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Sĩ Số"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Sĩ Số</span>
+                        <SortIndicator sortKey="siSo" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('thoiGian')}
+                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Lịch học"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Thời Khóa Biểu</span>
+                        <SortIndicator sortKey="thoiGian" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('giaoVien')}
+                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Giáo Viên"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Giáo Viên</span>
+                        <SortIndicator sortKey="giaoVien" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
+                    <th
+                      onClick={() => toggleSort('trangThai')}
+                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      title="Nhấn để sắp xếp theo Trạng Thái"
+                    >
+                      <div className="flex items-center space-x-1">
+                        <span>Trạng Thái (Đổi Nhanh)</span>
+                        <SortIndicator sortKey="trangThai" activeKey={sortKey} sortOrder={sortOrder} />
+                      </div>
+                    </th>
                     <th className="px-5 py-3.5 text-right">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {classes.map((c) => (
+                  {sortedClasses.map((c) => (
                     <tr key={c.id} className="hover:bg-teal-50/30 transition">
                       <td className="px-5 py-4 font-mono font-bold text-teal-700">{c.maLopHoc}</td>
                       <td className="px-5 py-4">
@@ -530,10 +602,6 @@ export default function AdminClassesPage() {
                           {c.trangThai === 'DA_HUY' ? (
                             <span className="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-bold">
                               Lớp Đã Hủy
-                            </span>
-                          ) : c.trangThai === 'DA_KET_THUC' ? (
-                            <span className="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 text-[11px] font-bold">
-                              Đã Kết Thúc
                             </span>
                           ) : (
                             <>
