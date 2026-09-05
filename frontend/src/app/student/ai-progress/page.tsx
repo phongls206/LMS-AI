@@ -315,7 +315,7 @@ export default function StudentAiProgressPage() {
 
               {/* Badge Mode */}
               <div className="flex items-center space-x-2">
-                {summary.mode === 'AI_GEMINI' || summary.mode === 'AI_GEMINI_CACHED' ? (
+                {summary.mode === 'AI_GEMINI' || summary.mode === 'AI_GEMINI_CACHED' || summary.mode === 'GEMINI_AI' ? (
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
                     <Sparkles className="w-3.5 h-3.5 text-teal-600" />
                     <span>✨ Phân Tích AI {summary.mode === 'AI_GEMINI_CACHED' ? '(Tức Thì • Smart Cache)' : '(Zero-Trust Verified)'}</span>

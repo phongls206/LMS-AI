@@ -296,12 +296,12 @@ export default function StudentAiConsultPage() {
               <div className="flex items-center space-x-2">
                 <span
                   className={`text-[11px] font-bold px-3 py-1 rounded-full border ${
-                    mode === 'AI_GEMINI'
+                    mode === 'AI_GEMINI' || mode === 'GEMINI_AI'
                       ? 'bg-teal-50 text-teal-700 border-teal-200'
                       : 'bg-amber-50 text-amber-700 border-amber-200'
                   }`}
                 >
-                  {mode === 'AI_GEMINI' ? '✨ Trí Tuệ Nhân Tạo (AI)' : '📋 Hệ Thống Quy Tắc (Rule-Based)'}
+                  {mode === 'AI_GEMINI' || mode === 'GEMINI_AI' ? '✨ Trí Tuệ Nhân Tạo (AI)' : '📋 Hệ Thống Quy Tắc (Rule-Based)'}
                 </span>
                 <button
                   type="button"

@@ -117,17 +117,16 @@ export default function StudentDashboardPage() {
               {schedule.map((item) => (
                 <div key={item.id} className="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
                   <div className="flex justify-between items-start mb-2">
-                    <span className="font-mono text-xs font-bold text-teal-700 px-2 py-0.5 rounded bg-teal-100/70 border border-teal-200/60">
+                    <span className="font-mono text-xs font-bold text-teal-700 px-2 py-0.5 rounded bg-teal-50 border border-teal-200/60">
                       {item.lopHoc?.maLopHoc}
                     </span>
                     <span
-                      className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border ${
-                        item.trangThai === 'DA_XAC_NHAN' || item.trangThai === 'HOAN_THANH'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                          : item.trangThai === 'CHO_THANH_TOAN' || item.trangThai === 'CHO_XAC_NHAN'
+                      className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold border ${item.trangThai === 'DA_XAC_NHAN' || item.trangThai === 'HOAN_THANH'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : item.trangThai === 'CHO_THANH_TOAN' || item.trangThai === 'CHO_XAC_NHAN'
                           ? 'bg-amber-50 text-amber-700 border-amber-200'
                           : 'bg-slate-100 text-slate-600 border-slate-200'
-                      }`}
+                        }`}
                     >
                       {formatTrangThaiDangKy(item.trangThai)}
                     </span>

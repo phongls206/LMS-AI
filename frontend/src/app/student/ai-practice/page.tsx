@@ -524,14 +524,14 @@ export default function StudentAiPracticePage() {
                   className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
                     result.mode === 'AI_COMMUNITY_CACHE'
                       ? 'bg-amber-100 text-amber-800 border-amber-300'
-                      : result.mode === 'GEMINI_AI'
+                      : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
                       ? 'bg-teal-100 text-teal-800 border-teal-300'
                       : 'bg-slate-100 text-slate-700 border-slate-300'
                   }`}
                 >
                   {result.mode === 'AI_COMMUNITY_CACHE'
                     ? '⚡ Đề Tương Thích (Kho AI)'
-                    : result.mode === 'GEMINI_AI'
+                    : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
                     ? '✨ Trí Tuệ Nhân Tạo (AI)'
                     : '📦 Mẫu Dự Phòng (Fallback)'}
                 </span>
