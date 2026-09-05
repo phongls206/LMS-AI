@@ -694,11 +694,11 @@ export default function StudentAiPracticePage() {
                       ({((calculateScore() / result.data.cauHoi.length) * 100).toFixed(0)}%)
                     </span>
                   </div>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:space-x-2 w-full sm:w-auto justify-between sm:justify-end">
                     <button
                       type="button"
                       onClick={() => setPrintExamData(result.data)}
-                      className="px-3.5 py-2 bg-white hover:bg-slate-50 text-teal-800 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer"
+                      className="flex-1 sm:flex-none justify-center px-3.5 py-2 bg-white hover:bg-slate-50 text-teal-800 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer shadow-xs"
                       title="In phiếu bài tập này ra giấy A4 hoặc lưu PDF"
                     >
                       <Printer className="w-3.5 h-3.5 text-teal-600" />
@@ -711,7 +711,7 @@ export default function StudentAiPracticePage() {
                         setUserAnswers({});
                         saveToSession(result, {}, false);
                       }}
-                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
+                      className="flex-1 sm:flex-none justify-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>Làm Lại Đề Này</span>
@@ -719,10 +719,10 @@ export default function StudentAiPracticePage() {
                     <button
                       type="button"
                       onClick={handleResetSession}
-                      className="px-4 py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer"
+                      className="w-full sm:w-auto justify-center px-4 py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer"
                     >
                       <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
-                      <span>Tạo Phiên Mới</span>
+                      <span>Tạo Đề Mới</span>
                     </button>
                   </div>
                 </>
@@ -733,11 +733,11 @@ export default function StudentAiPracticePage() {
                     <strong className="text-slate-900 font-bold">{countAnswered()}</strong> /{' '}
                     {result.data.cauHoi.length} câu
                   </span>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-2 w-full sm:w-auto">
                     <button
                       type="button"
                       onClick={handleResetSession}
-                      className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
+                      className="px-4 py-2.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl flex items-center justify-center space-x-1.5 transition cursor-pointer"
                     >
                       <PlusCircle className="w-3.5 h-3.5 text-slate-500" />
                       <span>Hủy & Tạo Đề Khác</span>
@@ -749,7 +749,7 @@ export default function StudentAiPracticePage() {
                         setSubmitted(true);
                         saveToSession(result, userAnswers, true);
                       }}
-                      className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-md shadow-teal-600/20 transition disabled:opacity-40 cursor-pointer"
+                      className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-md shadow-teal-600/20 transition disabled:opacity-40 cursor-pointer flex items-center justify-center"
                     >
                       Nộp Bài & Chấm Điểm
                     </button>

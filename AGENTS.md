@@ -53,8 +53,28 @@ Khi thực thi các tác vụ chuyên môn, Agent bắt buộc phải tuân th�
 | Thiết kế & vẽ sơ đồ (UML/ERD) | `diagram-design`        |
 | Thiết kế giao diện UI/UX      | `figma-design`          |
 | Thiết kế Mockup & Prototype   | `ui-mockup-designer`    |
+| Định hướng Visual & UI cao cấp| `frontend-design`       |
 
 > **Nguyên tắc phân định:** `AGENTS.md` quy định nguyên tắc tổng quan của hệ thống. `SKILL.md` (hoặc file cấu hình skill cụ thể) quy định quy trình chi tiết từng bước. Không lặp lại chi tiết triển khai của Skill vào file này.
+
+---
+
+### 4.1. Hệ Thống Sub-Agents Chuyên Trách (`.agents/agents/`)
+
+Khi người dùng yêu cầu thực thi các tác vụ chuyên biệt hoặc ủy quyền nhiệm vụ, Agent đóng vai trò các Sub-Agent tương ứng:
+
+| Sub-Agent | File Cấu Hình | Vai Trò & Chuyên Môn |
+| :--- | :--- | :--- |
+| **DB Architect** | [`.agents/agents/db-architect-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/db-architect-agent.md) | Kiến trúc CSDL 14 bảng chuẩn 3NF, Prisma Schema, Migrations, Indexing |
+| **Backend Core** | [`.agents/agents/backend-core-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/backend-core-agent.md) | Phát triển NestJS Modules, Services, Business Rules, JWT & RBAC Guards |
+| **Frontend UI/UX** | [`.agents/agents/frontend-ui-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/frontend-ui-agent.md) | Giao diện Next.js App Router, Responsive Mobile/PC, In ấn A4, UI Styling |
+| **AI Engineer** | [`.agents/agents/ai-engineer-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/ai-engineer-agent.md) | Tích hợp Gemini API, Prompt Engineering, Chống ảo giác, Fallback Cache |
+| **QA & Testing** | [`.agents/agents/qa-testing-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/qa-testing-agent.md) | Thiết kế Test Matrix 14 Use Cases, Chạy Jest Unit/E2E Test, Kiểm toán số học |
+| **Security Auditor** | [`.agents/agents/security-auditor-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/security-auditor-agent.md) | Rà soát OWASP Top 10, Argon2 hashing, Chống IDOR, Bảo mật API Secret |
+| **Doc & Diagram Architect** | [`.agents/agents/doc-architect-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/doc-architect-agent.md) | Quản lý tài liệu lớn `EnglishCenterTOP.docx`, Sơ đồ PlantUML/Mermaid |
+| **Code Reviewer / Tech Lead** | [`.agents/agents/code-reviewer-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/code-reviewer-agent.md) | Kiểm duyệt chất lượng mã nguồn, Clean Code, SOLID, TypeScript Type-safety |
+
+Chi tiết quy trình phối hợp và hợp đồng chuyển giao xem tại: [`.agents/agents/README.md`](file:///d:/MyProjects/lms-ai/.agents/agents/README.md).
 
 ---
 

@@ -373,50 +373,60 @@ export const PaperExamModal: React.FC<PaperExamModalProps> = ({
   return (
     <>
       {/* Modal Container */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/70 backdrop-blur-xs overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-5 bg-slate-900/70 backdrop-blur-xs overflow-y-auto">
         <div className="relative w-full max-w-4xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
           {/* Top Control Bar */}
-          <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
-            <div className="flex items-center space-x-2.5">
-              <div className="w-9 h-9 rounded-xl bg-teal-100 dark:bg-teal-950/70 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-300">
-                <Printer className="w-5 h-5" />
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center justify-between w-full sm:w-auto">
+              <div className="flex items-center space-x-2 sm:space-x-2.5">
+                <div className="w-8 sm:w-9 h-8 sm:h-9 rounded-xl bg-teal-100 dark:bg-teal-950/70 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0">
+                  <Printer className="w-4 sm:w-5 h-4 sm:h-5" />
+                </div>
+                <div>
+                  <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                    <span>In / Tải Phiếu Bài Tập (A4)</span>
+                  </h2>
+                  <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 line-clamp-1 sm:line-clamp-none">
+                    In ra giấy hoặc lưu file PDF để tự ôn tập
+                  </p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                  <span>In / Tải Phiếu Bài Tập Ôn Luyện (A4)</span>
-                </h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  In ra giấy hoặc lưu file PDF để tự ôn tập và làm bài nhanh
-                </p>
-              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                className="sm:hidden p-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition cursor-pointer"
+                title="Đóng cửa sổ"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
             {/* Print Options & Actions */}
-            <div className="flex flex-wrap items-center gap-3">
-              <label className="flex items-center space-x-2 text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer bg-white dark:bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-teal-400 transition">
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <label className="flex items-center space-x-1.5 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer bg-white dark:bg-slate-900 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-teal-400 transition">
                 <input
                   type="checkbox"
                   checked={includeAnswerSheet}
                   onChange={(e) => setIncludeAnswerSheet(e.target.checked)}
                   className="rounded text-teal-600 focus:ring-teal-500 w-3.5 h-3.5 cursor-pointer"
                 />
-                <span>Phiếu khoanh đáp án</span>
+                <span>Phiếu khoanh</span>
               </label>
 
-              <label className="flex items-center space-x-2 text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer bg-white dark:bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-teal-400 transition">
+              <label className="flex items-center space-x-1.5 text-[11px] sm:text-xs font-semibold text-slate-700 dark:text-slate-300 cursor-pointer bg-white dark:bg-slate-900 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-teal-400 transition">
                 <input
                   type="checkbox"
                   checked={includeAnswerKey}
                   onChange={(e) => setIncludeAnswerKey(e.target.checked)}
                   className="rounded text-teal-600 focus:ring-teal-500 w-3.5 h-3.5 cursor-pointer"
                 />
-                <span>Đáp án & Lời giải tham khảo</span>
+                <span>Đáp án & Lời giải</span>
               </label>
 
               <button
                 type="button"
                 onClick={handlePrint}
-                className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-md shadow-teal-600/20 transition cursor-pointer"
+                className="flex-1 sm:flex-none flex items-center justify-center space-x-1.5 px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs shadow-md shadow-teal-600/20 transition cursor-pointer"
               >
                 <Printer className="w-4 h-4" />
                 <span>In Phiếu Bài Tập</span>
@@ -425,7 +435,7 @@ export const PaperExamModal: React.FC<PaperExamModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
+                className="hidden sm:block p-2 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition cursor-pointer"
                 title="Đóng cửa sổ"
               >
                 <X className="w-5 h-5" />
@@ -434,11 +444,11 @@ export const PaperExamModal: React.FC<PaperExamModalProps> = ({
           </div>
 
           {/* Paper Preview Area */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-100 dark:bg-slate-950 flex justify-center">
+          <div className="flex-1 overflow-y-auto p-2 sm:p-6 bg-slate-100 dark:bg-slate-950 flex justify-center overflow-x-auto">
             {/* The Actual Printed Document - Wrapped in full border */}
             <div
               id="printable-practice-sheet"
-              className="practice-sheet-container w-full h-full max-w-[210mm] bg-white text-slate-900 p-6 sm:p-10 rounded-lg shadow-md border-2 border-slate-800 space-y-4 text-sm"
+              className="practice-sheet-container w-full h-full max-w-[210mm] bg-white text-slate-900 p-4 sm:p-10 rounded-lg shadow-md border-2 border-slate-800 space-y-3.5 sm:space-y-4 text-xs sm:text-sm"
               style={{ fontFamily: "'Times New Roman', Times, Georgia, serif" }}
             >
               {/* Worksheet Header - Clean, academic, not a formal exam */}
