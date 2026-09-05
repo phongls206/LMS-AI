@@ -116,8 +116,36 @@ export class ClassesService {
           },
         },
         dangKyHoc: {
+          orderBy: { id: 'asc' },
           include: {
-            hocVien: { select: { id: true, maHocVien: true, hoTen: true, trinhDoCEFR: true } },
+            hocVien: {
+              select: {
+                id: true,
+                maHocVien: true,
+                hoTen: true,
+                trinhDoCEFR: true,
+                gioiTinh: true,
+                ngaySinh: true,
+                diaChi: true,
+                trangThai: true,
+                nguoiDung: {
+                  select: {
+                    email: true,
+                    soDienThoai: true,
+                  },
+                },
+              },
+            },
+            hoaDon: {
+              select: {
+                id: true,
+                maHoaDon: true,
+                soTienPhaiTra: true,
+                soTienDaTra: true,
+                trangThai: true,
+                hanThanhToan: true,
+              },
+            },
           },
         },
       },

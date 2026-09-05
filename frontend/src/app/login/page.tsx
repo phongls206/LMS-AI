@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import { authService } from '../../services/api';
 import { Footer } from '../../components/Footer';
 import { EtcLogo } from '../../components/EtcLogo';
-import { Sparkles, Lock, User, AlertCircle, AlertTriangle, ArrowRight, Sun, Moon, Mail, Copy, Check, X, ExternalLink } from 'lucide-react';
+import { Sparkles, Lock, User, AlertCircle, AlertTriangle, ArrowRight, Sun, Moon, Mail, Copy, Check, X, ExternalLink, Eye, EyeOff } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [wasKicked, setWasKicked] = useState(false);
@@ -125,8 +126,8 @@ export default function LoginPage() {
               </div>
               <p className="text-sm text-teal-600 dark:text-teal-400 font-bold flex items-center justify-center space-x-2 mt-2 animate-subtitle-reveal select-none">
                 <Sparkles
-                  className="w-4 h-4 text-teal-500 hover:animate-spin group-hover/brand:animate-spin hover:scale-125 shrink-0 origin-center transition-all duration-300 cursor-pointer"
-                  style={{ animationDuration: '2s' }}
+                  className="w-4 h-4 text-teal-500 group-hover/card:animate-spin group-hover/brand:scale-110 shrink-0 origin-center transition-transform duration-300"
+                  style={{ animationDuration: '4s' }}
                 />
                 <span className="tracking-wide group-hover/brand:text-teal-500 transition-colors">
                   Hệ Thống LMS Tích Hợp AI
@@ -155,37 +156,52 @@ export default function LoginPage() {
 
             {/* Login Form */}
             <form onSubmit={handleLogin} className="space-y-4">
+              {/* Tên đăng nhập */}
               <div className="group/input">
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 group-focus-within/input:text-teal-600 dark:group-focus-within/input:text-teal-400 transition-colors">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 group-hover/input:text-teal-600 dark:group-hover/input:text-teal-400 group-focus-within/input:text-teal-600 dark:group-focus-within/input:text-teal-400 transition-colors cursor-pointer">
                   Tên đăng nhập
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 dark:text-slate-500 group-focus-within/input:text-teal-500 dark:group-focus-within/input:text-teal-400 group-hover/input:text-slate-600 dark:group-hover/input:text-slate-300 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-200" />
+                  <User className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover/input:text-teal-500 dark:group-hover/input:text-teal-400 group-focus-within/input:text-teal-500 dark:group-focus-within/input:text-teal-400 group-hover/input:scale-110 absolute left-3.5 top-1/2 -translate-y-1/2 transition-all duration-200 pointer-events-none" />
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
-                    className="w-full bg-slate-50/70 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] hover:border-slate-300 dark:hover:border-slate-700 focus:border-teal-500 dark:focus:border-teal-400 rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-teal-500/15 transition-all duration-200"
+                    className="w-full bg-slate-50/80 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] hover:border-teal-400 dark:hover:border-teal-500/70 hover:bg-white dark:hover:bg-[#131d33] hover:shadow-md hover:shadow-teal-500/5 focus:border-teal-500 dark:focus:border-teal-400 focus:bg-white dark:focus:bg-[#0f172a] rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-teal-500/15 transition-all duration-200"
                     placeholder="Nhập tên đăng nhập của bạn..."
                   />
                 </div>
               </div>
 
+              {/* Mật khẩu */}
               <div className="group/input">
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 group-focus-within/input:text-teal-600 dark:group-focus-within/input:text-teal-400 transition-colors">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 group-hover/input:text-teal-600 dark:group-hover/input:text-teal-400 group-focus-within/input:text-teal-600 dark:group-focus-within/input:text-teal-400 transition-colors cursor-pointer">
                   Mật khẩu
                 </label>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500 group-focus-within/input:text-teal-500 dark:group-focus-within/input:text-teal-400 group-hover/input:text-slate-600 dark:group-hover/input:text-slate-300 absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-200" />
+                  <Lock className="w-4 h-4 text-slate-400 dark:text-slate-500 group-hover/input:text-teal-500 dark:group-hover/input:text-teal-400 group-focus-within/input:text-teal-500 dark:group-focus-within/input:text-teal-400 group-hover/input:scale-110 absolute left-3.5 top-1/2 -translate-y-1/2 transition-all duration-200 pointer-events-none" />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full bg-slate-50/70 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] hover:border-slate-300 dark:hover:border-slate-700 focus:border-teal-500 dark:focus:border-teal-400 rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-teal-500/15 transition-all duration-200"
+                    className="w-full bg-slate-50/80 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] hover:border-teal-400 dark:hover:border-teal-500/70 hover:bg-white dark:hover:bg-[#131d33] hover:shadow-md hover:shadow-teal-500/5 focus:border-teal-500 dark:focus:border-teal-400 focus:bg-white dark:focus:bg-[#0f172a] rounded-xl px-4 py-2.5 pl-10 pr-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-teal-500/15 transition-all duration-200"
                     placeholder="Mật khẩu của bạn"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 dark:text-slate-500 hover:text-teal-600 dark:hover:text-teal-400 hover:scale-110 active:scale-95 transition-all cursor-pointer rounded-lg hover:bg-slate-200/50 dark:hover:bg-slate-800/60"
+                    title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4 transition-transform duration-200" />
+                    ) : (
+                      <Eye className="w-4 h-4 transition-transform duration-200" />
+                    )}
+                  </button>
                 </div>
               </div>
 

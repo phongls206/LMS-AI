@@ -5,15 +5,21 @@ import { AppLayout } from '../../../components/AppLayout';
 import { classesService } from '../../../services/api';
 import {
   GraduationCap, Users, Calendar, Clock, MapPin, AlertCircle,
-  CheckCircle, ChevronDown, ChevronUp, BookOpen, Lock
+  CheckCircle, ChevronDown, ChevronUp, BookOpen, Lock, ChevronRight
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatTrangThaiLopHoc } from '../../../utils/formatters';
+import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
 
 export default function TeacherClassesPage() {
   const [classes, setClasses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedClassId, setExpandedClassId] = useState<number | null>(null);
+  const [selectedClassForStudents, setSelectedClassForStudents] = useState<{
+    id: number;
+    name?: string;
+    code?: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetch = async () => {
@@ -118,14 +124,32 @@ export default function TeacherClassesPage() {
 
                     {/* Thông tin sĩ số & Thời gian */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 mb-4">
-                      <div>
-                        <span className="text-slate-500 block mb-0.5">Sĩ số học viên:</span>
-                        <span className="font-bold text-slate-900 text-sm">
+                      <div
+                        onClick={() =>
+                          setSelectedClassForStudents({
+                            id: Number(lop?.id),
+                            name: lop?.tenLopHoc,
+                            code: lop?.maLopHoc,
+                          })
+                        }
+                        className="p-2.5 rounded-xl bg-white hover:bg-teal-50/50 border border-slate-200/80 hover:border-teal-400 transition cursor-pointer group shadow-2xs"
+                        title="Bấm để xem danh sách học viên của lớp này"
+                      >
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-slate-500 block text-xs">Sĩ số học viên:</span>
+                          <span className="text-[11px] font-bold text-teal-600 group-hover:text-teal-700 flex items-center gap-0.5">
+                            <span>Xem DS</span>
+                            <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                          </span>
+                        </div>
+                        <span className="font-bold text-slate-900 text-sm group-hover:text-teal-700 transition-colors">
                           {lop?.siSoHienTai || 0} / {lop?.siSoToiDa || 25} HV
                         </span>
-                        <span className="text-[11px] text-slate-500 block">
-                          {isRecruiting ? '(Đang tiếp nhận ghi danh)' : '(Đã chốt sĩ số ổn định)'}
-                        </span>
+                        {isRecruiting && (
+                          <span className="text-[11px] text-amber-600 block mt-0.5">
+                            (Đang tiếp nhận ghi danh)
+                          </span>
+                        )}
                       </div>
 
                       <div>
@@ -342,6 +366,16 @@ export default function TeacherClassesPage() {
           </div>
         )}
       </div>
+
+      {/* Modal xem danh sách học viên */}
+      {selectedClassForStudents && (
+        <ClassStudentsModal
+          classId={selectedClassForStudents.id}
+          initialClassName={selectedClassForStudents.name}
+          initialClassCode={selectedClassForStudents.code}
+          onClose={() => setSelectedClassForStudents(null)}
+        />
+      )}
     </AppLayout>
   );
 }

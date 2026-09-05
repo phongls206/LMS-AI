@@ -9,10 +9,16 @@ import {
   Eye, Edit, Users, School, AlertCircle, X, ChevronRight, Check
 } from 'lucide-react';
 import Link from 'next/link';
+import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
 
 export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<KhoaHoc[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedClassForStudents, setSelectedClassForStudents] = useState<{
+    id: number;
+    name?: string;
+    code?: string;
+  } | null>(null);
   
   // Modal Tạo Mới
   const [showModal, setShowModal] = useState(false);
@@ -398,9 +404,23 @@ export default function AdminCoursesPage() {
                                   {lop.tenLopHoc}
                                 </td>
                                 <td className="py-2.5 px-3">
-                                  <span className="font-bold text-slate-700 dark:text-slate-300">
-                                    {lop.siSoHienTai || 0} / {lop.siSoToiDa} HV
-                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setSelectedClassForStudents({
+                                        id: Number(lop.id),
+                                        name: lop.tenLopHoc,
+                                        code: lop.maLopHoc,
+                                      })
+                                    }
+                                    className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-teal-950/50 text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-200 dark:border-slate-700 hover:border-teal-400 transition cursor-pointer font-bold text-xs"
+                                    title="Bấm để xem danh sách học viên của lớp này"
+                                  >
+                                    <Users className="w-3 h-3 text-teal-600 dark:text-teal-400" />
+                                    <span>
+                                      {lop.siSoHienTai || 0} / {lop.siSoToiDa} HV
+                                    </span>
+                                  </button>
                                 </td>
                                 <td className="py-2.5 px-3">
                                   {getClassStatusBadge(lop.trangThai)}
@@ -693,6 +713,16 @@ export default function AdminCoursesPage() {
           </div>
         )}
       </div>
+
+      {/* Modal xem danh sách học viên */}
+      {selectedClassForStudents && (
+        <ClassStudentsModal
+          classId={selectedClassForStudents.id}
+          initialClassName={selectedClassForStudents.name}
+          initialClassCode={selectedClassForStudents.code}
+          onClose={() => setSelectedClassForStudents(null)}
+        />
+      )}
     </AppLayout>
   );
 }

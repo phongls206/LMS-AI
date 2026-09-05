@@ -6,9 +6,10 @@ import { classesService, coursesService, usersService, attendancesService } from
 import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
 import { 
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
-  Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock
+  Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock, Users
 } from 'lucide-react';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
+import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
 
 const DAYS_OF_WEEK = [
   { value: 2, label: 'Thứ Hai', short: 'T2' },
@@ -33,6 +34,11 @@ export default function AdminClassesPage() {
   const [courses, setCourses] = useState<KhoaHoc[]>([]);
   const [teachers, setTeachers] = useState<GiaoVien[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedClassForStudents, setSelectedClassForStudents] = useState<{
+    id: number;
+    name?: string;
+    code?: string;
+  } | null>(null);
 
   // Sorting
   const {
@@ -549,7 +555,25 @@ export default function AdminClassesPage() {
                         <p className="text-[11px] text-slate-500">{c.khoaHoc?.tenKhoaHoc}</p>
                       </td>
                       <td className="px-5 py-4">
-                        <span className="font-bold text-slate-900">{c.siSoHienTai}</span> / {c.siSoToiDa} HV
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedClassForStudents({
+                              id: Number(c.id),
+                              name: c.tenLopHoc,
+                              code: c.maLopHoc,
+                            })
+                          }
+                          className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 text-slate-700 hover:text-teal-700 border border-slate-200 hover:border-teal-400 transition-all cursor-pointer group shadow-sm text-xs font-semibold"
+                          title="Nhấn để xem danh sách học viên của lớp này"
+                        >
+                          <Users className="w-3.5 h-3.5 text-teal-600 group-hover:scale-110 transition-transform" />
+                          <span className="font-bold text-slate-900 group-hover:text-teal-700">
+                            {c.siSoHienTai}
+                          </span>
+                          <span className="text-slate-400">/</span>
+                          <span>{c.siSoToiDa} HV</span>
+                        </button>
                       </td>
                       <td className="px-5 py-4">
                         {c.lichHoc && c.lichHoc.length > 0 ? (
@@ -1547,6 +1571,16 @@ export default function AdminClassesPage() {
               })()}
             </div>
           </div>
+        )}
+
+        {/* Modal xem danh sách học viên theo lớp */}
+        {selectedClassForStudents && (
+          <ClassStudentsModal
+            classId={selectedClassForStudents.id}
+            initialClassName={selectedClassForStudents.name}
+            initialClassCode={selectedClassForStudents.code}
+            onClose={() => setSelectedClassForStudents(null)}
+          />
         )}
       </div>
     </AppLayout>

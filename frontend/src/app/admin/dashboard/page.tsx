@@ -13,11 +13,18 @@ import {
   Award,
   Sparkles,
   ArrowUpRight,
+  ChevronRight,
 } from 'lucide-react';
+import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedClassForStudents, setSelectedClassForStudents] = useState<{
+    id: number;
+    name?: string;
+    code?: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -161,8 +168,15 @@ export default function AdminDashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Sĩ số lớp học */}
             <div className="lg:col-span-2 p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-slate-900 text-base">Tình Trạng Sĩ Số Các Lớp Đang Mở</h3>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+                <div>
+                  <h3 className="font-bold text-slate-900 dark:text-white text-base">Tình Trạng Sĩ Số Các Lớp Đang Mở</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Nhấn vào lớp học bất kỳ để xem danh sách học viên chi tiết</p>
+                </div>
+                <span className="self-start sm:self-auto text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2.5 py-1 rounded-lg border border-teal-200 dark:border-teal-800 flex items-center gap-1.5 shadow-sm">
+                  <Users className="w-3.5 h-3.5" />
+                  <span>Click xem DS học viên</span>
+                </span>
               </div>
 
               <div className="space-y-4">
@@ -170,17 +184,36 @@ export default function AdminDashboardPage() {
                   stats.siSoCacLop.map((c: any) => {
                     const percent = Math.min(100, Math.round((c.siSoHienTai / c.siSoToiDa) * 100));
                     return (
-                      <div key={c.id} className="p-4 rounded-xl bg-slate-50 dark:bg-[#111827] border border-slate-200/80 dark:border-[#1e2d45]">
-                        <div className="flex justify-between items-center mb-2">
-                          <div>
-                            <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded mr-2">
+                      <div
+                        key={c.id}
+                        onClick={() =>
+                          setSelectedClassForStudents({
+                            id: Number(c.id),
+                            name: c.tenLopHoc,
+                            code: c.maLopHoc,
+                          })
+                        }
+                        className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-[#111827] border border-slate-200/80 dark:border-[#1e2d45] hover:border-teal-500 hover:bg-white dark:hover:bg-[#152033] hover:shadow-md hover:shadow-teal-500/10 transition-all duration-200 cursor-pointer group"
+                        title={`Bấm để xem danh sách học viên của lớp ${c.tenLopHoc}`}
+                      >
+                        <div className="flex justify-between items-center mb-2 gap-2">
+                          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+                            <span className="text-[11px] sm:text-xs font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 px-1.5 sm:px-2 py-0.5 rounded group-hover:bg-teal-600 group-hover:text-white transition-colors shrink-0">
                               {c.maLopHoc}
                             </span>
-                            <span className="text-sm font-bold text-slate-800 dark:text-slate-100">{c.tenLopHoc}</span>
+                            <span className="text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-100 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors truncate">
+                              {c.tenLopHoc}
+                            </span>
                           </div>
-                          <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
-                            {c.siSoHienTai} / {c.siSoToiDa} HV ({percent}%)
-                          </span>
+                          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                            <span className="text-[11px] sm:text-xs font-bold text-slate-600 dark:text-slate-300">
+                              {c.siSoHienTai} / {c.siSoToiDa} HV
+                            </span>
+                            <span className="text-[11px] sm:text-xs font-bold text-teal-600 dark:text-teal-400 opacity-90 sm:opacity-80 group-hover:opacity-100 flex items-center gap-0.5 bg-teal-50 dark:bg-teal-950/60 px-1.5 sm:px-2 py-0.5 rounded border border-teal-200/70 dark:border-teal-800 group-hover:border-teal-500 transition-all shadow-sm">
+                              <span className="hidden sm:inline">Xem DS</span>
+                              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                            </span>
+                          </div>
                         </div>
                         <div className="w-full h-2.5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
                           <div
@@ -240,6 +273,15 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </div>
+      )}
+      {/* Modal xem danh sách học viên theo lớp */}
+      {selectedClassForStudents && (
+        <ClassStudentsModal
+          classId={selectedClassForStudents.id}
+          initialClassName={selectedClassForStudents.name}
+          initialClassCode={selectedClassForStudents.code}
+          onClose={() => setSelectedClassForStudents(null)}
+        />
       )}
     </AppLayout>
   );
