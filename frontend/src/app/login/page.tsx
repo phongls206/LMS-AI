@@ -115,17 +115,22 @@ export default function LoginPage() {
       <div className="flex-1 flex flex-col justify-center items-center px-4 py-6 sm:py-8 z-10 min-h-0 w-full">
         {/* Card wrapper with interactive ambient border glow */}
         <div className="relative group/card w-full max-w-md">
-          <div className="absolute -inset-1 rounded-[28px] bg-gradient-to-r from-teal-500/20 via-cyan-500/20 to-blue-500/20 blur-xl opacity-40 group-hover/card:opacity-90 group-hover/card:blur-2xl transition-all duration-500 pointer-events-none"></div>
+          <div className="absolute -inset-1 rounded-2xl sm:rounded-[28px] bg-gradient-to-r from-teal-500/20 via-cyan-500/20 to-blue-500/20 blur-xl opacity-40 group-hover/card:opacity-90 group-hover/card:blur-2xl transition-all duration-500 pointer-events-none"></div>
 
-          <div className="relative w-full bg-white/95 dark:bg-[#141c2e]/95 backdrop-blur-xl border border-slate-200/90 dark:border-[#1e2d45] hover:border-teal-500/40 dark:hover:border-teal-500/40 rounded-3xl shadow-2xl dark:shadow-black/80 p-8 sm:p-10 transition-all duration-300">
+          <div className="relative w-full bg-white/95 dark:bg-[#141c2e]/95 backdrop-blur-xl border border-slate-200/90 dark:border-[#1e2d45] hover:border-teal-500/40 dark:hover:border-teal-500/40 rounded-2xl sm:rounded-3xl shadow-2xl dark:shadow-black/80 p-6 sm:p-10 transition-all duration-300">
             {/* Brand */}
             <div className="text-center mb-7 sm:mb-8 group/brand cursor-default">
-              <div className="flex justify-center mb-3 group-hover/brand:scale-105 transition-transform duration-300">
+              <div className="flex justify-center mb-3 animate-brand-reveal group-hover/brand:scale-105 transition-transform duration-300">
                 <EtcLogo size="lg" />
               </div>
-              <p className="text-sm text-teal-600 dark:text-teal-400 font-bold flex items-center justify-center space-x-2 mt-2">
-                <Sparkles className="w-4 h-4 text-teal-500 group-hover/brand:rotate-12 group-hover/brand:scale-110 transition-transform duration-300" />
-                <span className="tracking-wide group-hover/brand:text-teal-500 transition-colors">Hệ Thống LMS Tích Hợp AI</span>
+              <p className="text-sm text-teal-600 dark:text-teal-400 font-bold flex items-center justify-center space-x-2 mt-2 animate-subtitle-reveal select-none">
+                <Sparkles
+                  className="w-4 h-4 text-teal-500 hover:animate-spin group-hover/brand:animate-spin hover:scale-125 shrink-0 origin-center transition-all duration-300 cursor-pointer"
+                  style={{ animationDuration: '2s' }}
+                />
+                <span className="tracking-wide group-hover/brand:text-teal-500 transition-colors">
+                  Hệ Thống LMS Tích Hợp AI
+                </span>
               </p>
             </div>
 
@@ -223,7 +228,7 @@ export default function LoginPage() {
       {/* Modal Chọn Kênh Hỗ Trợ Quên Mật Khẩu (Zalo hoặc Email) */}
       {showForgotModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-          <div className="w-full max-w-sm bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-3xl shadow-2xl p-6 relative">
+          <div className="w-full max-w-sm bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-2xl sm:rounded-3xl shadow-2xl p-5 sm:p-6 relative">
             {/* Nút đóng */}
             <button
               type="button"
