@@ -271,228 +271,192 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {/* Profile Modal */}
       {showProfileModal && (
         <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
-          <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl space-y-4 sm:space-y-5 max-h-[90vh] overflow-y-auto text-slate-800">
-            <div className="flex justify-between items-center pb-3 border-b border-slate-100">
-              <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
-                <User className="w-4 h-4 text-teal-600" />
+          <div className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl space-y-4 sm:space-y-5 max-h-[90vh] overflow-y-auto text-slate-800 dark:text-slate-100">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                <User className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                 <span>Hồ Sơ & Thông Tin Tài Khoản</span>
               </h3>
               <button
                 onClick={() => setShowProfileModal(false)}
-                className="text-slate-400 hover:text-slate-700 transition p-1 rounded-lg hover:bg-slate-100"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="flex items-center space-x-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+            <div className="flex items-center space-x-4 p-4 rounded-xl bg-slate-50 dark:bg-[#0f172a] border border-slate-200/80 dark:border-[#1e2d45]">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-black text-xl text-white uppercase shadow-md shadow-teal-500/20 shrink-0">
                 {user.tenDangNhap?.slice(0, 2) || 'AD'}
               </div>
               <div className="space-y-1 overflow-hidden">
-                <h4 className="font-bold text-slate-900 text-base truncate">{displayName}</h4>
+                <h4 className="font-bold text-slate-900 dark:text-white text-base truncate">{displayName}</h4>
                 <div>{getRoleBadge(user.vaiTro)}</div>
               </div>
             </div>
 
-            <div className="space-y-2 text-xs text-slate-600">
-              <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-1">
+            <div className="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+              <div className="text-[11px] font-bold text-teal-700 dark:text-teal-400 uppercase tracking-wider px-1 pt-1">
                 Thông Tin Hồ Sơ
               </div>
 
               {hoTen && (
-                <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                  <span className="text-slate-500 flex items-center space-x-1.5">
-                    <User className="w-3.5 h-3.5 text-teal-600" />
+                <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                  <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                    <User className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                     <span>Họ Và Tên:</span>
                   </span>
-                  <span className="font-bold text-slate-900">{hoTen}</span>
+                  <span className="font-bold text-slate-900 dark:text-white">{hoTen}</span>
                 </div>
               )}
 
+              {/* Dành riêng cho Học viên */}
               {user.hoSoHocVien && (
                 <>
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500 flex items-center space-x-1.5">
-                      <GraduationCap className="w-3.5 h-3.5 text-teal-600" />
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                    <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                      <GraduationCap className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>Mã Học Viên:</span>
                     </span>
-                    <span className="font-mono font-bold text-teal-700">{user.hoSoHocVien.maHocVien}</span>
+                    <span className="font-mono font-bold text-teal-700 dark:text-teal-400">{user.hoSoHocVien.maHocVien}</span>
+                  </div>
+
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                    <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                      <Award className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                      <span>Trình Độ CEFR:</span>
+                    </span>
+                    <span className="font-mono font-bold text-emerald-700 dark:text-emerald-400">CEFR {user.hoSoHocVien.trinhDoCEFR}</span>
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                      <span className="text-slate-500 flex items-center space-x-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-teal-600" />
+                    <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                      <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                         <span>Ngày Sinh:</span>
                       </span>
-                      <span className="font-bold text-slate-800">
+                      <span className="font-bold text-slate-800 dark:text-slate-200">
                         {user.hoSoHocVien.ngaySinh ? new Date(user.hoSoHocVien.ngaySinh).toLocaleDateString('vi-VN') : 'Chưa cập nhật'}
                       </span>
                     </div>
 
-                    <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                      <span className="text-slate-500">Giới Tính:</span>
-                      <span className="font-bold text-slate-800">{user.hoSoHocVien.gioiTinh || 'Nam'}</span>
+                    <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                      <span className="text-slate-500 dark:text-slate-400">Giới Tính:</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">{user.hoSoHocVien.gioiTinh || 'Nam'}</span>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-start p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500 flex items-center space-x-1.5 shrink-0 mr-2">
-                      <MapPin className="w-3.5 h-3.5 text-teal-600" />
+                  <div className="flex justify-between items-start p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                    <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5 shrink-0 mr-2">
+                      <MapPin className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>Địa Chỉ:</span>
                     </span>
-                    <span className="font-semibold text-slate-800 text-right">{user.hoSoHocVien.diaChi || 'Chưa cập nhật'}</span>
-                  </div>
-
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500">Trình Độ Đầu Vào:</span>
-                    <span className="font-mono font-bold text-emerald-700">CEFR {user.hoSoHocVien.trinhDoCEFR}</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 text-right">{user.hoSoHocVien.diaChi || 'Chưa cập nhật'}</span>
                   </div>
                 </>
               )}
 
+              {/* Dành riêng cho Giáo viên */}
               {user.hoSoGiaoVien && (
                 <>
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500 flex items-center space-x-1.5">
-                      <Award className="w-3.5 h-3.5 text-teal-600" />
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                    <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                      <Award className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>Mã Giáo Viên:</span>
                     </span>
-                    <span className="font-mono font-bold text-teal-700">{user.hoSoGiaoVien.maGiaoVien}</span>
+                    <span className="font-mono font-bold text-teal-700 dark:text-teal-400">{user.hoSoGiaoVien.maGiaoVien}</span>
                   </div>
 
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500">Chuyên Môn:</span>
-                    <span className="font-bold text-slate-800">{user.hoSoGiaoVien.chuyenMon}</span>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                    <span className="text-slate-500 dark:text-slate-400">Chuyên Môn:</span>
+                    <span className="font-bold text-slate-800 dark:text-slate-200">{user.hoSoGiaoVien.chuyenMon}</span>
                   </div>
 
-                  <div className="flex justify-between items-start p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500 shrink-0 mr-2">Bằng Cấp:</span>
-                    <span className="font-semibold text-slate-800 text-right">{user.hoSoGiaoVien.bangCap || 'Cử nhân Sư phạm Tiếng Anh'}</span>
-                  </div>
-                </>
-              )}
-
-              <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-2">
-                Liên Hệ & Tài Khoản
-              </div>
-
-              <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                <span className="text-slate-500 flex items-center space-x-1.5">
-                  <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
-                  <span>Tên Đăng Nhập:</span>
-                </span>
-                <span className="font-mono font-bold text-slate-800">{user.tenDangNhap}</span>
-              </div>
-
-              <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                <span className="text-slate-500 flex items-center space-x-1.5">
-                  <Mail className="w-3.5 h-3.5 text-teal-600" />
-                  <span>Email:</span>
-                </span>
-                <span className="font-semibold text-slate-800 truncate max-w-[200px]">{user.email || 'Chưa cập nhật'}</span>
-              </div>
-
-              <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                <span className="text-slate-500 flex items-center space-x-1.5">
-                  <Phone className="w-3.5 h-3.5 text-teal-600" />
-                  <span>Số Điện Thoại:</span>
-                </span>
-                <span className="font-mono font-semibold text-slate-800">{user.soDienThoai || 'Chưa cập nhật'}</span>
-              </div>
-
-              {/* Thông tin mở rộng theo vai trò */}
-              {user.hoSoHocVien && (
-                <>
-                  <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-2">
-                    Hồ Sơ Học Viên
-                  </div>
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500 flex items-center space-x-1.5">
-                      <GraduationCap className="w-3.5 h-3.5 text-teal-600" />
-                      <span>Mã Học Viên:</span>
-                    </span>
-                    <span className="font-mono font-bold text-teal-700">{user.hoSoHocVien.maHocVien}</span>
-                  </div>
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500 flex items-center space-x-1.5">
-                      <Award className="w-3.5 h-3.5 text-teal-600" />
-                      <span>Trình Độ CEFR:</span>
-                    </span>
-                    <span className="px-2 py-0.5 rounded bg-teal-50 text-teal-800 font-bold text-[11px]">
-                      {user.hoSoHocVien.trinhDoCEFR}
-                    </span>
+                  <div className="flex justify-between items-start p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                    <span className="text-slate-500 dark:text-slate-400 shrink-0 mr-2">Bằng Cấp:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 text-right">{user.hoSoGiaoVien.bangCap || 'Cử nhân Sư phạm Tiếng Anh'}</span>
                   </div>
                 </>
               )}
 
-              {user.hoSoGiaoVien && (
-                <>
-                  <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-2">
-                    Hồ Sơ Giảng Dạy
-                  </div>
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500 flex items-center space-x-1.5">
-                      <Award className="w-3.5 h-3.5 text-teal-600" />
-                      <span>Mã Giáo Viên:</span>
-                    </span>
-                    <span className="font-mono font-bold text-teal-700">{user.hoSoGiaoVien.maGiaoVien}</span>
-                  </div>
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500">Chuyên Môn:</span>
-                    <span className="font-semibold text-slate-800">{user.hoSoGiaoVien.chuyenMon}</span>
-                  </div>
-                  {user.hoSoGiaoVien.bangCap && (
-                    <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                      <span className="text-slate-500">Bằng Cấp:</span>
-                      <span className="font-semibold text-slate-800">{user.hoSoGiaoVien.bangCap}</span>
-                    </div>
-                  )}
-                </>
-              )}
-
+              {/* Dành riêng cho Tư vấn viên */}
               {user.vaiTro === 'TU_VAN_VIEN' && (
                 <>
-                  <div className="text-[11px] font-bold text-teal-700 uppercase tracking-wider px-1 pt-2">
-                    Phân Công Công Tác
-                  </div>
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500 flex items-center space-x-1.5">
-                      <Award className="w-3.5 h-3.5 text-teal-600" />
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                    <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                      <Award className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>Mã Tư Vấn Viên:</span>
                     </span>
-                    <span className="font-mono font-bold text-teal-700">
+                    <span className="font-mono font-bold text-teal-700 dark:text-teal-400">
                       {user.maTuVanVien || `TVV${String(user.tenDangNhap?.replace(/\D/g, '') || '01').padStart(3, '0')}`}
                     </span>
                   </div>
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500 flex items-center space-x-1.5">
-                      <Briefcase className="w-3.5 h-3.5 text-teal-600" />
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                    <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                      <Briefcase className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>Vị Trí:</span>
                     </span>
-                    <span className="font-bold text-cyan-800">Chuyên Viên Tư Vấn Tuyển Sinh</span>
+                    <span className="font-bold text-cyan-800 dark:text-cyan-300">Chuyên Viên Tư Vấn Tuyển Sinh</span>
                   </div>
-                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200/60">
-                    <span className="text-slate-500">Bộ Phận:</span>
-                    <span className="font-semibold text-slate-800">Phòng Tuyển Sinh & CSKH ETC</span>
+                  <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                    <span className="text-slate-500 dark:text-slate-400">Bộ Phận:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">Phòng Tuyển Sinh & CSKH ETC</span>
                   </div>
                 </>
               )}
+
+              {/* Dành riêng cho Quản lý */}
+              {user.vaiTro === 'QUAN_LY' && (
+                <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                  <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                    <span>Quyền Hạn:</span>
+                  </span>
+                  <span className="font-bold text-purple-700 dark:text-purple-300">Toàn Quyền Quản Trị Trung Tâm (Admin)</span>
+                </div>
+              )}
+
+              <div className="text-[11px] font-bold text-teal-700 dark:text-teal-400 uppercase tracking-wider px-1 pt-2">
+                Liên Hệ & Tài Khoản
+              </div>
+
+              <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  <span>Tên Đăng Nhập:</span>
+                </span>
+                <span className="font-mono font-bold text-slate-800 dark:text-slate-200">{user.tenDangNhap}</span>
+              </div>
+
+              <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                  <Mail className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  <span>Email:</span>
+                </span>
+                <span className="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px]">{user.email || 'Chưa cập nhật'}</span>
+              </div>
+
+              <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-[#0f172a] border border-slate-200/60 dark:border-[#1e2d45]">
+                <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1.5">
+                  <Phone className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  <span>Số Điện Thoại:</span>
+                </span>
+                <span className="font-mono font-semibold text-slate-800 dark:text-slate-200">{user.soDienThoai || 'Chưa cập nhật'}</span>
+              </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 flex space-x-3">
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex space-x-3">
               <Link
                 href="/change-password"
                 onClick={() => setShowProfileModal(false)}
-                className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs flex items-center justify-center space-x-1.5 transition border border-slate-200"
+                className="flex-1 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-xs flex items-center justify-center space-x-1.5 transition border border-slate-200 dark:border-slate-700 cursor-pointer"
               >
                 <KeyRound className="w-3.5 h-3.5" />
                 <span>Đổi Mật Khẩu</span>
               </Link>
               <button
                 onClick={() => setShowProfileModal(false)}
-                className="flex-1 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs transition shadow-sm"
+                className="flex-1 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs transition shadow-sm cursor-pointer"
               >
                 Đóng
               </button>

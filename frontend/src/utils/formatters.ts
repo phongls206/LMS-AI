@@ -64,7 +64,7 @@ export const STATUS_MAP: Record<string, string> = {
   GIAO_VIEN: 'Giáo Viên',
   HOC_VIEN: 'Học Viên',
   TU_VAN_VIEN: 'Tư Vấn Viên',
-  CHINH: 'Giảng Viên Chính',
+  CHINH: 'Giáo Viên Phụ Trách',
   TRO_GIANG: 'Trợ Giảng',
   DANG_PHU_TRACH: 'Đang Phụ Trách',
 

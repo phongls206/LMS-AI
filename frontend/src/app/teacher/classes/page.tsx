@@ -80,12 +80,12 @@ export default function TeacherClassesPage() {
                         {isRecruiting ? (
                           <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                            Đang Mở Tuyển Sinh (Chưa Khai Giảng)
+                            Đang Mở Tuyển Sinh
                           </span>
                         ) : isOngoing ? (
                           <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Đang Học (Đã Ổn Định Sĩ Số)
+                            Đang Học
                           </span>
                         ) : (
                           <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-600 border border-slate-200">
@@ -94,8 +94,8 @@ export default function TeacherClassesPage() {
                         )}
                       </div>
 
-                      <span className="text-xs font-bold text-slate-500 bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
-                        Vai trò: {item.vaiTroPhanCong === 'CHINH' ? 'Giảng Viên Chính' : 'Trợ Giảng'}
+                      <span className="text-xs font-bold text-teal-800 bg-teal-50 px-2.5 py-1 rounded-lg border border-teal-200">
+                        Giáo Viên Phụ Trách
                       </span>
                     </div>
 

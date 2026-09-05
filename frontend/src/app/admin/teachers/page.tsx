@@ -936,14 +936,14 @@ export default function AdminTeachersPage() {
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-teal-50/60 border border-teal-200 space-y-1.5">
-                  <label className="block text-teal-800 font-bold uppercase tracking-wider text-[11px]">
+                <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 space-y-1.5">
+                  <label className="block text-teal-800 dark:text-teal-200 font-bold uppercase tracking-wider text-[11px]">
                     Trạng Thái Công Tác (Quy Chế Nghiệp Vụ)
                   </label>
                   <select
                     value={editFormData.trangThai}
                     onChange={(e) => setEditFormData({ ...editFormData, trangThai: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-teal-500"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-slate-900 dark:text-white font-bold focus:outline-none focus:border-teal-500"
                   >
                     <option value="DANG_LAM_VIEC">🟢 Đang Làm Việc (Có thể phân công dạy)</option>
                     <option value="TAM_NGHI">🟡 Tạm Nghỉ (Nghỉ phép / dưỡng bệnh)</option>

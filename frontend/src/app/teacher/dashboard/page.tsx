@@ -5,6 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { classesService } from '../../../services/api';
 import { Calendar, Users, ClipboardList, Award, Sparkles, Clock, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { formatTrangThaiLopHoc } from '../../../utils/formatters';
 
 export default function TeacherDashboardPage() {
   const [schedule, setSchedule] = useState<any[]>([]);
@@ -80,8 +81,16 @@ export default function TeacherDashboardPage() {
                     <span className="px-2.5 py-1 rounded bg-teal-50 text-teal-800 border border-teal-200 font-mono text-xs font-bold">
                       {item.lopHoc?.maLopHoc}
                     </span>
-                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">
-                      {item.vaiTroPhanCong === 'CHINH' ? 'Giảng viên chính' : 'Trợ giảng'}
+                    <span
+                      className={`text-xs font-bold px-2.5 py-0.5 rounded-full border ${
+                        item.lopHoc?.trangThai === 'DANG_HOC'
+                          ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                          : item.lopHoc?.trangThai === 'DANG_MO_DANG_KY' || item.lopHoc?.trangThai === 'SAP_MO'
+                          ? 'text-amber-700 bg-amber-50 border-amber-200'
+                          : 'text-slate-600 bg-slate-100 border-slate-200'
+                      }`}
+                    >
+                      {formatTrangThaiLopHoc(item.lopHoc?.trangThai) || 'Đang Học'}
                     </span>
                   </div>
 

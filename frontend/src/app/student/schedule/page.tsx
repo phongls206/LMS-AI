@@ -79,12 +79,12 @@ export default function StudentSchedulePage() {
                         {isRecruiting ? (
                           <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                            Đang Mở Tuyển Sinh (Chưa Khai Giảng)
+                            Đang Mở Tuyển Sinh
                           </span>
                         ) : isOngoing ? (
                           <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            Đang Học (Đã Ổn Định Sĩ Số)
+                            Đang Học
                           </span>
                         ) : (
                           <span className="text-xs px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-slate-600 border border-slate-200">
@@ -116,7 +116,7 @@ export default function StudentSchedulePage() {
                         <span>
                           Lớp học đang trong giai đoạn tiếp nhận học viên (Sĩ số hiện tại:{' '}
                           <strong>{lop?.siSoHienTai || 0} / {lop?.siSoToiDa || 25} HV</strong>).
-                          Lớp học và các buổi điểm danh sẽ chính thức bắt đầu ngay khi hoàn tất tuyển sinh và ổn định sĩ số.
+                          Lớp học và các buổi điểm danh sẽ chính thức bắt đầu ngay khi hoàn tất tuyển sinh và chuyển sang trạng thái "Đang Học".
                         </span>
                       </div>
                     )}

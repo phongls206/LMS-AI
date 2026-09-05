@@ -41,7 +41,7 @@ async function main() {
       matKhauMaHoa: defaultPassword,
       vaiTro: VaiTro.QUAN_LY,
       email: 'admin@etc-english.vn',
-      soDienThoai: '0901111001',
+      soDienThoai: '0787304341',
     },
   });
   console.log(`✅ Admin: ${adminUser.tenDangNhap}`);

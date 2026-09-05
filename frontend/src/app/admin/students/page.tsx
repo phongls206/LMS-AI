@@ -931,10 +931,10 @@ export default function AdminStudentsPage() {
                 </div>
 
                 {/* Phần Reset Mật Khẩu */}
-                <div className="p-3.5 rounded-xl bg-teal-50/60 border border-teal-200 space-y-2">
+                <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 space-y-2">
                   <div className="flex justify-between items-center">
-                    <label className="block text-teal-800 font-bold uppercase tracking-wider text-[11px] flex items-center space-x-1.5">
-                      <KeyRound className="w-3.5 h-3.5 text-teal-600" />
+                    <label className="block text-teal-800 dark:text-teal-200 font-bold uppercase tracking-wider text-[11px] flex items-center space-x-1.5">
+                      <KeyRound className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>Khôi Phục / Đặt Lại Mật Khẩu</span>
                     </label>
                     <button
@@ -950,7 +950,7 @@ export default function AdminStudentsPage() {
                     placeholder="Để trống nếu không đổi, hoặc nhập mật khẩu mới..."
                     value={editFormData.matKhauMoi}
                     onChange={(e) => setEditFormData({ ...editFormData, matKhauMoi: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 font-mono"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-teal-500 font-mono"
                   />
                   <p className="text-[10px] text-slate-500 italic">
                     * Sử dụng khi học viên quên mật khẩu và yêu cầu trung tâm cấp lại.
