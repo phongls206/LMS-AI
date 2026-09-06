@@ -291,18 +291,18 @@ export default function StudentAiConsultPage() {
         {recommendations.length > 0 && (
           <div className="space-y-4 animate-fadeIn">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
+              <div className="min-w-0 flex-1">
                 <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center space-x-2">
-                  <Bot className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                  <Bot className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                   <span>Top Lớp Học Được AI Đề Xuất Dành Riêng Cho Bạn</span>
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2 sm:line-clamp-1">
                   Được tính toán dựa trên mục tiêu: &ldquo;{mucTieu}&rdquo;
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
                 <span
-                  className={`text-[11px] font-bold px-3 py-1 rounded-full border ${
+                  className={`inline-flex items-center h-8 text-[11px] font-bold px-3 rounded-lg border whitespace-nowrap ${
                     mode === 'AI_GEMINI' || mode === 'GEMINI_AI'
                       ? 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800'
                       : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
@@ -318,7 +318,7 @@ export default function StudentAiConsultPage() {
                     setSoSanhLopHoc('');
                     setMode('');
                   }}
-                  className="px-2.5 py-1 min-h-[32px] rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
+                  className="inline-flex items-center h-8 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold space-x-1.5 border border-slate-200 dark:border-slate-700 transition cursor-pointer whitespace-nowrap"
                   title="Xóa kết quả hiện tại để tạo phiên tư vấn mới"
                 >
                   <PlusCircle className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
