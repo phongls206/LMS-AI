@@ -612,42 +612,44 @@ export default function StudentAiProgressPage() {
               </div>
             </div>
 
-            {/* 4. Thanh Hành Động Nhanh (Quick Action CTAs) */}
-            <div className="p-3.5 rounded-xl bg-gradient-to-r from-teal-50/80 via-cyan-50/60 to-slate-50 dark:from-[#13222e] dark:via-[#142338] dark:to-[#111827] border border-teal-200/80 dark:border-teal-800/60 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 print:hidden">
-              <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-200">
-                <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
-                <div>
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-100">
-                    Hành Động Khuyến Nghị Tiếp Theo
-                  </p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                    Tận dụng ngay các định hướng từ AI để củng cố kỹ năng và tiến bộ vượt bậc
-                  </p>
+            {/* 4. Thanh Hành Động Nhanh (Quick Action CTAs) - Chỉ hiển thị cho tài khoản Học viên */}
+            {role === 'HOC_VIEN' && (
+              <div className="p-3.5 rounded-xl bg-gradient-to-r from-teal-50/80 via-cyan-50/60 to-slate-50 dark:from-[#13222e] dark:via-[#142338] dark:to-[#111827] border border-teal-200/80 dark:border-teal-800/60 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 print:hidden">
+                <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-200">
+                  <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                  <div>
+                    <p className="text-xs font-bold text-slate-800 dark:text-slate-100">
+                      Hành Động Khuyến Nghị Tiếp Theo
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      Tận dụng ngay các định hướng từ AI để củng cố kỹ năng và tiến bộ vượt bậc
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+                  <Link
+                    href="/student/ai-practice"
+                    className="flex-1 sm:flex-none justify-center px-3.5 py-2 min-h-[40px] rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm shadow-teal-600/20 transition cursor-pointer"
+                    title="Chuyển sang làm bài tập trắc nghiệm AI để củng cố kiến thức"
+                  >
+                    <BrainCircuit className="w-3.5 h-3.5" />
+                    <span>Luyện Đề AI Ngay</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </Link>
+                  <Link
+                    href="/student/ai-consult"
+                    className="flex-1 sm:flex-none justify-center px-3.5 py-2 min-h-[40px] rounded-lg bg-white dark:bg-[#1a2540] hover:bg-slate-50 dark:hover:bg-[#223052] text-teal-800 dark:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-teal-300 dark:border-teal-700 shadow-2xs transition cursor-pointer"
+                    title="Nhận tư vấn lớp học tiếp theo phù hợp với trình độ CEFR"
+                  >
+                    <Bot className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                    <span>
+                      {summary.data.duLieuGoc?.xepLoai === 'DAT' ? 'Tư Vấn Lớp Kế Tiếp' : 'Tư Vấn Lộ Trình Ôn'}
+                    </span>
+                    <ArrowRight className="w-3 h-3 text-teal-600 dark:text-teal-400" />
+                  </Link>
                 </div>
               </div>
-              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto justify-end shrink-0">
-                <Link
-                  href="/student/ai-practice"
-                  className="flex-1 sm:flex-none justify-center px-3.5 py-2 min-h-[40px] rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm shadow-teal-600/20 transition cursor-pointer"
-                  title="Chuyển sang làm bài tập trắc nghiệm AI để củng cố kiến thức"
-                >
-                  <BrainCircuit className="w-3.5 h-3.5" />
-                  <span>Luyện Đề AI Ngay</span>
-                  <ArrowRight className="w-3 h-3" />
-                </Link>
-                <Link
-                  href="/student/ai-consult"
-                  className="flex-1 sm:flex-none justify-center px-3.5 py-2 min-h-[40px] rounded-lg bg-white dark:bg-[#1a2540] hover:bg-slate-50 dark:hover:bg-[#223052] text-teal-800 dark:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-teal-300 dark:border-teal-700 shadow-2xs transition cursor-pointer"
-                  title="Nhận tư vấn lớp học tiếp theo phù hợp với trình độ CEFR"
-                >
-                  <Bot className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                  <span>
-                    {summary.data.duLieuGoc?.xepLoai === 'DAT' ? 'Tư Vấn Lớp Kế Tiếp' : 'Tư Vấn Lộ Trình Ôn'}
-                  </span>
-                  <ArrowRight className="w-3 h-3 text-teal-600 dark:text-teal-400" />
-                </Link>
-              </div>
-            </div>
+            )}
 
             {/* Khối Chữ Ký Xác Nhận Chính Thức (Chỉ xuất hiện khi In Ấn / Xuất PDF) */}
             <div className="hidden print:grid grid-cols-2 gap-8 pt-8 mt-6 border-t border-slate-300 text-center text-xs text-slate-800 break-inside-avoid">
