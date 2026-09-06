@@ -37,6 +37,21 @@ export class EnrollmentsController {
   }
 
   /**
+   * POST /api/v1/enrollments/cancel — UC006 (Quản lý, Tư vấn viên, Học viên)
+   */
+  @Post('enrollments/cancel')
+  @Roles(VaiTro.QUAN_LY, VaiTro.TU_VAN_VIEN, VaiTro.HOC_VIEN)
+  @ApiOperation({
+    summary: 'Hủy đăng ký lớp học (khi chưa phát sinh thanh toán học phí)',
+  })
+  cancelEnrollment(
+    @Body() dto: CreateEnrollmentDto,
+    @CurrentUser() user: any,
+  ) {
+    return this.enrollmentsService.cancelEnrollment(dto, user);
+  }
+
+  /**
    * GET /api/v1/enrollments — UC006 (Quản lý, TVV)
    */
   @Get('enrollments')

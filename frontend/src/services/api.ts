@@ -129,6 +129,8 @@ export const usersService = {
 export const enrollmentsService = {
   enroll: async (hocVienId: number, lopHocId: number) =>
     (await api.post('/enrollments', { hocVienId, lopHocId })).data,
+  cancelEnrollment: async (hocVienId: number, lopHocId: number) =>
+    (await api.post('/enrollments/cancel', { hocVienId, lopHocId })).data,
   getAll: async (lopHocId?: number, hocVienId?: number) =>
     (await api.get('/enrollments', { params: { lopHocId, hocVienId } })).data,
   getInvoices: async (trangThai?: string, hocVienId?: number) =>

@@ -176,6 +176,84 @@ export class EnrollmentsService {
   }
 
   /**
+   * UC006 — Hủy đăng ký lớp học (Khi học viên bấm nhầm hoặc đổi ý trước khi nộp học phí)
+   */
+  async cancelEnrollment(dto: CreateEnrollmentDto, currentUser?: any) {
+    const student = await this.prisma.hoSoHocVien.findUnique({
+      where: { id: BigInt(dto.hocVienId) },
+    });
+    if (!student) throw new NotFoundException('Học viên không tồn tại.');
+
+    // Kiểm tra quyền: nếu là HỌC VIÊN thì chỉ được hủy đăng ký của chính mình
+    if (currentUser?.vaiTro === 'HOC_VIEN') {
+      if (student.nguoiDungId && BigInt(student.nguoiDungId) !== BigInt(currentUser.id)) {
+        throw new BadRequestException('Bạn chỉ có thể hủy đăng ký của chính mình.');
+      }
+    }
+
+    const enrollment = await this.prisma.dangKyHoc.findUnique({
+      where: {
+        lopHocId_hocVienId: {
+          lopHocId: BigInt(dto.lopHocId),
+          hocVienId: BigInt(dto.hocVienId),
+        },
+      },
+      include: {
+        hoaDon: {
+          include: {
+            thanhToan: true,
+          },
+        },
+      },
+    });
+
+    if (!enrollment) {
+      throw new NotFoundException('Không tìm thấy thông tin đăng ký của lớp học này.');
+    }
+
+    // Nếu đã phát sinh thanh toán (đã nộp tiền), không cho phép tự hủy mà phải liên hệ trung tâm
+    if (
+      enrollment.hoaDon &&
+      (Number(enrollment.hoaDon.soTienDaTra) > 0 || enrollment.hoaDon.thanhToan.length > 0)
+    ) {
+      throw new BadRequestException(
+        'Lớp học này đã phát sinh giao dịch đóng học phí. Vui lòng liên hệ phòng Đào tạo ETC English để được hỗ trợ thủ tục hoàn phí hoặc đổi lớp.'
+      );
+    }
+
+    // ACID Transaction: Xóa hóa đơn chưa thanh toán -> Xóa đăng ký học -> Giảm sĩ số hiện tại của lớp
+    await this.prisma.$transaction(async (tx) => {
+      if (enrollment.hoaDon) {
+        await tx.hoaDon.delete({
+          where: { id: enrollment.hoaDon.id },
+        });
+      }
+
+      await tx.dangKyHoc.delete({
+        where: { id: enrollment.id },
+      });
+
+      // Giảm sĩ số lớp học (đảm bảo không âm)
+      const currentClass = await tx.lopHoc.findUnique({
+        where: { id: BigInt(dto.lopHocId) },
+        select: { siSoHienTai: true },
+      });
+
+      if (currentClass && currentClass.siSoHienTai > 0) {
+        await tx.lopHoc.update({
+          where: { id: BigInt(dto.lopHocId) },
+          data: { siSoHienTai: { decrement: 1 } },
+        });
+      }
+    });
+
+    return {
+      success: true,
+      message: 'Hủy đăng ký lớp học thành công. Đã giải phóng chỗ trống cho học viên khác.',
+    };
+  }
+
+  /**
    * UC006 — Tra cứu danh sách đăng ký học
    */
   async findAllEnrollments(lopHocId?: number, hocVienId?: number) {

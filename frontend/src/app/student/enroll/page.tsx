@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, enrollmentsService, authService, gradesService } from '../../../services/api';
 import { LopHoc } from '../../../types';
@@ -20,6 +21,8 @@ import {
   Calendar,
   Layers,
   GraduationCap,
+  Bot,
+  X,
 } from 'lucide-react';
 
 const CEFR_RANKS: Record<string, number> = {
@@ -37,10 +40,13 @@ export default function StudentEnrollPage() {
   const [myEnrollments, setMyEnrollments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [enrollingId, setEnrollingId] = useState<number | null>(null);
+  const [cancellingId, setCancellingId] = useState<number | null>(null);
+  const [confirmEnrollClass, setConfirmEnrollClass] = useState<LopHoc | null>(null);
+  const [confirmCancelClass, setConfirmCancelClass] = useState<LopHoc | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Filters
-  const [activeTab, setActiveTab] = useState<'eligible' | 'all' | 'enrolled'>('eligible');
+  const [activeTab, setActiveTab] = useState<'all' | 'enrolled'>('all');
   const [search, setSearch] = useState('');
   const [selectedCefr, setSelectedCefr] = useState<string>('');
 
@@ -85,6 +91,7 @@ export default function StudentEnrollPage() {
         type: 'success',
         text: 'Đăng ký lớp học thành công! Hệ thống đã tự động tạo Hóa đơn học phí.',
       });
+      setConfirmEnrollClass(null);
       await fetchData();
     } catch (err: any) {
       setMessage({
@@ -93,6 +100,35 @@ export default function StudentEnrollPage() {
       });
     } finally {
       setEnrollingId(null);
+    }
+  };
+
+  const handleCancelEnroll = async (classId: number) => {
+    if (!user?.hoSoHocVien?.id) {
+      alert('Không tìm thấy thông tin hồ sơ học viên của bạn.');
+      return;
+    }
+
+    setCancellingId(classId);
+    setMessage(null);
+
+    try {
+      await enrollmentsService.cancelEnrollment(user.hoSoHocVien.id, classId);
+      setMessage({
+        type: 'success',
+        text: 'Hủy đăng ký lớp học thành công! Chỗ ngồi đã được giải phóng và hóa đơn chưa thanh toán đã được thu hồi.',
+      });
+      setConfirmCancelClass(null);
+      await fetchData();
+    } catch (err: any) {
+      setMessage({
+        type: 'error',
+        text:
+          err.response?.data?.message ||
+          'Hủy đăng ký không thành công. Nếu bạn đã đóng học phí, vui lòng liên hệ giáo vụ để được hỗ trợ.',
+      });
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -185,12 +221,6 @@ export default function StudentEnrollPage() {
     };
   };
 
-  // Thống kê số lượng lớp phù hợp và lớp đã đăng ký
-  const eligibleCount = classes.filter((c) => {
-    const st = getClassStatus(c);
-    return !st.isEnrolled && !st.isCefrIneligible && !st.isFull;
-  }).length;
-
   const enrolledCount = classes.filter((c) => {
     const st = getClassStatus(c);
     return st.isEnrolled;
@@ -201,9 +231,6 @@ export default function StudentEnrollPage() {
     const st = getClassStatus(c);
 
     // Lọc theo Tab
-    if (activeTab === 'eligible' && (st.isCefrIneligible || st.isEnrolled)) {
-      return false;
-    }
     if (activeTab === 'enrolled' && !st.isEnrolled) {
       return false;
     }
@@ -260,10 +287,10 @@ export default function StudentEnrollPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto justify-start md:justify-end">
-            <div className="px-3 py-1.5 rounded-xl bg-teal-50/80 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/40 text-teal-800 dark:text-teal-300 text-xs font-semibold flex items-center justify-center sm:justify-start gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+            <div className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-700 dark:text-slate-300 text-xs font-semibold flex items-center justify-center sm:justify-start gap-1.5">
+              <BookOpen className="w-3.5 h-3.5 text-teal-600 shrink-0" />
               <span>
-                <strong>{eligibleCount}</strong> lớp phù hợp với bạn
+                <strong>{classes.length}</strong> lớp mở tuyển sinh
               </span>
             </div>
             {enrolledCount > 0 && (
@@ -274,6 +301,14 @@ export default function StudentEnrollPage() {
                 </span>
               </div>
             )}
+            <Link
+              href="/student/ai-consult"
+              className="px-3.5 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold flex items-center justify-center space-x-1.5 shadow-sm shadow-teal-600/20 transition cursor-pointer shrink-0"
+              title="Nhận tư vấn lộ trình và gợi ý lớp học thông minh từ AI"
+            >
+              <Bot className="w-3.5 h-3.5 shrink-0" />
+              <span>AI Tư Vấn Lớp Học</span>
+            </Link>
           </div>
         </div>
 
@@ -281,28 +316,6 @@ export default function StudentEnrollPage() {
         <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-3 sm:gap-4 bg-white dark:bg-[#111928] p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm">
           {/* Tab Navigation */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0 -mx-1 px-1 sm:mx-0 sm:px-0 flex-nowrap sm:flex-wrap border-b lg:border-b-0 border-slate-100 dark:border-[#1e2d45] scrollbar-none">
-            <button
-              type="button"
-              onClick={() => setActiveTab('eligible')}
-              className={`px-3 sm:px-3.5 py-2 min-h-[38px] rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
-                activeTab === 'eligible'
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'bg-slate-100 dark:bg-[#162032] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Lớp Phù Hợp Với Bạn</span>
-              <span
-                className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                  activeTab === 'eligible'
-                    ? 'bg-white/20 text-white'
-                    : 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300'
-                }`}
-              >
-                {eligibleCount}
-              </span>
-            </button>
-
             <button
               type="button"
               onClick={() => setActiveTab('all')}
@@ -407,16 +420,14 @@ export default function StudentEnrollPage() {
               <div className="col-span-full py-16 text-center bg-white dark:bg-[#111928] rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] p-8 shadow-sm space-y-2">
                 <BookOpen className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
                 <h4 className="text-base font-bold text-slate-800 dark:text-slate-100">
-                  {activeTab === 'eligible'
-                    ? 'Không Có Lớp Học Mới Phù Hợp Với Trình Độ Hiện Tại'
-                    : activeTab === 'enrolled'
+                  {activeTab === 'enrolled'
                     ? 'Bạn Chưa Đăng Ký Lớp Học Nào'
                     : 'Không Tìm Thấy Lớp Học Phù Hợp'}
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-                  {activeTab === 'eligible'
-                    ? `Hiện tại chưa có thêm lớp học mở mới có chuẩn CEFR ≤ ${studentCefr}. Bạn có thể bấm sang tab "Tất Cả Lớp Mở Tuyển Sinh" để xem toàn bộ danh mục lớp của trung tâm.`
-                    : 'Vui lòng thay đổi bộ lọc tìm kiếm hoặc quay lại sau.'}
+                  {activeTab === 'enrolled'
+                    ? 'Hãy duyệt danh sách các lớp mở tuyển sinh và đăng ký lớp học bạn mong muốn.'
+                    : 'Vui lòng thay đổi từ khóa tìm kiếm, bộ lọc CEFR hoặc quay lại sau.'}
                 </p>
               </div>
             ) : (
@@ -508,45 +519,287 @@ export default function StudentEnrollPage() {
                       )}
                     </div>
 
-                    {/* Action Button */}
-                    <button
-                      type="button"
-                      onClick={() => handleEnroll(c.id)}
-                      disabled={!st.canEnroll || enrollingId === c.id}
-                      className={`w-full min-h-[44px] py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer text-center leading-tight ${
-                        st.isCourseSuspended
-                          ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 cursor-not-allowed'
-                          : st.isEnrolled
-                          ? 'bg-slate-100 dark:bg-[#162032] text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-[#22324e] cursor-not-allowed'
-                          : st.isCefrIneligible
-                          ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 cursor-not-allowed'
-                          : st.conflictMsg
-                          ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 cursor-not-allowed'
-                          : st.isFull
-                          ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white shadow-md shadow-teal-600/20'
-                      }`}
-                    >
-                      {st.isEnrolled ? (
-                        <Check className="w-3.5 h-3.5 text-slate-500 shrink-0" />
-                      ) : st.isCefrIneligible ? (
-                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                      ) : st.conflictMsg ? (
-                        <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                      ) : null}
+                    {/* Action Button Area */}
+                    {st.isEnrolled ? (
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full mt-auto">
+                        <div className="flex-1 min-h-[42px] py-2 px-3 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/40 text-blue-800 dark:text-blue-300 font-bold text-xs flex items-center justify-center gap-1.5 select-none">
+                          <Check className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                          <span>Đã Ghi Danh Lớp Này</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmCancelClass(c)}
+                          disabled={cancellingId === c.id}
+                          className="min-h-[42px] py-2 px-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 hover:border-rose-300 shadow-xs shrink-0"
+                          title="Hủy đăng ký lớp học này nếu bạn lỡ bấm nhầm hoặc muốn đổi lớp"
+                        >
+                          <X className="w-3.5 h-3.5 shrink-0" />
+                          <span>Hủy Đăng Ký</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (st.canEnroll) {
+                            setConfirmEnrollClass(c);
+                          }
+                        }}
+                        disabled={!st.canEnroll || enrollingId === c.id}
+                        className={`w-full min-h-[44px] py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer text-center leading-tight mt-auto ${
+                          st.isCourseSuspended
+                            ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 cursor-not-allowed'
+                            : st.isCefrIneligible
+                            ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 cursor-not-allowed'
+                            : st.conflictMsg
+                            ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 cursor-not-allowed'
+                            : st.isFull
+                            ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white shadow-md shadow-teal-600/20'
+                        }`}
+                      >
+                        {st.isCefrIneligible ? (
+                          <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                        ) : st.conflictMsg ? (
+                          <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                        ) : null}
 
-                      <span>
-                        {enrollingId === c.id ? 'Đang Xử Lý Đăng Ký...' : st.statusText}
-                      </span>
+                        <span>
+                          {enrollingId === c.id ? 'Đang Xử Lý Đăng Ký...' : st.statusText}
+                        </span>
 
-                      {st.canEnroll && enrollingId !== c.id && (
-                        <ArrowRight className="w-3.5 h-3.5 shrink-0" />
-                      )}
-                    </button>
+                        {st.canEnroll && enrollingId !== c.id && (
+                          <ArrowRight className="w-3.5 h-3.5 shrink-0" />
+                        )}
+                      </button>
+                    )}
                   </div>
                 );
               })
             )}
+          </div>
+        )}
+
+        {/* Modal Xác Nhận Đăng Ký Lớp Học */}
+        {confirmEnrollClass && (
+          <div
+            className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+            onClick={() => setConfirmEnrollClass(null)}
+          >
+            <div
+              className="bg-white dark:bg-[#111928] rounded-2xl border border-slate-200 dark:border-[#1e2d45] shadow-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#1e2d45]">
+                <div className="flex items-center space-x-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800/50 flex items-center justify-center text-teal-600 dark:text-teal-400">
+                    <BookOpen className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
+                      Xác Nhận Đăng Ký Lớp Học
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Kiểm tra thông tin chi tiết trước khi hoàn tất ghi danh
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setConfirmEnrollClass(null)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#162032] transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Class Info in Modal */}
+              <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200/80 dark:border-[#22324e] space-y-2.5 text-xs">
+                <div className="flex justify-between items-start gap-2">
+                  <span className="text-slate-500 dark:text-slate-400 shrink-0">Lớp học:</span>
+                  <div className="text-right">
+                    <span className="font-mono font-bold text-teal-700 dark:text-teal-400 mr-1.5">
+                      [{confirmEnrollClass.maLopHoc}]
+                    </span>
+                    <strong className="text-slate-900 dark:text-slate-100 font-bold">
+                      {confirmEnrollClass.tenLopHoc}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 dark:text-slate-400">Khóa học:</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                    {confirmEnrollClass.khoaHoc?.tenKhoaHoc}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 dark:text-slate-400">Học phí:</span>
+                  <span className="font-bold text-emerald-700 dark:text-emerald-400 text-sm font-mono">
+                    {Number(confirmEnrollClass.khoaHoc?.hocPhi).toLocaleString('vi-VN')} đ
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 dark:text-slate-400">Lịch học:</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                    {confirmEnrollClass.lichHoc && confirmEnrollClass.lichHoc.length > 0
+                      ? confirmEnrollClass.lichHoc.map((l: any) => `Thứ ${l.thuTrongTuan} (${l.gioBatDau || ''} - ${l.gioKetThuc || ''})`).join(', ')
+                      : 'Chưa xếp lịch cụ thể'}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 dark:text-slate-400">Sĩ số chỗ trống:</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                    {confirmEnrollClass.siSoHienTai} / {confirmEnrollClass.siSoToiDa}{' '}
+                    (còn {Math.max(0, confirmEnrollClass.siSoToiDa - confirmEnrollClass.siSoHienTai)} chỗ)
+                  </span>
+                </div>
+              </div>
+
+              {/* Note / Terms */}
+              <div className="p-3 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/70 dark:border-blue-800/40 text-blue-900 dark:text-blue-300 text-[11px] leading-relaxed flex items-start space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400 mt-0.5" />
+                <div>
+                  <strong>Lưu ý:</strong> Sau khi đăng ký, hệ thống sẽ tự động cấp chỗ và xuất hóa đơn học phí tương ứng. Nếu lỡ bấm nhầm hoặc thay đổi kế hoạch, bạn có thể tự <strong>Hủy đăng ký</strong> ngay tại giao diện này (áp dụng trước khi hoàn tất đóng học phí).
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setConfirmEnrollClass(null)}
+                  disabled={enrollingId !== null}
+                  className="w-full sm:w-auto px-4 py-2.5 min-h-[42px] rounded-xl border border-slate-200 dark:border-[#22324e] bg-slate-100 hover:bg-slate-200 dark:bg-[#162032] dark:hover:bg-[#1e2d45] text-slate-700 dark:text-slate-300 text-xs font-bold transition cursor-pointer"
+                >
+                  Hủy Bỏ (Không Đăng Ký)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleEnroll(confirmEnrollClass.id)}
+                  disabled={enrollingId === confirmEnrollClass.id}
+                  className="w-full sm:w-auto px-5 py-2.5 min-h-[42px] rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold transition shadow-sm flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  {enrollingId === confirmEnrollClass.id ? (
+                    <span className="flex items-center gap-1.5">
+                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Đang Ghi Danh...</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5">
+                      <Check className="w-4 h-4" />
+                      <span>Xác Nhận Đăng Ký Lớp</span>
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Xác Nhận Hủy Đăng Ký Lớp Học */}
+        {confirmCancelClass && (
+          <div
+            className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+            onClick={() => setConfirmCancelClass(null)}
+          >
+            <div
+              className="bg-white dark:bg-[#111928] rounded-2xl border border-slate-200 dark:border-[#1e2d45] shadow-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#1e2d45]">
+                <div className="flex items-center space-x-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
+                      Xác Nhận Hủy Đăng Ký Lớp Học
+                    </h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Thao tác sẽ thu hồi đăng ký và giải phóng vị trí chỗ ngồi
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setConfirmCancelClass(null)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#162032] transition cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Class Info in Modal */}
+              <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200/80 dark:border-[#22324e] space-y-2 text-xs">
+                <div className="flex justify-between items-start gap-2">
+                  <span className="text-slate-500 dark:text-slate-400 shrink-0">Lớp muốn hủy:</span>
+                  <div className="text-right">
+                    <span className="font-mono font-bold text-rose-600 dark:text-rose-400 mr-1.5">
+                      [{confirmCancelClass.maLopHoc}]
+                    </span>
+                    <strong className="text-slate-900 dark:text-slate-100 font-bold">
+                      {confirmCancelClass.tenLopHoc}
+                    </strong>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 dark:text-slate-400">Khóa học:</span>
+                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                    {confirmCancelClass.khoaHoc?.tenKhoaHoc}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-500 dark:text-slate-400">Học phí:</span>
+                  <span className="font-bold text-slate-700 dark:text-slate-300 font-mono">
+                    {Number(confirmCancelClass.khoaHoc?.hocPhi).toLocaleString('vi-VN')} đ
+                  </span>
+                </div>
+              </div>
+
+              {/* Warning Notice */}
+              <div className="p-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-800/50 text-rose-900 dark:text-rose-300 text-[11px] leading-relaxed flex items-start space-x-2">
+                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
+                <div>
+                  <strong>Cảnh báo:</strong> Khi bạn hủy đăng ký, chỗ trống của lớp sẽ được hoàn lại cho các học viên khác và hóa đơn học phí tương ứng (nếu chưa thanh toán) sẽ tự động được xóa bỏ. Nếu bạn đã chuyển khoản hoặc thanh toán học phí, vui lòng liên hệ phòng Giáo vụ để được hoàn tiền theo quy định.
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setConfirmCancelClass(null)}
+                  disabled={cancellingId !== null}
+                  className="w-full sm:w-auto px-4 py-2.5 min-h-[42px] rounded-xl border border-slate-200 dark:border-[#22324e] bg-slate-100 hover:bg-slate-200 dark:bg-[#162032] dark:hover:bg-[#1e2d45] text-slate-700 dark:text-slate-300 text-xs font-bold transition cursor-pointer"
+                >
+                  Giữ Lại Lớp (Không Hủy)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleCancelEnroll(confirmCancelClass.id)}
+                  disabled={cancellingId === confirmCancelClass.id}
+                  className="w-full sm:w-auto px-5 py-2.5 min-h-[42px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm flex items-center justify-center space-x-1.5 cursor-pointer"
+                >
+                  {cancellingId === confirmCancelClass.id ? (
+                    <span className="flex items-center gap-1.5">
+                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Đang Hủy Đăng Ký...</span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5">
+                      <X className="w-4 h-4" />
+                      <span>Xác Nhận Hủy Đăng Ký</span>
+                    </span>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
