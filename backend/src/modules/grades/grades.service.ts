@@ -23,7 +23,26 @@ export class GradesService {
   /**
    * UC009 — Xem bảng điểm chi tiết của lớp học
    */
-  async getClassGrades(classId: number) {
+  async getClassGrades(classId: number, user?: any) {
+    if (user && user.vaiTro === VaiTro.GIAO_VIEN) {
+      const teacher = await this.prisma.hoSoGiaoVien.findUnique({
+        where: { nguoiDungId: BigInt(user.id) },
+      });
+      if (!teacher) {
+        throw new ForbiddenException('Hồ sơ giáo viên không tồn tại hoặc chưa được liên kết.');
+      }
+      const isAssigned = await this.prisma.phanCongGiaoVien.findFirst({
+        where: {
+          lopHocId: BigInt(classId),
+          giaoVienId: teacher.id,
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+        },
+      });
+      if (!isAssigned) {
+        throw new ForbiddenException('Bạn không được phân công phụ trách lớp học này để xem bảng điểm.');
+      }
+    }
+
     const grades = await this.prisma.ketQuaHocTap.findMany({
       where: { lopHocId: BigInt(classId) },
       include: {
@@ -68,6 +87,7 @@ export class GradesService {
         where: {
           lopHocId: BigInt(classId),
           giaoVienId: teacher.id,
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
         },
       });
       if (!isAssigned) {

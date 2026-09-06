@@ -433,6 +433,7 @@ export default function TeacherAiExercisesPage() {
                   <option value="B1">B1 — Trung cấp</option>
                   <option value="B2">B2 — Trung cao cấp</option>
                   <option value="C1">C1 — Cao cấp</option>
+                  <option value="C2">C2 — Thành thạo</option>
                 </select>
               </div>
 

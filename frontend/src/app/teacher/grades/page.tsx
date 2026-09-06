@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, gradesService } from '../../../services/api';
-import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download } from 'lucide-react';
+import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download, Award } from 'lucide-react';
 import { exportClassGradeBookExcel } from '../../../utils/excel-exporter';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
@@ -18,31 +18,37 @@ export default function TeacherGradesPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
+  // 1. Lấy danh sách lớp phụ trách (Chỉ Quản lý mới xem tất cả lớp, Giáo viên chỉ xem lớp mình được phân công)
   useEffect(() => {
     const fetchAssignedClasses = async () => {
       try {
-        let assignedClasses: any[] = [];
+        let isManager = false;
         try {
-          // Lấy các lớp được phân công cho giáo viên hiện tại
+          const stored = localStorage.getItem('etc_user_session');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.vaiTro === 'QUAN_LY') isManager = true;
+          }
+        } catch {}
+
+        let assignedClasses: any[] = [];
+        if (isManager) {
+          const all = await classesService.getAll();
+          assignedClasses = all || [];
+        } else {
+          // Giáo viên: CHỈ lấy các lớp được phân công giảng dạy thực tế
           const schedule = await classesService.getTeacherSchedule();
           assignedClasses = (schedule || [])
             .map((item: any) => item.lopHoc)
             .filter(Boolean);
-        } catch {
-          // Nếu là Quản trị viên (Admin), lấy toàn bộ danh sách lớp
-          const all = await classesService.getAll();
-          assignedClasses = all || [];
-        }
-
-        if (assignedClasses.length === 0) {
-          const all = await classesService.getAll();
-          assignedClasses = all || [];
         }
 
         const validClasses = (assignedClasses || []).filter((c: any) => c.trangThai !== 'DA_HUY');
         setClasses(validClasses);
         if (validClasses.length > 0) {
           setSelectedClassId(validClasses[0].id);
+        } else {
+          setSelectedClassId(null);
         }
       } catch (err) {
         console.error(err);
@@ -170,8 +176,31 @@ export default function TeacherGradesPage() {
       subtitle="Chỉ hiển thị các lớp học bạn được phân công phụ trách. Công thức: 20% Chuyên Cần + 30% Giữa Kỳ + 50% Cuối Kỳ"
     >
       <div className="space-y-6">
-        {/* Top filter & Formula reminder */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+        {loading ? (
+          <div className="py-20 flex justify-center items-center">
+            <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
+          </div>
+        ) : classes.length === 0 ? (
+          <div className="p-12 sm:p-16 rounded-3xl bg-white dark:bg-[#111928] border border-slate-200 dark:border-[#1e2d45] text-center space-y-4 shadow-sm max-w-2xl mx-auto my-8">
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-amber-600 dark:text-amber-400 mx-auto flex items-center justify-center shadow-xs">
+              <Award className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                Chưa Được Phân Công Giảng Dạy
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                Tài khoản giáo viên của bạn hiện tại chưa được phân công phụ trách lớp học nào. Theo quy định, giáo viên chỉ có quyền xem và nhập điểm cho các lớp học do mình trực tiếp phụ trách giảng dạy.
+              </p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                Vui lòng liên hệ Phòng Đào tạo / Quản trị viên (Admin) để được xếp lịch và phân công giảng dạy.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Top filter & Formula reminder */}
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <label className="text-xs font-bold text-slate-700 whitespace-nowrap">Lớp Phụ Trách:</label>
             {classes.length > 0 ? (
@@ -413,6 +442,8 @@ export default function TeacherGradesPage() {
             </table>
           </div>
         </div>
+        </>
+      )}
       </div>
     </AppLayout>
   );

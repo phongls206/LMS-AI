@@ -65,9 +65,9 @@ export default function StudentAiProgressPage() {
           }
         } else if (me.vaiTro === 'GIAO_VIEN') {
           const teacherSchedule = await classesService.getTeacherSchedule();
-          setClasses(teacherSchedule);
-          if (teacherSchedule.length > 0) {
-            const firstClassId = Number(teacherSchedule[0].id || teacherSchedule[0].lopHocId);
+          setClasses(teacherSchedule || []);
+          if (teacherSchedule && teacherSchedule.length > 0) {
+            const firstClassId = Number(teacherSchedule[0].lopHocId || teacherSchedule[0].lopHoc?.id || teacherSchedule[0].id);
             setSelectedClassId(firstClassId);
             loadStudentsForClass(firstClassId);
           }
@@ -200,15 +200,21 @@ export default function StudentAiProgressPage() {
                 onChange={(e) => handleClassChange(Number(e.target.value))}
                 className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold w-full sm:w-auto sm:min-w-[220px] cursor-pointer"
               >
-                {classes.map((c: any) => {
-                  const classObj = c.lopHoc || c;
-                  const cId = c.lopHocId || c.id;
-                  return (
-                    <option key={cId} value={cId}>
-                      [{classObj.maLopHoc}] {classObj.tenLopHoc}
-                    </option>
-                  );
-                })}
+                {classes.length === 0 ? (
+                  <option value="">
+                    {role === 'GIAO_VIEN' ? '(Chưa được phân công giảng dạy)' : '(Chưa có lớp học nào)'}
+                  </option>
+                ) : (
+                  classes.map((c: any) => {
+                    const classObj = c.lopHoc || c;
+                    const cId = c.lopHocId || c.lopHoc?.id || c.id;
+                    return (
+                      <option key={cId} value={cId}>
+                        [{classObj.maLopHoc}] {classObj.tenLopHoc}
+                      </option>
+                    );
+                  })
+                )}
               </select>
             </div>
 

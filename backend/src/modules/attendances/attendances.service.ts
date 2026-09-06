@@ -11,7 +11,7 @@ import {
   GenerateSessionsDto,
   UpdateSessionDto,
 } from './dto/attendances.dto';
-import { TrangThaiBuoiHoc, TrangThaiPhanCong, TrangThaiLopHoc } from '@prisma/client';
+import { TrangThaiBuoiHoc, TrangThaiPhanCong, TrangThaiLopHoc, VaiTro } from '@prisma/client';
 
 @Injectable()
 export class AttendancesService {
@@ -26,9 +26,47 @@ export class AttendancesService {
   }
 
   /**
+   * Xác thực quyền truy cập lớp học:
+   * - Quản trị viên (QUAN_LY): Có toàn quyền truy cập tất cả lớp học.
+   * - Giáo viên (GIAO_VIEN): CHỈ được xem và thao tác trên các lớp học mà mình được phân công phụ trách (DANG_PHU_TRACH).
+   */
+  async verifyClassAccess(classId: number | bigint, userId?: number) {
+    if (!userId) return null;
+    const user = await this.prisma.nguoiDung.findUnique({
+      where: { id: BigInt(userId) },
+    });
+    if (!user) throw new NotFoundException('Người dùng không tồn tại.');
+    if (user.vaiTro === VaiTro.QUAN_LY) return null;
+
+    if (user.vaiTro === VaiTro.GIAO_VIEN) {
+      const teacher = await this.prisma.hoSoGiaoVien.findUnique({
+        where: { nguoiDungId: BigInt(userId) },
+      });
+      if (!teacher) {
+        throw new ForbiddenException('Hồ sơ giáo viên không tồn tại hoặc chưa được liên kết.');
+      }
+      const isAssigned = await this.prisma.phanCongGiaoVien.findFirst({
+        where: {
+          lopHocId: BigInt(classId),
+          giaoVienId: teacher.id,
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+        },
+      });
+      if (!isAssigned) {
+        throw new ForbiddenException('Bạn không được phân công giảng dạy lớp học này.');
+      }
+      return teacher;
+    }
+
+    throw new ForbiddenException('Bạn không có quyền truy cập lớp học này.');
+  }
+
+  /**
    * UC008 — Lấy danh sách buổi học của lớp
    */
-  async getClassSessions(classId: number) {
+  async getClassSessions(classId: number, userId?: number) {
+    await this.verifyClassAccess(classId, userId);
+
     const sessions = await this.prisma.buoiHoc.findMany({
       where: { lopHocId: BigInt(classId) },
       include: {
@@ -43,7 +81,7 @@ export class AttendancesService {
   /**
    * UC008 — Xem chi tiết điểm danh của 1 buổi học
    */
-  async getSessionAttendance(sessionId: number) {
+  async getSessionAttendance(sessionId: number, userId?: number) {
     const session = await this.prisma.buoiHoc.findUnique({
       where: { id: BigInt(sessionId) },
       include: {
@@ -57,13 +95,16 @@ export class AttendancesService {
     });
 
     if (!session) throw new NotFoundException('Buổi học không tồn tại.');
+    await this.verifyClassAccess(session.lopHocId, userId);
     return this.serializeBigInt(session);
   }
 
   /**
    * Lấy toàn bộ ma trận điểm danh của cả lớp (tất cả các buổi học và bản ghi điểm danh)
    */
-  async getClassAttendanceMatrix(classId: number) {
+  async getClassAttendanceMatrix(classId: number, userId?: number) {
+    await this.verifyClassAccess(classId, userId);
+
     const classRecord = await this.prisma.lopHoc.findUnique({
       where: { id: BigInt(classId) },
       include: {
@@ -105,22 +146,7 @@ export class AttendancesService {
       );
     }
 
-    const teacher = await this.prisma.hoSoGiaoVien.findUnique({
-      where: { nguoiDungId: BigInt(teacherUserId) },
-    });
-
-    // Nếu người thực hiện là Giáo viên, bắt buộc phải được phân công phụ trách lớp học này
-    if (teacher) {
-      const isAssigned = await this.prisma.phanCongGiaoVien.findFirst({
-        where: {
-          lopHocId: session.lopHocId,
-          giaoVienId: teacher.id,
-        },
-      });
-      if (!isAssigned) {
-        throw new ForbiddenException('Bạn không được phân công phụ trách lớp học này để thực hiện điểm danh.');
-      }
-    }
+    const teacher = await this.verifyClassAccess(session.lopHocId, teacherUserId);
 
     // Xác định ID giáo viên ghi nhận điểm danh
     let recordTeacherId = teacher?.id;

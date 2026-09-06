@@ -52,30 +52,37 @@ export default function TeacherAttendancePage() {
   // Modal xem chi tiết điểm danh 1 học viên
   const [viewStudentModal, setViewStudentModal] = useState<any>(null);
 
-  // 1. Lấy danh sách lớp phụ trách (hoặc tất cả lớp nếu là Admin)
+  // 1. Lấy danh sách lớp phụ trách (Chỉ Quản lý mới xem tất cả lớp, Giáo viên chỉ xem lớp mình được phân công)
   useEffect(() => {
     const fetchAssignedClasses = async () => {
       try {
-        let assignedClasses: any[] = [];
+        let isManager = false;
         try {
+          const stored = localStorage.getItem('etc_user_session');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.vaiTro === 'QUAN_LY') isManager = true;
+          }
+        } catch {}
+
+        let assignedClasses: any[] = [];
+        if (isManager) {
+          const all = await classesService.getAll();
+          assignedClasses = all || [];
+        } else {
+          // Giáo viên: CHỈ lấy các lớp được phân công giảng dạy thực tế
           const schedule = await classesService.getTeacherSchedule();
           assignedClasses = (schedule || [])
             .map((item: any) => item.lopHoc)
             .filter(Boolean);
-        } catch {
-          const all = await classesService.getAll();
-          assignedClasses = all || [];
-        }
-
-        if (assignedClasses.length === 0) {
-          const all = await classesService.getAll();
-          assignedClasses = all || [];
         }
 
         const validClasses = (assignedClasses || []).filter((c: any) => c.trangThai !== 'DA_HUY');
         setClasses(validClasses);
         if (validClasses.length > 0) {
           setSelectedClassId(validClasses[0].id);
+        } else {
+          setSelectedClassId(null);
         }
       } catch (err) {
         console.error(err);
@@ -326,8 +333,31 @@ export default function TeacherAttendancePage() {
       subtitle="Ghi nhận 4 trạng thái điểm danh: Có Mặt, Đi Muộn, Có Phép, Vắng. Xem ma trận trực quan toàn khóa học."
     >
       <div className="space-y-6">
-        {/* Top bar: Chọn lớp, chọn buổi & các thao tác */}
-        <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+        {loading ? (
+          <div className="py-20 flex justify-center items-center">
+            <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
+          </div>
+        ) : classes.length === 0 ? (
+          <div className="p-12 sm:p-16 rounded-3xl bg-white dark:bg-[#111928] border border-slate-200 dark:border-[#1e2d45] text-center space-y-4 shadow-sm max-w-2xl mx-auto my-8">
+            <div className="w-16 h-16 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 text-amber-600 dark:text-amber-400 mx-auto flex items-center justify-center shadow-xs">
+              <Calendar className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                Chưa Được Phân Công Giảng Dạy
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                Tài khoản của bạn hiện tại chưa được phân công phụ trách lớp học nào. Theo quy định, giáo viên chỉ có quyền xem và thực hiện điểm danh cho các lớp học do mình trực tiếp phụ trách giảng dạy.
+              </p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                Vui lòng liên hệ Phòng Đào tạo / Quản trị viên (Admin) để được xếp lịch và phân công giảng dạy.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Top bar: Chọn lớp, chọn buổi & các thao tác */}
+            <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
           <div className="flex flex-wrap items-center gap-3">
             <div className="flex items-center space-x-2">
               <label className="text-xs font-bold text-slate-700 whitespace-nowrap">Lớp Học:</label>
@@ -953,6 +983,8 @@ export default function TeacherAttendancePage() {
               </div>
             )}
           </div>
+        )}
+          </>
         )}
 
         {/* MODAL CHI TIẾT ĐIỂM DANH HỌC VIÊN */}

@@ -390,6 +390,7 @@ export default function StaffNewStudentPage() {
                     <option value="B1">B1 - Trung Cấp</option>
                     <option value="B2">B2 - Trung Cao Cấp</option>
                     <option value="C1">C1 - Cao Cấp</option>
+                    <option value="C2">C2 - Thành Thạo</option>
                   </select>
                 </div>
 

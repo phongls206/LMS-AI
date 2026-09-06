@@ -208,7 +208,8 @@ export default function StudentAiConsultPage() {
                   <option value="A2">A2 — Tiền Trung Cấp (Sơ cấp vững)</option>
                   <option value="B1">B1 — Trung Cấp (Giao tiếp cơ bản)</option>
                   <option value="B2">B2 — Trung Cao Cấp (Luyện thi chuyên sâu)</option>
-                  <option value="C1">C1 — Cao Cấp (Thành thạo như bản xứ)</option>
+                  <option value="C1">C1 — Cao Cấp (Lưu loát / Học thuật & Đi làm)</option>
+                  <option value="C2">C2 — Thành Thạo (Bản ngữ / Tinh hoa học thuật)</option>
                 </select>
               </div>
 

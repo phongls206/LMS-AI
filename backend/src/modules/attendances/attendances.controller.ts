@@ -36,8 +36,11 @@ export class AttendancesController {
   @Get('classes/:id/sessions')
   @Roles(VaiTro.QUAN_LY, VaiTro.GIAO_VIEN)
   @ApiOperation({ summary: 'Lấy danh sách các buổi học của lớp' })
-  getClassSessions(@Param('id', ParseIntPipe) id: number) {
-    return this.attendancesService.getClassSessions(id);
+  getClassSessions(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
+  ) {
+    return this.attendancesService.getClassSessions(id, user.id);
   }
 
   /**
@@ -46,8 +49,11 @@ export class AttendancesController {
   @Get('classes/:id/attendance-matrix')
   @Roles(VaiTro.QUAN_LY, VaiTro.GIAO_VIEN)
   @ApiOperation({ summary: 'Lấy ma trận điểm danh toàn bộ buổi học của lớp' })
-  getClassAttendanceMatrix(@Param('id', ParseIntPipe) id: number) {
-    return this.attendancesService.getClassAttendanceMatrix(id);
+  getClassAttendanceMatrix(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
+  ) {
+    return this.attendancesService.getClassAttendanceMatrix(id, user.id);
   }
 
   /**
@@ -56,8 +62,11 @@ export class AttendancesController {
   @Get('sessions/:id')
   @Roles(VaiTro.QUAN_LY, VaiTro.GIAO_VIEN)
   @ApiOperation({ summary: 'Xem chi tiết bảng điểm danh của 1 buổi học' })
-  getSessionAttendance(@Param('id', ParseIntPipe) id: number) {
-    return this.attendancesService.getSessionAttendance(id);
+  getSessionAttendance(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
+  ) {
+    return this.attendancesService.getSessionAttendance(id, user.id);
   }
 
   /**

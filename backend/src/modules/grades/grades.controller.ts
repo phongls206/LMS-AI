@@ -29,8 +29,11 @@ export class GradesController {
   @Get('classes/:id/grades')
   @Roles(VaiTro.GIAO_VIEN, VaiTro.QUAN_LY)
   @ApiOperation({ summary: 'Xem bảng điểm chi tiết của lớp học' })
-  getClassGrades(@Param('id', ParseIntPipe) id: number) {
-    return this.gradesService.getClassGrades(id);
+  getClassGrades(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: any,
+  ) {
+    return this.gradesService.getClassGrades(id, user);
   }
 
   /**

@@ -384,7 +384,20 @@ async function main() {
       trangThai: TrangThaiKhoaHoc.HOAT_DONG,
     },
   });
-  console.log('✅ Đã nạp 10 Khóa học toàn diện (Từ A1 đến C1/C2)');
+  const course11 = await prisma.khoaHoc.upsert({
+    where: { maKhoaHoc: 'KH-MAST-C2' },
+    update: {},
+    create: {
+      maKhoaHoc: 'KH-MAST-C2',
+      tenKhoaHoc: 'Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)',
+      trinhDoYeuCau: TrinhDoCEFR.C2,
+      thoiLuongGio: 60,
+      hocPhi: 6800000,
+      moTa: 'Dành cho học viên trình độ cao cấp muốn hoàn thiện năng lực tiếng Anh tương đương người bản ngữ, làm chủ nghệ thuật tranh biện học thuật và xuất bản bài nghiên cứu.',
+      trangThai: TrangThaiKhoaHoc.HOAT_DONG,
+    },
+  });
+  console.log('✅ Đã nạp 11 Khóa học toàn diện (Chuẩn 6 bậc CEFR từ A1 đến C2)');
 
   // ============================================================================
   // 3. LỚP HỌC & THỜI KHÓA BIỂU
@@ -593,7 +606,41 @@ async function main() {
     },
   });
 
-  console.log('✅ Đã nạp 12 Lớp học đa dạng trạng thái (Từ lớp SĨ SỐ TỐI ĐA 25/25 đến lớp SẮP MỞ)');
+  // Lớp 13: MAST-C2-01 (0/12 HV - ĐANG MỞ ĐĂNG KÝ)
+  const class13 = await prisma.lopHoc.upsert({
+    where: { maLopHoc: 'MAST-C2-01' },
+    update: { siSoToiDa: 12, siSoHienTai: 0, trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY },
+    create: {
+      khoaHocId: course11.id,
+      maLopHoc: 'MAST-C2-01',
+      tenLopHoc: 'C2 Academic Mastery & Advanced Debate (Thứ 7 - CN)',
+      siSoToiDa: 12,
+      siSoHienTai: 0,
+      ngayBatDau: new Date('2024-10-20'),
+      ngayKetThuc: new Date('2025-01-20'),
+      phongHoc: 'Phòng Hội Thảo VIP A105',
+      trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY,
+    },
+  });
+
+  // Lớp 14: IELTS-C1-02 (0/15 HV - ĐANG MỞ ĐĂNG KÝ)
+  const class14 = await prisma.lopHoc.upsert({
+    where: { maLopHoc: 'IELTS-C1-02' },
+    update: { siSoToiDa: 15, siSoHienTai: 0, trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY },
+    create: {
+      khoaHocId: course9.id,
+      maLopHoc: 'IELTS-C1-02',
+      tenLopHoc: 'IELTS Chuyên Sâu 7.5 - 8.5+ Cấp Tốc (Tối Thứ 3-5-7)',
+      siSoToiDa: 15,
+      siSoHienTai: 0,
+      ngayBatDau: new Date('2024-10-15'),
+      ngayKetThuc: new Date('2025-01-15'),
+      phongHoc: 'Phòng Chuyên Đề A104',
+      trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY,
+    },
+  });
+
+  console.log('✅ Đã nạp 14 Lớp học đa dạng trạng thái (Chuẩn CEFR A1 đến C2)');
 
   // Lịch học (Schedules)
   const schedules = [
@@ -627,6 +674,12 @@ async function main() {
     { lopId: class11.id, thu: 4, bd: '18:00:00', kt: '21:00:00', phong: 'Phòng Chuyên Đề A105' },
     { lopId: class12.id, thu: 3, bd: '18:00:00', kt: '20:00:00', phong: 'Phòng B204' },
     { lopId: class12.id, thu: 6, bd: '18:00:00', kt: '20:00:00', phong: 'Phòng B204' },
+    // Lịch học lớp 13 (C2) & 14 (C1)
+    { lopId: class13.id, thu: 7, bd: '18:00:00', kt: '20:30:00', phong: 'Phòng Hội Thảo VIP A105' },
+    { lopId: class13.id, thu: 8, bd: '18:00:00', kt: '20:30:00', phong: 'Phòng Hội Thảo VIP A105' },
+    { lopId: class14.id, thu: 3, bd: '18:00:00', kt: '20:30:00', phong: 'Phòng Chuyên Đề A104' },
+    { lopId: class14.id, thu: 5, bd: '18:00:00', kt: '20:30:00', phong: 'Phòng Chuyên Đề A104' },
+    { lopId: class14.id, thu: 7, bd: '18:00:00', kt: '20:30:00', phong: 'Phòng Chuyên Đề A104' },
   ];
 
   for (const sc of schedules) {
@@ -666,6 +719,8 @@ async function main() {
     { lopId: class10.id, gvId: teacherProfiles['teacher09'].id, vaitro: VaiTroPhanCong.CHINH },
     { lopId: class11.id, gvId: teacherProfiles['teacher08'].id, vaitro: VaiTroPhanCong.CHINH },
     { lopId: class12.id, gvId: teacherProfiles['teacher11'].id, vaitro: VaiTroPhanCong.CHINH },
+    { lopId: class13.id, gvId: teacherProfiles['teacher12'].id, vaitro: VaiTroPhanCong.CHINH },
+    { lopId: class14.id, gvId: teacherProfiles['teacher10'].id, vaitro: VaiTroPhanCong.CHINH },
   ];
 
   for (const asg of assignments) {
@@ -1340,14 +1395,15 @@ async function main() {
   });
   console.log('✅ Đã nạp Audit Log AI đầy đủ');
 
-  console.log('\n🎉 NẠP TOÀN BỘ SIÊU DỮ LIỆU ĐẦY ĐỦ 80 HỌC VIÊN, 14 GIẢNG VIÊN, 10 KHÓA HỌC & 12 LỚP HỌC THÀNH CÔNG!');
+  console.log('\n🎉 NẠP TOÀN BỘ SIÊU DỮ LIỆU ĐẦY ĐỦ 80 HỌC VIÊN, 14 GIẢNG VIÊN, 11 KHÓA HỌC & 14 LỚP HỌC (CHUẨN CEFR A1 - C2) THÀNH CÔNG!');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('📋 TÀI KHOẢN HỆ THỐNG ĐÃ SẴN SÀNG (Mật khẩu mặc định: 123456):');
   console.log('   👑 Quản lý (Admin)     : admin01');
   console.log('   👨‍🏫 Giáo viên (Teacher) : teacher01 → teacher14 (14 Giảng viên chuyên môn sâu)');
   console.log('   📞 Tư vấn viên (Staff) : staff01, staff02');
-  console.log('   🎓 Học viên (Student)   : student01 → student80 (80 Học viên đầy đủ CEFR A1 → C1)');
-  console.log('   🏫 Lớp học (Classes)    : 12 Lớp học đa dạng (Sĩ số tối đa 25/25, Đang học, Mở đăng ký, Sắp mở)');
+  console.log('   🎓 Học viên (Student)   : student01 → student80 (80 Học viên đầy đủ CEFR A1 → C2)');
+  console.log('   📚 Khóa học (Courses)   : 11 Khóa học chuẩn quốc tế (CEFR A1, A2, B1, B2, C1, C2)');
+  console.log('   🏫 Lớp học (Classes)    : 14 Lớp học đa dạng (Đủ các lớp mở đăng ký cho cả C1 và C2)');
   console.log(`   📊 Thống kê bảng điểm   : ${passCount} ĐẠT, ${failCount} KHÔNG ĐẠT, ${inProgressCount} ĐANG HỌC (Chuẩn tỷ lệ 20/30/50)`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 }
