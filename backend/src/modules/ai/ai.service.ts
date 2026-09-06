@@ -305,6 +305,12 @@ export class AiService {
       availableClasses.map((c) => [c.maLopHoc, c]),
     );
 
+    const defaultInsights = {
+      soSanhLopHoc: `Đối chiếu giữa các lớp đề xuất: Các lớp học đều được tuyển chọn sát với trình độ CEFR ${dto.cefr} và khung lịch rảnh của bạn. Lớp có độ tương thích cao nhất tối ưu thời gian biểu và đảm bảo khả năng tiếp thu cân bằng giữa Ngữ pháp và Phản xạ thực chiến. Bạn nên ưu tiên lớp có lịch học cố định phù hợp nhất với quỹ thời gian tuần của mình.`,
+      giaoTrinhCamKet: `Khung chương trình tại ETC English được chuẩn hóa theo Khung Tham Chiếu Châu Âu (CEFR), kết hợp giáo trình chuẩn quốc tế Oxford/Cambridge. Học viên được cam kết chuẩn đầu ra năng lực sau khi hoàn thành tối thiểu 80% thời lượng khóa học và đạt yêu cầu các bài kiểm tra tiến độ định kỳ.`,
+      loTrinhPhatTrien: `Sau khi hoàn thành khóa học này ở trình độ ${dto.cefr}, bạn nên tiếp tục đăng ký khóa nâng cao tiếp theo (CEFR B2 / Luyện thi chứng chỉ chuyên sâu) để duy trì phản xạ và phát triển toàn diện 4 kỹ năng trong môi trường học thuật và công sở.`,
+    };
+
     const prompt = `
 Bạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.
 Dữ liệu học viên:
@@ -329,21 +335,33 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
 1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.
 2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.
 3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.
-4. Trả về đúng định dạng JSON:
-[
-  {
-    "maLopHoc": "...",
-    "tenLopHoc": "...",
-    "doTuongThich": 95,
-    "lyDoPhuHop": "...",
-    "diemNoiBat": "...",
-    "loTrinhKhuyenNghi": "..."
+4. CUNG CẤP 3 GÓC NHÌN PHÂN TÍCH & THẢO LUẬN CHUYÊN SÂU:
+   - "soSanhLopHoc": Phân tích đối chiếu ưu và nhược điểm giữa các lớp được đề xuất. Chỉ rõ sự khác biệt về lịch học, trọng tâm kỹ năng và đối tượng học viên; giải thích lớp nào là lựa chọn số 1 cho mục tiêu của học viên.
+   - "giaoTrinhCamKet": Tư vấn chi tiết về khung giáo trình quốc tế áp dụng, phương pháp giảng dạy tương tác và cam kết chuẩn đầu ra CEFR sau khi hoàn thành.
+   - "loTrinhPhatTrien": Định hướng lộ trình học tiếp theo (Next Step) sau khi hoàn thành khóa học này để học viên tiếp tục bứt phá mục tiêu cao hơn.
+5. Trả về đúng định dạng JSON:
+{
+  "danhSachLop": [
+    {
+      "maLopHoc": "...",
+      "tenLopHoc": "...",
+      "doTuongThich": 95,
+      "lyDoPhuHop": "...",
+      "diemNoiBat": "...",
+      "loTrinhKhuyenNghi": "..."
+    }
+  ],
+  "insights": {
+    "soSanhLopHoc": "...",
+    "giaoTrinhCamKet": "...",
+    "loTrinhPhatTrien": "..."
   }
-]
+}
 `;
 
     let rawOutput: string | null = null;
     let validatedRecommendations: any[] = [];
+    let deepInsights: any = defaultInsights;
     let status: TrangThaiYeuCauAI = TrangThaiYeuCauAI.THANH_CONG;
 
     try {
@@ -354,12 +372,44 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
 
       // Parse JSON
       const cleaned = rawOutput.replace(/```json/g, '').replace(/```/g, '').trim();
-      const jsonMatch = cleaned.match(/\[[\s\S]*\]/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
+      let parsed: any = null;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch {
+        const objMatch = cleaned.match(/\{[\s\S]*\}/);
+        const arrMatch = cleaned.match(/\[[\s\S]*\]/);
+        if (objMatch) {
+          try { parsed = JSON.parse(objMatch[0]); } catch {}
+        }
+        if (!parsed && arrMatch) {
+          try { parsed = JSON.parse(arrMatch[0]); } catch {}
+        }
+      }
 
+      let rawClasses: any[] = [];
+      if (parsed) {
+        if (Array.isArray(parsed)) {
+          rawClasses = parsed;
+        } else if (typeof parsed === 'object') {
+          if (Array.isArray(parsed.danhSachLop)) {
+            rawClasses = parsed.danhSachLop;
+          } else if (Array.isArray(parsed.recommendations)) {
+            rawClasses = parsed.recommendations;
+          }
+
+          if (parsed.insights && typeof parsed.insights === 'object') {
+            deepInsights = {
+              soSanhLopHoc: parsed.insights.soSanhLopHoc || defaultInsights.soSanhLopHoc,
+              giaoTrinhCamKet: parsed.insights.giaoTrinhCamKet || defaultInsights.giaoTrinhCamKet,
+              loTrinhPhatTrien: parsed.insights.loTrinhPhatTrien || defaultInsights.loTrinhPhatTrien,
+            };
+          }
+        }
+      }
+
+      if (rawClasses.length > 0) {
         // HẬU KIỂM TRA (Post-Validation): Lọc ảo giác — chỉ giữ lại lớp có trong DB
-        validatedRecommendations = parsed
+        validatedRecommendations = rawClasses
           .filter((item: any) => validClassMap.has(item.maLopHoc))
           .map((item: any) => {
             const rawClass = validClassMap.get(item.maLopHoc);
@@ -378,6 +428,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
     } catch (error: any) {
       this.logger.warn('AI Consult thất bại hoặc timeout, kích hoạt Fallback Rule-based:', error?.message);
       status = error?.message === 'TIMEOUT' ? TrangThaiYeuCauAI.TIMEOUT : TrangThaiYeuCauAI.FALLBACK_APPLIED;
+      deepInsights = defaultInsights;
 
       // FALLBACK RULE-BASED: Lọc lớp theo CEFR và sắp xếp theo chỗ trống
       const fallbackList = availableClasses
@@ -414,7 +465,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
       LoaiChucNangAI.TU_VAN_LOP,
       prompt,
       rawOutput,
-      validatedRecommendations,
+      { recommendations: validatedRecommendations, insights: deepInsights },
       status,
       duration,
     );
@@ -423,6 +474,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
       success: true,
       mode: status === TrangThaiYeuCauAI.THANH_CONG ? 'AI_GEMINI' : 'RULE_BASED_FALLBACK',
       data: validatedRecommendations,
+      insights: deepInsights,
     };
   }
 

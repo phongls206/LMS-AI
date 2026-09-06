@@ -16,6 +16,10 @@ import {
   Lightbulb,
   PlusCircle,
   Clock,
+  Scale,
+  BookOpen,
+  TrendingUp,
+  Sparkles,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -27,6 +31,12 @@ export default function StudentAiConsultPage() {
   );
   const [loading, setLoading] = useState(false);
   const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [insights, setInsights] = useState<{
+    soSanhLopHoc?: string;
+    giaoTrinhCamKet?: string;
+    loTrinhPhatTrien?: string;
+  } | null>(null);
+  const [activeInsightTab, setActiveInsightTab] = useState<'compare' | 'syllabus' | 'roadmap'>('compare');
   const [mode, setMode] = useState<string>('');
   const [cooldown, setCooldown] = useState(0);
 
@@ -64,6 +74,7 @@ export default function StudentAiConsultPage() {
         const parsed = JSON.parse(saved);
         if (parsed.recommendations && parsed.recommendations.length > 0) {
           setRecommendations(parsed.recommendations);
+          if (parsed.insights) setInsights(parsed.insights);
           if (parsed.mode) setMode(parsed.mode);
           if (parsed.mucTieu) setMucTieu(parsed.mucTieu);
           if (parsed.selectedDays) setSelectedDays(parsed.selectedDays);
@@ -118,9 +129,11 @@ export default function StudentAiConsultPage() {
         },
         mucTieu,
       );
-      const recs = res.data || [];
+      const recs = Array.isArray(res.data) ? res.data : [];
       const m = res.mode || '';
+      const ins = res.insights || null;
       setRecommendations(recs);
+      setInsights(ins);
       setMode(m);
       try {
         sessionStorage.setItem(
@@ -130,6 +143,7 @@ export default function StudentAiConsultPage() {
             selectedDays,
             mucTieu,
             recommendations: recs,
+            insights: ins,
             mode: m,
           }),
         );
@@ -308,6 +322,7 @@ export default function StudentAiConsultPage() {
                   onClick={() => {
                     sessionStorage.removeItem('etc_ai_consult_session');
                     setRecommendations([]);
+                    setInsights(null);
                     setMode('');
                   }}
                   className="px-2.5 py-1 min-h-[32px] rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
@@ -402,6 +417,116 @@ export default function StudentAiConsultPage() {
                 </div>
               ))}
             </div>
+
+            {/* Khối Thảo Luận & Phân Tích Chuyên Sâu 3 Chiều */}
+            {insights && (
+              <div className="mt-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm overflow-hidden animate-fadeIn">
+                {/* Header của khối thảo luận */}
+                <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-[#1e2d45] bg-slate-50/70 dark:bg-[#162032]/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-teal-500/10 dark:bg-teal-400/10 border border-teal-500/20 text-teal-600 dark:text-teal-400 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-slate-900 dark:text-white text-sm flex items-center space-x-2">
+                        <span>Bản Thảo Luận & Phân Tích Chuyên Sâu Của AI</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-100 dark:bg-teal-950/80 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                          3 Chiều Đánh Giá
+                        </span>
+                      </h4>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                        Cung cấp góc nhìn đối chiếu, định hướng giáo trình và lộ trình dài hạn giúp bạn chọn lớp chuẩn xác nhất
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 3 Tab Điều Hướng */}
+                  <div className="flex items-center p-1 bg-slate-100 dark:bg-[#0f172a] rounded-xl border border-slate-200/70 dark:border-slate-800 shrink-0 self-start sm:self-auto overflow-x-auto max-w-full">
+                    <button
+                      type="button"
+                      onClick={() => setActiveInsightTab('compare')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer whitespace-nowrap ${
+                        activeInsightTab === 'compare'
+                          ? 'bg-white dark:bg-teal-600 text-teal-700 dark:text-white shadow-xs'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      <Scale className="w-3.5 h-3.5" />
+                      <span>So Sánh Lớp Học</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveInsightTab('syllabus')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer whitespace-nowrap ${
+                        activeInsightTab === 'syllabus'
+                          ? 'bg-white dark:bg-teal-600 text-teal-700 dark:text-white shadow-xs'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      <BookOpen className="w-3.5 h-3.5" />
+                      <span>Giáo Trình & Cam Kết</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveInsightTab('roadmap')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer whitespace-nowrap ${
+                        activeInsightTab === 'roadmap'
+                          ? 'bg-white dark:bg-teal-600 text-teal-700 dark:text-white shadow-xs'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      <TrendingUp className="w-3.5 h-3.5" />
+                      <span>Lộ Trình Tiếp Theo</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Nội dung của từng Tab */}
+                <div className="p-4 sm:p-6 text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
+                  {activeInsightTab === 'compare' && (
+                    <div className="space-y-3 animate-fadeIn">
+                      <div className="flex items-center space-x-2 text-teal-700 dark:text-teal-400 font-bold text-xs uppercase tracking-wider">
+                        <Scale className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                        <span>Đối Chiếu Ưu & Nhược Điểm Giữa Các Lớp Đề Xuất</span>
+                      </div>
+                      <div className="p-4 rounded-xl bg-teal-50/40 dark:bg-[#162032] border border-teal-100 dark:border-[#22324e]">
+                        <p className="whitespace-pre-line leading-relaxed text-slate-800 dark:text-slate-200">
+                          {insights.soSanhLopHoc}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeInsightTab === 'syllabus' && (
+                    <div className="space-y-3 animate-fadeIn">
+                      <div className="flex items-center space-x-2 text-sky-700 dark:text-sky-400 font-bold text-xs uppercase tracking-wider">
+                        <BookOpen className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+                        <span>Tư Vấn Khung Giáo Trình & Cam Kết Đầu Ra Chuẩn CEFR</span>
+                      </div>
+                      <div className="p-4 rounded-xl bg-sky-50/40 dark:bg-[#162032] border border-sky-100 dark:border-[#22324e]">
+                        <p className="whitespace-pre-line leading-relaxed text-slate-800 dark:text-slate-200">
+                          {insights.giaoTrinhCamKet}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {activeInsightTab === 'roadmap' && (
+                    <div className="space-y-3 animate-fadeIn">
+                      <div className="flex items-center space-x-2 text-emerald-700 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                        <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                        <span>Lộ Trình Phát Triển Năng Lực Tiếp Theo Sau Khóa Này</span>
+                      </div>
+                      <div className="p-4 rounded-xl bg-emerald-50/40 dark:bg-[#162032] border border-emerald-100 dark:border-[#22324e]">
+                        <p className="whitespace-pre-line leading-relaxed text-slate-800 dark:text-slate-200">
+                          {insights.loTrinhPhatTrien}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
