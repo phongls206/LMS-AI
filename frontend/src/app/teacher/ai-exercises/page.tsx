@@ -17,6 +17,7 @@ import {
   History,
   Printer,
   AlertTriangle,
+  Check,
 } from 'lucide-react';
 import { ExerciseHistoryModal } from '../../../components/ai/ExerciseHistoryModal';
 import { PaperExamModal } from '../../../components/ai/PaperExamModal';
@@ -375,31 +376,9 @@ export default function TeacherAiExercisesPage() {
             </button>
           </div>
 
-          {/* Cảnh báo khóa sinh đề khi đang có bài dở dang */}
-          {isExamInProgress && (
-            <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/70 text-amber-900 dark:text-amber-200 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs animate-fadeIn">
-              <div className="flex items-center space-x-2.5">
-                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                <div>
-                  <span className="font-bold">Đang có bộ đề làm thử dở dang: </span>
-                  <span>
-                    Bạn đã chọn {countAnswered()}/{result.data.cauHoi.length} câu. Hãy nộp bài thử hoặc nhấn &ldquo;Hủy & Tạo Đề Khác&rdquo; nếu muốn sinh đề mới.
-                  </span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={handleResetSession}
-                className="px-3 py-1.5 min-h-[40px] bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/80 dark:hover:bg-amber-800 text-amber-900 dark:text-amber-100 font-bold rounded-lg text-xs transition shrink-0 cursor-pointer self-end sm:self-auto border border-amber-300 dark:border-amber-700"
-              >
-                Hủy & Tạo Đề Khác
-              </button>
-            </div>
-          )}
-
           <form onSubmit={handleGenerate} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-              <div className="md:col-span-5">
+              <div className="md:col-span-4">
                 <label className="block font-bold text-teal-800 dark:text-teal-400 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
                   <Layers className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   <span>Chọn Chủ Đề Ngữ Pháp / Từ Vựng</span>
@@ -453,16 +432,16 @@ export default function TeacherAiExercisesPage() {
                 </select>
               </div>
 
-              <div className="md:col-span-2">
+              <div className="md:col-span-3">
                 <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                   Số Lượng
                 </label>
-                <div className="flex space-x-2">
+                <div className="flex items-center space-x-2 w-full">
                   <select
                     value={soLuong}
                     disabled={isExamInProgress}
                     onChange={(e) => setSoLuong(+e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-2.5 py-2.5 text-teal-800 dark:text-teal-300 focus:outline-none focus:border-teal-500 font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-24 shrink-0 bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-2.5 py-2.5 text-teal-800 dark:text-teal-300 focus:outline-none focus:border-teal-500 font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <option value={5}>5 câu</option>
                     <option value={10}>10 câu</option>
@@ -473,10 +452,10 @@ export default function TeacherAiExercisesPage() {
                     disabled={loading || cooldown > 0 || isExamInProgress}
                     title={
                       isExamInProgress
-                        ? 'Đang có bộ đề thử nghiệm dở dang. Vui lòng nộp bài hoặc nhấn "Hủy & Tạo Đề Khác" để tạo đề mới.'
+                        ? 'Đang có bộ đề thử nghiệm dở dang. Vui lòng nộp bài hoặc nhấn "Hủy & Tạo Đề Khác" ở cuối trang để tạo đề mới.'
                         : 'Biên soạn bài tập mới với AI'
                     }
-                    className={`px-4 h-10 min-h-[40px] font-bold rounded-xl flex items-center justify-center space-x-1.5 shadow-md transition shrink-0 ${
+                    className={`flex-1 min-w-0 px-3.5 h-10 min-h-[40px] font-bold rounded-xl flex items-center justify-center space-x-1.5 shadow-md transition ${
                       isExamInProgress
                         ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed opacity-75 shadow-none'
                         : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white shadow-teal-600/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
@@ -489,15 +468,10 @@ export default function TeacherAiExercisesPage() {
                         <Clock className="w-3.5 h-3.5 text-amber-200 animate-spin" />
                         <span>{cooldown}s</span>
                       </span>
-                    ) : isExamInProgress ? (
-                      <span className="flex items-center space-x-1 text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
-                        <BrainCircuit className="w-3.5 h-3.5 text-slate-400" />
-                        <span>Đang Làm</span>
-                      </span>
                     ) : (
                       <>
-                        <BrainCircuit className="w-3.5 h-3.5" />
-                        <span>Sinh Đề</span>
+                        <BrainCircuit className="w-3.5 h-3.5 shrink-0" />
+                        <span className="truncate">Sinh Đề</span>
                       </>
                     )}
                   </button>
@@ -692,20 +666,25 @@ export default function TeacherAiExercisesPage() {
                               key={optKey}
                               type="button"
                               onClick={() => handleSelectOption(idx, optKey, typeInfo.isMulti)}
-                              className={`p-3 min-h-[42px] rounded-xl border text-xs text-left transition flex items-center space-x-2.5 cursor-pointer ${btnClass}`}
+                              className={`p-3 min-h-[44px] rounded-xl border text-xs text-left transition flex items-center space-x-3 cursor-pointer ${btnClass}`}
                             >
                               <span
-                                className={`w-5 h-5 rounded-md flex items-center justify-center font-bold text-[11px] shrink-0 transition-colors ${
+                                className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${
                                   isChosen
-                                    ? 'bg-white/20 text-white'
+                                    ? 'bg-white/25 text-white shadow-xs'
                                     : 'bg-slate-200/90 dark:bg-[#253550] text-slate-800 dark:text-teal-300 border border-transparent dark:border-[#2d4265]'
                                 }`}
                               >
-                                {typeInfo.isMulti ? (isChosen ? '☑' : '☐') : optKey}
+                                {optKey}
                               </span>
-                              <span className={`leading-snug font-medium ${isChosen ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
+                              <span className={`flex-1 min-w-0 leading-snug font-medium ${isChosen ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
                                 {optVal}
                               </span>
+                              {typeInfo.isMulti && isChosen && (
+                                <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 ml-auto text-white">
+                                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                                </span>
+                              )}
                             </button>
                           );
                         })}

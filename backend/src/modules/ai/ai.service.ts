@@ -457,7 +457,8 @@ ${formatInstruction}
 
 RÀNG BUỘC NGHIÊM NGẶT:
 - Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.
-- Đúng ${count} câu hỏi được đánh số id từ 1 đến ${count}.
+- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG ${count} CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng "cauHoi" trong JSON phải có đúng ${count} phần tử.
+- Đúng ${count} câu hỏi được đánh số id tuần tự từ 1 đến ${count}.
 - QUY TẮC BẮT BUỘC: Với câu hỏi Đúng/Sai (True/False), "luaChon" CHỈ ĐƯỢC CÓ 2 ĐÁP ÁN A VÀ B (True và False), KHÔNG ĐƯỢC TẠO C, D.
 - Bắt buộc có đáp án đúng ("dapAnDung") và giải thích ngắn gọn ("giaiThich") bằng tiếng Việt.
 - Trả về JSON hợp lệ:
@@ -492,7 +493,7 @@ RÀNG BUỘC NGHIÊM NGẶT:
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
         if (Array.isArray(parsed.cauHoi) && parsed.cauHoi.length >= 1) {
-          parsed.cauHoi = parsed.cauHoi.map((q: any, idx: number) => {
+          let questions = parsed.cauHoi.map((q: any, idx: number) => {
             let loai = q.loaiCauHoi;
             let dapAn = q.dapAnDung;
 
@@ -554,6 +555,26 @@ RÀNG BUỘC NGHIÊM NGẶT:
               giaiThich: q.giaiThich || '',
             };
           });
+
+          // ÉP BUỘC CHÍNH XÁC SỐ LƯỢNG CÂU HỎI (EXACT COUNT CLAMPING)
+          if (questions.length > count) {
+            // Nếu Gemini sinh thừa (ví dụ yêu cầu 10 nhưng sinh 12), cắt bỏ các câu dư thừa
+            questions = questions.slice(0, count);
+          } else if (questions.length < count) {
+            // Nếu Gemini sinh thiếu câu hỏi (ví dụ yêu cầu 15 nhưng dừng ở 12), bổ sung từ ngân hàng câu hỏi
+            const needed = count - questions.length;
+            const fallbackSupp = getFallbackExercises(dto.chuDe, dto.trinhDo, needed, dto.loaiCauHoi);
+            const existingTexts = new Set(questions.map((q: any) => (q.noiDung || '').trim().toLowerCase()));
+            const suppQuestions = fallbackSupp.cauHoi.filter(
+              (q) => !existingTexts.has((q.noiDung || '').trim().toLowerCase()),
+            );
+            questions = [...questions, ...suppQuestions].slice(0, count);
+          }
+
+          parsed.cauHoi = questions.map((q: any, idx: number) => ({
+            ...q,
+            id: idx + 1,
+          }));
           validatedJson = parsed;
         }
       }
@@ -579,6 +600,25 @@ RÀNG BUỘC NGHIÊM NGẶT:
         this.logger.log(`[AI FALLBACK] Chưa có ai tạo đề tương tự cho "${dto.chuDe}", áp dụng bộ đề mẫu dự phòng`);
         validatedJson = getFallbackExercises(dto.chuDe, dto.trinhDo, count, dto.loaiCauHoi);
       }
+    }
+
+    // ĐẢM BẢO CUỐI CÙNG (TRIPLE SAFETY LOCK): Số lượng câu hỏi BẮT BUỘC bằng đúng count (5, 10 hoặc 15)
+    if (validatedJson && Array.isArray(validatedJson.cauHoi)) {
+      if (validatedJson.cauHoi.length > count) {
+        validatedJson.cauHoi = validatedJson.cauHoi.slice(0, count);
+      } else if (validatedJson.cauHoi.length < count) {
+        const needed = count - validatedJson.cauHoi.length;
+        const fallbackSupp = getFallbackExercises(dto.chuDe, dto.trinhDo, needed, dto.loaiCauHoi);
+        const existingTexts = new Set(validatedJson.cauHoi.map((q: any) => (q.noiDung || '').trim().toLowerCase()));
+        const additions = fallbackSupp.cauHoi.filter(
+          (q) => !existingTexts.has((q.noiDung || '').trim().toLowerCase()),
+        );
+        validatedJson.cauHoi = [...validatedJson.cauHoi, ...additions].slice(0, count);
+      }
+      validatedJson.cauHoi = validatedJson.cauHoi.map((q: any, idx: number) => ({
+        ...q,
+        id: idx + 1,
+      }));
     }
 
     const duration = Date.now() - startTime;
@@ -753,6 +793,14 @@ RÀNG BUỘC NGHIÊM NGẶT:
 
         if (cloned.cauHoi.length > count) {
           cloned.cauHoi = cloned.cauHoi.slice(0, count);
+        } else if (cloned.cauHoi.length < count) {
+          const needed = count - cloned.cauHoi.length;
+          const supplement = getFallbackExercises(chuDe, trinhDo, needed);
+          const existingTexts = new Set(cloned.cauHoi.map((q: any) => (q.noiDung || '').trim().toLowerCase()));
+          const extra = supplement.cauHoi.filter(
+            (q) => !existingTexts.has((q.noiDung || '').trim().toLowerCase()),
+          );
+          cloned.cauHoi = [...cloned.cauHoi, ...extra].slice(0, count);
         }
         cloned.cauHoi = cloned.cauHoi.map((q: any, idx: number) => ({
           ...q,
