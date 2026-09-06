@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService, authService, gradesService, classesService } from '../../../services/api';
 import {
@@ -21,6 +22,9 @@ import {
   BrainCircuit,
   Target,
   RotateCcw,
+  Printer,
+  ArrowRight,
+  Bot,
 } from 'lucide-react';
 
 export default function StudentAiProgressPage() {
@@ -183,18 +187,18 @@ export default function StudentAiProgressPage() {
     >
       <div className="space-y-6 max-w-6xl mx-auto">
         {/* Bộ lọc chọn Lớp và Học viên */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-4 w-full md:w-auto">
+        <div className="bg-white dark:bg-[#111827] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 print:hidden">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full md:w-auto">
             {/* Dropdown Lớp Học */}
-            <div className="flex flex-col space-y-1">
-              <label className="text-[11px] font-bold text-teal-800 uppercase tracking-wider flex items-center space-x-1">
-                <GraduationCap className="w-3.5 h-3.5 text-teal-600" />
+            <div className="flex flex-col space-y-1 w-full sm:w-auto">
+              <label className="text-[11px] font-bold text-teal-800 dark:text-teal-400 uppercase tracking-wider flex items-center space-x-1">
+                <GraduationCap className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                 <span>{role === 'HOC_VIEN' ? 'Lớp Đang Theo Học:' : 'Chọn Lớp Học:'}</span>
               </label>
               <select
                 value={selectedClassId || ''}
                 onChange={(e) => handleClassChange(Number(e.target.value))}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-bold min-w-[220px] cursor-pointer"
+                className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold w-full sm:w-auto sm:min-w-[220px] cursor-pointer"
               >
                 {classes.map((c: any) => {
                   const classObj = c.lopHoc || c;
@@ -210,9 +214,9 @@ export default function StudentAiProgressPage() {
 
             {/* Dropdown Học Viên (Dành cho Giáo viên & Quản lý) */}
             {role !== 'HOC_VIEN' && (
-              <div className="flex flex-col space-y-1">
-                <label className="text-[11px] font-bold text-teal-800 uppercase tracking-wider flex items-center space-x-1">
-                  <User className="w-3.5 h-3.5 text-teal-600" />
+              <div className="flex flex-col space-y-1 w-full sm:w-auto">
+                <label className="text-[11px] font-bold text-teal-800 dark:text-teal-400 uppercase tracking-wider flex items-center space-x-1">
+                  <User className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   <span>Chọn Học Viên:</span>
                 </label>
                 <select
@@ -221,7 +225,7 @@ export default function StudentAiProgressPage() {
                     setSelectedStudentId(Number(e.target.value));
                     setSummary(null);
                   }}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-bold min-w-[220px] cursor-pointer"
+                  className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold w-full sm:w-auto sm:min-w-[220px] cursor-pointer"
                 >
                   {studentsInClass.length === 0 ? (
                     <option value="">(Lớp chưa có danh sách học viên)</option>
@@ -247,7 +251,7 @@ export default function StudentAiProgressPage() {
           <button
             onClick={() => handleGenerateSummary(false)}
             disabled={loading || cooldown > 0 || !selectedClassId || !selectedStudentId}
-            className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-40 shrink-0 cursor-pointer disabled:cursor-not-allowed"
+            className="w-full md:w-auto min-h-[42px] flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-40 shrink-0 cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? (
               <>
@@ -293,7 +297,7 @@ export default function StudentAiProgressPage() {
 
         {/* Trạng thái ban đầu khi chưa bấm Tóm tắt (Empty State / Onboarding Hero) */}
         {!loading && !summary && (
-          <div className="p-6 md:p-8 rounded-2xl bg-white border border-slate-200/90 shadow-sm text-center relative overflow-hidden animate-fadeIn">
+          <div className="p-6 md:p-8 rounded-2xl bg-white border border-slate-200/90 shadow-sm text-center relative overflow-hidden animate-fadeIn print:hidden">
             {/* Background decorative glow */}
             <div className="absolute -top-24 -right-24 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -358,44 +362,72 @@ export default function StudentAiProgressPage() {
           </div>
         )}
 
-        {/* Hiển Thị Kết Quả Tóm Tắt (Gọn gàng, Vừa vặn tầm mắt, Không cần cuộn chuột) */}
+        {/* Hiển Thị Kết Quả Tóm Tắt (Gọn gàng, Vừa vặn tầm mắt, Chuẩn in ấn A4) */}
         {summary && summary.data && (
-          <div className="space-y-3.5 animate-fadeIn">
+          <div id="etc-printable-progress" className="space-y-3.5 animate-fadeIn">
+            {/* Header Tiêu Đề Khi In Ấn (Chỉ hiển thị khi bấm In/Lưu PDF) */}
+            <div className="hidden print:block pb-3 mb-3 border-b-2 border-slate-900">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-base font-black text-slate-900 uppercase tracking-wide">
+                    TRUNG TÂM ANH NGỮ QUỐC TẾ ETC ENGLISH
+                  </h1>
+                  <p className="text-[11px] text-slate-600">Hệ Thống Quản Lý Đào Tạo & Khảo Thí Chuẩn CEFR</p>
+                </div>
+                <div className="text-right text-[11px] text-slate-600">
+                  <p className="font-bold text-slate-900 uppercase">PHIẾU ĐÁNH GIÁ TIẾN ĐỘ & SƯ PHẠM AI</p>
+                  <p>Thời điểm in: {new Date().toLocaleDateString('vi-VN')} {new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</p>
+                </div>
+              </div>
+            </div>
+
             {/* 1. Header Tinh Gọn 1 Dòng */}
-            <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+            <div className="p-3 sm:p-3.5 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
               <div className="flex items-center space-x-3">
                 <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-cyan-500 text-white flex items-center justify-center font-black text-sm shadow-sm shadow-teal-500/20 shrink-0">
                   {summary.data.hocVien?.hoTen?.split(' ').slice(-1)[0][0] || 'HV'}
                 </div>
                 <div>
-                  <div className="flex items-center space-x-2">
-                    <h3 className="font-bold text-slate-900 text-sm">{summary.data.hocVien?.hoTen}</h3>
-                    <span className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
+                  <div className="flex items-center flex-wrap gap-1.5 sm:gap-2">
+                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">{summary.data.hocVien?.hoTen}</h3>
+                    <span className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-semibold">
                       {summary.data.hocVien?.maHocVien}
                     </span>
-                    <span className="font-mono font-bold text-[11px] px-1.5 py-0.2 rounded bg-teal-50 text-teal-700 border border-teal-200">
+                    <span className="font-mono font-bold text-[11px] px-1.5 py-0.2 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
                       CEFR {summary.data.hocVien?.trinhDoCEFR}
                     </span>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Lớp: <strong className="text-slate-800">[{summary.data.lopHoc?.maLopHoc}] {summary.data.lopHoc?.tenLopHoc}</strong>
-                    {summary.data.lopHoc?.tenKhoaHoc && (
-                      <> — Khóa: <span className="text-teal-700 font-semibold">{summary.data.lopHoc?.tenKhoaHoc}</span></>
+                    {summary.data.duLieuGoc?.xepLoai === 'DAT' && (
+                      <span className="inline-flex items-center space-x-1 px-2 py-0.2 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-[10px] font-bold">
+                        <Sparkles className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" />
+                        <span>Đủ ĐK Chuyển Cấp</span>
+                      </span>
                     )}
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 flex items-center flex-wrap gap-x-2">
+                    <span>
+                      Lớp: <strong className="text-slate-800 dark:text-slate-200">[{summary.data.lopHoc?.maLopHoc}] {summary.data.lopHoc?.tenLopHoc}</strong>
+                      {summary.data.lopHoc?.tenKhoaHoc && (
+                        <> — Khóa: <span className="text-teal-700 dark:text-teal-400 font-semibold">{summary.data.lopHoc?.tenKhoaHoc}</span></>
+                      )}
+                    </span>
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium flex items-center space-x-1">
+                      <Clock className="w-2.5 h-2.5 inline" />
+                      <span>{new Date().toLocaleDateString('vi-VN')}</span>
+                    </span>
                   </p>
                 </div>
               </div>
 
-              {/* Mode Badge & Action */}
-              <div className="flex items-center space-x-2 self-end sm:self-auto shrink-0">
+              {/* Mode Badge & Action Toolbar */}
+              <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-start sm:justify-end shrink-0 pt-1 sm:pt-0 print:hidden">
                 {summary.mode === 'AI_GEMINI' || summary.mode === 'AI_GEMINI_CACHED' || summary.mode === 'GEMINI_AI' ? (
-                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
-                    <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300 text-xs font-bold">
+                    <TrendingUp className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                     <span>Phân Tích AI {summary.mode === 'AI_GEMINI_CACHED' ? '(Tức Thì • Smart Cache)' : '(Zero-Trust Verified)'}</span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold">
-                    <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+                  <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-bold">
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                     <span>Phân Tích Sư Phạm (Hệ Thống Quy Tắc)</span>
                   </span>
                 )}
@@ -403,11 +435,20 @@ export default function StudentAiProgressPage() {
                   type="button"
                   onClick={() => handleGenerateSummary(true)}
                   disabled={loading || cooldown > 0}
-                  className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 text-[11px] font-bold flex items-center space-x-1 border border-teal-200 transition cursor-pointer disabled:opacity-50"
+                  className="px-2.5 py-1 min-h-[34px] sm:min-h-0 rounded-lg bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/60 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-300 text-[11px] font-bold flex items-center space-x-1 border border-teal-200 dark:border-teal-800 transition cursor-pointer disabled:opacity-50"
                   title="Yêu cầu AI phân tích lại lượt mới chuyên sâu"
                 >
-                  <RotateCcw className="w-3 h-3 text-teal-600" />
+                  <RotateCcw className="w-3 h-3 text-teal-600 dark:text-teal-400" />
                   <span>Phân Tích Lại</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-2.5 py-1 min-h-[34px] sm:min-h-0 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
+                  title="In phiếu báo cáo tiến độ hoặc lưu thành file PDF"
+                >
+                  <Printer className="w-3 h-3 text-slate-600 dark:text-slate-400" />
+                  <span>In / Lưu PDF</span>
                 </button>
                 <button
                   type="button"
@@ -415,10 +456,10 @@ export default function StudentAiProgressPage() {
                     sessionStorage.removeItem('etc_ai_progress_session');
                     setSummary(null);
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 transition cursor-pointer"
+                  className="px-2.5 py-1 min-h-[34px] sm:min-h-0 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
                   title="Xóa tóm tắt hiện tại để chọn lớp khác"
                 >
-                  <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
+                  <PlusCircle className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   <span>Tạo Phiên Mới</span>
                 </button>
               </div>
@@ -568,6 +609,59 @@ export default function StudentAiProgressPage() {
                     {summary.data.aiPhanTich?.loiKhuyen || 'Tập trung củng cố kiến thức ngữ pháp cốt lõi và từ vựng theo khung CEFR.'}
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* 4. Thanh Hành Động Nhanh (Quick Action CTAs) */}
+            <div className="p-3.5 rounded-xl bg-gradient-to-r from-teal-50/80 via-cyan-50/60 to-slate-50 dark:from-[#13222e] dark:via-[#142338] dark:to-[#111827] border border-teal-200/80 dark:border-teal-800/60 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-3 print:hidden">
+              <div className="flex items-center space-x-2 text-slate-700 dark:text-slate-200">
+                <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                <div>
+                  <p className="text-xs font-bold text-slate-800 dark:text-slate-100">
+                    Hành Động Khuyến Nghị Tiếp Theo
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Tận dụng ngay các định hướng từ AI để củng cố kỹ năng và tiến bộ vượt bậc
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+                <Link
+                  href="/student/ai-practice"
+                  className="flex-1 sm:flex-none justify-center px-3.5 py-2 min-h-[40px] rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1.5 shadow-sm shadow-teal-600/20 transition cursor-pointer"
+                  title="Chuyển sang làm bài tập trắc nghiệm AI để củng cố kiến thức"
+                >
+                  <BrainCircuit className="w-3.5 h-3.5" />
+                  <span>Luyện Đề AI Ngay</span>
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+                <Link
+                  href="/student/ai-consult"
+                  className="flex-1 sm:flex-none justify-center px-3.5 py-2 min-h-[40px] rounded-lg bg-white dark:bg-[#1a2540] hover:bg-slate-50 dark:hover:bg-[#223052] text-teal-800 dark:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-teal-300 dark:border-teal-700 shadow-2xs transition cursor-pointer"
+                  title="Nhận tư vấn lớp học tiếp theo phù hợp với trình độ CEFR"
+                >
+                  <Bot className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  <span>
+                    {summary.data.duLieuGoc?.xepLoai === 'DAT' ? 'Tư Vấn Lớp Kế Tiếp' : 'Tư Vấn Lộ Trình Ôn'}
+                  </span>
+                  <ArrowRight className="w-3 h-3 text-teal-600 dark:text-teal-400" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Khối Chữ Ký Xác Nhận Chính Thức (Chỉ xuất hiện khi In Ấn / Xuất PDF) */}
+            <div className="hidden print:grid grid-cols-2 gap-8 pt-8 mt-6 border-t border-slate-300 text-center text-xs text-slate-800 break-inside-avoid">
+              <div>
+                <p className="font-bold uppercase">Học Viên Xác Nhận</p>
+                <p className="italic text-[10px] text-slate-500 mt-0.5">(Ký và ghi rõ họ tên)</p>
+                <div className="h-16"></div>
+                <p className="font-semibold text-slate-900">{summary.data.hocVien?.hoTen}</p>
+              </div>
+              <div>
+                <p className="font-bold uppercase">Giáo Viên Phụ Trách / TT Ngoại Ngữ ETC</p>
+                <p className="italic text-[10px] text-slate-500 mt-0.5">(Xác nhận chuyên môn & kết quả)</p>
+                <div className="h-16"></div>
+                <p className="font-semibold text-slate-900">Ban Đào Tạo ETC English</p>
               </div>
             </div>
           </div>

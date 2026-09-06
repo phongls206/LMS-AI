@@ -150,16 +150,16 @@ export default function StudentAiConsultPage() {
     >
       <div className="space-y-6">
         {/* Form Container */}
-        <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-6">
+        <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-6">
           <form onSubmit={handleConsult} className="space-y-5 text-xs">
             {/* Free-text Goal Input */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <label className="block text-teal-800 font-bold uppercase tracking-wider text-xs flex items-center space-x-2">
-                  <Target className="w-4 h-4 text-teal-600" />
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                <label className="block text-teal-800 dark:text-teal-400 font-bold uppercase tracking-wider text-xs flex items-center space-x-2">
+                  <Target className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                   <span>Mục Tiêu & Nguyện Vọng Học Tập Của Bạn (Tự Nhiên)</span>
                 </label>
-                <span className="text-[11px] text-slate-500 font-medium">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
                   AI hiểu văn bản tự do tiếng Việt
                 </span>
               </div>
@@ -168,17 +168,17 @@ export default function StudentAiConsultPage() {
                 value={mucTieu}
                 onChange={(e) => setMucTieu(e.target.value)}
                 placeholder="Nhập bất kỳ mong muốn nào của bạn (VD: Muốn học tối 2-4-6, mục tiêu 6.5 IELTS trong 3 tháng, thích giáo viên phản xạ tốt...)"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 leading-relaxed font-sans"
+                className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-4 py-3 text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 leading-relaxed font-sans"
               />
 
               {/* Quick Goal Chips */}
-              <div className="flex flex-wrap gap-2 pt-1">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
                 {quickGoals.map((g, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setMucTieu(g.text)}
-                    className="px-2.5 py-1.5 rounded-lg bg-slate-50 hover:bg-teal-50 text-slate-700 hover:text-teal-800 border border-slate-200 text-[11px] font-medium transition flex items-center space-x-1 cursor-pointer"
+                    className="px-2.5 py-1.5 min-h-[34px] sm:min-h-0 rounded-lg bg-slate-50 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-[#1f2e47] text-slate-700 hover:text-teal-800 dark:text-slate-200 dark:hover:text-teal-300 border border-slate-200 dark:border-[#22324e] text-[11px] font-medium transition flex items-center space-x-1 cursor-pointer"
                   >
                     <span>{g.label}</span>
                   </button>
@@ -187,15 +187,15 @@ export default function StudentAiConsultPage() {
             </div>
 
             {/* Filter Row: CEFR + Days */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2 border-t border-slate-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 pt-2 border-t border-slate-100 dark:border-[#1e2d45]">
               <div>
-                <label className="block text-slate-700 font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-2 uppercase tracking-wider">
                   Trình Độ CEFR Hiện Tại
                 </label>
                 <select
                   value={cefr}
                   onChange={(e) => setCefr(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 font-bold text-sm focus:outline-none focus:border-teal-500 cursor-pointer"
+                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-100 font-bold text-sm focus:outline-none focus:border-teal-500 cursor-pointer"
                 >
                   <option value="A1">A1 — Mất gốc / Người mới bắt đầu</option>
                   <option value="A2">A2 — Tiền Trung Cấp (Sơ cấp vững)</option>
@@ -206,10 +206,10 @@ export default function StudentAiConsultPage() {
               </div>
 
               <div>
-                <label className="block text-slate-700 font-bold mb-2 uppercase tracking-wider">
+                <label className="block text-slate-700 dark:text-slate-300 font-bold mb-2 uppercase tracking-wider">
                   Các Buổi Bạn Rảnh Trong Tuần
                 </label>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
                   {[2, 3, 4, 5, 6, 7, 8].map((day) => {
                     const isSelected = selectedDays.includes(day);
                     return (
@@ -217,10 +217,10 @@ export default function StudentAiConsultPage() {
                         key={day}
                         type="button"
                         onClick={() => handleToggleDay(day)}
-                        className={`px-3 py-2 rounded-xl font-bold text-xs transition cursor-pointer ${
+                        className={`px-3 py-2 min-h-[38px] rounded-xl font-bold text-xs transition cursor-pointer flex items-center justify-center ${
                           isSelected
                             ? 'bg-teal-600 text-white shadow-sm'
-                            : 'bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900'
+                            : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                         }`}
                       >
                         {day === 8 ? 'Chủ Nhật' : `Thứ ${day}`}
@@ -234,7 +234,7 @@ export default function StudentAiConsultPage() {
             <button
               type="submit"
               disabled={loading || cooldown > 0}
-              className="w-full py-3.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white font-bold rounded-xl shadow-md shadow-teal-600/20 transition flex items-center justify-center space-x-2 text-sm disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+              className="w-full py-3.5 min-h-[46px] bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white font-bold rounded-xl shadow-md shadow-teal-600/20 transition flex items-center justify-center space-x-2 text-sm disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -257,14 +257,14 @@ export default function StudentAiConsultPage() {
         </div>
 
         {/* Security & Zero-Trust Notice */}
-        <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
+        <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <ShieldCheck className="w-4 h-4 text-teal-600 shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
             <span>
               <strong>Bảo vệ Zero-Trust & Grounding DB:</strong> Hệ thống tự động lọc ảo giác, chỉ đề xuất các lớp học thực sự đang mở tuyển sinh và còn chỗ trống trong CSDL.
             </span>
           </div>
-          <div className="hidden md:flex items-center space-x-1.5 text-teal-700 font-bold text-[11px]">
+          <div className="hidden md:flex items-center space-x-1.5 text-teal-700 dark:text-teal-300 font-bold text-[11px] shrink-0">
             <Zap className="w-3.5 h-3.5" />
             <span>Tích hợp AI Tiên Tiến (Zero-Trust Verified)</span>
           </div>
@@ -283,22 +283,22 @@ export default function StudentAiConsultPage() {
         {/* Results */}
         {recommendations.length > 0 && (
           <div className="space-y-4 animate-fadeIn">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="font-bold text-slate-900 text-base flex items-center space-x-2">
-                  <Bot className="w-4 h-4 text-teal-600" />
+                <h3 className="font-bold text-slate-900 dark:text-white text-base flex items-center space-x-2">
+                  <Bot className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                   <span>Top Lớp Học Được AI Đề Xuất Dành Riêng Cho Bạn</span>
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                   Được tính toán dựa trên mục tiêu: &ldquo;{mucTieu}&rdquo;
                 </p>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span
                   className={`text-[11px] font-bold px-3 py-1 rounded-full border ${
                     mode === 'AI_GEMINI' || mode === 'GEMINI_AI'
-                      ? 'bg-teal-50 text-teal-700 border-teal-200'
-                      : 'bg-amber-50 text-amber-700 border-amber-200'
+                      ? 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800'
+                      : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
                   }`}
                 >
                   {mode === 'AI_GEMINI' || mode === 'GEMINI_AI' ? '✨ Trí Tuệ Nhân Tạo (AI)' : '📋 Hệ Thống Quy Tắc (Rule-Based)'}
@@ -310,90 +310,90 @@ export default function StudentAiConsultPage() {
                     setRecommendations([]);
                     setMode('');
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 transition cursor-pointer"
+                  className="px-2.5 py-1 min-h-[32px] rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 dark:border-slate-700 transition cursor-pointer"
                   title="Xóa kết quả hiện tại để tạo phiên tư vấn mới"
                 >
-                  <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
+                  <PlusCircle className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   <span>Tạo Phiên Mới</span>
                 </button>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {recommendations.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col justify-between relative overflow-hidden group hover:border-teal-400 hover:shadow-md transition-all duration-300"
+                  className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm flex flex-col justify-between relative overflow-hidden group hover:border-teal-400 dark:hover:border-teal-500 hover:shadow-md transition-all duration-300"
                 >
                   {/* Top glowing strip */}
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 via-cyan-400 to-emerald-400"></div>
 
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
-                      <span className="font-mono text-xs font-bold text-teal-700 px-2.5 py-1 rounded-lg bg-teal-50 border border-teal-200">
+                      <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-300 px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800">
                         {item.maLopHoc}
                       </span>
-                      <span className="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center space-x-1">
+                      <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-full flex items-center space-x-1">
                         <CheckCircle className="w-3.5 h-3.5" />
                         <span>{item.doTuongThich || 95}% Phù hợp</span>
                       </span>
                     </div>
 
                     <div>
-                      <h4 className="text-base font-bold text-slate-900 group-hover:text-teal-700 transition leading-snug">
+                      <h4 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-teal-400 transition leading-snug">
                         {item.tenLopHoc}
                       </h4>
                       {item.lichHocText && (
-                        <p className="text-xs text-slate-500 mt-1 flex items-center space-x-1">
-                          <Calendar className="w-3.5 h-3.5 text-teal-600" />
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center space-x-1">
+                          <Calendar className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                           <span>Lịch học: {item.lichHocText}</span>
                         </p>
                       )}
                     </div>
 
                     {/* AI Reasoning Box */}
-                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
-                      <div className="flex items-center space-x-1.5 text-amber-700 font-bold text-[11px] uppercase tracking-wider">
-                        <Lightbulb className="w-3.5 h-3.5 text-amber-600" />
+                    <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] space-y-2">
+                      <div className="flex items-center space-x-1.5 text-amber-700 dark:text-amber-400 font-bold text-[11px] uppercase tracking-wider">
+                        <Lightbulb className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                         <span>Phân Tích Của AI</span>
                       </div>
-                      <p className="text-xs text-slate-700 leading-relaxed">
+                      <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
                         {item.lyDoPhuHop}
                       </p>
                     </div>
 
                     {/* Highlights & Roadmap */}
                     {item.diemNoiBat && (
-                      <div className="text-xs text-slate-700 space-y-1">
-                        <p className="text-teal-700 font-bold flex items-center space-x-1 text-[11px]">
+                      <div className="text-xs text-slate-700 dark:text-slate-200 space-y-1">
+                        <p className="text-teal-700 dark:text-teal-400 font-bold flex items-center space-x-1 text-[11px]">
                           <Zap className="w-3 h-3" />
                           <span>Điểm nổi bật:</span>
                         </p>
-                        <p className="text-slate-600 pl-4">{item.diemNoiBat}</p>
+                        <p className="text-slate-600 dark:text-slate-300 pl-4">{item.diemNoiBat}</p>
                       </div>
                     )}
 
                     {item.loTrinhKhuyenNghi && (
-                      <div className="text-xs text-slate-700 space-y-1">
-                        <p className="text-emerald-700 font-bold flex items-center space-x-1 text-[11px]">
+                      <div className="text-xs text-slate-700 dark:text-slate-200 space-y-1">
+                        <p className="text-emerald-700 dark:text-emerald-400 font-bold flex items-center space-x-1 text-[11px]">
                           <Compass className="w-3 h-3" />
                           <span>Lộ trình tiếp theo:</span>
                         </p>
-                        <p className="text-slate-600 pl-4">{item.loTrinhKhuyenNghi}</p>
+                        <p className="text-slate-600 dark:text-slate-300 pl-4">{item.loTrinhKhuyenNghi}</p>
                       </div>
                     )}
                   </div>
 
-                  <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between">
+                  <div className="pt-4 sm:pt-5 mt-4 border-t border-slate-100 dark:border-[#1e2d45] flex items-center justify-between gap-2">
                     <div>
-                      <p className="text-[10px] text-slate-500 uppercase font-semibold">Học phí</p>
-                      <p className="text-sm font-bold text-teal-800">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Học phí</p>
+                      <p className="text-sm font-bold text-teal-800 dark:text-teal-300">
                         {item.hocPhi ? Number(item.hocPhi).toLocaleString('vi-VN') + ' đ' : 'Theo quy chế'}
                       </p>
                     </div>
                     <Link
                       href="/student/enroll"
-                      className="px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition flex items-center space-x-1.5 shadow-sm"
+                      className="px-3.5 sm:px-4 py-2 sm:py-2.5 min-h-[38px] rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition flex items-center space-x-1.5 shadow-sm"
                     >
                       <span>Đăng Ký Ngay</span>
                       <ArrowRight className="w-3.5 h-3.5" />

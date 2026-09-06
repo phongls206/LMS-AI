@@ -429,22 +429,25 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   background: #334155;
 }
 
-/* ── Print Media Styles for Official Accounting Receipts ──────────────── */
+/* ── Print Media Styles for Official Accounting Receipts & AI Progress Reports ─ */
 @media print {
   body * {
     visibility: hidden;
   }
   #etc-printable-receipt,
-  #etc-printable-receipt * {
+  #etc-printable-receipt *,
+  #etc-printable-progress,
+  #etc-printable-progress * {
     visibility: visible;
   }
-  #etc-printable-receipt {
-    position: fixed;
+  #etc-printable-receipt,
+  #etc-printable-progress {
+    position: absolute;
     left: 0;
     top: 0;
     width: 100% !important;
     margin: 0 !important;
-    padding: 24px !important;
+    padding: 20px !important;
     background: #ffffff !important;
     color: #000000 !important;
     box-shadow: none !important;

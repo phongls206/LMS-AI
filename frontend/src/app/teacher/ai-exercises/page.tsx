@@ -16,6 +16,7 @@ import {
   Clock,
   History,
   Printer,
+  AlertTriangle,
 } from 'lucide-react';
 import { ExerciseHistoryModal } from '../../../components/ai/ExerciseHistoryModal';
 import { PaperExamModal } from '../../../components/ai/PaperExamModal';
@@ -205,8 +206,8 @@ export default function TeacherAiExercisesPage() {
       return {
         isMulti: true,
         isTrueFalse: false,
-        badgeLabel: '☑ Chọn nhiều đáp án',
-        badgeClass: 'bg-purple-50 text-purple-700 border-purple-200',
+        badgeLabel: '🔘 Chọn nhiều đáp án',
+        badgeClass: 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800',
         instruction: 'Học viên có thể chọn nhiều phương án đúng',
       };
     }
@@ -214,16 +215,16 @@ export default function TeacherAiExercisesPage() {
       return {
         isMulti: false,
         isTrueFalse: true,
-        badgeLabel: '⚖️ Đúng / Sai (True/False)',
-        badgeClass: 'bg-sky-50 text-sky-700 border-sky-200',
+        badgeLabel: '⚖️ Đúng / Sai',
+        badgeClass: 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800',
         instruction: 'Dạng bài Đúng (True) hoặc Sai (False)',
       };
     }
     return {
       isMulti: false,
       isTrueFalse: false,
-      badgeLabel: '🔘 1 đáp án đúng (Single Choice)',
-      badgeClass: 'bg-slate-100 text-slate-700 border-slate-200',
+      badgeLabel: '🔘 Chọn 1 đáp án',
+      badgeClass: 'bg-slate-100 dark:bg-[#1a2540] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-[#223052]',
       instruction: 'Chọn 1 đáp án chính xác nhất',
     };
   };
@@ -346,43 +347,68 @@ export default function TeacherAiExercisesPage() {
     return count;
   };
 
+  const isExamInProgress = !!result?.data?.cauHoi && !submitted;
+
   return (
     <AppLayout
       allowedRoles={['GIAO_VIEN', 'QUAN_LY']}
-      title="Biên Soạn & Sinh Đề Trắc Nghiệm Trợ Giảng AI"
-      subtitle="Tạo tức thì bộ câu hỏi trắc nghiệm kèm đáp án và lời giải chi tiết, phục vụ ôn tập và kiểm tra trên lớp"
+      title="Biên Soạn & Thử Nghiệm Bài Tập AI"
+      subtitle="Giáo viên chủ động sinh bài luyện tập theo chuẩn khung CEFR, kiểm thử đáp án và lưu đề thi"
     >
       <div className="space-y-6">
-        {/* Generator Form */}
-        <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+        {/* Form Cấu Hình Sinh Đề */}
+        <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-[#1e2d45] pb-3">
             <div className="flex items-center space-x-2">
               <BrainCircuit className="w-4 h-4 text-teal-600" />
-              <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+              <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
                 Biên Soạn Bộ Đề Bài Tập AI
               </span>
             </div>
             <button
               type="button"
               onClick={() => setShowHistoryModal(true)}
-              className="px-3.5 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer self-start sm:self-auto shadow-2xs"
+              className="px-3.5 py-1.5 min-h-[40px] rounded-xl bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer self-start sm:self-auto shadow-2xs"
             >
-              <History className="w-3.5 h-3.5 text-teal-600" />
+              <History className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
               <span>Lịch Sử Đề Đã Tạo</span>
             </button>
           </div>
 
+          {/* Cảnh báo khóa sinh đề khi đang có bài dở dang */}
+          {isExamInProgress && (
+            <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/70 text-amber-900 dark:text-amber-200 text-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs animate-fadeIn">
+              <div className="flex items-center space-x-2.5">
+                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                <div>
+                  <span className="font-bold">Đang có bộ đề làm thử dở dang: </span>
+                  <span>
+                    Bạn đã chọn {countAnswered()}/{result.data.cauHoi.length} câu. Hãy nộp bài thử hoặc nhấn &ldquo;Hủy & Tạo Đề Khác&rdquo; nếu muốn sinh đề mới.
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleResetSession}
+                className="px-3 py-1.5 min-h-[40px] bg-amber-100 hover:bg-amber-200 dark:bg-amber-900/80 dark:hover:bg-amber-800 text-amber-900 dark:text-amber-100 font-bold rounded-lg text-xs transition shrink-0 cursor-pointer self-end sm:self-auto border border-amber-300 dark:border-amber-700"
+              >
+                Hủy & Tạo Đề Khác
+              </button>
+            </div>
+          )}
+
           <form onSubmit={handleGenerate} className="space-y-4 text-xs">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
               <div className="md:col-span-5">
-                <label className="block font-bold text-teal-800 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
-                  <Layers className="w-3.5 h-3.5 text-teal-600" />
+                <label className="block font-bold text-teal-800 dark:text-teal-400 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
+                  <Layers className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   <span>Chọn Chủ Đề Ngữ Pháp / Từ Vựng</span>
                 </label>
                 <select
                   value={selectedTopic}
+                  disabled={isExamInProgress}
                   onChange={(e) => setSelectedTopic(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 font-semibold focus:outline-none focus:border-teal-500 cursor-pointer"
+                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-teal-500 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {PREDEFINED_TOPICS.map((t) => (
                     <option key={t} value={t}>
@@ -393,13 +419,14 @@ export default function TeacherAiExercisesPage() {
               </div>
 
               <div className="md:col-span-2">
-                <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                   Độ Khó CEFR
                 </label>
                 <select
                   value={cefr}
+                  disabled={isExamInProgress}
                   onChange={(e) => setCefr(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-teal-500 cursor-pointer"
+                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3 py-2.5 text-slate-900 dark:text-slate-100 font-bold focus:outline-none focus:border-teal-500 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="A1">A1 — Sơ cấp</option>
                   <option value="A2">A2 — Tiền trung cấp</option>
@@ -410,30 +437,32 @@ export default function TeacherAiExercisesPage() {
               </div>
 
               <div className="md:col-span-3">
-                <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                   Dạng Câu Hỏi
                 </label>
                 <select
                   value={loaiCauHoi}
+                  disabled={isExamInProgress}
                   onChange={(e) => setLoaiCauHoi(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-teal-800 font-bold focus:outline-none focus:border-teal-500 cursor-pointer"
+                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3 py-2.5 text-teal-800 dark:text-teal-300 font-bold focus:outline-none focus:border-teal-500 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="MIXED">🌟 Hỗn hợp (Trắc nghiệm, Đúng/Sai, Nhiều đáp án)</option>
-                  <option value="SINGLE">🔘 Trắc nghiệm 1 đáp án (A, B, C, D)</option>
+                  <option value="SINGLE">🔘 Chọn 1 đáp án (A, B, C, D)</option>
                   <option value="TRUE_FALSE">⚖️ Đúng / Sai (True / False)</option>
-                  <option value="MULTIPLE">☑️ Chọn nhiều đáp án đúng</option>
+                  <option value="MULTIPLE">🔘 Chọn nhiều đáp án</option>
                 </select>
               </div>
 
               <div className="md:col-span-2">
-                <label className="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                   Số Lượng
                 </label>
                 <div className="flex space-x-2">
                   <select
                     value={soLuong}
+                    disabled={isExamInProgress}
                     onChange={(e) => setSoLuong(+e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2.5 text-teal-800 focus:outline-none focus:border-teal-500 font-bold cursor-pointer"
+                    className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-2.5 py-2.5 text-teal-800 dark:text-teal-300 focus:outline-none focus:border-teal-500 font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <option value={5}>5 câu</option>
                     <option value={10}>10 câu</option>
@@ -441,8 +470,17 @@ export default function TeacherAiExercisesPage() {
                   </select>
                   <button
                     type="submit"
-                    disabled={loading || cooldown > 0}
-                    className="px-4 h-10 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white font-bold rounded-xl flex items-center justify-center space-x-1.5 shadow-md shadow-teal-600/20 transition disabled:opacity-50 shrink-0 cursor-pointer disabled:cursor-not-allowed"
+                    disabled={loading || cooldown > 0 || isExamInProgress}
+                    title={
+                      isExamInProgress
+                        ? 'Đang có bộ đề thử nghiệm dở dang. Vui lòng nộp bài hoặc nhấn "Hủy & Tạo Đề Khác" để tạo đề mới.'
+                        : 'Biên soạn bài tập mới với AI'
+                    }
+                    className={`px-4 h-10 min-h-[40px] font-bold rounded-xl flex items-center justify-center space-x-1.5 shadow-md transition shrink-0 ${
+                      isExamInProgress
+                        ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed opacity-75 shadow-none'
+                        : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white shadow-teal-600/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                    }`}
                   >
                     {loading ? (
                       <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -450,6 +488,11 @@ export default function TeacherAiExercisesPage() {
                       <span className="flex items-center space-x-1 text-amber-100 text-[11px] font-bold">
                         <Clock className="w-3.5 h-3.5 text-amber-200 animate-spin" />
                         <span>{cooldown}s</span>
+                      </span>
+                    ) : isExamInProgress ? (
+                      <span className="flex items-center space-x-1 text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                        <BrainCircuit className="w-3.5 h-3.5 text-slate-400" />
+                        <span>Đang Làm</span>
                       </span>
                     ) : (
                       <>
@@ -519,14 +562,14 @@ export default function TeacherAiExercisesPage() {
         {/* Result Area */}
         {result?.data?.cauHoi && (
           <div className="space-y-6">
-            <div className="p-4 rounded-xl bg-teal-50 border border-teal-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center space-x-2 text-teal-900 text-xs font-bold">
-                <BookOpen className="w-4 h-4 text-teal-600 shrink-0" />
+            <div className="p-3.5 sm:p-4 rounded-xl bg-teal-50 dark:bg-[#13222e] border border-teal-200 dark:border-teal-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center space-x-2 text-teal-900 dark:text-teal-200 text-xs font-bold">
+                <BookOpen className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                 <span>
                   Chủ đề: <strong>{result.data.chuDe}</strong> — Trình độ: <strong>CEFR {result.data.trinhDo}</strong> ({result.data.cauHoi.length} câu)
                 </span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
                 <button
                   type="button"
                   onClick={() => {
@@ -534,18 +577,19 @@ export default function TeacherAiExercisesPage() {
                     setTeacherViewKey(nextKey);
                     saveToSession(result, userAnswers, submitted, nextKey);
                   }}
-                  className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-teal-800 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 transition cursor-pointer shadow-xs"
+                  className="px-3 py-1.5 min-h-[34px] rounded-lg bg-white dark:bg-[#162032] hover:bg-slate-50 dark:hover:bg-[#1e2d45] text-teal-800 dark:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-slate-700 transition cursor-pointer shadow-xs"
                 >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>{teacherViewKey ? 'Ẩn Đáp Án Mẫu' : 'Xem Nhanh Đáp Án (Teacher Mode)'}</span>
+                  <Eye className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  <span className="hidden sm:inline">{teacherViewKey ? 'Ẩn Đáp Án Mẫu' : 'Xem Nhanh Đáp Án (Teacher Mode)'}</span>
+                  <span className="sm:hidden">{teacherViewKey ? 'Ẩn Đáp Án' : 'Xem Đáp Án'}</span>
                 </button>
                 <span
                   className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${
                     result.mode === 'AI_CACHE' || result.mode === 'AI_COMMUNITY_CACHE'
-                      ? 'bg-amber-100 text-amber-800 border-amber-300'
+                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800'
                       : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
-                      ? 'bg-teal-100 text-teal-800 border-teal-300'
-                      : 'bg-slate-100 text-slate-700 border-slate-300'
+                      ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border-teal-300 dark:border-teal-800'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700'
                   }`}
                 >
                   {result.mode === 'AI_CACHE'
@@ -559,10 +603,10 @@ export default function TeacherAiExercisesPage() {
                 <button
                   type="button"
                   onClick={() => setPrintExamData(result.data)}
-                  className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-teal-800 text-xs font-bold flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer shadow-xs"
+                  className="px-3 py-1.5 min-h-[34px] rounded-lg bg-white dark:bg-[#162032] hover:bg-slate-50 dark:hover:bg-[#1e2d45] text-teal-800 dark:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-teal-200 dark:border-teal-800 transition cursor-pointer shadow-xs"
                   title="In phiếu bài tập ra giấy A4 hoặc lưu file PDF để phát cho học viên"
                 >
-                  <Printer className="w-3.5 h-3.5 text-teal-600" />
+                  <Printer className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   <span>In Phiếu Bài Tập</span>
                 </button>
               </div>
@@ -579,18 +623,18 @@ export default function TeacherAiExercisesPage() {
                 return (
                   <div
                     key={q.id || idx}
-                    className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4"
+                    className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-4"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-start space-x-3">
-                        <span className="w-6 h-6 rounded-full bg-teal-50 border border-teal-200 text-teal-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="w-6 h-6 rounded-full bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
                           {idx + 1}
                         </span>
                         <div className="space-y-1">
-                          <p className="text-sm font-bold text-slate-900 leading-relaxed">
+                          <p className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-relaxed">
                             {q.noiDung}
                           </p>
-                          <p className="text-[11px] text-slate-500 italic">
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 italic">
                             {typeInfo.instruction}
                           </p>
                         </div>
@@ -603,7 +647,7 @@ export default function TeacherAiExercisesPage() {
                     </div>
 
                     {/* Options */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pl-9">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 pl-0 sm:pl-9">
                       {getRenderOptions(q, typeInfo.isTrueFalse).map(([optKey, optVal]: [string, any]) => {
                           const isChosen = Array.isArray(selected)
                             ? selected.includes(optKey)
@@ -626,17 +670,17 @@ export default function TeacherAiExercisesPage() {
                             : q.dapAnDung === optKey;
 
                           let btnClass =
-                            'bg-slate-50 border-slate-200 text-slate-700 hover:border-teal-300 hover:bg-teal-50/40';
+                            'bg-slate-50 dark:bg-[#162238] border-slate-200 dark:border-[#223554] text-slate-800 dark:text-slate-100 hover:border-teal-300 dark:hover:border-teal-500 hover:bg-teal-50/50 dark:hover:bg-teal-950/40';
 
                           if (revealMode) {
                             if (isAnswerKey) {
                               btnClass =
-                                'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold ring-1 ring-emerald-300';
+                                'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-600 text-emerald-800 dark:text-emerald-200 font-bold ring-1 ring-emerald-300';
                             } else if (isChosen && !isCorrect && submitted) {
                               btnClass =
-                                'bg-rose-50 border-rose-300 text-rose-800 font-bold ring-1 ring-rose-300';
+                                'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-600 text-rose-800 dark:text-rose-200 font-bold ring-1 ring-rose-300';
                             } else {
-                              btnClass = 'bg-slate-50/50 border-slate-200 text-slate-400 opacity-60';
+                              btnClass = 'bg-slate-50/50 dark:bg-[#111927] border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 opacity-60';
                             }
                           } else if (isChosen) {
                             btnClass =
@@ -648,18 +692,20 @@ export default function TeacherAiExercisesPage() {
                               key={optKey}
                               type="button"
                               onClick={() => handleSelectOption(idx, optKey, typeInfo.isMulti)}
-                              className={`p-3 rounded-xl border text-xs text-left transition flex items-center space-x-2.5 cursor-pointer ${btnClass}`}
+                              className={`p-3 min-h-[42px] rounded-xl border text-xs text-left transition flex items-center space-x-2.5 cursor-pointer ${btnClass}`}
                             >
                               <span
-                                className={`w-5 h-5 rounded-md flex items-center justify-center font-bold text-[11px] shrink-0 ${
+                                className={`w-5 h-5 rounded-md flex items-center justify-center font-bold text-[11px] shrink-0 transition-colors ${
                                   isChosen
                                     ? 'bg-white/20 text-white'
-                                    : 'bg-slate-200/80 text-slate-700'
+                                    : 'bg-slate-200/90 dark:bg-[#253550] text-slate-800 dark:text-teal-300 border border-transparent dark:border-[#2d4265]'
                                 }`}
                               >
                                 {typeInfo.isMulti ? (isChosen ? '☑' : '☐') : optKey}
                               </span>
-                              <span className="leading-snug">{optVal}</span>
+                              <span className={`leading-snug font-medium ${isChosen ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
+                                {optVal}
+                              </span>
                             </button>
                           );
                         })}
@@ -668,10 +714,10 @@ export default function TeacherAiExercisesPage() {
                     {/* Explanation */}
                     {revealMode && (
                       <div
-                        className={`ml-9 p-3.5 rounded-xl border text-xs ${
+                        className={`ml-0 sm:ml-9 p-3 sm:p-3.5 rounded-xl border text-xs ${
                           isCorrect
-                            ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                            : 'bg-rose-50 border-rose-200 text-rose-800'
+                            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/70 text-emerald-800 dark:text-emerald-200'
+                            : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/70 text-rose-800 dark:text-rose-200'
                         }`}
                       >
                         <div className="flex items-center space-x-1.5 font-bold mb-1">
@@ -686,7 +732,7 @@ export default function TeacherAiExercisesPage() {
                               : `Đáp án chuẩn là: [${formatCorrectAnswer(q)}]`}
                           </span>
                         </div>
-                        <p className="text-slate-700 text-[11px] leading-relaxed">
+                        <p className="text-[11px] leading-relaxed opacity-90">
                           {q.giaiThich}
                         </p>
                       </div>
@@ -697,15 +743,15 @@ export default function TeacherAiExercisesPage() {
             </div>
 
             {/* Bottom actions */}
-            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
               {submitted ? (
                 <>
                   <div className="flex items-center space-x-3">
-                    <span className="text-xs text-slate-500 font-medium">Kết quả trải nghiệm:</span>
-                    <span className="text-xl font-black text-teal-700">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">Kết quả trải nghiệm:</span>
+                    <span className="text-xl font-black text-teal-700 dark:text-teal-400">
                       {calculateScore()} / {result.data.cauHoi.length} Câu Đúng
                     </span>
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-teal-50 border border-teal-200 text-teal-800">
+                    <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300">
                       ({((calculateScore() / result.data.cauHoi.length) * 100).toFixed(0)}%)
                     </span>
                   </div>
@@ -713,10 +759,10 @@ export default function TeacherAiExercisesPage() {
                     <button
                       type="button"
                       onClick={() => setPrintExamData(result.data)}
-                      className="flex-1 sm:flex-none justify-center px-3.5 py-2 bg-white hover:bg-slate-50 text-teal-800 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer shadow-xs"
+                      className="flex-1 sm:flex-none justify-center px-3.5 py-2 min-h-[40px] bg-white dark:bg-[#162032] hover:bg-slate-50 dark:hover:bg-[#1e2d45] text-teal-800 dark:text-teal-300 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 dark:border-teal-800 transition cursor-pointer shadow-xs"
                       title="In phiếu bài tập này ra giấy A4 hoặc lưu PDF"
                     >
-                      <Printer className="w-3.5 h-3.5 text-teal-600" />
+                      <Printer className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>In Phiếu Bài Tập</span>
                     </button>
                     <button
@@ -726,7 +772,7 @@ export default function TeacherAiExercisesPage() {
                         setUserAnswers({});
                         saveToSession(result, {}, false, teacherViewKey);
                       }}
-                      className="flex-1 sm:flex-none justify-center px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
+                      className="flex-1 sm:flex-none justify-center px-4 py-2 min-h-[40px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl flex items-center space-x-1.5 transition cursor-pointer"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>Làm Lại Đề Này</span>
@@ -734,27 +780,27 @@ export default function TeacherAiExercisesPage() {
                     <button
                       type="button"
                       onClick={handleResetSession}
-                      className="w-full sm:w-auto justify-center px-4 py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 transition cursor-pointer"
+                      className="w-full sm:w-auto justify-center px-4 py-2 min-h-[40px] bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-300 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 dark:border-teal-800 transition cursor-pointer"
                     >
-                      <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
+                      <PlusCircle className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>Tạo Đề Mới</span>
                     </button>
                   </div>
                 </>
               ) : (
                 <>
-                  <span className="text-xs text-slate-500 font-medium">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
                     Đã chọn thử:{' '}
-                    <strong className="text-slate-900 font-bold">{countAnswered()}</strong> /{' '}
+                    <strong className="text-slate-900 dark:text-slate-100 font-bold">{countAnswered()}</strong> /{' '}
                     {result.data.cauHoi.length} câu
                   </span>
                   <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-2 w-full sm:w-auto">
                     <button
                       type="button"
                       onClick={handleResetSession}
-                      className="px-4 py-2.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl flex items-center justify-center space-x-1.5 transition cursor-pointer"
+                      className="px-4 py-2.5 sm:py-2 min-h-[42px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl flex items-center justify-center space-x-1.5 transition cursor-pointer border border-transparent dark:border-slate-700"
                     >
-                      <PlusCircle className="w-3.5 h-3.5 text-slate-500" />
+                      <PlusCircle className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                       <span>Hủy & Tạo Đề Khác</span>
                     </button>
                     <button
@@ -764,7 +810,7 @@ export default function TeacherAiExercisesPage() {
                         setSubmitted(true);
                         saveToSession(result, userAnswers, true, teacherViewKey);
                       }}
-                      className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-md shadow-teal-600/20 transition disabled:opacity-40 cursor-pointer flex items-center justify-center"
+                      className="px-6 py-2.5 min-h-[42px] bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold rounded-xl shadow-md shadow-teal-600/20 transition disabled:opacity-40 cursor-pointer flex items-center justify-center"
                     >
                       Nộp Bài Thử Nghiệm
                     </button>

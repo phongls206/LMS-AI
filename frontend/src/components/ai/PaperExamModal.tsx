@@ -649,14 +649,14 @@ export const PaperExamModal: React.FC<PaperExamModalProps> = ({
           </div>
 
           {/* Footer Control */}
-          <div className="px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 shrink-0">
+          <div className="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs text-slate-500 dark:text-slate-400 shrink-0">
             <span>
               💡 Mẹo: Khi hộp thoại in mở ra, bạn có thể chọn máy in hoặc chọn <strong>"Save as PDF" (Lưu dưới dạng PDF)</strong> để tải về máy.
             </span>
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold transition cursor-pointer"
+              className="w-full sm:w-auto px-4 py-2 min-h-[38px] flex items-center justify-center rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold transition cursor-pointer shrink-0"
             >
               Đóng
             </button>
