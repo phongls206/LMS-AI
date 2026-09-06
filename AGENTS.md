@@ -65,13 +65,14 @@ Khi người dùng yêu cầu thực thi các tác vụ chuyên biệt hoặc �
 
 | Sub-Agent | File Cấu Hình | Vai Trò & Chuyên Môn |
 | :--- | :--- | :--- |
+| **Business Analyst** | [`.agents/agents/business-analyst-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/business-analyst-agent.md) | Khảo sát hiện trạng, bộ 20 câu hỏi, lập SRS, đặc tả 14 Use Case, Business Rules & RTM |
+| **Doc & Diagram Architect** | [`.agents/agents/doc-architect-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/doc-architect-agent.md) | Quản lý báo cáo lớn 9 chương, Sơ đồ PlantUML/Mermaid, Cẩm nang sử dụng 4 vai trò |
 | **DB Architect** | [`.agents/agents/db-architect-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/db-architect-agent.md) | Kiến trúc CSDL 14 bảng chuẩn 3NF, Prisma Schema, Migrations, Indexing |
 | **Backend Core** | [`.agents/agents/backend-core-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/backend-core-agent.md) | Phát triển NestJS Modules, Services, Business Rules, JWT & RBAC Guards |
 | **Frontend UI/UX** | [`.agents/agents/frontend-ui-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/frontend-ui-agent.md) | Giao diện Next.js App Router, Responsive Mobile/PC, In ấn A4, UI Styling |
 | **AI Engineer** | [`.agents/agents/ai-engineer-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/ai-engineer-agent.md) | Tích hợp Gemini API, Prompt Engineering, Chống ảo giác, Fallback Cache |
 | **QA & Testing** | [`.agents/agents/qa-testing-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/qa-testing-agent.md) | Thiết kế Test Matrix 14 Use Cases, Chạy Jest Unit/E2E Test, Kiểm toán số học |
 | **Security Auditor** | [`.agents/agents/security-auditor-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/security-auditor-agent.md) | Rà soát OWASP Top 10, Argon2 hashing, Chống IDOR, Bảo mật API Secret |
-| **Doc & Diagram Architect** | [`.agents/agents/doc-architect-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/doc-architect-agent.md) | Quản lý tài liệu lớn `EnglishCenterTOP.docx`, Sơ đồ PlantUML/Mermaid |
 | **Code Reviewer / Tech Lead** | [`.agents/agents/code-reviewer-agent.md`](file:///d:/MyProjects/lms-ai/.agents/agents/code-reviewer-agent.md) | Kiểm duyệt chất lượng mã nguồn, Clean Code, SOLID, TypeScript Type-safety |
 
 Chi tiết quy trình phối hợp và hợp đồng chuyển giao xem tại: [`.agents/agents/README.md`](file:///d:/MyProjects/lms-ai/.agents/agents/README.md).
