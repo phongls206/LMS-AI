@@ -41,6 +41,25 @@ const PREDEFINED_TOPICS = [
   'CUSTOM',
 ];
 
+const TOPIC_ICONS: Record<string, string> = {
+  'Thì Hiện Tại Hoàn Thành (Present Perfect Tense)': '⏳',
+  'Câu Điều Kiện Loại 1, 2, 3 (Conditional Sentences)': '🔀',
+  'Mệnh Đề Quan Hệ (Relative Clauses)': '🔗',
+  'Câu Bị Động Nâng Cao (Passive Voice)': '🔄',
+  'Cụm Động Từ Thông Dụng (Common Phrasal Verbs)': '🎯',
+  'Từ Vựng Tiếng Anh Công Sở & Giao Tiếp (Business English)': '💼',
+  'Tiếng Anh Chuyên Ngành Công Nghệ Thông Tin (IT & Tech)': '💻',
+  'Từ Vựng Du Lịch, Khách Sạn & Khám Phá (Travel & Tourism)': '✈️',
+  'Điện Ảnh, Âm Nhạc & Giải Trí (Entertainment & Media)': '🎬',
+  'Giới Từ Chỉ Thời Gian & Nơi Chốn (Prepositions)': '📍',
+  'Động Từ Khuyết Thiếu (Modal Verbs)': '🗝️',
+  'Sự Hòa Hợp Chủ Vị (Subject-Verb Agreement)': '⚖️',
+  'Câu Tường Thuật Gián Tiếp (Reported Speech)': '💬',
+  'So Sánh Hơn & So Sánh Nhất (Comparatives & Superlatives)': '📈',
+  'Từ Vựng IELTS Chủ Đề Môi Trường & Xã Hội': '🌿',
+  'CUSTOM': '✍️',
+};
+
 const QUICK_SUGGESTIONS = [
   'Công nghệ thông tin (IT)',
   'Du lịch & Khám phá (Travel)',
@@ -383,7 +402,9 @@ export default function StudentAiPracticePage() {
                 >
                   {PREDEFINED_TOPICS.map((t) => (
                     <option key={t} value={t}>
-                      {t === 'CUSTOM' ? '✍️ Nhập chủ đề tùy chỉnh khác...' : `📚 ${t}`}
+                      {t === 'CUSTOM'
+                        ? '✍️ Nhập chủ đề tùy chỉnh khác...'
+                        : `${TOPIC_ICONS[t] || '📘'} ${t}`}
                     </option>
                   ))}
                 </select>
@@ -419,10 +440,10 @@ export default function StudentAiPracticePage() {
                   onChange={(e) => setLoaiCauHoi(e.target.value)}
                   className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3 py-2.5 text-teal-800 dark:text-teal-300 font-bold focus:outline-none focus:border-teal-500 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <option value="MIXED">🌟 Hỗn hợp (Trắc nghiệm, Đúng/Sai, Nhiều đáp án)</option>
-                  <option value="SINGLE">🔘 Chọn 1 đáp án (A, B, C, D)</option>
-                  <option value="TRUE_FALSE">⚖️ Đúng / Sai (True / False)</option>
-                  <option value="MULTIPLE">🔘 Chọn nhiều đáp án</option>
+                  <option value="MIXED">Hỗn hợp (Trắc nghiệm, Đúng/Sai, Nhiều đáp án)</option>
+                  <option value="SINGLE">Chọn 1 đáp án (A, B, C, D)</option>
+                  <option value="TRUE_FALSE">Đúng / Sai (True / False)</option>
+                  <option value="MULTIPLE">Chọn nhiều đáp án</option>
                 </select>
               </div>
 
@@ -576,25 +597,18 @@ export default function StudentAiPracticePage() {
                     key={q.id || idx}
                     className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-4"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex items-start space-x-3">
-                        <span className="w-6 h-6 rounded-full bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          {idx + 1}
-                        </span>
-                        <div className="space-y-1">
-                          <p className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-relaxed">
-                            {q.noiDung}
-                          </p>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 italic">
-                            {typeInfo.instruction}
-                          </p>
-                        </div>
-                      </div>
-                      <span
-                        className={`text-[10px] font-bold px-2.5 py-1 rounded-md border shrink-0 ${typeInfo.badgeClass}`}
-                      >
-                        {typeInfo.badgeLabel}
+                    <div className="flex items-start space-x-3">
+                      <span className="w-6 h-6 rounded-full bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                        {idx + 1}
                       </span>
+                      <div className="space-y-1 flex-1 min-w-0">
+                        <p className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-relaxed">
+                          {q.noiDung}
+                        </p>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 italic">
+                          {typeInfo.instruction}
+                        </p>
+                      </div>
                     </div>
 
                     <div
