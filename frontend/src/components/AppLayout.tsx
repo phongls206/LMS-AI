@@ -155,19 +155,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'QUAN_LY':
-        return <span className="px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs">Quản Trị Viên (Admin)</span>;
+        return <span className="px-2.5 py-0.5 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 font-bold text-xs">Quản Trị Viên</span>;
       case 'GIAO_VIEN':
-        return <span className="px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-teal-700 font-bold text-xs">Giảng Viên</span>;
+        return <span className="px-2.5 py-0.5 rounded-lg bg-teal-50 border border-teal-200 text-teal-700 font-bold text-xs">Giảng Viên</span>;
       case 'HOC_VIEN':
-        return <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-xs">Học Viên</span>;
+        return <span className="px-2.5 py-0.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-xs">Học Viên</span>;
       case 'TU_VAN_VIEN':
-        return <span className="px-2.5 py-0.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-700 font-bold text-xs">Tư Vấn Viên</span>;
+        return <span className="px-2.5 py-0.5 rounded-lg bg-cyan-50 border border-cyan-200 text-cyan-700 font-bold text-xs">Tư Vấn Viên</span>;
       default:
         return null;
     }
   };
 
-  const hoTen = user.hoTen || user.hoSoHocVien?.hoTen || user.hoSoGiaoVien?.hoTen;
+  const rawHoTen = user.hoTen || user.hoSoHocVien?.hoTen || user.hoSoGiaoVien?.hoTen;
+  const hoTen = rawHoTen ? rawHoTen.replace(/\s*\([Aa]dmin\)/g, '').trim() : null;
   const displayName = hoTen || user.tenDangNhap;
 
   return (
@@ -412,7 +413,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                     <span>Quyền Hạn:</span>
                   </span>
-                  <span className="font-bold text-purple-700 dark:text-purple-300">Toàn Quyền Quản Trị Trung Tâm (Admin)</span>
+                  <span className="font-bold text-purple-700 dark:text-purple-300">Toàn Quyền Quản Trị Trung Tâm</span>
                 </div>
               )}
 

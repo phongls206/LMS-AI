@@ -35,12 +35,18 @@ async function main() {
   // 1.1 Quản lý (Admin)
   const adminUser = await prisma.nguoiDung.upsert({
     where: { tenDangNhap: 'admin01' },
-    update: { matKhauMaHoa: defaultPassword },
+    update: {
+      matKhauMaHoa: defaultPassword,
+      hoTen: 'Lê Hồng Phong',
+      email: 'lehongphong2108@outlook.com',
+      soDienThoai: '0787304341',
+    },
     create: {
       tenDangNhap: 'admin01',
       matKhauMaHoa: defaultPassword,
       vaiTro: VaiTro.QUAN_LY,
-      email: 'admin@etc-english.vn',
+      hoTen: 'Lê Hồng Phong',
+      email: 'lehongphong2108@outlook.com',
       soDienThoai: '0787304341',
     },
   });
