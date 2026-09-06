@@ -211,19 +211,14 @@ export class EnrollmentsService {
       throw new NotFoundException('Không tìm thấy thông tin đăng ký của lớp học này.');
     }
 
-    // Nếu đã phát sinh thanh toán (đã nộp tiền), không cho phép tự hủy mà phải liên hệ trung tâm
-    if (
-      enrollment.hoaDon &&
-      (Number(enrollment.hoaDon.soTienDaTra) > 0 || enrollment.hoaDon.thanhToan.length > 0)
-    ) {
-      throw new BadRequestException(
-        'Lớp học này đã phát sinh giao dịch đóng học phí. Vui lòng liên hệ phòng Đào tạo ETC English để được hỗ trợ thủ tục hoàn phí hoặc đổi lớp.'
-      );
-    }
-
-    // ACID Transaction: Xóa hóa đơn chưa thanh toán -> Xóa đăng ký học -> Giảm sĩ số hiện tại của lớp
+    // ACID Transaction: Xóa các lượt thanh toán con (nếu có) -> Xóa hóa đơn -> Xóa đăng ký học -> Giảm sĩ số hiện tại của lớp
     await this.prisma.$transaction(async (tx) => {
       if (enrollment.hoaDon) {
+        // Xóa các bản ghi thanh toán con trước để tránh Foreign Key Constraint
+        await tx.thanhToan.deleteMany({
+          where: { hoaDonId: enrollment.hoaDon.id },
+        });
+
         await tx.hoaDon.delete({
           where: { id: enrollment.hoaDon.id },
         });

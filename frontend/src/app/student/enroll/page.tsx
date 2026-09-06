@@ -43,6 +43,7 @@ export default function StudentEnrollPage() {
   const [cancellingId, setCancellingId] = useState<number | null>(null);
   const [confirmEnrollClass, setConfirmEnrollClass] = useState<LopHoc | null>(null);
   const [confirmCancelClass, setConfirmCancelClass] = useState<LopHoc | null>(null);
+  const [cancelModalError, setCancelModalError] = useState<string | null>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Filters
@@ -105,27 +106,29 @@ export default function StudentEnrollPage() {
 
   const handleCancelEnroll = async (classId: number) => {
     if (!user?.hoSoHocVien?.id) {
-      alert('Không tìm thấy thông tin hồ sơ học viên của bạn.');
+      setCancelModalError('Không tìm thấy thông tin hồ sơ học viên của bạn.');
       return;
     }
 
     setCancellingId(classId);
-    setMessage(null);
+    setCancelModalError(null);
 
     try {
       await enrollmentsService.cancelEnrollment(user.hoSoHocVien.id, classId);
       setMessage({
         type: 'success',
-        text: 'Hủy đăng ký lớp học thành công! Chỗ ngồi đã được giải phóng và hóa đơn chưa thanh toán đã được thu hồi.',
+        text: 'Hủy đăng ký lớp học thành công! Chỗ ngồi đã được giải phóng và hóa đơn học phí đã được thu hồi.',
       });
       setConfirmCancelClass(null);
       await fetchData();
     } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.message ||
+        'Hủy đăng ký không thành công. Vui lòng thử lại sau.';
+      setCancelModalError(errorMsg);
       setMessage({
         type: 'error',
-        text:
-          err.response?.data?.message ||
-          'Hủy đăng ký không thành công. Nếu bạn đã đóng học phí, vui lòng liên hệ giáo vụ để được hỗ trợ.',
+        text: errorMsg,
       });
     } finally {
       setCancellingId(null);
@@ -521,22 +524,38 @@ export default function StudentEnrollPage() {
 
                     {/* Action Button Area */}
                     {st.isEnrolled ? (
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full mt-auto">
-                        <div className="flex-1 min-h-[42px] py-2 px-3 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/40 text-blue-800 dark:text-blue-300 font-bold text-xs flex items-center justify-center gap-1.5 select-none">
-                          <Check className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                          <span>Đã Ghi Danh Lớp Này</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setConfirmCancelClass(c)}
-                          disabled={cancellingId === c.id}
-                          className="min-h-[42px] py-2 px-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 hover:border-rose-300 shadow-xs shrink-0"
-                          title="Hủy đăng ký lớp học này nếu bạn lỡ bấm nhầm hoặc muốn đổi lớp"
-                        >
-                          <X className="w-3.5 h-3.5 shrink-0" />
-                          <span>Hủy Đăng Ký</span>
-                        </button>
-                      </div>
+                      (() => {
+                        const enr = (myEnrollments || []).find(
+                          (e: any) => Number(e.lopHocId || e.lopHoc?.id) === Number(c.id)
+                        );
+                        const paidAmount = Number(enr?.hoaDon?.soTienDaTra || 0);
+
+                        return (
+                          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full mt-auto">
+                            <div className="flex-1 min-h-[42px] py-2 px-3 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/40 text-blue-800 dark:text-blue-300 font-bold text-xs flex items-center justify-center gap-1.5 select-none">
+                              <Check className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                              <span>
+                                {paidAmount > 0
+                                  ? `Đã Ghi Danh (Đã nộp ${paidAmount.toLocaleString('vi-VN')} đ)`
+                                  : 'Đã Ghi Danh Lớp Này'}
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCancelModalError(null);
+                                setConfirmCancelClass(c);
+                              }}
+                              disabled={cancellingId === c.id}
+                              className="min-h-[42px] py-2 px-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 hover:border-rose-300 shadow-xs shrink-0"
+                              title="Hủy đăng ký lớp học này nếu bạn lỡ bấm nhầm hoặc muốn đổi lớp"
+                            >
+                              <X className="w-3.5 h-3.5 shrink-0" />
+                              <span>Hủy Đăng Ký</span>
+                            </button>
+                          </div>
+                        );
+                      })()
                     ) : (
                       <button
                         type="button"
@@ -701,107 +720,149 @@ export default function StudentEnrollPage() {
         )}
 
         {/* Modal Xác Nhận Hủy Đăng Ký Lớp Học */}
-        {confirmCancelClass && (
-          <div
-            className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
-            onClick={() => setConfirmCancelClass(null)}
-          >
+        {confirmCancelClass && (() => {
+          const cancelEnrollment = (myEnrollments || []).find(
+            (e: any) => Number(e.lopHocId || e.lopHoc?.id) === Number(confirmCancelClass.id)
+          );
+          const cancelPaidAmount = Number(cancelEnrollment?.hoaDon?.soTienDaTra || 0);
+
+          return (
             <div
-              className="bg-white dark:bg-[#111928] rounded-2xl border border-slate-200 dark:border-[#1e2d45] shadow-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150"
-              onClick={(e) => e.stopPropagation()}
+              className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+              onClick={() => {
+                setCancelModalError(null);
+                setConfirmCancelClass(null);
+              }}
             >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#1e2d45]">
-                <div className="flex items-center space-x-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 flex items-center justify-center text-rose-600 dark:text-rose-400">
-                    <AlertTriangle className="w-5 h-5" />
+              <div
+                className="bg-white dark:bg-[#111928] rounded-2xl border border-slate-200 dark:border-[#1e2d45] shadow-2xl max-w-lg w-full p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#1e2d45]">
+                  <div className="flex items-center space-x-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                      <AlertTriangle className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
+                        Xác Nhận Hủy Đăng Ký Lớp Học
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Thao tác sẽ thu hồi đăng ký và giải phóng vị trí chỗ ngồi
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-slate-100">
-                      Xác Nhận Hủy Đăng Ký Lớp Học
-                    </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Thao tác sẽ thu hồi đăng ký và giải phóng vị trí chỗ ngồi
-                    </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCancelModalError(null);
+                      setConfirmCancelClass(null);
+                    }}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#162032] transition cursor-pointer"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Class Info in Modal */}
+                <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200/80 dark:border-[#22324e] space-y-2 text-xs">
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="text-slate-500 dark:text-slate-400 shrink-0">Lớp muốn hủy:</span>
+                    <div className="text-right">
+                      <span className="font-mono font-bold text-rose-600 dark:text-rose-400 mr-1.5">
+                        [{confirmCancelClass.maLopHoc}]
+                      </span>
+                      <strong className="text-slate-900 dark:text-slate-100 font-bold">
+                        {confirmCancelClass.tenLopHoc}
+                      </strong>
+                    </div>
                   </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setConfirmCancelClass(null)}
-                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#162032] transition cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
 
-              {/* Class Info in Modal */}
-              <div className="p-3.5 sm:p-4 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200/80 dark:border-[#22324e] space-y-2 text-xs">
-                <div className="flex justify-between items-start gap-2">
-                  <span className="text-slate-500 dark:text-slate-400 shrink-0">Lớp muốn hủy:</span>
-                  <div className="text-right">
-                    <span className="font-mono font-bold text-rose-600 dark:text-rose-400 mr-1.5">
-                      [{confirmCancelClass.maLopHoc}]
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 dark:text-slate-400">Khóa học:</span>
+                    <span className="font-medium text-slate-800 dark:text-slate-200">
+                      {confirmCancelClass.khoaHoc?.tenKhoaHoc}
                     </span>
-                    <strong className="text-slate-900 dark:text-slate-100 font-bold">
-                      {confirmCancelClass.tenLopHoc}
-                    </strong>
                   </div>
-                </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500 dark:text-slate-400">Khóa học:</span>
-                  <span className="font-medium text-slate-800 dark:text-slate-200">
-                    {confirmCancelClass.khoaHoc?.tenKhoaHoc}
-                  </span>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-500 dark:text-slate-400">Học phí:</span>
-                  <span className="font-bold text-slate-700 dark:text-slate-300 font-mono">
-                    {Number(confirmCancelClass.khoaHoc?.hocPhi).toLocaleString('vi-VN')} đ
-                  </span>
-                </div>
-              </div>
-
-              {/* Warning Notice */}
-              <div className="p-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-800/50 text-rose-900 dark:text-rose-300 text-[11px] leading-relaxed flex items-start space-x-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
-                <div>
-                  <strong>Cảnh báo:</strong> Khi bạn hủy đăng ký, chỗ trống của lớp sẽ được hoàn lại cho các học viên khác và hóa đơn học phí tương ứng (nếu chưa thanh toán) sẽ tự động được xóa bỏ. Nếu bạn đã chuyển khoản hoặc thanh toán học phí, vui lòng liên hệ phòng Giáo vụ để được hoàn tiền theo quy định.
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setConfirmCancelClass(null)}
-                  disabled={cancellingId !== null}
-                  className="w-full sm:w-auto px-4 py-2.5 min-h-[42px] rounded-xl border border-slate-200 dark:border-[#22324e] bg-slate-100 hover:bg-slate-200 dark:bg-[#162032] dark:hover:bg-[#1e2d45] text-slate-700 dark:text-slate-300 text-xs font-bold transition cursor-pointer"
-                >
-                  Giữ Lại Lớp (Không Hủy)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleCancelEnroll(confirmCancelClass.id)}
-                  disabled={cancellingId === confirmCancelClass.id}
-                  className="w-full sm:w-auto px-5 py-2.5 min-h-[42px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm flex items-center justify-center space-x-1.5 cursor-pointer"
-                >
-                  {cancellingId === confirmCancelClass.id ? (
-                    <span className="flex items-center gap-1.5">
-                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>Đang Hủy Đăng Ký...</span>
+                  <div className="flex justify-between items-center">
+                    <span className="text-slate-500 dark:text-slate-400">Học phí:</span>
+                    <span className="font-bold text-slate-700 dark:text-slate-300 font-mono">
+                      {Number(confirmCancelClass.khoaHoc?.hocPhi).toLocaleString('vi-VN')} đ
                     </span>
-                  ) : (
-                    <span className="flex items-center gap-1.5">
-                      <X className="w-4 h-4" />
-                      <span>Xác Nhận Hủy Đăng Ký</span>
-                    </span>
+                  </div>
+
+                  {cancelPaidAmount > 0 && (
+                    <div className="flex justify-between items-center text-amber-700 dark:text-amber-400 font-semibold pt-1 border-t border-slate-200/60 dark:border-[#22324e]">
+                      <span>Đã nộp học phí:</span>
+                      <span className="font-mono font-bold">
+                        {cancelPaidAmount.toLocaleString('vi-VN')} đ
+                      </span>
+                    </div>
                   )}
-                </button>
+                </div>
+
+                {/* Warning Notice */}
+                {cancelPaidAmount > 0 ? (
+                  <div className="p-3 rounded-xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-[11px] leading-relaxed flex items-start space-x-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+                    <div>
+                      <strong>Lưu ý khoản đã nộp ({cancelPaidAmount.toLocaleString('vi-VN')} đ):</strong> Lớp học này đã ghi nhận giao dịch đóng học phí. Khi bạn xác nhận hủy, hệ thống sẽ giải phóng chỗ trống cho học viên khác và <strong>tự động thu hồi/hủy bỏ hóa đơn cùng các giao dịch thanh toán</strong> liên quan.
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-xl bg-rose-50/80 dark:bg-rose-950/30 border border-rose-200/80 dark:border-rose-800/50 text-rose-900 dark:text-rose-300 text-[11px] leading-relaxed flex items-start space-x-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
+                    <div>
+                      <strong>Cảnh báo:</strong> Khi bạn hủy đăng ký, chỗ trống của lớp sẽ được hoàn lại cho các học viên khác và hóa đơn học phí tương ứng (chưa thanh toán) sẽ tự động được xóa bỏ.
+                    </div>
+                  </div>
+                )}
+
+                {/* In-Modal Error Display */}
+                {cancelModalError && (
+                  <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-xs flex items-center space-x-2 animate-fadeIn">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                    <span>{cancelModalError}</span>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCancelModalError(null);
+                      setConfirmCancelClass(null);
+                    }}
+                    disabled={cancellingId !== null}
+                    className="w-full sm:w-auto px-4 py-2.5 min-h-[42px] rounded-xl border border-slate-200 dark:border-[#22324e] bg-slate-100 hover:bg-slate-200 dark:bg-[#162032] dark:hover:bg-[#1e2d45] text-slate-700 dark:text-slate-300 text-xs font-bold transition cursor-pointer"
+                  >
+                    Giữ Lại Lớp (Không Hủy)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleCancelEnroll(confirmCancelClass.id)}
+                    disabled={cancellingId === confirmCancelClass.id}
+                    className="w-full sm:w-auto px-5 py-2.5 min-h-[42px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-sm flex items-center justify-center space-x-1.5 cursor-pointer"
+                  >
+                    {cancellingId === confirmCancelClass.id ? (
+                      <span className="flex items-center gap-1.5">
+                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        <span>Đang Hủy Đăng Ký...</span>
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5">
+                        <X className="w-4 h-4" />
+                        <span>Xác Nhận Hủy Đăng Ký</span>
+                      </span>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
     </AppLayout>
   );

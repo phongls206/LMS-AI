@@ -191,6 +191,15 @@ export class GradesService {
         trangThai: { in: [TrangThaiDangKy.CHO_THANH_TOAN, TrangThaiDangKy.DA_XAC_NHAN, TrangThaiDangKy.HOAN_THANH] },
       },
       include: {
+        hoaDon: {
+          select: {
+            id: true,
+            maHoaDon: true,
+            soTienPhaiTra: true,
+            soTienDaTra: true,
+            trangThai: true,
+          },
+        },
         lopHoc: {
           include: {
             khoaHoc: { select: { tenKhoaHoc: true, maKhoaHoc: true, trinhDoYeuCau: true, thoiLuongGio: true } },
