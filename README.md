@@ -227,7 +227,7 @@ Hệ thống tài liệu Swagger OpenAPI bao gồm đầy đủ:
 ---
 
 ## 👥 Nhóm Tác Giả & Bản Quyền
-* **Dự án:** Hệ Thống Quản Lý Trung Tâm Ngoại Ngữ Tích Hợp AI (ETC English Center LMS)
+* **Dự án:** Hệ Thống Quản Lý Trung Tâm Ngoại Ngữ Tích Hợp AI (ETC English)
 * **Phiên bản:** `1.0.0`
 * **Nhóm Thực Hiện:** 42 - Lê Hồng Phong,Lưu Thanh Nguyên
 * **Năm thực hiện:** 2026
