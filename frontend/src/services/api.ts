@@ -173,8 +173,8 @@ export const aiService = {
     (await api.post('/ai/consult-classes', { cefr, lichRanhJson, mucTieu })).data,
   generateExercises: async (chuDe: string, trinhDo: string, soLuong?: number, loaiCauHoi?: string) =>
     (await api.post('/ai/generate-exercises', { chuDe, trinhDo, soLuong, loaiCauHoi })).data,
-  summarizeProgress: async (hocVienId: number, lopHocId: number) =>
-    (await api.post('/ai/summarize-progress', { hocVienId, lopHocId })).data,
+  summarizeProgress: async (hocVienId: number, lopHocId: number, forceRefresh?: boolean) =>
+    (await api.post('/ai/summarize-progress', { hocVienId, lopHocId, forceRefresh })).data,
   getExerciseHistory: async (limit?: number) =>
     (await api.get('/ai/exercises/history', { params: { limit } })).data,
   deleteExerciseHistoryItem: async (id: number) =>

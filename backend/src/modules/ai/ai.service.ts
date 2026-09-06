@@ -863,76 +863,81 @@ Dữ liệu học tập thực tế (Ground Truth) của học viên:
 - Điểm cuối kỳ (50%): ${grade?.diemCuoiKy != null ? grade.diemCuoiKy : 'Chưa thi'}
 - Điểm tổng kết: ${grade?.diemTongKet != null ? grade.diemTongKet : 'Chưa tổng kết (Khóa đang diễn ra)'}
 - Trạng thái hoàn thành: ${grade?.trangThaiHoanThanh ?? 'CHUA_XEP_LOAI'}
-- Nhận xét của giáo viên: ${grade?.nhanXet || 'Chưa có nhận xét riêng'}
+- Nhận xét của giáo viên phụ trách: ${grade?.nhanXet || 'Chưa có nhận xét riêng'}
 
-YÊU CẦU ĐẶC BIỆT:
+YÊU CẦU ĐẶC BIỆT (PHÂN TÍCH SƯ PHẠM CHUYÊN SÂU & ĐỊNH HƯỚNG CẢI THIỆN BẢN THÂN):
 1. Nhận diện chính xác giai đoạn học tập (${giaiDoanText}):
-   - Nếu học viên đang ở giai đoạn giữa kỳ (chưa có điểm cuối kỳ): Đánh giá phong độ dựa trên chuyên cần và điểm giữa kỳ; phân tích cơ hội và mục tiêu điểm cần đạt ở bài thi cuối khóa (hệ số 50%) để đạt kết quả cao.
-   - Nếu học viên đã hoàn thành khóa học: Đánh giá toàn diện kết quả đạt/không đạt.
-   - Nếu học viên mới bắt đầu: Khích lệ tinh thần chuyên cần và định hướng phương pháp học tập.
-2. Tuyệt đối trung thực với dữ liệu số, không bịa đặt cột điểm chưa thi.
-3. Độ dài tối ưu: Mỗi mục (diemManh, canKhacPhuc, loiKhuyen, tomTatChung) chỉ viết từ 1 đến tối đa 2 câu ngắn gọn, súc tích, cô đọng, đi thẳng vào bản chất, không viết dài dòng để hiển thị trọn vẹn trong một màn hình.
+   - Nếu đang học giữa kỳ: Đánh giá chi tiết cơ hội, tính toán mục tiêu điểm bài thi cuối kỳ (chiếm 50% tổng điểm) cần đạt để bứt phá.
+   - Nếu đã hoàn thành khóa học: Đánh giá toàn diện nguyên nhân Đạt hoặc Không Đạt (do chuyên cần thấp <80% hay điểm bài thi dưới chuẩn), rút ra bài học kinh nghiệm sâu sắc.
+   - Nếu mới bắt đầu: Khích lệ và nhấn mạnh tầm quan trọng của kỷ luật chuyên cần ngay từ đầu.
+2. Nội dung phân tích cần chi tiết, thấu đáo, mang tính hành động cao (Actionable Guidance) để người học cải thiện bản thân:
+   - Phân tích rõ nguyên nhân gốc rễ (Root Cause) của điểm số và chuyên cần.
+   - Trình bày dạng các gạch đầu dòng (•) rõ ràng, dễ đọc, mạch lạc.
+   - Đưa ra lộ trình hành động cụ thể: thời lượng tự học mỗi ngày, các chủ điểm ngữ pháp/từ vựng cốt lõi cần củng cố và cách tận dụng bài tập AI để lấy lại nền tảng.
+3. Tuyệt đối trung thực với dữ liệu số CSDL, không bịa đặt điểm số chưa thi.
 
-Trả về định dạng JSON hợp lệ:
+Trả về đúng định dạng JSON hợp lệ:
 {
-  "diemManh": "Phân tích điểm mạnh (tối đa 2 câu súc tích)...",
-  "canKhacPhuc": "Chỉ ra điểm yếu cần khắc phục (tối đa 2 câu súc tích)...",
-  "loiKhuyen": "Lời khuyên lộ trình ôn tập trọng tâm (tối đa 2 câu súc tích)...",
-  "tomTatChung": "Nhận xét tổng quan tiến độ ngắn gọn 1 câu."
+  "diemManh": "• Thái độ & Kỷ luật: [Nhận xét cụ thể về chuyên cần hoặc tinh thần học tập]\n• Năng lực & Bài thi: [Nhận xét chi tiết về bài kiểm tra đã hoàn thành]\n• Điểm sáng nỗ lực: [Ghi nhận sự cố gắng vượt bậc hoặc tiềm năng của học viên]",
+  "canKhacPhuc": "• Nguyên nhân gốc rễ: [Phân tích tác động của các buổi vắng/đi muộn hoặc thiếu hụt kiến thức cơ bản]\n• Điểm nghẽn kỹ năng: [Chỉ rõ phần bài thi/kỹ năng cần gia cố gấp]\n• Rủi ro cần phòng tránh: [Hậu quả nếu không khắc phục sớm ở các khóa học tiếp theo]",
+  "loiKhuyen": "• Bước 1 - Củng cố nền tảng: [Chủ điểm ngữ pháp và từ vựng cốt lõi cần ôn lại ngay theo chuẩn CEFR ${student.trinhDoCEFR}]\n• Bước 2 - Kỷ luật rèn luyện: [Kế hoạch phân bổ 30-45 phút tự học mỗi ngày và cách luyện đề trắc nghiệm AI]\n• Bước 3 - Mục tiêu bứt phá: [Chiến lược cụ thể cho kỳ thi cuối kỳ hoặc kế hoạch học tập tiếp theo]",
+  "tomTatChung": "[Đoạn nhận định sư phạm tổng thể 2-3 câu ngắn gọn, khách quan, mang tính xây dựng và tiếp thêm động lực cho học viên phấn đấu.]"
 }
 `;
 
-    // 1. SMART DB CACHE LOOKUP: Trả về kết quả tức thì nếu dữ liệu học tập chưa thay đổi
-    try {
-      const cachedRecord = await this.prisma.yeuCauAI.findFirst({
-        where: {
-          loaiChucNang: LoaiChucNangAI.TOM_TAT_TIEN_DO,
-          trangThai: TrangThaiYeuCauAI.THANH_CONG,
-          AND: [
-            { promptInput: { contains: student.maHocVien } },
-            { promptInput: { contains: lopHoc.maLopHoc } },
-          ],
-        },
-        orderBy: { id: 'desc' },
-      });
+    // 1. SMART DB CACHE LOOKUP: Trả về kết quả tức thì nếu dữ liệu học tập chưa thay đổi (và không yêu cầu forceRefresh)
+    if (!dto.forceRefresh) {
+      try {
+        const cachedRecord = await this.prisma.yeuCauAI.findFirst({
+          where: {
+            loaiChucNang: LoaiChucNangAI.TOM_TAT_TIEN_DO,
+            trangThai: TrangThaiYeuCauAI.THANH_CONG,
+            AND: [
+              { promptInput: { contains: student.maHocVien } },
+              { promptInput: { contains: lopHoc.maLopHoc } },
+            ],
+          },
+          orderBy: { id: 'desc' },
+        });
 
-      if (cachedRecord && cachedRecord.validatedOutputJson) {
-        const cached = cachedRecord.validatedOutputJson as any;
-        const cachedGroundTruth = cached.duLieuGoc;
-        if (
-          cachedGroundTruth &&
-          cachedGroundTruth.tongBuoiHoc === duLieuGoc.tongBuoiHoc &&
-          cachedGroundTruth.coMat === duLieuGoc.coMat &&
-          cachedGroundTruth.tyLeChuyenCan === `${attendanceRate}%` &&
-          cachedGroundTruth.diemChuyenCan === duLieuGoc.diemChuyenCan &&
-          cachedGroundTruth.diemGiuaKy === duLieuGoc.diemGiuaKy &&
-          cachedGroundTruth.diemCuoiKy === duLieuGoc.diemCuoiKy &&
-          cachedGroundTruth.diemTongKet === duLieuGoc.diemTongKet
-        ) {
-          return {
-            success: true,
-            mode: 'AI_GEMINI_CACHED',
-            data: {
-              hocVien: {
-                id: Number(student.id),
-                maHocVien: student.maHocVien,
-                hoTen: student.hoTen,
-                trinhDoCEFR: student.trinhDoCEFR,
+        if (cachedRecord && cachedRecord.validatedOutputJson) {
+          const cached = cachedRecord.validatedOutputJson as any;
+          const cachedGroundTruth = cached.duLieuGoc;
+          if (
+            cachedGroundTruth &&
+            cachedGroundTruth.tongBuoiHoc === duLieuGoc.tongBuoiHoc &&
+            cachedGroundTruth.coMat === duLieuGoc.coMat &&
+            cachedGroundTruth.tyLeChuyenCan === `${attendanceRate}%` &&
+            cachedGroundTruth.diemChuyenCan === duLieuGoc.diemChuyenCan &&
+            cachedGroundTruth.diemGiuaKy === duLieuGoc.diemGiuaKy &&
+            cachedGroundTruth.diemCuoiKy === duLieuGoc.diemCuoiKy &&
+            cachedGroundTruth.diemTongKet === duLieuGoc.diemTongKet
+          ) {
+            return {
+              success: true,
+              mode: 'AI_GEMINI_CACHED',
+              data: {
+                hocVien: {
+                  id: Number(student.id),
+                  maHocVien: student.maHocVien,
+                  hoTen: student.hoTen,
+                  trinhDoCEFR: student.trinhDoCEFR,
+                },
+                lopHoc: {
+                  id: Number(lopHoc.id),
+                  maLopHoc: lopHoc.maLopHoc,
+                  tenLopHoc: lopHoc.tenLopHoc,
+                  tenKhoaHoc: lopHoc.khoaHoc?.tenKhoaHoc || '',
+                },
+                duLieuGoc,
+                aiPhanTich: cached.aiInsights || cached.aiPhanTich,
               },
-              lopHoc: {
-                id: Number(lopHoc.id),
-                maLopHoc: lopHoc.maLopHoc,
-                tenLopHoc: lopHoc.tenLopHoc,
-                tenKhoaHoc: lopHoc.khoaHoc?.tenKhoaHoc || '',
-              },
-              duLieuGoc,
-              aiPhanTich: cached.aiInsights || cached.aiPhanTich,
-            },
-          };
+            };
+          }
         }
+      } catch (cacheErr) {
+        this.logger.debug('Smart cache lookup skipped:', cacheErr);
       }
-    } catch (cacheErr) {
-      this.logger.debug('Smart cache lookup skipped:', cacheErr);
     }
 
     let rawOutput: string | null = null;

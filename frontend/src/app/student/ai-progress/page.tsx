@@ -20,6 +20,7 @@ import {
   PlusCircle,
   BrainCircuit,
   Target,
+  RotateCcw,
 } from 'lucide-react';
 
 export default function StudentAiProgressPage() {
@@ -142,7 +143,7 @@ export default function StudentAiProgressPage() {
     }
   };
 
-  const handleGenerateSummary = async () => {
+  const handleGenerateSummary = async (forceRefresh = false) => {
     if (!selectedClassId || !selectedStudentId) {
       setErrorMsg('Vui lòng chọn đầy đủ Lớp học và Học viên.');
       return;
@@ -150,11 +151,11 @@ export default function StudentAiProgressPage() {
 
     setLoading(true);
     setErrorMsg(null);
-    setSummary(null);
+    if (forceRefresh) setSummary(null);
     sessionStorage.removeItem('etc_ai_progress_session');
 
     try {
-      const res = await aiService.summarizeProgress(selectedStudentId, selectedClassId);
+      const res = await aiService.summarizeProgress(selectedStudentId, selectedClassId, forceRefresh);
       setSummary(res);
       try {
         sessionStorage.setItem(
@@ -244,7 +245,7 @@ export default function StudentAiProgressPage() {
 
           {/* Nút Kích Hoạt Tóm Tắt AI */}
           <button
-            onClick={handleGenerateSummary}
+            onClick={() => handleGenerateSummary(false)}
             disabled={loading || cooldown > 0 || !selectedClassId || !selectedStudentId}
             className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-40 shrink-0 cursor-pointer disabled:cursor-not-allowed"
           >
@@ -400,6 +401,16 @@ export default function StudentAiProgressPage() {
                 )}
                 <button
                   type="button"
+                  onClick={() => handleGenerateSummary(true)}
+                  disabled={loading || cooldown > 0}
+                  className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-800 text-[11px] font-bold flex items-center space-x-1 border border-teal-200 transition cursor-pointer disabled:opacity-50"
+                  title="Yêu cầu AI phân tích lại lượt mới chuyên sâu"
+                >
+                  <RotateCcw className="w-3 h-3 text-teal-600" />
+                  <span>Phân Tích Lại</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => {
                     sessionStorage.removeItem('etc_ai_progress_session');
                     setSummary(null);
@@ -523,38 +534,38 @@ export default function StudentAiProgressPage() {
                 </div>
               )}
 
-              {/* 3 Cột Điểm Mạnh - Cần Khắc Phục - Lời Khuyên */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
+              {/* 3 Cột Điểm Mạnh - Cần Khắc Phục - Lời Khuyên (Hiển thị chuyên sâu, chi tiết) */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 {/* 1. Điểm mạnh */}
-                <div className="p-3 rounded-xl bg-emerald-50/50 dark:bg-[#151f33] border border-emerald-200/80 dark:border-emerald-600/40 space-y-1">
+                <div className="p-3.5 rounded-xl bg-emerald-50/60 dark:bg-[#13222e] border border-emerald-200/90 dark:border-emerald-700/50 space-y-1.5 shadow-2xs">
                   <div className="flex items-center space-x-1.5 text-emerald-800 dark:text-emerald-400 font-bold text-[11px] uppercase tracking-wider">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <span>1. Điểm Mạnh Nổi Bật</span>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-medium">
-                    {summary.data.aiPhanTich?.diemManh || 'Duy trì tốt kỷ luật và chuyên cần học tập.'}
+                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal whitespace-pre-line">
+                    {summary.data.aiPhanTich?.diemManh || 'Học viên duy trì tốt tinh thần và nỗ lực trong các buổi học.'}
                   </p>
                 </div>
 
                 {/* 2. Điểm cần khắc phục */}
-                <div className="p-3 rounded-xl bg-amber-50/50 dark:bg-[#151f33] border border-amber-200/80 dark:border-amber-600/40 space-y-1">
+                <div className="p-3.5 rounded-xl bg-amber-50/60 dark:bg-[#251f22] border border-amber-200/90 dark:border-amber-700/50 space-y-1.5 shadow-2xs">
                   <div className="flex items-center space-x-1.5 text-amber-800 dark:text-amber-400 font-bold text-[11px] uppercase tracking-wider">
                     <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
-                    <span>2. Cần Khắc Phục</span>
+                    <span>2. Hạn Chế Cần Khắc Phục</span>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-medium">
-                    {summary.data.aiPhanTich?.canKhacPhuc || 'Cần nỗ lực hơn trong các bài kiểm tra định kỳ.'}
+                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal whitespace-pre-line">
+                    {summary.data.aiPhanTich?.canKhacPhuc || 'Cần chú ý cải thiện điểm số và đảm bảo tỷ lệ chuyên cần tối thiểu.'}
                   </p>
                 </div>
 
                 {/* 3. Lời khuyên ôn tập */}
-                <div className="p-3 rounded-xl bg-cyan-50/50 dark:bg-[#151f33] border border-cyan-200/80 dark:border-cyan-600/40 space-y-1">
+                <div className="p-3.5 rounded-xl bg-cyan-50/60 dark:bg-[#142338] border border-cyan-200/90 dark:border-cyan-700/50 space-y-1.5 shadow-2xs">
                   <div className="flex items-center space-x-1.5 text-cyan-800 dark:text-cyan-400 font-bold text-[11px] uppercase tracking-wider">
                     <Lightbulb className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
-                    <span>3. Lời Khuyên Ôn Tập</span>
+                    <span>3. Kế Hoạch & Lời Khuyên Ôn Tập</span>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-medium">
-                    {summary.data.aiPhanTich?.loiKhuyen || 'Tập trung ôn tập theo chuẩn khung CEFR.'}
+                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal whitespace-pre-line">
+                    {summary.data.aiPhanTich?.loiKhuyen || 'Tập trung củng cố kiến thức ngữ pháp cốt lõi và từ vựng theo khung CEFR.'}
                   </p>
                 </div>
               </div>

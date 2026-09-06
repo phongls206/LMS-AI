@@ -55,4 +55,8 @@ export class SummarizeProgressDto {
   @ApiProperty({ example: 1, description: 'ID lớp học' })
   @IsNumber()
   lopHocId: number;
+
+  @ApiPropertyOptional({ example: false, description: 'Bỏ qua cache và gọi lại AI phân tích mới' })
+  @IsOptional()
+  forceRefresh?: boolean;
 }
