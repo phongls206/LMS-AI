@@ -6,7 +6,8 @@ import { classesService, coursesService, usersService, attendancesService } from
 import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
 import { 
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
-  Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock, Users
+  Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock, Users,
+  Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
@@ -34,11 +35,32 @@ export default function AdminClassesPage() {
   const [courses, setCourses] = useState<KhoaHoc[]>([]);
   const [teachers, setTeachers] = useState<GiaoVien[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [selectedClassForStudents, setSelectedClassForStudents] = useState<{
     id: number;
     name?: string;
     code?: string;
   } | null>(null);
+
+  // Filtered classes list
+  const filteredClasses = classes.filter((c: any) => {
+    const q = search.toLowerCase().trim();
+    const teacherName = c.phanCong?.[0]?.giaoVien?.hoTen || '';
+    const courseName = c.khoaHoc?.tenKhoaHoc || '';
+    const matchQuery =
+      !q ||
+      c.maLopHoc?.toLowerCase().includes(q) ||
+      c.tenLopHoc?.toLowerCase().includes(q) ||
+      courseName.toLowerCase().includes(q) ||
+      teacherName.toLowerCase().includes(q);
+
+    const matchStatus = !statusFilter || c.trangThai === statusFilter;
+
+    return matchQuery && matchStatus;
+  });
 
   // Sorting
   const {
@@ -46,7 +68,7 @@ export default function AdminClassesPage() {
     sortOrder,
     toggleSort,
     sortedData: sortedClasses,
-  } = useTableSort(classes, {
+  } = useTableSort(filteredClasses, {
     valueExtractors: {
       maLopHoc: (c) => c.maLopHoc,
       tenLopHoc: (c) => c.tenLopHoc,
@@ -56,6 +78,10 @@ export default function AdminClassesPage() {
       trangThai: (c) => c.trangThai,
     },
   });
+
+  const totalClasses = sortedClasses.length;
+  const totalPages = Math.max(1, Math.ceil(totalClasses / limit));
+  const displayedClasses = sortedClasses.slice((page - 1) * limit, page * limit);
 
   // Modals state
   const [showCreateClass, setShowCreateClass] = useState(false);
@@ -443,16 +469,47 @@ export default function AdminClassesPage() {
       subtitle="Thiết lập phòng học, xếp lịch hàng tuần và phân công giảng viên trực tiếp"
     >
       <div className="space-y-6">
-        {/* Actions Bar */}
-        <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <div>
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Tổng số {classes.length} lớp học trên hệ thống
+        {/* Actions Bar: Tìm kiếm, Bộ lọc trạng thái & Thao tác */}
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white dark:bg-[#111928] p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 flex-1">
+            <div className="relative flex-1 sm:max-w-xs">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Tìm mã lớp, tên lớp, giáo viên..."
+                className="w-full h-10 min-h-[40px] bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 pl-9 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500 transition-colors"
+              />
+            </div>
+
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+              className="h-10 min-h-[40px] w-full sm:w-auto bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 cursor-pointer transition-colors"
+            >
+              <option value="">Tất cả trạng thái</option>
+              <option value="DANG_HOC">Đang Học</option>
+              <option value="DANG_MO_DANG_KY">Đang Mở Tuyển Sinh</option>
+              <option value="SAP_MO">Sắp Mở</option>
+              <option value="DA_KET_THUC">Đã Kết Thúc</option>
+              <option value="DA_HUY">Đã Hủy</option>
+            </select>
+
+            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden lg:inline-block whitespace-nowrap">
+              Tổng số {totalClasses} lớp
             </span>
           </div>
+
           <button
             onClick={() => setShowCreateClass(true)}
-            className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer"
+            className="w-full sm:w-auto h-10 min-h-[40px] flex items-center justify-center space-x-2 px-4 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer shrink-0"
           >
             <Plus className="w-4 h-4" />
             <span>Mở Lớp Học Mới</span>
@@ -478,9 +535,9 @@ export default function AdminClassesPage() {
             <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-700">
+          <div className="bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] rounded-2xl overflow-hidden shadow-sm">
+            <div className="w-full overflow-x-auto scrollbar-thin">
+              <table className="min-w-[780px] w-full text-left text-xs text-slate-700 dark:text-slate-200">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
                     <th
@@ -547,7 +604,16 @@ export default function AdminClassesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {sortedClasses.map((c) => (
+                  {displayedClasses.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-12 text-slate-400 text-xs italic">
+                        {classes.length === 0
+                          ? 'Chưa có lớp học nào trên hệ thống.'
+                          : 'Không tìm thấy lớp học nào phù hợp với bộ lọc.'}
+                      </td>
+                    </tr>
+                  ) : (
+                    displayedClasses.map((c) => (
                     <tr key={c.id} className="hover:bg-teal-50/30 transition">
                       <td className="px-5 py-4 font-mono font-bold text-teal-700">{c.maLopHoc}</td>
                       <td className="px-5 py-4">
@@ -667,9 +733,106 @@ export default function AdminClassesPage() {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  ))
+                )}
                 </tbody>
               </table>
+            </div>
+
+            {/* Pagination Controls */}
+            <div className="px-3 sm:px-5 py-3.5 sm:py-4 bg-slate-50 dark:bg-[#111928] border-t border-slate-200 dark:border-[#1e2d45] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2 text-slate-600 dark:text-slate-400 text-center sm:text-left">
+                <span>Hiển thị</span>
+                <span className="font-bold text-slate-900 dark:text-slate-100">
+                  {totalClasses > 0 ? (page - 1) * limit + 1 : 0} - {Math.min(page * limit, totalClasses)}
+                </span>
+                <span>trên tổng số</span>
+                <span className="font-bold text-teal-700 dark:text-teal-400">{totalClasses}</span>
+                <span>lớp học</span>
+
+                <span className="text-slate-300 dark:text-slate-700">|</span>
+
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-600 dark:text-slate-400">Số dòng:</span>
+                  <select
+                    value={limit}
+                    onChange={(e) => {
+                      setLimit(Number(e.target.value));
+                      setPage(1);
+                    }}
+                    className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer transition-colors"
+                  >
+                    <option value={10}>10 / trang</option>
+                    <option value={20}>20 / trang</option>
+                    <option value={50}>50 / trang</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center space-x-1 sm:space-x-1.5 overflow-x-auto max-w-full py-1">
+                <button
+                  onClick={() => setPage(1)}
+                  disabled={page === 1}
+                  title="Trang đầu"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#1f2d45] disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronsLeft className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  title="Trang trước"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#1f2d45] disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <div className="flex items-center space-x-1 px-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((p) => {
+                      if (totalPages <= 5) return true;
+                      if (p === 1 || p === totalPages) return true;
+                      return Math.abs(p - page) <= 1;
+                    })
+                    .map((p, idx, arr) => (
+                      <React.Fragment key={p}>
+                        {idx > 0 && arr[idx - 1] !== p - 1 && (
+                          <span className="px-1 text-slate-400 dark:text-slate-600 text-[11px]">...</span>
+                        )}
+                        <button
+                          key={p}
+                          onClick={() => setPage(p)}
+                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            page === p
+                              ? 'bg-teal-600 text-white shadow-sm'
+                              : 'bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#1f2d45]'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      </React.Fragment>
+                    ))}
+                </div>
+
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                  title="Trang kế tiếp"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#1f2d45] disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                <button
+                  onClick={() => setPage(totalPages)}
+                  disabled={page >= totalPages}
+                  title="Trang cuối"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#1f2d45] disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronsRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}

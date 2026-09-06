@@ -264,8 +264,8 @@ export default function AdminTeachersPage() {
     >
       <div className="space-y-6">
         {/* Filters and Actions */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <div className="flex items-center space-x-3 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 sm:gap-4 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-64">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
@@ -273,14 +273,14 @@ export default function AdminTeachersPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Tìm họ tên, mã GV, chuyên môn..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 pl-9 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 h-10 min-h-[40px] pl-9 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
               />
             </div>
 
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500"
+              className="bg-slate-50 border border-slate-200 rounded-xl px-3 h-10 min-h-[40px] text-xs text-slate-900 focus:outline-none focus:border-teal-500 cursor-pointer"
             >
               <option value="">Tất cả trạng thái</option>
               <option value="DANG_LAM_VIEC">Đang làm việc</option>
@@ -291,7 +291,7 @@ export default function AdminTeachersPage() {
 
           <button
             onClick={handleOpenCreateModal}
-            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer"
+            className="w-full sm:w-auto min-h-[40px] flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Thêm Giáo Viên Mới</span>
@@ -312,7 +312,7 @@ export default function AdminTeachersPage() {
           </div>
         ) : (
           <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
-            <div className="overflow-x-auto">
+            <div className="w-full overflow-x-auto scrollbar-thin">
               <table className="w-full text-left text-xs text-slate-700 table-fixed min-w-[800px] lg:min-w-0">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
@@ -506,7 +506,7 @@ export default function AdminTeachersPage() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-1.5 overflow-x-auto max-w-full py-1">
                 <button
                   onClick={() => setPage(1)}
                   disabled={page === 1}

@@ -357,15 +357,15 @@ export default function TeacherAttendancePage() {
         ) : (
           <>
             {/* Top bar: Chọn lớp, chọn buổi & các thao tác */}
-            <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center space-x-2">
-              <label className="text-xs font-bold text-slate-700 whitespace-nowrap">Lớp Học:</label>
+            <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-3.5 sm:gap-4 bg-white dark:bg-[#111928] p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm">
+          <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:space-x-2 w-full sm:w-auto">
+              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">Lớp Học:</label>
               {classes.length > 0 ? (
                 <select
                   value={selectedClassId || ''}
                   onChange={(e) => setSelectedClassId(+e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-bold cursor-pointer"
+                  className="h-10 min-h-[40px] w-full sm:w-auto bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold cursor-pointer transition-colors"
                 >
                   {classes.map((c) => (
                     <option key={c.id} value={c.id}>
@@ -379,12 +379,12 @@ export default function TeacherAttendancePage() {
             </div>
 
             {activeTab === 'take_attendance' && sessions.length > 0 ? (
-              <div className="flex items-center space-x-2">
-                <label className="text-xs font-bold text-slate-700 whitespace-nowrap">Buổi Điểm Danh:</label>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:space-x-2 w-full sm:w-auto">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">Buổi Điểm Danh:</label>
                 <select
                   value={selectedSessionId || ''}
                   onChange={(e) => setSelectedSessionId(+e.target.value)}
-                  className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-bold max-w-[340px] truncate cursor-pointer"
+                  className="h-10 min-h-[40px] w-full sm:w-auto sm:max-w-[340px] bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold truncate cursor-pointer transition-colors"
                 >
                   {sessions.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -394,8 +394,8 @@ export default function TeacherAttendancePage() {
                 </select>
               </div>
             ) : activeTab === 'take_attendance' && (
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-2 rounded-xl border border-amber-200 flex items-center gap-1.5">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-2 rounded-xl border border-amber-200 flex items-center justify-center gap-1.5 min-h-[40px]">
                   <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                   Lớp chưa có buổi học
                 </span>
@@ -403,7 +403,7 @@ export default function TeacherAttendancePage() {
                   type="button"
                   onClick={handleAutoGenerateSessions}
                   disabled={generatingSessions}
-                  className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-teal-600/20 cursor-pointer disabled:opacity-50"
+                  className="px-3.5 py-2 min-h-[40px] rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-teal-600/20 cursor-pointer disabled:opacity-50"
                 >
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>{generatingSessions ? 'Đang tạo...' : '⚡ Khởi Tạo 12 Buổi Cho Lớp'}</span>
@@ -413,7 +413,7 @@ export default function TeacherAttendancePage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap sm:flex-nowrap items-stretch sm:items-center gap-2 w-full lg:w-auto">
             <button
               type="button"
               onClick={() =>
@@ -425,11 +425,11 @@ export default function TeacherAttendancePage() {
                 })
               }
               disabled={!selectedClassId || !classDetail?.dangKyHoc?.length}
-              className="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition flex items-center space-x-1.5 shadow-xs cursor-pointer disabled:opacity-50"
+              className="flex-1 sm:flex-initial px-3.5 py-2 min-h-[40px] rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer disabled:opacity-50"
               title="Xuất kết quả điểm danh ra file Excel .xlsx"
             >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span>Xuất Excel Điểm Danh</span>
+              <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span className="whitespace-nowrap">Xuất Excel Điểm Danh</span>
             </button>
 
             {activeTab === 'take_attendance' && (
@@ -437,17 +437,17 @@ export default function TeacherAttendancePage() {
                 <button
                   type="button"
                   onClick={handleMarkAllPresent}
-                  className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center space-x-1.5 border border-slate-200 cursor-pointer"
+                  className="flex-1 sm:flex-initial px-3 py-2 min-h-[40px] rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center justify-center space-x-1.5 border border-slate-200 cursor-pointer"
                   title="Điểm danh tất cả học viên Có Mặt"
                 >
-                  <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Tất Cả Có Mặt</span>
+                  <CheckCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span className="whitespace-nowrap">Tất Cả Có Mặt</span>
                 </button>
 
                 <button
                   onClick={handleSaveAttendance}
                   disabled={saving || !selectedSessionId || !classDetail?.dangKyHoc?.length || isClassRecruiting}
-                  className="flex items-center space-x-2 px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer"
+                  className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-2 min-h-[40px] rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer shrink-0"
                   title={isClassRecruiting ? 'Lớp đang mở tuyển sinh, chưa bắt đầu học. Không thể điểm danh!' : 'Lưu kết quả điểm danh'}
                 >
                   <Save className="w-4 h-4" />
@@ -545,10 +545,10 @@ export default function TeacherAttendancePage() {
         </div>
 
         {/* Tab Navigation: Điểm danh buổi học vs Ma trận toàn khóa */}
-        <div className="flex border-b border-slate-200 space-x-4">
+        <div className="flex border-b border-slate-200 dark:border-[#1e2d45] space-x-2 sm:space-x-4 overflow-x-auto pb-1 scrollbar-none">
           <button
             onClick={() => setActiveTab('take_attendance')}
-            className={`pb-3 text-xs font-bold flex items-center space-x-2 transition border-b-2 cursor-pointer ${
+            className={`pb-3 min-h-[38px] text-xs font-bold flex items-center space-x-2 transition border-b-2 cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === 'take_attendance'
                 ? 'text-teal-700 border-teal-600'
                 : 'text-slate-500 border-transparent hover:text-slate-900'
@@ -560,7 +560,7 @@ export default function TeacherAttendancePage() {
 
           <button
             onClick={() => setActiveTab('matrix_view')}
-            className={`pb-3 text-xs font-bold flex items-center space-x-2 transition border-b-2 cursor-pointer ${
+            className={`pb-3 min-h-[38px] text-xs font-bold flex items-center space-x-2 transition border-b-2 cursor-pointer whitespace-nowrap shrink-0 ${
               activeTab === 'matrix_view'
                 ? 'text-teal-700 border-teal-600'
                 : 'text-slate-500 border-transparent hover:text-slate-900'
@@ -621,8 +621,8 @@ export default function TeacherAttendancePage() {
               </div>
             )}
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-700">
+            <div className="w-full overflow-x-auto scrollbar-thin">
+              <table className="min-w-[720px] w-full text-left text-xs text-slate-700 dark:text-slate-200">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
                     <th
@@ -830,8 +830,8 @@ export default function TeacherAttendancePage() {
                 <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-700 border-collapse">
+              <div className="w-full overflow-x-auto scrollbar-thin">
+                <table className="min-w-[700px] w-full text-left text-xs text-slate-700 dark:text-slate-200 border-collapse">
                   <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] font-bold tracking-wider">
                     <tr>
                       <th
@@ -1021,7 +1021,7 @@ export default function TeacherAttendancePage() {
               {(() => {
                 const stats = calculateStudentAttendanceRate(viewStudentModal.id);
                 return (
-                  <div className="grid grid-cols-4 gap-2.5">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
                     <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
                       <p className="text-[11px] text-slate-500 font-bold">Có mặt</p>
                       <p className="text-base font-bold font-mono text-emerald-700">{stats.attended}</p>

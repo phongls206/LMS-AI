@@ -84,6 +84,9 @@ export class ClassesService {
         lichHoc: true,
         buoiHoc: { select: { id: true, soThuTu: true, ngayHoc: true, chuDe: true, trangThai: true, phongHoc: true } },
         _count: { select: { buoiHoc: true, dangKyHoc: true } },
+        dangKyHoc: {
+          select: { hocVienId: true, trangThai: true },
+        },
         phanCong: {
           where: { trangThai: 'DANG_PHU_TRACH' },
           orderBy: { id: 'desc' },

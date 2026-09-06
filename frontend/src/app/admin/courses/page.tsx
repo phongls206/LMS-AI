@@ -190,7 +190,7 @@ export default function AdminCoursesPage() {
           </div>
           <button
             onClick={() => setShowModal(true)}
-            className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer"
+            className="w-full sm:w-auto min-h-[40px] flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer"
           >
             <Plus className="w-4 h-4" />
             <span>Mở Khóa Học Mới</span>
@@ -383,8 +383,8 @@ export default function AdminCoursesPage() {
                     </div>
 
                     {selectedCourseDetail.lopHoc && selectedCourseDetail.lopHoc.length > 0 ? (
-                      <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
-                        <table className="w-full text-left text-xs border-collapse">
+                      <div className="w-full border border-slate-200 dark:border-slate-800 rounded-xl overflow-x-auto scrollbar-thin">
+                        <table className="w-full text-left text-xs border-collapse min-w-[520px]">
                           <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-500 font-bold border-b border-slate-200 dark:border-slate-700">
                             <tr>
                               <th className="py-2.5 px-3">Mã Lớp</th>

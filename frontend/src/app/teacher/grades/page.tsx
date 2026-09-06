@@ -200,14 +200,14 @@ export default function TeacherGradesPage() {
         ) : (
           <>
             {/* Top filter & Formula reminder */}
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/90 shadow-sm">
-          <div className="flex items-center space-x-3 w-full sm:w-auto">
-            <label className="text-xs font-bold text-slate-700 whitespace-nowrap">Lớp Phụ Trách:</label>
+            <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3.5 sm:gap-4 bg-white dark:bg-[#111928] p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:space-x-3 w-full md:w-auto">
+            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">Lớp Phụ Trách:</label>
             {classes.length > 0 ? (
               <select
                 value={selectedClassId || ''}
                 onChange={(e) => setSelectedClassId(+e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-bold cursor-pointer"
+                className="h-10 min-h-[40px] w-full sm:w-auto bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold cursor-pointer transition-colors"
               >
                 {classes.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -220,22 +220,22 @@ export default function TeacherGradesPage() {
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full md:w-auto">
             <button
               type="button"
               onClick={() => exportClassGradeBookExcel({ classDetail, gradesMap })}
               disabled={!selectedClassId || !classDetail?.dangKyHoc?.length}
-              className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition disabled:opacity-50 cursor-pointer shadow-xs"
+              className="flex-1 sm:flex-initial flex items-center justify-center space-x-1.5 px-4 py-2 min-h-[40px] rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition disabled:opacity-50 cursor-pointer shadow-xs whitespace-nowrap"
               title="Xuất bảng điểm tổng kết (20% - 30% - 50%) ra file Excel .xlsx để nộp"
             >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+              <FileSpreadsheet className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>Xuất Excel Bảng Điểm</span>
             </button>
 
             <button
               onClick={handleSaveGrades}
               disabled={saving || !selectedClassId || !classDetail?.dangKyHoc?.length || isClassRecruiting}
-              className="flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer"
+              className="w-full sm:w-auto flex items-center justify-center space-x-2 px-5 py-2 min-h-[40px] rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition disabled:opacity-50 cursor-pointer shrink-0"
               title={isClassRecruiting ? 'Lớp đang mở tuyển sinh, chưa bắt đầu học. Không thể nhập bảng điểm!' : 'Lưu & Tính Điểm Tổng Kết'}
             >
               <Save className="w-4 h-4" />
@@ -276,9 +276,9 @@ export default function TeacherGradesPage() {
         )}
 
         {/* Grades Table */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-700">
+        <div className="bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] rounded-2xl overflow-hidden shadow-sm">
+          <div className="w-full overflow-x-auto scrollbar-thin">
+            <table className="min-w-[780px] w-full text-left text-xs text-slate-700 dark:text-slate-200">
               <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                 <tr>
                   <th
