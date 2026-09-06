@@ -64,6 +64,10 @@ async function main() {
     { user: 'teacher08', ma: 'GV008', ten: 'Cô Sarah Jenkins', chuyenMon: 'Cambridge FCE/CAE & Academic Writing', bangCap: 'Cambridge DELTA, University of Oxford Alumni', email: 'sarah.jenkins@etc-english.vn', phone: '0902222008' },
     { user: 'teacher09', ma: 'GV009', ten: 'Thầy Hoàng Minh Đức', chuyenMon: 'Ngữ Pháp Nền Tảng & Luyện Đề Chuyên Ngữ', bangCap: 'Thạc sĩ Lý luận và Phương pháp Dạy học Tiếng Anh', email: 'hoang.minh.duc@etc-english.vn', phone: '0902222009' },
     { user: 'teacher10', ma: 'GV010', ten: 'Cô Đỗ Mai Phương', chuyenMon: 'Tiếng Anh Tổng Quát & Giao Tiếp Phản Xạ', bangCap: 'Cử nhân Ngôn ngữ Anh ĐH Ngoại Ngữ', email: 'do.mai.phuong@etc-english.vn', phone: '0902222010' },
+    { user: 'teacher11', ma: 'GV011', ten: 'Cô Phan Thu Thảo', chuyenMon: 'Luyện Phát Âm Chuẩn Mỹ & Phản Xạ Giao Tiếp', bangCap: 'Chứng chỉ TESOL International, Cử nhân ĐH Sư Phạm TP.HCM', email: 'phan.thu.thao@etc-english.vn', phone: '0902222011' },
+    { user: 'teacher12', ma: 'GV012', ten: 'Thầy Robert Taylor', chuyenMon: 'IELTS Academic Writing & Critical Thinking', bangCap: 'Master in Applied Linguistics - Cambridge University', email: 'robert.taylor@etc-english.vn', phone: '0902222012' },
+    { user: 'teacher13', ma: 'GV013', ten: 'Thầy Bùi Quang Huy', chuyenMon: 'TOEIC Đột Phá 4 Kỹ Năng & Ngữ Pháp Thực Chiến', bangCap: 'TOEIC 990/990 Tuyệt đối, Cử nhân ĐH Ngoại Thương', email: 'bui.quang.huy@etc-english.vn', phone: '0902222013' },
+    { user: 'teacher14', ma: 'GV014', ten: 'Cô Lê Kim Chi', chuyenMon: 'Tiếng Anh Tổng Quát & Luyện Đề Thi Quốc Tế', bangCap: 'IELTS 8.0, Cử nhân Sư phạm Tiếng Anh ĐH Hà Nội', email: 'le.kim.chi@etc-english.vn', phone: '0902222014' },
   ];
 
   const teacherProfiles: Record<string, any> = {};
@@ -95,7 +99,7 @@ async function main() {
     });
     teacherProfiles[t.user] = p;
   }
-  console.log('✅ Đã nạp 10 Giảng viên: GV001 → GV010');
+  console.log('✅ Đã nạp 14 Giảng viên: GV001 → GV014');
 
   // 1.3 Tư vấn viên (2 Nhân viên Tuyển sinh / Thu ngân)
   const staffData = [
@@ -176,6 +180,32 @@ async function main() {
     { user: 'student52', ma: 'HV052', ten: 'Nguyễn Thùy Trang', cefr: TrinhDoCEFR.B2, dob: '2000-08-27', gender: 'Nữ', phone: '0904444052', email: 'thuytrang.nguyen@gmail.com', source: 'IELTS 6.5 BC Certificate', schedule: { thu: [2, 4, 6], gio: '18:00-21:00' } },
     { user: 'student53', ma: 'HV053', ten: 'Trần Anh Khoa', cefr: TrinhDoCEFR.B2, dob: '2001-12-14', gender: 'Nam', phone: '0904444053', email: 'anhkhoa.tran@gmail.com', source: 'IELTS 6.0 IDP Certificate', schedule: { thu: [2, 4, 6], gio: '18:00-21:00' } },
     { user: 'student54', ma: 'HV054', ten: 'Lê Diễm Quỳnh', cefr: TrinhDoCEFR.B2, dob: '2002-06-03', gender: 'Nữ', phone: '0904444054', email: 'diemquynh.le@gmail.com', source: 'IELTS 6.5 mock test', schedule: { thu: [2, 4, 6], gio: '18:00-21:00' } },
+    { user: 'student55', ma: 'HV055', ten: 'Trần Gia Hưng', cefr: TrinhDoCEFR.B1, dob: '2002-03-15', gender: 'Nam', phone: '0904444055', email: 'giahung.tran@gmail.com', source: 'Test đầu vào B1', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student56', ma: 'HV056', ten: 'Lê Thảo My', cefr: TrinhDoCEFR.B1, dob: '2003-07-22', gender: 'Nữ', phone: '0904444056', email: 'thaomy.le@gmail.com', source: 'Đánh giá năng lực B1', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student57', ma: 'HV057', ten: 'Nguyễn Đình Phúc', cefr: TrinhDoCEFR.B1, dob: '2001-11-09', gender: 'Nam', phone: '0904444057', email: 'dinhphuc.nguyen@gmail.com', source: 'TOEIC Starter 480', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student58', ma: 'HV058', ten: 'Phạm Kiều Trang', cefr: TrinhDoCEFR.B1, dob: '2004-05-18', gender: 'Nữ', phone: '0904444058', email: 'kieutrang.pham@gmail.com', source: 'Test đầu vào B1', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student59', ma: 'HV059', ten: 'Hoàng Nhật Minh', cefr: TrinhDoCEFR.B1, dob: '2000-09-30', gender: 'Nam', phone: '0904444059', email: 'nhatminh.hoang@gmail.com', source: 'IELTS 5.0 mock test', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student60', ma: 'HV060', ten: 'Vũ Ngọc Lan', cefr: TrinhDoCEFR.B1, dob: '2002-12-14', gender: 'Nữ', phone: '0904444060', email: 'ngoclan.vu@gmail.com', source: 'Test năng lực B1', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student61', ma: 'HV061', ten: 'Đặng Quốc Huy', cefr: TrinhDoCEFR.B1, dob: '2003-04-25', gender: 'Nam', phone: '0904444061', email: 'quochuy.dang@gmail.com', source: 'Test đầu vào B1', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student62', ma: 'HV062', ten: 'Bùi Kim Ngân', cefr: TrinhDoCEFR.B1, dob: '2001-08-03', gender: 'Nữ', phone: '0904444062', email: 'kimngan.bui@gmail.com', source: 'Phỏng vấn B1', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student63', ma: 'HV063', ten: 'Lý Quốc Đạt', cefr: TrinhDoCEFR.B1, dob: '2004-01-19', gender: 'Nam', phone: '0904444063', email: 'quocdat.ly@gmail.com', source: 'Test đầu vào B1', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student64', ma: 'HV064', ten: 'Mai Cẩm Vân', cefr: TrinhDoCEFR.B1, dob: '2002-10-08', gender: 'Nữ', phone: '0904444064', email: 'camvan.mai@gmail.com', source: 'Test đầu vào B1', schedule: { thu: [2, 4, 6], gio: '18:30-20:30' } },
+    { user: 'student65', ma: 'HV065', ten: 'Nguyễn Thành Nam', cefr: TrinhDoCEFR.A2, dob: '2003-02-28', gender: 'Nam', phone: '0904444065', email: 'thanhnam.nguyen@gmail.com', source: 'Placement Test A2', schedule: { thu: [3, 5, 7], gio: '18:00-20:00' } },
+    { user: 'student66', ma: 'HV066', ten: 'Trần Bích Hạnh', cefr: TrinhDoCEFR.A2, dob: '2004-06-12', gender: 'Nữ', phone: '0904444066', email: 'bichhanh.tran@gmail.com', source: 'Placement Test A2', schedule: { thu: [3, 5, 7], gio: '18:00-20:00' } },
+    { user: 'student67', ma: 'HV067', ten: 'Lê Đức Trọng', cefr: TrinhDoCEFR.A2, dob: '2001-10-21', gender: 'Nam', phone: '0904444067', email: 'ductrong.le@gmail.com', source: 'Placement Test A2', schedule: { thu: [3, 5, 7], gio: '18:00-20:00' } },
+    { user: 'student68', ma: 'HV068', ten: 'Phạm Quỳnh Anh', cefr: TrinhDoCEFR.A2, dob: '2005-01-05', gender: 'Nữ', phone: '0904444068', email: 'quynhanh.pham@gmail.com', source: 'Placement Test A2', schedule: { thu: [3, 5, 7], gio: '18:00-20:00' } },
+    { user: 'student69', ma: 'HV069', ten: 'Hoàng Văn Quý', cefr: TrinhDoCEFR.A2, dob: '2000-08-16', gender: 'Nam', phone: '0904444069', email: 'vanquy.hoang@gmail.com', source: 'Placement Test A2', schedule: { thu: [3, 5, 7], gio: '18:00-20:00' } },
+    { user: 'student70', ma: 'HV070', ten: 'Đỗ Thùy Linh', cefr: TrinhDoCEFR.A2, dob: '2002-11-23', gender: 'Nữ', phone: '0904444070', email: 'thuylinh.do@gmail.com', source: 'Placement Test A2', schedule: { thu: [3, 5, 7], gio: '18:00-20:00' } },
+    { user: 'student71', ma: 'HV071', ten: 'Vũ Hữu Đạt', cefr: TrinhDoCEFR.A2, dob: '2003-09-07', gender: 'Nam', phone: '0904444071', email: 'huudat.vu@gmail.com', source: 'Placement Test A2', schedule: { thu: [3, 5, 7], gio: '18:00-20:00' } },
+    { user: 'student72', ma: 'HV072', ten: 'Ngô Mỹ Duyên', cefr: TrinhDoCEFR.A2, dob: '2004-03-14', gender: 'Nữ', phone: '0904444072', email: 'myduyen.ngo@gmail.com', source: 'Placement Test A2', schedule: { thu: [3, 5, 7], gio: '18:00-20:00' } },
+    { user: 'student73', ma: 'HV073', ten: 'Trịnh Tuấn Khôi', cefr: TrinhDoCEFR.C1, dob: '1998-05-20', gender: 'Nam', phone: '0904444073', email: 'tuankhoi.trinh@gmail.com', source: 'IELTS 7.5 IDP', schedule: { thu: [3, 5], gio: '18:30-21:00' } },
+    { user: 'student74', ma: 'HV074', ten: 'Phan Diệu Huyền', cefr: TrinhDoCEFR.C1, dob: '1999-12-11', gender: 'Nữ', phone: '0904444074', email: 'dieuhuyen.phan@gmail.com', source: 'IELTS 7.5 BC', schedule: { thu: [3, 5], gio: '18:30-21:00' } },
+    { user: 'student75', ma: 'HV075', ten: 'Lâm Hoàng Phong', cefr: TrinhDoCEFR.C1, dob: '2000-07-04', gender: 'Nam', phone: '0904444075', email: 'hoangphong.lam@gmail.com', source: 'IELTS 7.5 IDP', schedule: { thu: [3, 5], gio: '18:30-21:00' } },
+    { user: 'student76', ma: 'HV076', ten: 'Đoàn Bảo Châu', cefr: TrinhDoCEFR.C1, dob: '2001-02-18', gender: 'Nữ', phone: '0904444076', email: 'baochau.doan@gmail.com', source: 'IELTS 7.5 BC', schedule: { thu: [3, 5], gio: '18:30-21:00' } },
+    { user: 'student77', ma: 'HV077', ten: 'Dương Hải Đăng', cefr: TrinhDoCEFR.C1, dob: '1997-10-29', gender: 'Nam', phone: '0904444077', email: 'haidang.duong@gmail.com', source: 'Cử nhân Ngôn ngữ Anh', schedule: { thu: [2, 4], gio: '18:00-21:00' } },
+    { user: 'student78', ma: 'HV078', ten: 'Lý Kim Yến', cefr: TrinhDoCEFR.C1, dob: '2000-04-09', gender: 'Nữ', phone: '0904444078', email: 'kimyen.ly@gmail.com', source: 'IELTS 7.5 IDP', schedule: { thu: [3, 5], gio: '18:30-21:00' } },
+    { user: 'student79', ma: 'HV079', ten: 'Vũ Quốc Thái', cefr: TrinhDoCEFR.A1, dob: '2005-08-15', gender: 'Nam', phone: '0904444079', email: 'quocthai.vu@gmail.com', source: 'Mất gốc tiếng Anh', schedule: { thu: [7, 8], gio: '14:00-17:00' } },
+    { user: 'student80', ma: 'HV080', ten: 'Nguyễn Hồng Nhung', cefr: TrinhDoCEFR.A1, dob: '2004-12-02', gender: 'Nữ', phone: '0904444080', email: 'hongnhung.nguyen@gmail.com', source: 'Mất gốc tiếng Anh', schedule: { thu: [7, 8], gio: '14:00-17:00' } },
   ];
 
   const studentProfiles: Record<string, any> = {};
@@ -210,7 +240,7 @@ async function main() {
     });
     studentProfiles[s.user] = p;
   }
-  console.log('✅ Đã nạp 54 Học viên: HV001 → HV054');
+  console.log('✅ Đã nạp 80 Học viên: HV001 → HV080');
 
   // ============================================================================
   // 2. KHÓA HỌC (6 Khóa học chuẩn CEFR A1 → C1)
@@ -298,7 +328,63 @@ async function main() {
       trangThai: TrangThaiKhoaHoc.HOAT_DONG,
     },
   });
-  console.log('✅ Đã nạp 6 Khóa học');
+
+  const course7 = await prisma.khoaHoc.upsert({
+    where: { maKhoaHoc: 'KH-TOEIC-B1' },
+    update: {},
+    create: {
+      maKhoaHoc: 'KH-TOEIC-B1',
+      tenKhoaHoc: 'TOEIC Đột Phá 650 - 800+ (B1 → B2)',
+      trinhDoYeuCau: TrinhDoCEFR.B1,
+      thoiLuongGio: 54,
+      hocPhi: 3600000,
+      moTa: 'Chiến thuật giải đề TOEIC 4 kỹ năng nâng cao, bẫy từ vựng thương mại và đàm phán hợp đồng.',
+      trangThai: TrangThaiKhoaHoc.HOAT_DONG,
+    },
+  });
+
+  const course8 = await prisma.khoaHoc.upsert({
+    where: { maKhoaHoc: 'KH-COMM-A2' },
+    update: {},
+    create: {
+      maKhoaHoc: 'KH-COMM-A2',
+      tenKhoaHoc: 'Tiếng Anh Giao Tiếp Hàng Ngày & Phản Xạ Đời Sống (A2)',
+      trinhDoYeuCau: TrinhDoCEFR.A2,
+      thoiLuongGio: 40,
+      hocPhi: 2600000,
+      moTa: 'Tập trung giao tiếp đời sống, phản xạ đàm thoại du lịch, mua sắm và xử lý tình huống thực tế.',
+      trangThai: TrangThaiKhoaHoc.HOAT_DONG,
+    },
+  });
+
+  const course9 = await prisma.khoaHoc.upsert({
+    where: { maKhoaHoc: 'KH-IELTS-C1' },
+    update: {},
+    create: {
+      maKhoaHoc: 'KH-IELTS-C1',
+      tenKhoaHoc: 'IELTS Expert 7.5 - 8.5+ (C1 → C2)',
+      trinhDoYeuCau: TrinhDoCEFR.C1,
+      thoiLuongGio: 75,
+      hocPhi: 6200000,
+      moTa: 'Chinh phục Band điểm tinh hoa, phân tích chuyên sâu các chủ đề học thuật trừu tượng và tư duy biện luận phản biện cùng GV bản xứ.',
+      trangThai: TrangThaiKhoaHoc.HOAT_DONG,
+    },
+  });
+
+  const course10 = await prisma.khoaHoc.upsert({
+    where: { maKhoaHoc: 'KH-GRAM-A1' },
+    update: {},
+    create: {
+      maKhoaHoc: 'KH-GRAM-A1',
+      tenKhoaHoc: 'Ngữ Pháp Nền Tảng & Luyện Âm Chuẩn Quốc Tế (A1 → A2)',
+      trinhDoYeuCau: TrinhDoCEFR.A1,
+      thoiLuongGio: 36,
+      hocPhi: 1950000,
+      moTa: 'Hệ thống hóa toàn diện 12 thì tiếng Anh, từ loại, cấu trúc câu và kỹ thuật phát âm chuẩn IPA.',
+      trangThai: TrangThaiKhoaHoc.HOAT_DONG,
+    },
+  });
+  console.log('✅ Đã nạp 10 Khóa học toàn diện (Từ A1 đến C1/C2)');
 
   // ============================================================================
   // 3. LỚP HỌC & THỜI KHÓA BIỂU
@@ -404,7 +490,110 @@ async function main() {
       trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY,
     },
   });
-  console.log('✅ Đã nạp 6 Lớp học (Bao gồm lớp IELTS-B1-01 ĐẠT SĨ SỐ TỐI ĐA 25/25 HV)');
+
+  // Lớp 7: TOEIC-B1-01 (10/25 HV - 40%)
+  const class7 = await prisma.lopHoc.upsert({
+    where: { maLopHoc: 'TOEIC-B1-01' },
+    update: { siSoToiDa: 25, siSoHienTai: 10, trangThai: TrangThaiLopHoc.DANG_HOC },
+    create: {
+      khoaHocId: course7.id,
+      maLopHoc: 'TOEIC-B1-01',
+      tenLopHoc: 'TOEIC Đột Phá 650+ Tối T2-4-6',
+      siSoToiDa: 25,
+      siSoHienTai: 10,
+      ngayBatDau: new Date('2024-09-16'),
+      ngayKetThuc: new Date('2024-12-16'),
+      phongHoc: 'Phòng B203',
+      trangThai: TrangThaiLopHoc.DANG_HOC,
+    },
+  });
+
+  // Lớp 8: COMM-A2-01 (8/18 HV - 44%)
+  const class8 = await prisma.lopHoc.upsert({
+    where: { maLopHoc: 'COMM-A2-01' },
+    update: { siSoToiDa: 18, siSoHienTai: 8, trangThai: TrangThaiLopHoc.DANG_HOC },
+    create: {
+      khoaHocId: course8.id,
+      maLopHoc: 'COMM-A2-01',
+      tenLopHoc: 'Giao Tiếp Phản Xạ Đời Sống Tối T3-5-7',
+      siSoToiDa: 18,
+      siSoHienTai: 8,
+      ngayBatDau: new Date('2024-09-17'),
+      ngayKetThuc: new Date('2024-12-17'),
+      phongHoc: 'Phòng C302',
+      trangThai: TrangThaiLopHoc.DANG_HOC,
+    },
+  });
+
+  // Lớp 9: IELTS-C1-01 (6/12 HV - 50%)
+  const class9 = await prisma.lopHoc.upsert({
+    where: { maLopHoc: 'IELTS-C1-01' },
+    update: { siSoToiDa: 12, siSoHienTai: 6, trangThai: TrangThaiLopHoc.DANG_HOC },
+    create: {
+      khoaHocId: course9.id,
+      maLopHoc: 'IELTS-C1-01',
+      tenLopHoc: 'IELTS Expert 7.5+ Cùng GV Bản Xứ Tối T3-5',
+      siSoToiDa: 12,
+      siSoHienTai: 6,
+      ngayBatDau: new Date('2024-08-20'),
+      ngayKetThuc: new Date('2024-11-20'),
+      phongHoc: 'Phòng Hội Thảo VIP A104',
+      trangThai: TrangThaiLopHoc.DANG_HOC,
+    },
+  });
+
+  // Lớp 10: ENG-A1-02 (4/20 HV - 20%)
+  const class10 = await prisma.lopHoc.upsert({
+    where: { maLopHoc: 'ENG-A1-02' },
+    update: { siSoToiDa: 20, siSoHienTai: 4, trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY },
+    create: {
+      khoaHocId: course1.id,
+      maLopHoc: 'ENG-A1-02',
+      tenLopHoc: 'Tiếng Anh Căn Bản Cuối Tuần (Thứ 7 - CN)',
+      siSoToiDa: 20,
+      siSoHienTai: 4,
+      ngayBatDau: new Date('2024-10-12'),
+      ngayKetThuc: new Date('2025-01-12'),
+      phongHoc: 'Phòng B201',
+      trangThai: TrangThaiLopHoc.DANG_MO_DANG_KY,
+    },
+  });
+
+  // Lớp 11: ADV-C1-01 (5/15 HV - 33%)
+  const class11 = await prisma.lopHoc.upsert({
+    where: { maLopHoc: 'ADV-C1-01' },
+    update: { siSoToiDa: 15, siSoHienTai: 5, trangThai: TrangThaiLopHoc.DANG_HOC },
+    create: {
+      khoaHocId: course6.id,
+      maLopHoc: 'ADV-C1-01',
+      tenLopHoc: 'Biên Dịch Học Thuật Chuyên Sâu Tối Thứ 2-4',
+      siSoToiDa: 15,
+      siSoHienTai: 5,
+      ngayBatDau: new Date('2024-08-15'),
+      ngayKetThuc: new Date('2024-11-30'),
+      phongHoc: 'Phòng Chuyên Đề A105',
+      trangThai: TrangThaiLopHoc.DANG_HOC,
+    },
+  });
+
+  // Lớp 12: GRAM-A1-01 (0/25 HV - Sắp mở mới)
+  const class12 = await prisma.lopHoc.upsert({
+    where: { maLopHoc: 'GRAM-A1-01' },
+    update: { siSoToiDa: 25, siSoHienTai: 0, trangThai: TrangThaiLopHoc.SAP_MO },
+    create: {
+      khoaHocId: course10.id,
+      maLopHoc: 'GRAM-A1-01',
+      tenLopHoc: 'Ngữ Pháp Nền Tảng & Luyện Âm Tối Thứ 3-6',
+      siSoToiDa: 25,
+      siSoHienTai: 0,
+      ngayBatDau: new Date('2024-11-01'),
+      ngayKetThuc: new Date('2025-02-01'),
+      phongHoc: 'Phòng B204',
+      trangThai: TrangThaiLopHoc.SAP_MO,
+    },
+  });
+
+  console.log('✅ Đã nạp 12 Lớp học đa dạng trạng thái (Từ lớp SĨ SỐ TỐI ĐA 25/25 đến lớp SẮP MỞ)');
 
   // Lịch học (Schedules)
   const schedules = [
@@ -423,6 +612,21 @@ async function main() {
     { lopId: class5.id, thu: 4, bd: '18:00:00', kt: '21:00:00', phong: 'Phòng A103' },
     { lopId: class6.id, thu: 7, bd: '08:30:00', kt: '11:30:00', phong: 'Phòng A102' },
     { lopId: class6.id, thu: 8, bd: '08:30:00', kt: '11:30:00', phong: 'Phòng A102' },
+    // Lịch học lớp 7-12
+    { lopId: class7.id, thu: 2, bd: '18:30:00', kt: '20:30:00', phong: 'Phòng B203' },
+    { lopId: class7.id, thu: 4, bd: '18:30:00', kt: '20:30:00', phong: 'Phòng B203' },
+    { lopId: class7.id, thu: 6, bd: '18:30:00', kt: '20:30:00', phong: 'Phòng B203' },
+    { lopId: class8.id, thu: 3, bd: '18:00:00', kt: '20:00:00', phong: 'Phòng C302' },
+    { lopId: class8.id, thu: 5, bd: '18:00:00', kt: '20:00:00', phong: 'Phòng C302' },
+    { lopId: class8.id, thu: 7, bd: '18:00:00', kt: '20:00:00', phong: 'Phòng C302' },
+    { lopId: class9.id, thu: 3, bd: '18:30:00', kt: '21:00:00', phong: 'Phòng Hội Thảo VIP A104' },
+    { lopId: class9.id, thu: 5, bd: '18:30:00', kt: '21:00:00', phong: 'Phòng Hội Thảo VIP A104' },
+    { lopId: class10.id, thu: 7, bd: '14:00:00', kt: '17:00:00', phong: 'Phòng B201' },
+    { lopId: class10.id, thu: 8, bd: '14:00:00', kt: '17:00:00', phong: 'Phòng B201' },
+    { lopId: class11.id, thu: 2, bd: '18:00:00', kt: '21:00:00', phong: 'Phòng Chuyên Đề A105' },
+    { lopId: class11.id, thu: 4, bd: '18:00:00', kt: '21:00:00', phong: 'Phòng Chuyên Đề A105' },
+    { lopId: class12.id, thu: 3, bd: '18:00:00', kt: '20:00:00', phong: 'Phòng B204' },
+    { lopId: class12.id, thu: 6, bd: '18:00:00', kt: '20:00:00', phong: 'Phòng B204' },
   ];
 
   for (const sc of schedules) {
@@ -456,6 +660,12 @@ async function main() {
     { lopId: class3.id, gvId: teacherProfiles['teacher03'].id, vaitro: VaiTroPhanCong.CHINH },
     { lopId: class4.id, gvId: teacherProfiles['teacher06'].id, vaitro: VaiTroPhanCong.CHINH },
     { lopId: class5.id, gvId: teacherProfiles['teacher05'].id, vaitro: VaiTroPhanCong.CHINH },
+    { lopId: class7.id, gvId: teacherProfiles['teacher07'].id, vaitro: VaiTroPhanCong.CHINH },
+    { lopId: class8.id, gvId: teacherProfiles['teacher10'].id, vaitro: VaiTroPhanCong.CHINH },
+    { lopId: class9.id, gvId: teacherProfiles['teacher04'].id, vaitro: VaiTroPhanCong.CHINH },
+    { lopId: class10.id, gvId: teacherProfiles['teacher09'].id, vaitro: VaiTroPhanCong.CHINH },
+    { lopId: class11.id, gvId: teacherProfiles['teacher08'].id, vaitro: VaiTroPhanCong.CHINH },
+    { lopId: class12.id, gvId: teacherProfiles['teacher11'].id, vaitro: VaiTroPhanCong.CHINH },
   ];
 
   for (const asg of assignments) {
@@ -584,11 +794,11 @@ async function main() {
       staffUserId: staffUsers['staff01'].id,
       enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
       invoiceCode: `HD-COMM-B1-${String(idx).padStart(3, '0')}`,
-      amountDue: 3200000,
-      amountPaid: 3200000,
+      amountDue: 2500000,
+      amountPaid: 2500000,
       invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
       payCode: `TX-COMM-B1-${String(idx).padStart(3, '0')}`,
-      payMethod: PhuongThucThanhToan.CHUYEN_KHOAN,
+      payMethod: idx % 2 === 0 ? PhuongThucThanhToan.CHUYEN_KHOAN : PhuongThucThanhToan.TIEN_MAT,
     });
     idx++;
   }
@@ -613,7 +823,7 @@ async function main() {
     idx++;
   }
 
-  // 5.5 Lớp IELTS-B2-01 (4 học viên: student51 -> student54) - Thu ngân: staff02
+  // 5.5 Lớp KIDS-PRE-01 (4 học viên: student51 -> student54) - Thu ngân: staff01
   const class5Students = Array.from({ length: 4 }, (_, i) => `student${String(i + 51).padStart(2, '0')}`);
   idx = 1;
   for (const sUser of class5Students) {
@@ -621,298 +831,459 @@ async function main() {
     await enrollAndPay({
       lopId: class5.id,
       studentId: sProfile.id,
-      staffUserId: staffUsers['staff02'].id,
+      staffUserId: staffUsers['staff01'].id,
       enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
-      invoiceCode: `HD-IELTS-B2-${String(idx).padStart(3, '0')}`,
-      amountDue: 4800000,
-      amountPaid: 4800000,
+      invoiceCode: `HD-KIDS-PRE-${String(idx).padStart(3, '0')}`,
+      amountDue: 3000000,
+      amountPaid: 3000000,
       invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
-      payCode: `TX-IELTS-B2-${String(idx).padStart(3, '0')}`,
+      payCode: `TX-KIDS-PRE-${String(idx).padStart(3, '0')}`,
       payMethod: PhuongThucThanhToan.CHUYEN_KHOAN,
     });
     idx++;
   }
 
-  // 5.6 Lớp IELTS-B1-02 (3 học viên chờ thanh toán: student04, student10, student20)
-  const class6Students = ['student04', 'student10', 'student20'];
+  // 5.6 Lớp BUS-B2-01 (Đang tuyển sinh - 2 học viên: 1 đã đóng tiền, 1 chờ đóng tiền)
+  await enrollAndPay({
+    lopId: class6.id,
+    studentId: studentProfiles['student01'].id,
+    staffUserId: staffUsers['staff02'].id,
+    enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+    invoiceCode: 'HD-BUS-B2-001',
+    amountDue: 4500000,
+    amountPaid: 4500000,
+    invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+    payCode: 'TX-BUS-B2-001',
+    payMethod: PhuongThucThanhToan.CHUYEN_KHOAN,
+  });
+
+  await enrollAndPay({
+    lopId: class6.id,
+    studentId: studentProfiles['student02'].id,
+    enrollStatus: TrangThaiDangKy.CHO_THANH_TOAN,
+    invoiceCode: 'HD-BUS-B2-002',
+    amountDue: 4500000,
+    amountPaid: 0,
+    invoiceStatus: TrangThaiHoaDon.CHUA_THANH_TOAN,
+  });
+
+  // 5.7 Lớp TOEIC-B1-01 (10 học viên: student55 -> student64) - Thu ngân: staff01 & staff02
+  const class7Students = Array.from({ length: 10 }, (_, i) => `student${String(i + 55).padStart(2, '0')}`);
   idx = 1;
-  for (const sUser of class6Students) {
+  for (const sUser of class7Students) {
     const sProfile = studentProfiles[sUser];
     await enrollAndPay({
-      lopId: class6.id,
+      lopId: class7.id,
+      studentId: sProfile.id,
+      staffUserId: idx % 2 === 0 ? staffUsers['staff01'].id : staffUsers['staff02'].id,
+      enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+      invoiceCode: `HD-TOEIC-B1-${String(idx).padStart(3, '0')}`,
+      amountDue: 3600000,
+      amountPaid: 3600000,
+      invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+      payCode: `TX-TOEIC-B1-${String(idx).padStart(3, '0')}`,
+      payMethod: idx % 2 === 0 ? PhuongThucThanhToan.CHUYEN_KHOAN : PhuongThucThanhToan.TIEN_MAT,
+    });
+    idx++;
+  }
+
+  // 5.8 Lớp COMM-A2-01 (8 học viên: student65 -> student72) - Thu ngân: staff01
+  const class8Students = Array.from({ length: 8 }, (_, i) => `student${String(i + 65).padStart(2, '0')}`);
+  idx = 1;
+  for (const sUser of class8Students) {
+    const sProfile = studentProfiles[sUser];
+    await enrollAndPay({
+      lopId: class8.id,
+      studentId: sProfile.id,
+      staffUserId: staffUsers['staff01'].id,
+      enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+      invoiceCode: `HD-COMM-A2-${String(idx).padStart(3, '0')}`,
+      amountDue: 2600000,
+      amountPaid: 2600000,
+      invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+      payCode: `TX-COMM-A2-${String(idx).padStart(3, '0')}`,
+      payMethod: PhuongThucThanhToan.TIEN_MAT,
+    });
+    idx++;
+  }
+
+  // 5.9 Lớp IELTS-C1-01 (6 học viên: student73 -> student78) - Thu ngân: staff02
+  const class9Students = Array.from({ length: 6 }, (_, i) => `student${String(i + 73).padStart(2, '0')}`);
+  idx = 1;
+  for (const sUser of class9Students) {
+    const sProfile = studentProfiles[sUser];
+    await enrollAndPay({
+      lopId: class9.id,
+      studentId: sProfile.id,
+      staffUserId: staffUsers['staff02'].id,
+      enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+      invoiceCode: `HD-IELTS-C1-${String(idx).padStart(3, '0')}`,
+      amountDue: 6200000,
+      amountPaid: 6200000,
+      invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+      payCode: `TX-IELTS-C1-${String(idx).padStart(3, '0')}`,
+      payMethod: PhuongThucThanhToan.CHUYEN_KHOAN,
+    });
+    idx++;
+  }
+
+  // 5.10 Lớp ENG-A1-02 (4 học viên: student79, student80 đã đóng; student04, student49 chờ thanh toán)
+  const class10Paid = ['student79', 'student80'];
+  idx = 1;
+  for (const sUser of class10Paid) {
+    const sProfile = studentProfiles[sUser];
+    await enrollAndPay({
+      lopId: class10.id,
+      studentId: sProfile.id,
+      staffUserId: staffUsers['staff01'].id,
+      enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+      invoiceCode: `HD-ENG-A1-02-${String(idx).padStart(3, '0')}`,
+      amountDue: 2200000,
+      amountPaid: 2200000,
+      invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+      payCode: `TX-ENG-A1-02-${String(idx).padStart(3, '0')}`,
+      payMethod: PhuongThucThanhToan.TIEN_MAT,
+    });
+    idx++;
+  }
+  const class10Pending = ['student04', 'student49'];
+  for (const sUser of class10Pending) {
+    const sProfile = studentProfiles[sUser];
+    await enrollAndPay({
+      lopId: class10.id,
       studentId: sProfile.id,
       enrollStatus: TrangThaiDangKy.CHO_THANH_TOAN,
-      invoiceCode: `HD-IELTS-B1-02-${String(idx).padStart(3, '0')}`,
-      amountDue: 3500000,
+      invoiceCode: `HD-ENG-A1-02-${String(idx).padStart(3, '0')}`,
+      amountDue: 2200000,
       amountPaid: 0,
       invoiceStatus: TrangThaiHoaDon.CHUA_THANH_TOAN,
     });
     idx++;
   }
-  console.log('✅ Đã nạp Đăng ký học, Hóa đơn & Thanh toán đầy đủ');
+
+  // 5.11 Lớp ADV-C1-01 (5 học viên: student06, student10, student73, student75, student77) - Thu ngân: staff02
+  const class11Students = ['student06', 'student10', 'student73', 'student75', 'student77'];
+  idx = 1;
+  for (const sUser of class11Students) {
+    const sProfile = studentProfiles[sUser];
+    await enrollAndPay({
+      lopId: class11.id,
+      studentId: sProfile.id,
+      staffUserId: staffUsers['staff02'].id,
+      enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
+      invoiceCode: `HD-ADV-C1-${String(idx).padStart(3, '0')}`,
+      amountDue: 5500000,
+      amountPaid: 5500000,
+      invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
+      payCode: `TX-ADV-C1-${String(idx).padStart(3, '0')}`,
+      payMethod: PhuongThucThanhToan.CHUYEN_KHOAN,
+    });
+    idx++;
+  }
+
+  console.log('✅ Đã nạp Đăng ký học, Hóa đơn & Thanh toán đầy đủ cho 11 lớp học hoạt động');
 
   // ============================================================================
-  // 6. BUỔI HỌC & ĐIỂM DANH (BuoiHoc & BanGhiDiemDanh)
+  // 6. BUỔI HỌC & ĐIỂM DANH (BuoiHoc & BanGhiDiemDanh - Batch Created)
   // ============================================================================
   await prisma.banGhiDiemDanh.deleteMany({});
   await prisma.buoiHoc.deleteMany({});
-  
-  // Tạo 8 buổi học cho lớp IELTS-B1-01
-  const class1Sessions = [
-    { so: 1, ngay: '2024-09-16', tieude: 'Orientation & Diagnostic Placement Test' },
-    { so: 2, ngay: '2024-09-18', tieude: 'Listening Section 1 & 2 Strategies' },
-    { so: 3, ngay: '2024-09-20', tieude: 'Reading Skimming & Scanning Techniques' },
-    { so: 4, ngay: '2024-09-23', tieude: 'Speaking Part 1 Fluency & Pronunciation' },
-    { so: 5, ngay: '2024-09-25', tieude: 'Writing Task 1 Overview & Line Graphs' },
-    { so: 6, ngay: '2024-09-27', tieude: 'Mid-term Assessment & Teacher Feedback' },
-    { so: 7, ngay: '2024-09-30', tieude: 'Writing Task 2 Essay Structure & Ideas' },
-    { so: 8, ngay: '2024-10-02', tieude: 'Final Full Mock Test & Band Score Evaluation' },
-  ];
 
-  const class1TeacherId = teacherProfiles['teacher01'].id;
-  for (const sess of class1Sessions) {
-    const b = await prisma.buoiHoc.create({
-      data: {
-        lopHocId: class1.id,
-        soThuTu: sess.so,
-        ngayHoc: new Date(sess.ngay),
-        gioBatDau: new Date('1970-01-01T17:30:00'),
-        gioKetThuc: new Date('1970-01-01T20:30:00'),
-        chuDe: sess.tieude,
-        trangThai: TrangThaiBuoiHoc.DA_KET_THUC,
-      },
-    });
+  const allAttendanceData: any[] = [];
 
-    // Điểm danh cho tất cả 25 học viên trong lớp
-    for (const sUser of class1Students) {
-      const sProfile = studentProfiles[sUser];
-      const isAbsent = (sUser === 'student15' && (sess.so === 3 || sess.so === 4 || sess.so === 6)) || 
-                       (sUser === 'student17' && (sess.so === 2 || sess.so === 5)) ||
-                       (sUser === 'student23' && (sess.so === 1 || sess.so === 7));
-      const isLate = (sUser === 'student12' && sess.so === 2) || (sUser === 'student25' && sess.so === 4);
-      const attStatus = isAbsent ? TrangThaiDiemDanh.VANG : isLate ? TrangThaiDiemDanh.DI_MUON : TrangThaiDiemDanh.CO_MAT;
-
-      await prisma.banGhiDiemDanh.create({
+  // Helper tạo buổi học và chuẩn bị dữ liệu điểm danh
+  const createSessionsAndAttendance = async (
+    lopId: bigint,
+    teacherId: bigint,
+    studentsList: string[],
+    sessionsList: { so: number; ngay: string; tieude: string }[],
+    absentMap?: Record<string, number[]>,
+    lateMap?: Record<string, number[]>,
+  ) => {
+    for (const sess of sessionsList) {
+      const b = await prisma.buoiHoc.create({
         data: {
+          lopHocId: lopId,
+          soThuTu: sess.so,
+          ngayHoc: new Date(sess.ngay),
+          gioBatDau: new Date('1970-01-01T18:00:00'),
+          gioKetThuc: new Date('1970-01-01T20:00:00'),
+          chuDe: sess.tieude,
+          trangThai: TrangThaiBuoiHoc.DA_KET_THUC,
+        },
+      });
+
+      for (const sUser of studentsList) {
+        const sProf = studentProfiles[sUser];
+        const isAbsent = absentMap?.[sUser]?.includes(sess.so);
+        const isLate = lateMap?.[sUser]?.includes(sess.so);
+        const attStatus = isAbsent ? TrangThaiDiemDanh.VANG : isLate ? TrangThaiDiemDanh.DI_MUON : TrangThaiDiemDanh.CO_MAT;
+
+        allAttendanceData.push({
           buoiHocId: b.id,
-          hocVienId: sProfile.id,
-          giaoVienDiemDanhId: class1TeacherId,
+          hocVienId: sProf.id,
+          giaoVienDiemDanhId: teacherId,
           trangThai: attStatus,
           ghiChu: isAbsent ? 'Vắng không phép' : isLate ? 'Kẹt xe đến muộn 15p' : 'Đi học đúng giờ',
-        },
-      });
+        });
+      }
     }
-  }
+  };
 
-  // Tạo 6 buổi học cho lớp TOEIC-A2-01
-  const class2Sessions = [
-    { so: 1, ngay: '2024-09-17', tieude: 'Part 1 Photographs & Vocabulary' },
-    { so: 2, ngay: '2024-09-19', tieude: 'Part 2 Question - Response' },
-    { so: 3, ngay: '2024-09-21', tieude: 'Part 5 Incomplete Sentences Grammar' },
-    { so: 4, ngay: '2024-09-24', tieude: 'Mid-term Quiz & Listening Part 3' },
-    { so: 5, ngay: '2024-09-26', tieude: 'Part 6 Text Completion' },
-    { so: 6, ngay: '2024-09-28', tieude: 'Final Review & Practice Test' },
-  ];
+  // 6.1 Lớp IELTS-B1-01 (8 buổi x 25 HV)
+  await createSessionsAndAttendance(
+    class1.id,
+    teacherProfiles['teacher01'].id,
+    class1Students,
+    [
+      { so: 1, ngay: '2024-09-16', tieude: 'Orientation & Diagnostic Placement Test' },
+      { so: 2, ngay: '2024-09-18', tieude: 'Listening Section 1 & 2 Strategies' },
+      { so: 3, ngay: '2024-09-20', tieude: 'Reading Skimming & Scanning Techniques' },
+      { so: 4, ngay: '2024-09-23', tieude: 'Speaking Part 1 Fluency & Pronunciation' },
+      { so: 5, ngay: '2024-09-25', tieude: 'Writing Task 1 Overview & Line Graphs' },
+      { so: 6, ngay: '2024-09-27', tieude: 'Mid-term Assessment & Teacher Feedback' },
+      { so: 7, ngay: '2024-09-30', tieude: 'Writing Task 2 Essay Structure & Ideas' },
+      { so: 8, ngay: '2024-10-02', tieude: 'Final Full Mock Test & Band Score Evaluation' },
+    ],
+    {
+      student15: [3, 4, 6],
+      student17: [2, 5],
+      student23: [1, 7],
+    },
+    {
+      student12: [2],
+      student25: [4],
+    },
+  );
 
-  const class2TeacherId = teacherProfiles['teacher02'].id;
-  for (const sess of class2Sessions) {
-    const b = await prisma.buoiHoc.create({
-      data: {
-        lopHocId: class2.id,
-        soThuTu: sess.so,
-        ngayHoc: new Date(sess.ngay),
-        gioBatDau: new Date('1970-01-01T19:00:00'),
-        gioKetThuc: new Date('1970-01-01T21:00:00'),
-        chuDe: sess.tieude,
-        trangThai: TrangThaiBuoiHoc.DA_KET_THUC,
-      },
-    });
+  // 6.2 Lớp TOEIC-A2-01 (6 buổi x 12 HV)
+  await createSessionsAndAttendance(
+    class2.id,
+    teacherProfiles['teacher02'].id,
+    class2Students,
+    [
+      { so: 1, ngay: '2024-09-17', tieude: 'Part 1 Photographs & Vocabulary' },
+      { so: 2, ngay: '2024-09-19', tieude: 'Part 2 Question - Response' },
+      { so: 3, ngay: '2024-09-21', tieude: 'Part 5 Incomplete Sentences Grammar' },
+      { so: 4, ngay: '2024-09-24', tieude: 'Mid-term Quiz & Listening Part 3' },
+      { so: 5, ngay: '2024-09-26', tieude: 'Part 6 Text Completion' },
+      { so: 6, ngay: '2024-09-28', tieude: 'Final Review & Practice Test' },
+    ],
+    {
+      student37: [3, 5],
+    },
+  );
 
-    for (const sUser of class2Students) {
-      const sProfile = studentProfiles[sUser];
-      const isAbsent = sUser === 'student37' && (sess.so === 3 || sess.so === 5);
-      const attStatus = isAbsent ? TrangThaiDiemDanh.VANG : TrangThaiDiemDanh.CO_MAT;
+  // 6.3 Lớp TOEIC-B1-01 (6 buổi x 10 HV)
+  await createSessionsAndAttendance(
+    class7.id,
+    teacherProfiles['teacher07'].id,
+    class7Students,
+    [
+      { so: 1, ngay: '2024-09-16', tieude: 'TOEIC Listening Part 3 & 4 Advance' },
+      { so: 2, ngay: '2024-09-18', tieude: 'Business Vocabulary & Email Collocations' },
+      { so: 3, ngay: '2024-09-20', tieude: 'Reading Comprehension Double Passages' },
+      { so: 4, ngay: '2024-09-23', tieude: 'Mid-term Diagnostic Assessment' },
+      { so: 5, ngay: '2024-09-25', tieude: 'Speed Reading & Time Management' },
+      { so: 6, ngay: '2024-09-27', tieude: 'Final Practice Test & Band Target Review' },
+    ],
+    {
+      student63: [2, 5],
+    },
+  );
 
-      await prisma.banGhiDiemDanh.create({
-        data: {
-          buoiHocId: b.id,
-          hocVienId: sProfile.id,
-          giaoVienDiemDanhId: class2TeacherId,
-          trangThai: attStatus,
-          ghiChu: isAbsent ? 'Vắng có phép' : 'Có mặt đầy đủ',
-        },
-      });
-    }
-  }
-  console.log('✅ Đã nạp Buổi học & Bản ghi điểm danh');
+  // 6.4 Lớp COMM-A2-01 (6 buổi x 8 HV)
+  await createSessionsAndAttendance(
+    class8.id,
+    teacherProfiles['teacher10'].id,
+    class8Students,
+    [
+      { so: 1, ngay: '2024-09-17', tieude: 'Self Introduction & Networking' },
+      { so: 2, ngay: '2024-09-19', tieude: 'Daily Routines & Hobbies Conversation' },
+      { so: 3, ngay: '2024-09-21', tieude: 'Travel, Airport & Hotel Check-in' },
+      { so: 4, ngay: '2024-09-24', tieude: 'Mid-term Role-play Simulation' },
+      { so: 5, ngay: '2024-09-26', tieude: 'Dining Out & Shopping English' },
+      { so: 6, ngay: '2024-09-28', tieude: 'Final Group Discussion & Presentation' },
+    ],
+    {
+      student71: [3, 6],
+    },
+  );
+
+  // 6.5 Lớp IELTS-C1-01 (6 buổi x 6 HV)
+  await createSessionsAndAttendance(
+    class9.id,
+    teacherProfiles['teacher04'].id,
+    class9Students,
+    [
+      { so: 1, ngay: '2024-08-20', tieude: 'Academic Discourse & Abstract Topics' },
+      { so: 2, ngay: '2024-08-22', tieude: 'Writing Task 2 Band 8.0+ Lexical Resource' },
+      { so: 3, ngay: '2024-08-27', tieude: 'Speaking Part 3 Critical Argumentation' },
+      { so: 4, ngay: '2024-08-29', tieude: 'Advanced Cohesion & Coherence in Essays' },
+      { so: 5, ngay: '2024-09-03', tieude: 'Mock Interview with Native Examiner' },
+      { so: 6, ngay: '2024-09-05', tieude: 'Final Full Academic Assessment' },
+    ],
+  );
+
+  // 6.6 Lớp ADV-C1-01 (6 buổi x 5 HV)
+  await createSessionsAndAttendance(
+    class11.id,
+    teacherProfiles['teacher08'].id,
+    class11Students,
+    [
+      { so: 1, ngay: '2024-08-15', tieude: 'Foundations of Academic Translation' },
+      { so: 2, ngay: '2024-08-19', tieude: 'Terminology Management in Law & Commerce' },
+      { so: 3, ngay: '2024-08-22', tieude: 'Journal Article Synthesis & Translation' },
+      { so: 4, ngay: '2024-08-26', tieude: 'Editing & Proofreading English Manuscripts' },
+      { so: 5, ngay: '2024-08-29', tieude: 'Simultaneous Translation Practice' },
+      { so: 6, ngay: '2024-09-02', tieude: 'Final Project Submission & Evaluation' },
+    ],
+  );
+
+  // Batch insert toàn bộ điểm danh trong 1 query
+  await prisma.banGhiDiemDanh.createMany({ data: allAttendanceData });
+  console.log(`✅ Đã nạp Buổi học & ${allAttendanceData.length} Bản ghi điểm danh tốc độ cao (Batch Insert)`);
 
   // ============================================================================
   // 7. BẢNG ĐIỂM & ĐÁNH GIÁ (KetQuaHocTap — 20% Chuyên cần, 30% Giữa kỳ, 50% Cuối kỳ)
-  // Có đầy đủ ca ĐẠT (38 HV), KHÔNG ĐẠT (6 HV), và ĐANG HỌC GIỮA KHÓA (10 HV)
+  // Đảm bảo 100% nhất quán toán học và logic ĐẠT / KHÔNG ĐẠT theo quy chế
   // ============================================================================
   await prisma.ketQuaHocTap.deleteMany({});
 
-  // Điểm số cho học viên lớp IELTS-B1-01 (25 học viên)
-  const class1Grades = [
-    // --- Nhóm ĐẠT (17 học viên) ---
-    { user: 'student01', cc: 95.0, gk: 82.5, ck: 88.0, total: 87.75, note: 'Ngữ pháp tốt, phát âm chuẩn. Cần luyện thêm từ vựng Writing.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student02', cc: 90.0, gk: 80.0, ck: 85.0, total: 84.5, note: 'Tác phong học tập nghiêm túc, giải đề cẩn thận.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student03', cc: 92.0, gk: 86.0, ck: 88.0, total: 88.2, note: 'Phản xạ tốt, tự tin trong Speaking.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student05', cc: 85.0, gk: 72.0, ck: 78.0, total: 77.6, note: 'Chăm chỉ, làm bài đầy đủ.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student06', cc: 95.0, gk: 90.0, ck: 92.0, total: 92.0, note: 'Kiến thức học thuật chuyên sâu.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student07', cc: 88.0, gk: 78.0, ck: 80.0, total: 81.0, note: 'Tiếp thu bài nhanh.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student08', cc: 92.0, gk: 85.0, ck: 87.0, total: 87.4, note: 'Phát âm tự nhiên.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student09', cc: 90.0, gk: 82.0, ck: 86.0, total: 85.6, note: 'Nắm vững cấu trúc bài thi IELTS.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student11', cc: 90.0, gk: 80.0, ck: 85.0, total: 84.5, note: 'Tiếp thu bài nhanh, phản xạ lưu loát.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student12', cc: 88.0, gk: 75.0, ck: 80.0, total: 80.1, note: 'Có tiến bộ rõ rệt ở kỹ năng Reading.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student13', cc: 92.0, gk: 88.0, ck: 90.0, total: 89.8, note: 'Bài thi cuối kỳ xuất sắc, nắm chắc cấu trúc bài luận.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student14', cc: 95.0, gk: 85.0, ck: 87.0, total: 88.0, note: 'Tác phong học tập gương mẫu, nhiệt tình trao đổi.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student16', cc: 90.0, gk: 78.0, ck: 82.0, total: 82.4, note: 'Khả năng Nghe tốt, cần trau chuốt phần phát âm âm đuôi.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student18', cc: 92.0, gk: 84.0, ck: 86.0, total: 86.6, note: 'Kỹ năng Writing mạch lạc, lập luận chặt chẽ.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student21', cc: 88.0, gk: 76.0, ck: 80.0, total: 80.4, note: 'Hoàn thành tốt các kỹ năng đầu ra của khóa B1.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student22', cc: 90.0, gk: 80.0, ck: 82.0, total: 83.0, note: 'Làm bài tập đầy đủ, tự tin trong giao tiếp.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student24', cc: 92.0, gk: 85.0, ck: 88.0, total: 87.9, note: 'Xuất sắc, mục tiêu đạt IELTS 6.0+.', status: TrangThaiHoanThanh.DAT },
+  const computeGrade = (user: string, lopId: bigint, cc: number, gk: number, ck: number | null, note: string) => {
+    const sProf = studentProfiles[user];
+    if (ck === null) {
+      return {
+        lopHocId: lopId,
+        hocVienId: sProf.id,
+        diemChuyenCan: cc,
+        diemGiuaKy: gk,
+        diemCuoiKy: null,
+        diemTongKet: null,
+        nhanXet: note,
+        trangThaiHoanThanh: TrangThaiHoanThanh.CHUA_XEP_LOAI,
+      };
+    }
+    const total = Number(((cc * 0.2) + (gk * 0.3) + (ck * 0.5)).toFixed(2));
+    const isPass = cc >= 80.0 && total >= 50.0;
+    return {
+      lopHocId: lopId,
+      hocVienId: sProf.id,
+      diemChuyenCan: cc,
+      diemGiuaKy: gk,
+      diemCuoiKy: ck,
+      diemTongKet: total,
+      nhanXet: note,
+      trangThaiHoanThanh: isPass ? TrangThaiHoanThanh.DAT : TrangThaiHoanThanh.KHONG_DAT,
+    };
+  };
 
-    // --- Nhóm KHÔNG ĐẠT (3 Học viên rớt do vắng nhiều / điểm thi < 50đ) ---
-    { user: 'student15', cc: 62.5, gk: 45.0, ck: 40.0, total: 46.0, note: 'Vắng 3/8 buổi (Chuyên cần 62.5% < 80%) và điểm thi dưới 50đ. Không đủ điều kiện hoàn thành khóa.', status: TrangThaiHoanThanh.KHONG_DAT },
-    { user: 'student17', cc: 75.0, gk: 42.0, ck: 44.0, total: 49.6, note: 'Chuyên cần dưới 80% và bài thi cuối kỳ không đạt chuẩn B1. Đề xuất học lại lớp tăng cường.', status: TrangThaiHoanThanh.KHONG_DAT },
-    { user: 'student23', cc: 70.0, gk: 40.0, ck: 48.0, total: 48.0, note: 'Điểm tổng kết dưới 50đ, không đủ điều kiện cấp chứng nhận hoàn thành.', status: TrangThaiHoanThanh.KHONG_DAT },
+  const allGradesData = [
+    // --- LỚP 1: IELTS-B1-01 (25 học viên) ---
+    computeGrade('student01', class1.id, 95.0, 82.5, 88.0, 'Ngữ pháp tốt, phát âm chuẩn. Cần luyện thêm từ vựng Writing.'),
+    computeGrade('student02', class1.id, 90.0, 80.0, 85.0, 'Tác phong học tập nghiêm túc, giải đề cẩn thận.'),
+    computeGrade('student03', class1.id, 92.0, 86.0, 88.0, 'Phản xạ tốt, tự tin trong Speaking.'),
+    computeGrade('student05', class1.id, 85.0, 72.0, 78.0, 'Chăm chỉ, làm bài đầy đủ.'),
+    computeGrade('student06', class1.id, 95.0, 90.0, 92.0, 'Kiến thức học thuật chuyên sâu.'),
+    computeGrade('student07', class1.id, 88.0, 78.0, 80.0, 'Tiếp thu bài nhanh.'),
+    computeGrade('student08', class1.id, 92.0, 85.0, 87.0, 'Phát âm tự nhiên.'),
+    computeGrade('student09', class1.id, 90.0, 82.0, 86.0, 'Nắm vững cấu trúc bài thi IELTS.'),
+    computeGrade('student11', class1.id, 90.0, 80.0, 85.0, 'Tiếp thu bài nhanh, phản xạ lưu loát.'),
+    computeGrade('student12', class1.id, 88.0, 75.0, 80.0, 'Có tiến bộ rõ rệt ở kỹ năng Reading.'),
+    computeGrade('student13', class1.id, 92.0, 88.0, 90.0, 'Bài thi cuối kỳ xuất sắc, nắm chắc cấu trúc bài luận.'),
+    computeGrade('student14', class1.id, 95.0, 85.0, 87.0, 'Tác phong học tập gương mẫu, nhiệt tình trao đổi.'),
+    computeGrade('student16', class1.id, 90.0, 78.0, 82.0, 'Khả năng Nghe tốt, cần trau chuốt phần phát âm âm đuôi.'),
+    computeGrade('student18', class1.id, 92.0, 84.0, 86.0, 'Kỹ năng Writing mạch lạc, lập luận chặt chẽ.'),
+    computeGrade('student21', class1.id, 88.0, 76.0, 80.0, 'Hoàn thành tốt các kỹ năng đầu ra của khóa B1.'),
+    computeGrade('student22', class1.id, 90.0, 80.0, 82.0, 'Làm bài tập đầy đủ, tự tin trong giao tiếp.'),
+    computeGrade('student24', class1.id, 92.0, 85.0, 88.0, 'Xuất sắc, mục tiêu đạt IELTS 6.0+.'),
+    computeGrade('student15', class1.id, 62.5, 45.0, 40.0, 'Vắng 3/8 buổi (Chuyên cần 62.5% < 80%) và điểm thi dưới 50đ. Không đủ điều kiện hoàn thành khóa.'),
+    computeGrade('student17', class1.id, 75.0, 42.0, 44.0, 'Chuyên cần dưới 80% và bài thi cuối kỳ không đạt chuẩn B1. Đề xuất học lại lớp tăng cường.'),
+    computeGrade('student23', class1.id, 70.0, 40.0, 48.0, 'Điểm tổng kết dưới 50đ, không đủ điều kiện cấp chứng nhận hoàn thành.'),
+    computeGrade('student19', class1.id, 85.0, 68.0, null, 'Đang ở giai đoạn giữa khóa, điểm giữa kỳ đạt 68/100.'),
+    computeGrade('student20', class1.id, 90.0, 75.0, null, 'Đang hoàn thành nửa chặng đường khóa học, chờ thi cuối kỳ.'),
+    computeGrade('student25', class1.id, 80.0, 70.0, null, 'Đang theo học chương trình, tiến độ tích lũy ổn định.'),
 
-    // --- Nhóm ĐANG HỌC (5 Học viên đang giữa khóa, chưa thi cuối kỳ) ---
-    { user: 'student19', cc: 85.0, gk: 68.0, ck: null, total: null, note: 'Đang ở giai đoạn giữa khóa, điểm giữa kỳ đạt 68/100.', status: TrangThaiHoanThanh.CHUA_XEP_LOAI },
-    { user: 'student20', cc: 90.0, gk: 75.0, ck: null, total: null, note: 'Đang hoàn thành nửa chặng đường khóa học, chờ thi cuối kỳ.', status: TrangThaiHoanThanh.CHUA_XEP_LOAI },
-    { user: 'student25', cc: 80.0, gk: 70.0, ck: null, total: null, note: 'Đang theo học chương trình, tiến độ tích lũy ổn định.', status: TrangThaiHoanThanh.CHUA_XEP_LOAI },
+    // --- LỚP 2: TOEIC-A2-01 (12 học viên) ---
+    computeGrade('student26', class2.id, 88.0, 76.0, 78.0, 'Tiến độ làm bài thi nhanh và chính xác.'),
+    computeGrade('student28', class2.id, 90.0, 80.0, 82.0, 'Nắm chắc ngữ pháp cơ bản.'),
+    computeGrade('student29', class2.id, 92.0, 84.0, 86.0, 'Kỹ năng Nghe Part 2 & 3 tốt.'),
+    computeGrade('student30', class2.id, 85.0, 75.0, 78.0, 'Tiến bộ rõ rệt ở Part 5.'),
+    computeGrade('student31', class2.id, 90.0, 82.0, 85.0, 'Đạt mục tiêu TOEIC 500+.'),
+    computeGrade('student32', class2.id, 88.0, 78.0, 80.0, 'Làm bài thi cẩn thận.'),
+    computeGrade('student33', class2.id, 92.0, 86.0, 88.0, 'Nắm chắc từ vựng kinh tế văn phòng.'),
+    computeGrade('student34', class2.id, 85.0, 72.0, 75.0, 'Hoàn thành tốt khóa học.'),
+    computeGrade('student35', class2.id, 90.0, 80.0, 84.0, 'Phản xạ nghe hiểu tốt.'),
+    computeGrade('student27', class2.id, 75.0, 40.0, 42.0, 'Điểm tổng kết dưới 50đ, chưa nắm vững cấu trúc đề TOEIC.'),
+    computeGrade('student37', class2.id, 60.0, 45.0, 40.0, 'Vắng 2/6 buổi (Chuyên cần 60% < 80%) và điểm thi không đạt.'),
+    computeGrade('student36', class2.id, 85.0, 70.0, null, 'Đang theo học giữa khóa.'),
+
+    // --- LỚP 3: COMM-B1-01 (8 học viên) ---
+    computeGrade('student38', class3.id, 90.0, 85.0, 86.0, 'Thuyết trình tự tin, phản xạ tốt.'),
+    computeGrade('student39', class3.id, 95.0, 88.0, 89.0, 'Phát âm tự nhiên, đàm phán linh hoạt.'),
+    computeGrade('student40', class3.id, 88.0, 80.0, 82.0, 'Tham gia tương tác tích cực.'),
+    computeGrade('student41', class3.id, 92.0, 86.0, 88.0, 'Kỹ năng trình bày báo cáo lưu loát.'),
+    computeGrade('student42', class3.id, 90.0, 84.0, 85.0, 'Phản xạ đàm phán linh hoạt, giao tiếp tự tin.'),
+    computeGrade('student43', class3.id, 92.0, 85.0, 87.0, 'Kỹ năng thương thuyết tốt.'),
+    computeGrade('student44', class3.id, 88.0, 78.0, 80.0, 'Giao tiếp tự nhiên.'),
+    computeGrade('student45', class3.id, 90.0, 82.0, 84.0, 'Hoàn thành xuất sắc khóa giao tiếp B1.'),
+
+    // --- LỚP 4: ENG-A1-01 (5 học viên) ---
+    computeGrade('student46', class4.id, 90.0, 75.0, 78.0, 'Nắm vững phát âm IPA cơ bản.'),
+    computeGrade('student47', class4.id, 85.0, 70.0, 72.0, 'Tiến bộ vượt bậc từ mất gốc.'),
+    computeGrade('student48', class4.id, 92.0, 80.0, 82.0, 'Tự tin phát âm các từ đơn giản.'),
+    computeGrade('student49', class4.id, 70.0, 40.0, 42.0, 'Chưa nắm vững quy tắc phát âm cơ bản, cần học lại.'),
+    computeGrade('student50', class4.id, 85.0, 68.0, null, 'Đang theo học nửa đầu khóa học.'),
+
+    // --- LỚP 5: IELTS-B2-01 (4 học viên) ---
+    computeGrade('student51', class5.id, 95.0, 90.0, 92.0, 'Trình độ IELTS tương đương 7.5, bài viết Task 2 chặt chẽ.'),
+    computeGrade('student52', class5.id, 85.0, 82.0, 86.0, 'Nắm vững chiến thuật làm bài, phản xạ Speaking lưu loát.'),
+    computeGrade('student53', class5.id, 90.0, 88.0, 90.0, 'Tác phong học thuật chuyên sâu, từ vựng phong phú.'),
+    computeGrade('student54', class5.id, 92.0, 85.0, 88.0, 'Lập luận sắc bén trong phần thi Speaking Part 3.'),
+
+    // --- LỚP 7: TOEIC-B1-01 (10 học viên) ---
+    computeGrade('student55', class7.id, 92.0, 84.0, 86.0, 'Nắm rất chắc kỹ thuật nghe bẫy TOEIC Part 3 & 4.'),
+    computeGrade('student56', class7.id, 90.0, 82.0, 84.0, 'Từ vựng thương mại phong phú, giải đề đọc nhanh.'),
+    computeGrade('student57', class7.id, 88.0, 78.0, 80.0, 'Tiến bộ rõ rệt ở phần ngữ pháp Part 5.'),
+    computeGrade('student58', class7.id, 95.0, 88.0, 90.0, 'Điểm số xuất sắc, đạt band kỳ vọng 750+.'),
+    computeGrade('student59', class7.id, 85.0, 75.0, 78.0, 'Chăm chỉ, làm đầy đủ các đề luyện tập.'),
+    computeGrade('student60', class7.id, 90.0, 80.0, 82.0, 'Khả năng phân bổ thời gian làm bài thi rất chuẩn.'),
+    computeGrade('student61', class7.id, 88.0, 76.0, 79.0, 'Hoàn thành tốt các mục tiêu của khóa học.'),
+    computeGrade('student62', class7.id, 92.0, 85.0, 87.0, 'Tư duy logic tốt, điểm thi cuối kỳ bứt phá.'),
+    computeGrade('student63', class7.id, 65.0, 42.0, 45.0, 'Vắng 2 buổi (Chuyên cần 65% < 80%) và điểm thi dưới 50đ. Cần ôn tập lại.'),
+    computeGrade('student64', class7.id, 85.0, 72.0, null, 'Đang theo học giữa khóa, theo dõi tiến độ ổn định.'),
+
+    // --- LỚP 8: COMM-A2-01 (8 học viên) ---
+    computeGrade('student65', class8.id, 90.0, 80.0, 82.0, 'Tự tin đàm thoại tình huống du lịch và mua sắm.'),
+    computeGrade('student66', class8.id, 92.0, 84.0, 85.0, 'Phát âm ngữ điệu tự nhiên, phản xạ nhanh.'),
+    computeGrade('student67', class8.id, 88.0, 76.0, 78.0, 'Tiếp thu bài tốt, giao tiếp lưu loát hơn đầu khóa.'),
+    computeGrade('student68', class8.id, 95.0, 86.0, 88.0, 'Tương tác nhóm tích cực, vốn từ vựng phong phú.'),
+    computeGrade('student69', class8.id, 85.0, 72.0, 74.0, 'Có nhiều nỗ lực vượt bậc trong thực hành giao tiếp.'),
+    computeGrade('student70', class8.id, 90.0, 82.0, 84.0, 'Xử lý tình huống đối thoại tiếng Anh rất nhạy bén.'),
+    computeGrade('student72', class8.id, 88.0, 78.0, 80.0, 'Hoàn thành xuất sắc mục tiêu phản xạ A2.'),
+    computeGrade('student71', class8.id, 68.0, 44.0, 46.0, 'Chuyên cần dưới 80% và kỹ năng phát âm còn nhiều lỗi sai cơ bản.'),
+
+    // --- LỚP 9: IELTS-C1-01 (6 học viên) ---
+    computeGrade('student73', class9.id, 95.0, 90.0, 94.0, 'Tư duy học thuật xuất sắc, bài viết Band 8.0 chuẩn Cambridge.'),
+    computeGrade('student74', class9.id, 92.0, 88.0, 90.0, 'Phản xạ biện luận sắc sảo, từ vựng C1 phong phú.'),
+    computeGrade('student75', class9.id, 95.0, 92.0, 93.0, 'Khả năng phân tích chủ đề phức tạp rất mạch lạc.'),
+    computeGrade('student76', class9.id, 90.0, 86.0, 88.0, 'Kỹ năng Speaking lưu loát, không ngập ngừng.'),
+    computeGrade('student77', class9.id, 92.0, 89.0, 91.0, 'Cấu trúc bài luận chặt chẽ, luận cứ thuyết phục.'),
+    computeGrade('student78', class9.id, 94.0, 87.0, 89.0, 'Hoàn thành xuất sắc chương trình IELTS Expert.'),
+
+    // --- LỚP 11: ADV-C1-01 (5 học viên) ---
+    computeGrade('student06', class11.id, 95.0, 92.0, 95.0, 'Kỹ năng dịch thuật văn bản học thuật quốc tế điêu luyện.'),
+    computeGrade('student10', class11.id, 92.0, 88.0, 90.0, 'Nắm vững thuật ngữ pháp lý và thương mại quốc tế.'),
+    computeGrade('student73', class11.id, 90.0, 86.0, 88.0, 'Biên tập bản dịch chính xác, phong cách học thuật cao.'),
+    computeGrade('student75', class11.id, 92.0, 89.0, 91.0, 'Phản xạ dịch cabin và dịch đuổi rất chuẩn xác.'),
+    computeGrade('student77', class11.id, 94.0, 90.0, 92.0, 'Tác phong nghiên cứu ngôn ngữ học mẫu mực.'),
   ];
 
-  for (const g of class1Grades) {
-    const sProfile = studentProfiles[g.user];
-    await prisma.ketQuaHocTap.create({
-      data: {
-        lopHocId: class1.id,
-        hocVienId: sProfile.id,
-        diemChuyenCan: g.cc,
-        diemGiuaKy: g.gk,
-        diemCuoiKy: g.ck,
-        diemTongKet: g.total,
-        nhanXet: g.note,
-        trangThaiHoanThanh: g.status,
-      },
-    });
-  }
-
-  // Điểm số cho học viên lớp TOEIC-A2-01 (12 học viên)
-  const class2Grades = [
-    { user: 'student26', cc: 88.0, gk: 76.0, ck: 78.0, total: 79.4, note: 'Tiến độ làm bài thi nhanh và chính xác.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student28', cc: 90.0, gk: 80.0, ck: 82.0, total: 83.0, note: 'Nắm chắc ngữ pháp cơ bản.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student29', cc: 92.0, gk: 84.0, ck: 86.0, total: 86.6, note: 'Kỹ năng Nghe Part 2 & 3 tốt.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student30', cc: 85.0, gk: 75.0, ck: 78.0, total: 78.5, note: 'Tiến bộ rõ rệt ở Part 5.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student31', cc: 90.0, gk: 82.0, ck: 85.0, total: 85.1, note: 'Đạt mục tiêu TOEIC 500+.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student32', cc: 88.0, gk: 78.0, ck: 80.0, total: 81.0, note: 'Làm bài thi cẩn thận.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student33', cc: 92.0, gk: 86.0, ck: 88.0, total: 88.2, note: 'Nắm chắc từ vựng kinh tế văn phòng.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student34', cc: 85.0, gk: 72.0, ck: 75.0, total: 76.1, note: 'Hoàn thành tốt khóa học.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student35', cc: 90.0, gk: 80.0, ck: 84.0, total: 84.0, note: 'Phản xạ nghe hiểu tốt.', status: TrangThaiHoanThanh.DAT },
-    // 2 học viên KHÔNG ĐẠT lớp TOEIC
-    { user: 'student27', cc: 75.0, gk: 40.0, ck: 42.0, total: 48.0, note: 'Điểm tổng kết dưới 50đ, chưa nắm vững cấu trúc đề TOEIC.', status: TrangThaiHoanThanh.KHONG_DAT },
-    { user: 'student37', cc: 60.0, gk: 45.0, ck: 40.0, total: 45.5, note: 'Vắng 2/6 buổi (Chuyên cần 60% < 80%) và điểm thi không đạt.', status: TrangThaiHoanThanh.KHONG_DAT },
-    // 1 học viên đang học
-    { user: 'student36', cc: 85.0, gk: 70.0, ck: null, total: null, note: 'Đang theo học giữa khóa.', status: TrangThaiHoanThanh.CHUA_XEP_LOAI },
-  ];
-
-  for (const g of class2Grades) {
-    const sProfile = studentProfiles[g.user];
-    await prisma.ketQuaHocTap.create({
-      data: {
-        lopHocId: class2.id,
-        hocVienId: sProfile.id,
-        diemChuyenCan: g.cc,
-        diemGiuaKy: g.gk,
-        diemCuoiKy: g.ck,
-        diemTongKet: g.total,
-        nhanXet: g.note,
-        trangThaiHoanThanh: g.status,
-      },
-    });
-  }
-
-  // Điểm số cho học viên lớp COMM-B1-01 (8 học viên)
-  const class3Grades = [
-    { user: 'student38', cc: 90.0, gk: 85.0, ck: 86.0, total: 86.5, note: 'Thuyết trình tự tin, phản xạ tốt.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student39', cc: 95.0, gk: 88.0, ck: 89.0, total: 89.9, note: 'Phát âm tự nhiên, đàm phán linh hoạt.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student40', cc: 88.0, gk: 80.0, ck: 82.0, total: 82.6, note: 'Tham gia tương tác tích cực.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student41', cc: 92.0, gk: 86.0, ck: 88.0, total: 88.2, note: 'Kỹ năng trình bày báo cáo lưu loát.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student42', cc: 90.0, gk: 84.0, ck: 85.0, total: 85.7, note: 'Phản xạ đàm phán linh hoạt, giao tiếp tự tin.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student43', cc: 92.0, gk: 85.0, ck: 87.0, total: 87.4, note: 'Kỹ năng thương thuyết tốt.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student44', cc: 88.0, gk: 78.0, ck: 80.0, total: 81.0, note: 'Giao tiếp tự nhiên.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student45', cc: 90.0, gk: 82.0, ck: 84.0, total: 84.6, note: 'Hoàn thành xuất sắc khóa giao tiếp B1.', status: TrangThaiHoanThanh.DAT },
-  ];
-
-  for (const g of class3Grades) {
-    const sProfile = studentProfiles[g.user];
-    await prisma.ketQuaHocTap.create({
-      data: {
-        lopHocId: class3.id,
-        hocVienId: sProfile.id,
-        diemChuyenCan: g.cc,
-        diemGiuaKy: g.gk,
-        diemCuoiKy: g.ck,
-        diemTongKet: g.total,
-        nhanXet: g.note,
-        trangThaiHoanThanh: g.status,
-      },
-    });
-  }
-
-  // Điểm số cho học viên lớp ENG-A1-01 (5 học viên)
-  const class4Grades = [
-    { user: 'student46', cc: 90.0, gk: 75.0, ck: 78.0, total: 79.5, note: 'Nắm vững phát âm IPA cơ bản.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student47', cc: 85.0, gk: 70.0, ck: 72.0, total: 74.0, note: 'Tiến bộ vượt bậc từ mất gốc.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student48', cc: 92.0, gk: 80.0, ck: 82.0, total: 83.4, note: 'Tự tin phát âm các từ đơn giản.', status: TrangThaiHoanThanh.DAT },
-    // 1 KHÔNG ĐẠT lớp A1
-    { user: 'student49', cc: 70.0, gk: 40.0, ck: 42.0, total: 47.0, note: 'Chưa nắm vững quy tắc phát âm cơ bản, cần học lại.', status: TrangThaiHoanThanh.KHONG_DAT },
-    { user: 'student50', cc: 85.0, gk: 68.0, ck: null, total: null, note: 'Đang theo học nửa đầu khóa học.', status: TrangThaiHoanThanh.CHUA_XEP_LOAI },
-  ];
-
-  for (const g of class4Grades) {
-    const sProfile = studentProfiles[g.user];
-    await prisma.ketQuaHocTap.create({
-      data: {
-        lopHocId: class4.id,
-        hocVienId: sProfile.id,
-        diemChuyenCan: g.cc,
-        diemGiuaKy: g.gk,
-        diemCuoiKy: g.ck,
-        diemTongKet: g.total,
-        nhanXet: g.note,
-        trangThaiHoanThanh: g.status,
-      },
-    });
-  }
-
-  // Điểm số cho học viên lớp IELTS-B2-01 (4 học viên)
-  const class5Grades = [
-    { user: 'student51', cc: 95.0, gk: 90.0, ck: 92.0, total: 92.0, note: 'Trình độ IELTS tương đương 7.5, bài viết Task 2 chặt chẽ.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student52', cc: 85.0, gk: 82.0, ck: 86.0, total: 84.6, note: 'Nắm vững chiến thuật làm bài, phản xạ Speaking lưu loát.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student53', cc: 90.0, gk: 88.0, ck: 90.0, total: 89.4, note: 'Tác phong học thuật chuyên sâu, từ vựng phong phú.', status: TrangThaiHoanThanh.DAT },
-    { user: 'student54', cc: 92.0, gk: 85.0, ck: 88.0, total: 87.9, note: 'Lập luận sắc bén trong phần thi Speaking Part 3.', status: TrangThaiHoanThanh.DAT },
-  ];
-
-  for (const g of class5Grades) {
-    const sProfile = studentProfiles[g.user];
-    await prisma.ketQuaHocTap.create({
-      data: {
-        lopHocId: class5.id,
-        hocVienId: sProfile.id,
-        diemChuyenCan: g.cc,
-        diemGiuaKy: g.gk,
-        diemCuoiKy: g.ck,
-        diemTongKet: g.total,
-        nhanXet: g.note,
-        trangThaiHoanThanh: g.status,
-      },
-    });
-  }
-
-  console.log('✅ Đã nạp Bảng điểm chuẩn quy chế: 40 ĐẠT, 6 KHÔNG ĐẠT, 5 ĐANG HỌC');
+  await prisma.ketQuaHocTap.createMany({ data: allGradesData });
+  const passCount = allGradesData.filter((g) => g.trangThaiHoanThanh === TrangThaiHoanThanh.DAT).length;
+  const failCount = allGradesData.filter((g) => g.trangThaiHoanThanh === TrangThaiHoanThanh.KHONG_DAT).length;
+  const inProgressCount = allGradesData.filter((g) => g.trangThaiHoanThanh === TrangThaiHoanThanh.CHUA_XEP_LOAI).length;
+  console.log(`✅ Đã nạp ${allGradesData.length} Bảng điểm chuẩn quy chế (${passCount} ĐẠT, ${failCount} KHÔNG ĐẠT, ${inProgressCount} ĐANG HỌC)`);
 
   // ============================================================================
   // 8. AUDIT LOG AI (YeuCauAI)
@@ -947,19 +1318,37 @@ async function main() {
         trangThai: TrangThaiYeuCauAI.THANH_CONG,
         thoiGianXuLyMs: 1800,
       },
+      {
+        nguoiDungId: studentProfiles['student58'].nguoiDungId!,
+        loaiChucNang: LoaiChucNangAI.TU_VAN_LOP,
+        promptInput: 'Tư vấn lớp TOEIC cấp tốc mục tiêu 750+ cho người đi làm tối 2-4-6',
+        rawOutput: '[{"maLopHoc": "TOEIC-B1-01", "tenLopHoc": "TOEIC Đột Phá 650+ Tối T2-4-6", "doTuongThich": 98}]',
+        validatedOutputJson: [{ maLopHoc: 'TOEIC-B1-01', tenLopHoc: 'TOEIC Đột Phá 650+ Tối T2-4-6', doTuongThich: 98 }],
+        trangThai: TrangThaiYeuCauAI.THANH_CONG,
+        thoiGianXuLyMs: 1320,
+      },
+      {
+        nguoiDungId: teacherProfiles['teacher07'].nguoiDungId!,
+        loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
+        promptInput: 'Sinh 10 câu trắc nghiệm từ vựng kinh tế văn phòng TOEIC Part 5 chuẩn CEFR B1',
+        rawOutput: '{"chuDe": "Business Vocabulary", "trinhDo": "B1", "cauHoi": [...]}',
+        validatedOutputJson: { chuDe: 'Business Vocabulary', trinhDo: 'B1', cauHoi: [] },
+        trangThai: TrangThaiYeuCauAI.THANH_CONG,
+        thoiGianXuLyMs: 2150,
+      },
     ],
   });
-  console.log('✅ Đã nạp Audit Log AI');
+  console.log('✅ Đã nạp Audit Log AI đầy đủ');
 
-  console.log('\n🎉 NẠP TOÀN BỘ SIÊU DỮ LIỆU ĐẦY ĐỦ 54 HỌC VIÊN & LỚP TỐI ĐA 25/25 THÀNH CÔNG!');
+  console.log('\n🎉 NẠP TOÀN BỘ SIÊU DỮ LIỆU ĐẦY ĐỦ 80 HỌC VIÊN, 14 GIẢNG VIÊN, 10 KHÓA HỌC & 12 LỚP HỌC THÀNH CÔNG!');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('📋 TÀI KHOẢN HỆ THỐNG ĐÃ SẴN SÀNG (Mật khẩu mặc định: 123456):');
   console.log('   👑 Quản lý (Admin)     : admin01');
-  console.log('   👨‍🏫 Giáo viên (Teacher) : teacher01 → teacher10 (10 Giảng viên)');
+  console.log('   👨‍🏫 Giáo viên (Teacher) : teacher01 → teacher14 (14 Giảng viên chuyên môn sâu)');
   console.log('   📞 Tư vấn viên (Staff) : staff01, staff02');
-  console.log('   🎓 Học viên (Student)   : student01 → student54 (54 Học viên)');
-  console.log('   🔥 Lớp SĨ SỐ TỐI ĐA 25 : IELTS-B1-01 (25/25 HV - 100% Sĩ số)');
-  console.log('   📊 Thống kê hoàn thành : 40 ĐẠT (87.0%), 6 KHÔNG ĐẠT (13.0%), 5 ĐANG HỌC');
+  console.log('   🎓 Học viên (Student)   : student01 → student80 (80 Học viên đầy đủ CEFR A1 → C1)');
+  console.log('   🏫 Lớp học (Classes)    : 12 Lớp học đa dạng (Sĩ số tối đa 25/25, Đang học, Mở đăng ký, Sắp mở)');
+  console.log(`   📊 Thống kê bảng điểm   : ${passCount} ĐẠT, ${failCount} KHÔNG ĐẠT, ${inProgressCount} ĐANG HỌC (Chuẩn tỷ lệ 20/30/50)`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 }
 
