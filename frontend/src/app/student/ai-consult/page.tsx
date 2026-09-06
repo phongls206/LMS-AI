@@ -5,7 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { aiService, authService } from '../../../services/api';
 import { validateAiPrompt } from '../../../utils/ai-validator';
 import {
-  Sparkles,
+  Bot,
   ArrowRight,
   ShieldCheck,
   Calendar,
@@ -238,7 +238,7 @@ export default function StudentAiConsultPage() {
             >
               {loading ? (
                 <>
-                  <Sparkles className="w-5 h-5 animate-spin" />
+                  <Bot className="w-5 h-5 animate-spin" />
                   <span>Hệ Thống AI Đang Phân Tích Ngữ Cảnh & So Khớp Lớp Học...</span>
                 </>
               ) : cooldown > 0 ? (
@@ -248,7 +248,7 @@ export default function StudentAiConsultPage() {
                 </span>
               ) : (
                 <>
-                  <Sparkles className="w-5 h-5" />
+                  <Bot className="w-5 h-5" />
                   <span>AI Phân Tích Toàn Diện & Đề Xuất Lộ Trình Lớp Học</span>
                 </>
               )}
@@ -286,7 +286,7 @@ export default function StudentAiConsultPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-slate-900 text-base flex items-center space-x-2">
-                  <Sparkles className="w-4 h-4 text-amber-500" />
+                  <Bot className="w-4 h-4 text-teal-600" />
                   <span>Top Lớp Học Được AI Đề Xuất Dành Riêng Cho Bạn</span>
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">

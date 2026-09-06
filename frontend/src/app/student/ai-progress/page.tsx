@@ -292,120 +292,110 @@ export default function StudentAiProgressPage() {
 
         {/* Trạng thái ban đầu khi chưa bấm Tóm tắt (Empty State / Onboarding Hero) */}
         {!loading && !summary && (
-          <div className="p-8 md:p-12 rounded-3xl bg-white border border-slate-200/90 shadow-sm text-center relative overflow-hidden animate-fadeIn">
+          <div className="p-6 md:p-8 rounded-2xl bg-white border border-slate-200/90 shadow-sm text-center relative overflow-hidden animate-fadeIn">
             {/* Background decorative glow */}
             <div className="absolute -top-24 -right-24 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="relative z-10 max-w-3xl mx-auto space-y-6">
+            <div className="relative z-10 max-w-3xl mx-auto space-y-4">
               {/* Icon badge */}
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-teal-600 to-cyan-500 text-white shadow-lg shadow-teal-600/25">
-                <TrendingUp className="w-8 h-8" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-tr from-teal-600 to-cyan-500 text-white shadow-md shadow-teal-600/20">
+                <TrendingUp className="w-6 h-6" />
               </div>
 
-              <div className="space-y-2">
-                <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
-                  <Sparkles className="w-3.5 h-3.5 text-teal-600" />
+              <div className="space-y-1">
+                <div className="inline-flex items-center space-x-1.5 px-3 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-[11px] font-bold">
+                  <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
                   <span>Trợ Lý Sư Phạm AI • Đánh Giá Khách Quan</span>
                 </div>
-                <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+                <h3 className="text-lg md:text-xl font-black text-slate-900 tracking-tight">
                   Khám Phá Tiến Độ & Lộ Trình Học Tập Cá Nhân Hóa
                 </h3>
-                <p className="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
-                  Nhấn nút bên dưới để hệ thống đối soát dữ liệu điểm danh, tổng hợp bảng điểm các kỳ và đưa ra nhận xét đa chiều chuẩn Zero-Trust từ cơ sở dữ liệu gốc.
+                <p className="text-xs text-slate-600 max-w-lg mx-auto leading-relaxed">
+                  Nhấn nút <strong>&ldquo;Tạo Báo Cáo Tóm Tắt AI&rdquo;</strong> ở góc trên bên phải để hệ thống tổng hợp lịch sử chuyên cần, bảng điểm và sinh nhận xét sư phạm chuẩn Zero-Trust.
                 </p>
               </div>
 
-              {/* 3 Trụ cột phân tích */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-left">
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2 hover:border-teal-400 transition">
-                  <div className="w-9 h-9 rounded-xl bg-teal-100/80 flex items-center justify-center text-teal-700 font-bold">
-                    <CheckCircle2 className="w-5 h-5" />
+              {/* 3 Trụ cột phân tích tinh gọn */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-left">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5 hover:border-teal-400 transition">
+                  <div className="w-7 h-7 rounded-lg bg-teal-100/80 flex items-center justify-center text-teal-700 font-bold">
+                    <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <h4 className="font-bold text-slate-900 text-sm">Dữ Liệu Gốc (Ground Truth)</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Tổng hợp chính xác số buổi có mặt, vắng, tỷ lệ chuyên cần (%) và điểm 3 cột (20% Chuyên cần, 30% Giữa kỳ, 50% Cuối kỳ).
+                  <h4 className="font-bold text-slate-900 text-xs">Dữ Liệu Gốc (Ground Truth)</h4>
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    Đối soát chính xác tỷ lệ chuyên cần (%) và điểm 3 cột: Chuyên cần (20%), Giữa kỳ (30%), Cuối kỳ (50%).
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2 hover:border-teal-400 transition">
-                  <div className="w-9 h-9 rounded-xl bg-cyan-100/80 flex items-center justify-center text-cyan-700 font-bold">
-                    <BrainCircuit className="w-5 h-5" />
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5 hover:border-teal-400 transition">
+                  <div className="w-7 h-7 rounded-lg bg-cyan-100/80 flex items-center justify-center text-cyan-700 font-bold">
+                    <BrainCircuit className="w-4 h-4" />
                   </div>
-                  <h4 className="font-bold text-slate-900 text-sm">Phân Tích Đa Chiều</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    AI nhận diện điểm mạnh, kỹ năng cần khắc phục và đánh giá phong độ trung thực theo đúng tiến độ thực tế.
+                  <h4 className="font-bold text-slate-900 text-xs">Phân Tích Đa Chiều</h4>
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    AI nhận diện điểm mạnh, kỹ năng cần khắc phục theo đúng từng giai đoạn học tập thực tế.
                   </p>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2 hover:border-teal-400 transition">
-                  <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center text-blue-700 font-bold">
-                    <Target className="w-5 h-5" />
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5 hover:border-teal-400 transition">
+                  <div className="w-7 h-7 rounded-lg bg-blue-100/80 flex items-center justify-center text-blue-700 font-bold">
+                    <Target className="w-4 h-4" />
                   </div>
-                  <h4 className="font-bold text-slate-900 text-sm">Lời Khuyên Ôn Tập</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Chiến lược chuẩn bị trọng tâm cho bài thi cuối khóa và lộ trình phát triển năng lực chuẩn khung CEFR.
+                  <h4 className="font-bold text-slate-900 text-xs">Lời Khuyên Ôn Tập</h4>
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    Chiến lược chuẩn bị trọng tâm cho bài thi cuối khóa và lộ trình phát triển chuẩn CEFR.
                   </p>
                 </div>
               </div>
 
-              {/* Big CTA Button */}
-              <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button
-                  type="button"
-                  onClick={handleGenerateSummary}
-                  disabled={loading || cooldown > 0 || !selectedClassId || !selectedStudentId}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-sm font-bold shadow-lg shadow-teal-600/25 transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-40"
-                >
-                  <TrendingUp className="w-4 h-4" />
-                  <span>Bắt Đầu Phân Tích Tiến Độ Ngay</span>
-                </button>
-              </div>
-
-              <div className="flex items-center justify-center space-x-2 text-[11px] text-slate-400">
-                <ShieldCheck className="w-4 h-4 text-teal-600" />
+              <div className="pt-2 flex items-center justify-center space-x-1.5 text-[11px] text-slate-400">
+                <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />
                 <span>Cơ chế Zero-Trust: Tuyệt đối không suy diễn dữ kiện ngoài cơ sở dữ liệu</span>
               </div>
             </div>
           </div>
         )}
 
-        {/* Hiển Thị Kết Quả Tóm Tắt */}
+        {/* Hiển Thị Kết Quả Tóm Tắt (Gọn gàng, Vừa vặn tầm mắt, Không cần cuộn chuột) */}
         {summary && summary.data && (
-          <div className="space-y-6 animate-fadeIn">
-            {/* 1. Header Báo Cáo */}
-            <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-teal-600 to-cyan-500 text-white flex items-center justify-center font-black text-xl shadow-md shadow-teal-500/20">
+          <div className="space-y-3.5 animate-fadeIn">
+            {/* 1. Header Tinh Gọn 1 Dòng */}
+            <div className="p-3 rounded-xl bg-white border border-slate-200/90 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+              <div className="flex items-center space-x-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-cyan-500 text-white flex items-center justify-center font-black text-sm shadow-sm shadow-teal-500/20 shrink-0">
                   {summary.data.hocVien?.hoTen?.split(' ').slice(-1)[0][0] || 'HV'}
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <h3 className="font-bold text-slate-900 text-lg">{summary.data.hocVien?.hoTen}</h3>
-                    <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                    <h3 className="font-bold text-slate-900 text-sm">{summary.data.hocVien?.hoTen}</h3>
+                    <span className="font-mono text-[11px] px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
                       {summary.data.hocVien?.maHocVien}
                     </span>
-                    <span className="font-mono font-bold text-xs px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200">
+                    <span className="font-mono font-bold text-[11px] px-1.5 py-0.2 rounded bg-teal-50 text-teal-700 border border-teal-200">
                       CEFR {summary.data.hocVien?.trinhDoCEFR}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Lớp: <strong className="text-slate-800">[{summary.data.lopHoc?.maLopHoc}] {summary.data.lopHoc?.tenLopHoc}</strong> — Khóa: <span className="text-teal-700 font-semibold">{summary.data.lopHoc?.tenKhoaHoc}</span>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    Lớp: <strong className="text-slate-800">[{summary.data.lopHoc?.maLopHoc}] {summary.data.lopHoc?.tenLopHoc}</strong>
+                    {summary.data.lopHoc?.tenKhoaHoc && (
+                      <> — Khóa: <span className="text-teal-700 font-semibold">{summary.data.lopHoc?.tenKhoaHoc}</span></>
+                    )}
                   </p>
                 </div>
               </div>
 
-              {/* Badge Mode */}
-              <div className="flex items-center space-x-2">
+              {/* Mode Badge & Action */}
+              <div className="flex items-center space-x-2 self-end sm:self-auto shrink-0">
                 {summary.mode === 'AI_GEMINI' || summary.mode === 'AI_GEMINI_CACHED' || summary.mode === 'GEMINI_AI' ? (
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
-                    <Sparkles className="w-3.5 h-3.5 text-teal-600" />
-                    <span>✨ Phân Tích AI {summary.mode === 'AI_GEMINI_CACHED' ? '(Tức Thì • Smart Cache)' : '(Zero-Trust Verified)'}</span>
+                    <TrendingUp className="w-3.5 h-3.5 text-teal-600" />
+                    <span>Phân Tích AI {summary.mode === 'AI_GEMINI_CACHED' ? '(Tức Thì • Smart Cache)' : '(Zero-Trust Verified)'}</span>
                   </span>
                 ) : (
                   <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold">
                     <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-                    <span>📋 Phân Tích Sư Phạm (Hệ Thống Quy Tắc)</span>
+                    <span>Phân Tích Sư Phạm (Hệ Thống Quy Tắc)</span>
                   </span>
                 )}
                 <button
@@ -415,7 +405,7 @@ export default function StudentAiProgressPage() {
                     setSummary(null);
                   }}
                   className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold flex items-center space-x-1 border border-slate-200 transition cursor-pointer"
-                  title="Xóa tóm tắt hiện tại để tạo phiên mới"
+                  title="Xóa tóm tắt hiện tại để chọn lớp khác"
                 >
                   <PlusCircle className="w-3.5 h-3.5 text-teal-600" />
                   <span>Tạo Phiên Mới</span>
@@ -423,170 +413,148 @@ export default function StudentAiProgressPage() {
               </div>
             </div>
 
-            {/* 2. PHẦN 1: BẢNG DỮ LIỆU GỐC (GROUND TRUTH - TỪ DATABASE) */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#1e2d45]">
-                <div className="flex items-center space-x-2 text-slate-900 dark:text-white font-bold text-sm">
-                  <FileText className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                  <span>DỮ LIỆU GỐC TỪ HỆ THỐNG (GROUND TRUTH RAW METRICS)</span>
+            {/* 2. Dữ Liệu Gốc CSDL (Thanh Strip 6 Cột Gọn Gàng) */}
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-2">
+              <div className="flex items-center justify-between text-xs pb-1 border-b border-slate-100 dark:border-[#1e2d45]">
+                <div className="flex items-center space-x-1.5 font-bold text-slate-800 dark:text-slate-200 text-[11px]">
+                  <FileText className="w-3.5 h-3.5 text-teal-600" />
+                  <span className="uppercase tracking-wider">Dữ Liệu Gốc:</span>
+                  <span className="text-teal-700 dark:text-teal-300 font-semibold">
+                    {summary.data.duLieuGoc?.giaiDoanText || 'Đang trong quá trình học'}
+                  </span>
                 </div>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 italic">
-                  Dữ liệu điểm danh & điểm thi thực tế được lấy trực tiếp từ CSDL
-                </span>
+                {summary.data.duLieuGoc?.nhanXetGiaoVien && (
+                  <span className="text-[11px] text-slate-500 italic truncate max-w-sm hidden sm:inline">
+                    💬 GV: &ldquo;{summary.data.duLieuGoc.nhanXetGiaoVien}&rdquo;
+                  </span>
+                )}
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
                 {/* Chuyên Cần */}
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1a2540] border border-slate-200 dark:border-[#1e2d45]">
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">Tỷ Lệ Chuyên Cần</span>
-                  <span className="text-base font-black text-emerald-700 dark:text-emerald-400 block font-mono">
-                    {summary.data.duLieuGoc?.tyLeChuyenCan}
-                  </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">
-                    {summary.data.duLieuGoc?.coMat}/{summary.data.duLieuGoc?.tongBuoiHoc} buổi (Vắng: {summary.data.duLieuGoc?.vang})
-                  </span>
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#1a2540] border border-slate-200/80 dark:border-[#1e2d45]">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">Tỷ Lệ Chuyên Cần</span>
+                  <div className="flex items-baseline space-x-1 mt-0.5">
+                    <span className="text-sm font-black text-emerald-700 dark:text-emerald-400 font-mono">
+                      {summary.data.duLieuGoc?.tyLeChuyenCan}
+                    </span>
+                    <span className="text-[10px] text-slate-500">
+                      ({summary.data.duLieuGoc?.coMat}/{summary.data.duLieuGoc?.tongBuoiHoc}b)
+                    </span>
+                  </div>
                 </div>
 
                 {/* Điểm Chuyên Cần 20% */}
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1a2540] border border-slate-200 dark:border-[#1e2d45]">
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">Điểm CC (20%)</span>
-                  <span className="text-base font-black text-slate-900 dark:text-white block font-mono">
-                    {summary.data.duLieuGoc?.diemChuyenCan != null ? (
-                      summary.data.duLieuGoc?.diemChuyenCan
-                    ) : (
-                      <span className="text-slate-400 text-xs font-normal">Chưa chốt</span>
-                    )}
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#1a2540] border border-slate-200/80 dark:border-[#1e2d45]">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">Điểm CC (20%)</span>
+                  <span className="text-sm font-black text-slate-900 dark:text-white block font-mono mt-0.5">
+                    {summary.data.duLieuGoc?.diemChuyenCan != null ? summary.data.duLieuGoc.diemChuyenCan : '—'}
                   </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">Hệ số 0.2</span>
                 </div>
 
                 {/* Điểm Giữa Kỳ 30% */}
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1a2540] border border-slate-200 dark:border-[#1e2d45]">
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">Điểm Giữa Kỳ (30%)</span>
-                  <span className="text-base font-black text-slate-900 dark:text-white block font-mono">
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#1a2540] border border-slate-200/80 dark:border-[#1e2d45]">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">Giữa Kỳ (30%)</span>
+                  <span className="text-sm font-black text-slate-900 dark:text-white block font-mono mt-0.5">
                     {summary.data.duLieuGoc?.diemGiuaKy != null ? (
-                      summary.data.duLieuGoc?.diemGiuaKy
+                      summary.data.duLieuGoc.diemGiuaKy
                     ) : (
-                      <span className="text-amber-600 dark:text-amber-400 text-xs font-normal">⏳ Chưa thi</span>
+                      <span className="text-amber-600 text-xs font-normal">Chưa thi</span>
                     )}
                   </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">Hệ số 0.3</span>
                 </div>
 
                 {/* Điểm Cuối Kỳ 50% */}
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1a2540] border border-slate-200 dark:border-[#1e2d45]">
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">Điểm Cuối Kỳ (50%)</span>
-                  <span className="text-base font-black text-slate-900 dark:text-white block font-mono">
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#1a2540] border border-slate-200/80 dark:border-[#1e2d45]">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">Cuối Kỳ (50%)</span>
+                  <span className="text-sm font-black text-slate-900 dark:text-white block font-mono mt-0.5">
                     {summary.data.duLieuGoc?.diemCuoiKy != null ? (
-                      summary.data.duLieuGoc?.diemCuoiKy
+                      summary.data.duLieuGoc.diemCuoiKy
                     ) : (
-                      <span className="text-amber-600 dark:text-amber-400 text-xs font-normal">⏳ Chờ thi</span>
+                      <span className="text-amber-600 text-xs font-normal">Chờ thi</span>
                     )}
                   </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">Hệ số 0.5</span>
                 </div>
 
                 {/* Điểm Tổng Kết */}
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1a2540] border border-slate-200 dark:border-[#1e2d45]">
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">Điểm Tổng Kết</span>
-                  <span className="text-base font-black text-teal-700 dark:text-teal-300 block font-mono">
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#1a2540] border border-slate-200/80 dark:border-[#1e2d45]">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">Tổng Kết</span>
+                  <span className="text-sm font-black text-teal-700 dark:text-teal-300 block font-mono mt-0.5">
                     {summary.data.duLieuGoc?.diemTongKet != null ? (
-                      summary.data.duLieuGoc?.diemTongKet
+                      summary.data.duLieuGoc.diemTongKet
                     ) : (
                       <span className="text-slate-400 text-xs font-normal">Đang tích lũy</span>
                     )}
                   </span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5">Thang 100</span>
                 </div>
 
                 {/* Xếp Loại */}
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#1a2540] border border-slate-200 dark:border-[#1e2d45]">
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 block mb-1">Xếp Loại</span>
-                  <div>
+                <div className="p-2.5 rounded-lg bg-slate-50 dark:bg-[#1a2540] border border-slate-200/80 dark:border-[#1e2d45] flex flex-col justify-between">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 block">Xếp Loại</span>
+                  <div className="mt-0.5">
                     {summary.data.duLieuGoc?.xepLoai === 'DAT' ? (
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-[11px] font-bold">
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 text-emerald-700 text-[10px] font-bold">
                         ĐẠT
                       </span>
                     ) : summary.data.duLieuGoc?.xepLoai === 'KHONG_DAT' ? (
-                      <span className="px-2 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 text-[11px] font-bold">
+                      <span className="px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/60 border border-rose-200 text-rose-700 text-[10px] font-bold">
                         KHÔNG ĐẠT
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-[11px] font-bold">
-                        ĐANG THEO HỌC
+                      <span className="px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 border border-teal-200 text-teal-700 text-[10px] font-bold">
+                        ĐANG HỌC
                       </span>
                     )}
                   </div>
                 </div>
               </div>
-
-              {/* Banner Giai đoạn học tập */}
-              {summary.data.duLieuGoc?.giaiDoanText && (
-                <div className="p-3 rounded-xl bg-teal-50 dark:bg-[#0b2528] border border-teal-200 dark:border-teal-800/80 text-xs flex items-center justify-between">
-                  <span className="text-teal-900 dark:text-teal-200 font-bold flex items-center space-x-1.5">
-                    <TrendingUp className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                    <span>Tiến độ khóa học: {summary.data.duLieuGoc.giaiDoanText}</span>
-                  </span>
-                  <span className="text-[11px] text-teal-700 dark:text-teal-300 font-medium">
-                    {summary.data.duLieuGoc.giaiDoan === 'GIUA_KHOA_HOC'
-                      ? '🎯 Bài thi cuối khóa chiếm 50% tổng điểm'
-                      : ''}
-                  </span>
-                </div>
-              )}
-
-              {summary.data.duLieuGoc?.nhanXetGiaoVien && (
-                <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#1a2540] border border-slate-200 dark:border-[#1e2d45] text-xs text-slate-700 dark:text-slate-200">
-                  💬 <strong className="text-slate-900 dark:text-white">Ghi chú từ giáo viên:</strong> {summary.data.duLieuGoc.nhanXetGiaoVien}
-                </div>
-              )}
             </div>
 
-            {/* 3. PHẦN 2: BÁO CÁO PHÂN TÍCH TIẾN ĐỘ THÔNG MINH CỦA AI */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-6">
-              <div className="flex items-center space-x-2 text-teal-800 dark:text-teal-300 font-bold text-sm pb-3 border-b border-slate-100 dark:border-[#1e2d45]">
-                <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                <span>KẾT QUẢ TỔNG HỢP & PHÂN TÍCH TIẾN ĐỘ THÔNG MINH CỦA AI</span>
-              </div>
-
-              {/* Tóm tắt chung */}
+            {/* 3. Báo Cáo Phân Tích AI (Thiết kế Card 3 Cột Ngang Tinh Gọn) */}
+            <div className="p-3.5 rounded-xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-2.5">
+              {/* Tóm tắt chung 1 dòng highlight */}
               {summary.data.aiPhanTich?.tomTatChung && (
-                <div className="p-4 rounded-xl bg-teal-50 dark:bg-[#151f33] border border-teal-200 dark:border-teal-600/40 text-xs text-slate-800 dark:text-slate-100 leading-relaxed font-medium shadow-sm">
-                  📝 <strong className="text-teal-900 dark:text-teal-300 font-bold">Tóm tắt chung:</strong> {summary.data.aiPhanTich.tomTatChung}
+                <div className="p-2.5 px-3 rounded-lg bg-teal-50/70 dark:bg-[#151f33] border border-teal-200/80 dark:border-teal-700/50 text-xs text-slate-800 dark:text-slate-100 flex items-start space-x-2">
+                  <TrendingUp className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                  <div className="leading-relaxed">
+                    <strong className="text-teal-900 dark:text-teal-300 font-bold">Đánh giá chung: </strong>
+                    <span className="font-medium">{summary.data.aiPhanTich.tomTatChung}</span>
+                  </div>
                 </div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* 3 Cột Điểm Mạnh - Cần Khắc Phục - Lời Khuyên */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
                 {/* 1. Điểm mạnh */}
-                <div className="p-5 rounded-2xl bg-emerald-50/70 dark:bg-[#151f33] border border-emerald-200 dark:border-emerald-600/40 space-y-3 shadow-sm">
-                  <div className="flex items-center space-x-2 text-emerald-800 dark:text-emerald-400 font-bold text-xs uppercase tracking-wider">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <div className="p-3 rounded-xl bg-emerald-50/50 dark:bg-[#151f33] border border-emerald-200/80 dark:border-emerald-600/40 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-emerald-800 dark:text-emerald-400 font-bold text-[11px] uppercase tracking-wider">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                     <span>1. Điểm Mạnh Nổi Bật</span>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line font-medium">
-                    {summary.data.aiPhanTich?.diemManh || 'Duy trì tốt kỷ luật học tập.'}
+                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-medium">
+                    {summary.data.aiPhanTich?.diemManh || 'Duy trì tốt kỷ luật và chuyên cần học tập.'}
                   </p>
                 </div>
 
                 {/* 2. Điểm cần khắc phục */}
-                <div className="p-5 rounded-2xl bg-amber-50/70 dark:bg-[#151f33] border border-amber-200 dark:border-amber-600/40 space-y-3 shadow-sm">
-                  <div className="flex items-center space-x-2 text-amber-800 dark:text-amber-400 font-bold text-xs uppercase tracking-wider">
-                    <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                    <span>2. Điểm Cần Khắc Phục</span>
+                <div className="p-3 rounded-xl bg-amber-50/50 dark:bg-[#151f33] border border-amber-200/80 dark:border-amber-600/40 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-amber-800 dark:text-amber-400 font-bold text-[11px] uppercase tracking-wider">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                    <span>2. Cần Khắc Phục</span>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line font-medium">
+                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-medium">
                     {summary.data.aiPhanTich?.canKhacPhuc || 'Cần nỗ lực hơn trong các bài kiểm tra định kỳ.'}
                   </p>
                 </div>
 
                 {/* 3. Lời khuyên ôn tập */}
-                <div className="p-5 rounded-2xl bg-cyan-50/70 dark:bg-[#151f33] border border-cyan-200 dark:border-cyan-600/40 space-y-3 shadow-sm">
-                  <div className="flex items-center space-x-2 text-cyan-800 dark:text-cyan-400 font-bold text-xs uppercase tracking-wider">
-                    <Lightbulb className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
-                    <span>3. Lời Khuyên Ôn Tập Kỳ Tới</span>
+                <div className="p-3 rounded-xl bg-cyan-50/50 dark:bg-[#151f33] border border-cyan-200/80 dark:border-cyan-600/40 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-cyan-800 dark:text-cyan-400 font-bold text-[11px] uppercase tracking-wider">
+                    <Lightbulb className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400 shrink-0" />
+                    <span>3. Lời Khuyên Ôn Tập</span>
                   </div>
-                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-line font-medium">
-                    {summary.data.aiPhanTich?.loiKhuyen || 'Tập trung củng cố kiến thức ngữ pháp và từ vựng.'}
+                  <p className="text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-medium">
+                    {summary.data.aiPhanTich?.loiKhuyen || 'Tập trung ôn tập theo chuẩn khung CEFR.'}
                   </p>
                 </div>
               </div>

@@ -871,13 +871,14 @@ YÊU CẦU ĐẶC BIỆT:
    - Nếu học viên đã hoàn thành khóa học: Đánh giá toàn diện kết quả đạt/không đạt.
    - Nếu học viên mới bắt đầu: Khích lệ tinh thần chuyên cần và định hướng phương pháp học tập.
 2. Tuyệt đối trung thực với dữ liệu số, không bịa đặt cột điểm chưa thi.
+3. Độ dài tối ưu: Mỗi mục (diemManh, canKhacPhuc, loiKhuyen, tomTatChung) chỉ viết từ 1 đến tối đa 2 câu ngắn gọn, súc tích, cô đọng, đi thẳng vào bản chất, không viết dài dòng để hiển thị trọn vẹn trong một màn hình.
 
 Trả về định dạng JSON hợp lệ:
 {
-  "diemManh": "Phân tích điểm mạnh về thái độ học tập, chuyên cần hoặc kết quả giữa kỳ đạt được...",
-  "canKhacPhuc": "Chỉ ra các điểm yếu hoặc lưu ý để chuẩn bị cho giai đoạn tiếp theo...",
-  "loiKhuyen": "Lời khuyên lộ trình ôn tập cụ thể cho bài thi/giai đoạn tiếp theo...",
-  "tomTatChung": "Đoạn nhận xét tổng quan ngắn gọn 1-2 câu về tiến độ hiện tại."
+  "diemManh": "Phân tích điểm mạnh (tối đa 2 câu súc tích)...",
+  "canKhacPhuc": "Chỉ ra điểm yếu cần khắc phục (tối đa 2 câu súc tích)...",
+  "loiKhuyen": "Lời khuyên lộ trình ôn tập trọng tâm (tối đa 2 câu súc tích)...",
+  "tomTatChung": "Nhận xét tổng quan tiến độ ngắn gọn 1 câu."
 }
 `;
 

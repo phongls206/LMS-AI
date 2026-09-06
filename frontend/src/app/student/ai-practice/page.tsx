@@ -5,7 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { aiService } from '../../../services/api';
 import { validateAiPrompt } from '../../../utils/ai-validator';
 import {
-  Sparkles,
+  BrainCircuit,
   CheckCircle2,
   XCircle,
   RotateCcw,
@@ -348,7 +348,7 @@ export default function StudentAiPracticePage() {
         <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
             <div className="flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 text-teal-600" />
+              <BrainCircuit className="w-4 h-4 text-teal-600" />
               <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
                 Cấu Hình Sinh Đề Bài Tập AI
               </span>
@@ -448,7 +448,7 @@ export default function StudentAiPracticePage() {
                       </span>
                     ) : (
                       <>
-                        <Sparkles className="w-3.5 h-3.5" />
+                        <BrainCircuit className="w-3.5 h-3.5" />
                         <span>Làm Bài</span>
                       </>
                     )}
