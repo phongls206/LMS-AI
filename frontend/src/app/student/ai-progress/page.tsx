@@ -18,6 +18,8 @@ import {
   Clock,
   ShieldCheck,
   PlusCircle,
+  BrainCircuit,
+  Target,
 } from 'lucide-react';
 
 export default function StudentAiProgressPage() {
@@ -258,7 +260,7 @@ export default function StudentAiProgressPage() {
               </span>
             ) : (
               <>
-                <Sparkles className="w-4 h-4" />
+                <TrendingUp className="w-4 h-4" />
                 <span>Tạo Báo Cáo Tóm Tắt AI</span>
               </>
             )}
@@ -284,6 +286,86 @@ export default function StudentAiProgressPage() {
               <p className="text-xs text-slate-500">
                 Kiểm tra tính toàn vẹn (Zero-Trust Validation) để đảm bảo không bịa đặt dữ kiện
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Trạng thái ban đầu khi chưa bấm Tóm tắt (Empty State / Onboarding Hero) */}
+        {!loading && !summary && (
+          <div className="p-8 md:p-12 rounded-3xl bg-white border border-slate-200/90 shadow-sm text-center relative overflow-hidden animate-fadeIn">
+            {/* Background decorative glow */}
+            <div className="absolute -top-24 -right-24 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 max-w-3xl mx-auto space-y-6">
+              {/* Icon badge */}
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-teal-600 to-cyan-500 text-white shadow-lg shadow-teal-600/25">
+                <TrendingUp className="w-8 h-8" />
+              </div>
+
+              <div className="space-y-2">
+                <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-bold">
+                  <Sparkles className="w-3.5 h-3.5 text-teal-600" />
+                  <span>Trợ Lý Sư Phạm AI • Đánh Giá Khách Quan</span>
+                </div>
+                <h3 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
+                  Khám Phá Tiến Độ & Lộ Trình Học Tập Cá Nhân Hóa
+                </h3>
+                <p className="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+                  Nhấn nút bên dưới để hệ thống đối soát dữ liệu điểm danh, tổng hợp bảng điểm các kỳ và đưa ra nhận xét đa chiều chuẩn Zero-Trust từ cơ sở dữ liệu gốc.
+                </p>
+              </div>
+
+              {/* 3 Trụ cột phân tích */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-left">
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2 hover:border-teal-400 transition">
+                  <div className="w-9 h-9 rounded-xl bg-teal-100/80 flex items-center justify-center text-teal-700 font-bold">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </div>
+                  <h4 className="font-bold text-slate-900 text-sm">Dữ Liệu Gốc (Ground Truth)</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Tổng hợp chính xác số buổi có mặt, vắng, tỷ lệ chuyên cần (%) và điểm 3 cột (20% Chuyên cần, 30% Giữa kỳ, 50% Cuối kỳ).
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2 hover:border-teal-400 transition">
+                  <div className="w-9 h-9 rounded-xl bg-cyan-100/80 flex items-center justify-center text-cyan-700 font-bold">
+                    <BrainCircuit className="w-5 h-5" />
+                  </div>
+                  <h4 className="font-bold text-slate-900 text-sm">Phân Tích Đa Chiều</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    AI nhận diện điểm mạnh, kỹ năng cần khắc phục và đánh giá phong độ trung thực theo đúng tiến độ thực tế.
+                  </p>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-2 hover:border-teal-400 transition">
+                  <div className="w-9 h-9 rounded-xl bg-blue-100/80 flex items-center justify-center text-blue-700 font-bold">
+                    <Target className="w-5 h-5" />
+                  </div>
+                  <h4 className="font-bold text-slate-900 text-sm">Lời Khuyên Ôn Tập</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Chiến lược chuẩn bị trọng tâm cho bài thi cuối khóa và lộ trình phát triển năng lực chuẩn khung CEFR.
+                  </p>
+                </div>
+              </div>
+
+              {/* Big CTA Button */}
+              <div className="pt-3 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleGenerateSummary}
+                  disabled={loading || cooldown > 0 || !selectedClassId || !selectedStudentId}
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-sm font-bold shadow-lg shadow-teal-600/25 transition cursor-pointer flex items-center justify-center space-x-2 disabled:opacity-40"
+                >
+                  <TrendingUp className="w-4 h-4" />
+                  <span>Bắt Đầu Phân Tích Tiến Độ Ngay</span>
+                </button>
+              </div>
+
+              <div className="flex items-center justify-center space-x-2 text-[11px] text-slate-400">
+                <ShieldCheck className="w-4 h-4 text-teal-600" />
+                <span>Cơ chế Zero-Trust: Tuyệt đối không suy diễn dữ kiện ngoài cơ sở dữ liệu</span>
+              </div>
             </div>
           </div>
         )}

@@ -745,7 +745,7 @@ Hình 32: Biểu đồ trình tự UC013 - AI sinh bài luyện tập ngắn
 | Tác nhân | Học viên, Giáo viên, Quản lý. |
 | Điều kiện trước | Có dữ liệu kết quả học tập và người dùng có quyền xem. |
 | Điều kiện sau | Tóm tắt tiến độ hợp lệ được hiển thị và phân biệt với dữ liệu gốc. |
-| Luồng sự kiện chính (Basic flows) | 1. Người dùng chọn học viên/kỳ cần tóm tắt.<br>2. Hệ thống kiểm tra quyền.<br>3. Hệ thống lấy dữ liệu kết quả liên quan.<br>4. Gửi prompt và dữ liệu tối thiểu cho AI.<br>5. Kiểm tra tóm tắt với dữ liệu nguồn.<br>6. Hiển thị kết quả. |
+| Luồng sự kiện chính (Basic flows) | 1. Người dùng chọn học viên/lớp học cần tóm tắt.<br>2. Hệ thống kiểm tra quyền.<br>3. Hệ thống lấy dữ liệu kết quả liên quan.<br>4. Gửi prompt và dữ liệu tối thiểu cho AI.<br>5. Kiểm tra tóm tắt với dữ liệu nguồn.<br>6. Hiển thị kết quả. |
 | Luồng sự kiện phụ (Alternative flows) | A1. Không đủ dữ liệu: tạo tóm tắt quy tắc từ dữ liệu hiện có.<br>A2. AI thêm dữ kiện: loại bỏ output.<br>A3. AI lỗi: trả tóm tắt quy tắc. |
 
 Bảng 22: Mô tả use case UC014

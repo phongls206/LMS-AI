@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService } from '../../../services/api';
-import { Calendar, Users, ClipboardList, Award, Sparkles, Clock, MapPin } from 'lucide-react';
+import { Calendar, Users, ClipboardList, Award, BrainCircuit, Clock, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { formatTrangThaiLopHoc } from '../../../utils/formatters';
 
@@ -56,7 +56,7 @@ export default function TeacherDashboardPage() {
             href="/teacher/ai-exercises"
             className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:border-teal-400 hover:shadow-md transition group"
           >
-            <Sparkles className="w-6 h-6 text-teal-600 mb-2 group-hover:scale-110 transition" />
+            <BrainCircuit className="w-6 h-6 text-teal-600 mb-2 group-hover:scale-110 transition" />
             <h4 className="font-bold text-slate-900 text-sm">Sinh Đề Trắc Nghiệm AI</h4>
             <p className="text-xs text-slate-500 mt-1">Tạo 5 - 15 câu hỏi chuẩn CEFR kèm đáp án</p>
           </Link>

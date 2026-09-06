@@ -887,9 +887,10 @@ Trả về định dạng JSON hợp lệ:
         where: {
           loaiChucNang: LoaiChucNangAI.TOM_TAT_TIEN_DO,
           trangThai: TrangThaiYeuCauAI.THANH_CONG,
-          promptInput: {
-            contains: student.maHocVien,
-          },
+          AND: [
+            { promptInput: { contains: student.maHocVien } },
+            { promptInput: { contains: lopHoc.maLopHoc } },
+          ],
         },
         orderBy: { id: 'desc' },
       });
@@ -899,9 +900,13 @@ Trả về định dạng JSON hợp lệ:
         const cachedGroundTruth = cached.duLieuGoc;
         if (
           cachedGroundTruth &&
+          cachedGroundTruth.tongBuoiHoc === duLieuGoc.tongBuoiHoc &&
+          cachedGroundTruth.coMat === duLieuGoc.coMat &&
           cachedGroundTruth.tyLeChuyenCan === `${attendanceRate}%` &&
-          cachedGroundTruth.diemTongKet === duLieuGoc.diemTongKet &&
-          cachedGroundTruth.diemGiuaKy === duLieuGoc.diemGiuaKy
+          cachedGroundTruth.diemChuyenCan === duLieuGoc.diemChuyenCan &&
+          cachedGroundTruth.diemGiuaKy === duLieuGoc.diemGiuaKy &&
+          cachedGroundTruth.diemCuoiKy === duLieuGoc.diemCuoiKy &&
+          cachedGroundTruth.diemTongKet === duLieuGoc.diemTongKet
         ) {
           return {
             success: true,

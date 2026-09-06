@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { gradesService, authService } from '../../../services/api';
-import { BookOpen, Award, Sparkles, ArrowRight } from 'lucide-react';
+import { Bot, BrainCircuit, TrendingUp, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { formatTrangThaiDangKy } from '../../../utils/formatters';
 
@@ -69,7 +69,7 @@ export default function StudentDashboardPage() {
             className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:border-teal-500 hover:shadow-md transition group"
           >
             <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center mb-3 group-hover:bg-teal-600 transition">
-              <Sparkles className="w-5 h-5 text-teal-600 group-hover:text-white transition" />
+              <Bot className="w-5 h-5 text-teal-600 group-hover:text-white transition" />
             </div>
             <h4 className="font-bold text-slate-900 text-sm group-hover:text-teal-700 transition">AI Tư Vấn Lớp Học</h4>
             <p className="text-xs text-slate-500 mt-1">Gợi ý lớp chuẩn CEFR theo lịch rảnh</p>
@@ -80,7 +80,7 @@ export default function StudentDashboardPage() {
             className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:border-cyan-500 hover:shadow-md transition group"
           >
             <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center mb-3 group-hover:bg-cyan-600 transition">
-              <BookOpen className="w-5 h-5 text-cyan-600 group-hover:text-white transition" />
+              <BrainCircuit className="w-5 h-5 text-cyan-600 group-hover:text-white transition" />
             </div>
             <h4 className="font-bold text-slate-900 text-sm group-hover:text-cyan-700 transition">AI Luyện Trắc Nghiệm</h4>
             <p className="text-xs text-slate-500 mt-1">Luyện 5 - 15 câu trắc nghiệm kèm giải thích</p>
@@ -91,7 +91,7 @@ export default function StudentDashboardPage() {
             className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:border-blue-500 hover:shadow-md transition group"
           >
             <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-3 group-hover:bg-blue-600 transition">
-              <Award className="w-5 h-5 text-blue-600 group-hover:text-white transition" />
+              <TrendingUp className="w-5 h-5 text-blue-600 group-hover:text-white transition" />
             </div>
             <h4 className="font-bold text-slate-900 text-sm group-hover:text-blue-700 transition">AI Tóm Tắt Tiến Độ</h4>
             <p className="text-xs text-slate-500 mt-1">Phân tích điểm mạnh và lời khuyên ôn tập</p>

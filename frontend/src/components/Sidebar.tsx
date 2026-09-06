@@ -18,6 +18,9 @@ import {
   UserPlus,
   X,
   LogOut,
+  Bot,
+  BrainCircuit,
+  TrendingUp,
 } from 'lucide-react';
 import { VaiTro } from '../types';
 import { authService } from '../services/api';
@@ -54,7 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { label: 'Hồ Sơ Giáo Viên', href: '/admin/teachers', icon: UserCheck },
           { label: 'Quản Lý Học Phí', href: '/admin/fees', icon: Receipt },
           { label: 'Báo Cáo Thống Kê', href: '/admin/reports', icon: BarChart3 },
-          { label: 'AI Tóm Tắt Tiến Độ', href: '/student/ai-progress', icon: Sparkles },
+          { label: 'AI Tóm Tắt Tiến Độ', href: '/student/ai-progress', icon: TrendingUp },
         ];
       case 'GIAO_VIEN':
         return [
@@ -62,8 +65,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { label: 'Lớp Phụ Trách & TKB', href: '/teacher/classes', icon: Calendar },
           { label: 'Điểm Danh Buổi Học', href: '/teacher/attendance', icon: ClipboardList },
           { label: 'Nhập Điểm & Kết Quả', href: '/teacher/grades', icon: Award },
-          { label: 'Sinh Bài Tập AI', href: '/teacher/ai-exercises', icon: Sparkles },
-          { label: 'AI Tóm Tắt Tiến Độ', href: '/student/ai-progress', icon: Sparkles },
+          { label: 'Sinh Bài Tập AI', href: '/teacher/ai-exercises', icon: BrainCircuit },
+          { label: 'AI Tóm Tắt Tiến Độ', href: '/student/ai-progress', icon: TrendingUp },
         ];
       case 'HOC_VIEN':
         return [
@@ -72,16 +75,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { label: 'Thời Khóa Biểu', href: '/student/schedule', icon: Calendar },
           { label: 'Bảng Điểm & Kết Quả', href: '/student/grades', icon: Award },
           { label: 'Học Phí & Hóa Đơn', href: '/student/fees', icon: Receipt },
-          { label: 'AI Tư Vấn Lớp Học', href: '/student/ai-consult', icon: Sparkles },
-          { label: 'AI Luyện Trắc Nghiệm', href: '/student/ai-practice', icon: Sparkles },
-          { label: 'AI Tóm Tắt Tiến Độ', href: '/student/ai-progress', icon: Sparkles },
+          { label: 'AI Tư Vấn Lớp Học', href: '/student/ai-consult', icon: Bot },
+          { label: 'AI Luyện Trắc Nghiệm', href: '/student/ai-practice', icon: BrainCircuit },
+          { label: 'AI Tóm Tắt Tiến Độ', href: '/student/ai-progress', icon: TrendingUp },
         ];
       case 'TU_VAN_VIEN':
         return [
           { label: 'Bàn Tiếp Nhận', href: '/staff/dashboard', icon: LayoutDashboard },
           { label: 'Tiếp Nhận Học Viên Mới', href: '/staff/new-student', icon: UserPlus },
           { label: 'Ghi Danh & Thu Học Phí', href: '/staff/collect-fee', icon: Receipt },
-          { label: 'AI Hỗ Trợ Tư Vấn', href: '/student/ai-consult', icon: Sparkles },
+          { label: 'AI Hỗ Trợ Tư Vấn', href: '/student/ai-consult', icon: Bot },
         ];
       default:
         return [];
