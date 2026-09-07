@@ -193,6 +193,15 @@ export default function StaffCollectFeePage() {
   const currentClass = classes.find((c) => c.id === selectedClassId);
   const alreadyEnrolledInvoice = invoices.find(
     (inv) =>
+      inv.trangThai !== 'DA_HUY' &&
+      inv.dangKyHoc?.trangThai !== 'DA_HUY' &&
+      (Number(inv.hocVienId) === Number(selectedStudentId) || (currentStudent && inv.hocVien?.maHocVien === currentStudent.maHocVien)) &&
+      (Number(inv.dangKyHoc?.lopHocId) === Number(selectedClassId) || (currentClass && inv.dangKyHoc?.lopHoc?.maLopHoc === currentClass.maLopHoc))
+  );
+
+  const previouslyCancelledInvoice = invoices.find(
+    (inv) =>
+      (inv.trangThai === 'DA_HUY' || inv.dangKyHoc?.trangThai === 'DA_HUY') &&
       (Number(inv.hocVienId) === Number(selectedStudentId) || (currentStudent && inv.hocVien?.maHocVien === currentStudent.maHocVien)) &&
       (Number(inv.dangKyHoc?.lopHocId) === Number(selectedClassId) || (currentClass && inv.dangKyHoc?.lopHoc?.maLopHoc === currentClass.maLopHoc))
   );
@@ -204,12 +213,15 @@ export default function StaffCollectFeePage() {
 
     try {
       const res = await enrollmentsService.enroll(selectedStudentId, selectedClassId);
+      const isReactivate = !!previouslyCancelledInvoice;
       setMessage({
         type: 'success',
-        text: `Ghi danh thành công! Đã tạo hóa đơn ${res.invoice?.maHoaDon} với số tiền ${Number(res.invoice?.soTienPhaiTra).toLocaleString()} đ. Bạn có thể thu học phí ngay.`,
+        text: isReactivate
+          ? `Tái kích hoạt và ghi danh thành công! Hóa đơn ${res.invoice?.maHoaDon} đã được kích hoạt lại (bảo toàn ${Number(res.invoice?.soTienDaTra || 0).toLocaleString()} đ đã đóng trước đó).`
+          : `Ghi danh thành công! Đã tạo hóa đơn ${res.invoice?.maHoaDon} với số tiền ${Number(res.invoice?.soTienPhaiTra).toLocaleString()} đ. Bạn có thể thu học phí ngay.`,
       });
       await fetchData();
-      if (res.invoice) {
+      if (res.invoice && Number(res.invoice.soTienPhaiTra) - Number(res.invoice.soTienDaTra) > 0) {
         handleOpenPayment(res.invoice);
       }
     } catch (err: any) {
@@ -223,6 +235,10 @@ export default function StaffCollectFeePage() {
   };
 
   const handleOpenPayment = (inv: HoaDon) => {
+    if (inv.trangThai === 'DA_HUY' || inv.dangKyHoc?.trangThai === 'DA_HUY') {
+      alert('Không thể thu tiền cho hóa đơn hoặc đơn đăng ký đã bị hủy!');
+      return;
+    }
     setSelectedInvoice(inv);
     const remaining = Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra);
     setPaymentAmount(remaining);
@@ -362,10 +378,25 @@ export default function StaffCollectFeePage() {
                     ? 'Đang Ghi Danh...'
                     : alreadyEnrolledInvoice
                     ? 'Đã Ghi Danh Lớp Này'
+                    : previouslyCancelledInvoice
+                    ? 'Tái Kích Hoạt & Ghi Danh Lại'
                     : 'Ghi Danh & Tạo Hóa Đơn'}
                 </span>
               </button>
             </div>
+
+            {/* Thông báo nếu học viên đã từng hủy lớp này trước đó và có tiền bảo lưu */}
+            {previouslyCancelledInvoice && !alreadyEnrolledInvoice && (
+              <div className="md:col-span-3 p-3 rounded-xl bg-sky-50 dark:bg-sky-950/40 border border-sky-200 dark:border-sky-800 text-sky-950 dark:text-sky-200 text-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <span>
+                  ℹ️ Học viên <strong>{currentStudent?.hoTen}</strong> từng hủy lớp này. {Number(previouslyCancelledInvoice.soTienDaTra) > 0 ? (
+                    <span>Khoản tiền <strong>{Number(previouslyCancelledInvoice.soTienDaTra).toLocaleString()} đ</strong> đã nộp sẽ được <strong>tự động bảo lưu và trừ vào học phí</strong> khi bấm "Tái Kích Hoạt & Ghi Danh Lại"!</span>
+                  ) : (
+                    <span>Bạn có thể bấm "Tái Kích Hoạt & Ghi Danh Lại" để mở lại vị trí học cho học viên.</span>
+                  )}
+                </span>
+              </div>
+            )}
 
             {/* Thông báo nếu học viên đã ghi danh lớp này trước đó */}
             {alreadyEnrolledInvoice && (
@@ -451,7 +482,8 @@ export default function StaffCollectFeePage() {
                     </tr>
                   ) : (
                     displayedInvoices.map((inv) => {
-                      const remaining = Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra);
+                      const isCancelled = inv.trangThai === 'DA_HUY' || inv.dangKyHoc?.trangThai === 'DA_HUY';
+                      const remaining = isCancelled ? 0 : Math.max(0, Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra));
                       return (
                         <tr key={inv.id} className="hover:bg-teal-50/30 transition">
                           <td className="px-4 py-3 font-mono font-bold text-teal-700 whitespace-nowrap">
@@ -464,32 +496,38 @@ export default function StaffCollectFeePage() {
                             </button>
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
-                            <p className="font-bold text-slate-900">{inv.hocVien?.hoTen}</p>
+                            <p className="font-bold text-slate-900 dark:text-slate-100">{inv.hocVien?.hoTen}</p>
                             <p className="text-[11px] font-mono text-slate-400">{inv.hocVien?.maHocVien}</p>
                           </td>
-                          <td className="px-4 py-3 text-slate-700 font-medium">
+                          <td className="px-4 py-3 text-slate-700 dark:text-slate-300 font-medium">
                             {inv.dangKyHoc?.lopHoc?.tenLopHoc || 'N/A'}
                           </td>
-                          <td className="px-4 py-3 font-mono font-bold text-slate-900 whitespace-nowrap">
+                          <td className="px-4 py-3 font-mono font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap">
                             {Number(inv.soTienPhaiTra).toLocaleString()} đ
                           </td>
-                          <td className="px-4 py-3 font-mono font-bold text-emerald-700 whitespace-nowrap">
+                          <td className="px-4 py-3 font-mono font-bold text-emerald-700 dark:text-emerald-400 whitespace-nowrap">
                             {Number(inv.soTienDaTra).toLocaleString()} đ
                           </td>
-                          <td className="px-4 py-3 font-mono font-bold text-rose-700 whitespace-nowrap">
-                            {remaining.toLocaleString()} đ
+                          <td className="px-4 py-3 font-mono font-bold whitespace-nowrap">
+                            {isCancelled ? (
+                              <span className="text-slate-400 dark:text-slate-500 italic text-[11px]">Đã hủy nợ</span>
+                            ) : (
+                              <span className="text-rose-700 dark:text-rose-400">{remaining.toLocaleString()} đ</span>
+                            )}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-center">
                             <span
                               className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${
-                                inv.trangThai === 'DA_HOAN_THANH'
+                                isCancelled
+                                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700'
+                                  : inv.trangThai === 'DA_HOAN_THANH'
                                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                   : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
                                   ? 'bg-amber-50 text-amber-700 border-amber-200'
                                   : 'bg-rose-50 text-rose-700 border-rose-200'
                               }`}
                             >
-                              {formatTrangThaiHoaDon(inv.trangThai)}
+                              {isCancelled ? 'Đã Hủy Đăng Ký' : formatTrangThaiHoaDon(inv.trangThai)}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-right whitespace-nowrap space-x-1.5 min-w-[120px]">
@@ -500,7 +538,11 @@ export default function StaffCollectFeePage() {
                             >
                               <Eye className="w-4 h-4" />
                             </button>
-                            {remaining > 0 && (
+                            {isCancelled ? (
+                              <span className="text-slate-400 dark:text-slate-500 font-medium text-[11px] italic inline-flex items-center justify-end whitespace-nowrap px-1">
+                                Khóa thu tiền
+                              </span>
+                            ) : remaining > 0 ? (
                               <button
                                 onClick={() => handleOpenPayment(inv)}
                                 className="px-2.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition text-xs inline-flex items-center space-x-1 shadow-sm cursor-pointer whitespace-nowrap"
@@ -508,14 +550,12 @@ export default function StaffCollectFeePage() {
                                 <DollarSign className="w-3.5 h-3.5" />
                                 <span>Thu Tiền</span>
                               </button>
-                            )}
-                            {remaining === 0 && Number(inv.soTienDaTra) > 0 && (
+                            ) : remaining === 0 && Number(inv.soTienDaTra) > 0 ? (
                               <span className="text-emerald-700 dark:text-emerald-400 font-bold text-xs inline-flex items-center justify-end whitespace-nowrap">
                                 <CheckCircle className="w-3.5 h-3.5 mr-1" />
                                 Hoàn Tất
                               </span>
-                            )}
-                            {remaining === 0 && Number(inv.soTienDaTra) === 0 && (
+                            ) : (
                               <span className="text-slate-400 font-bold text-xs inline-flex items-center justify-end whitespace-nowrap">
                                 Miễn Phí
                               </span>

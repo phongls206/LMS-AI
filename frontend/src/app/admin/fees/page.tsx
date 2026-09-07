@@ -200,6 +200,10 @@ export default function AdminFeesPage() {
   };
 
   const handleOpenPayment = (inv: HoaDon) => {
+    if (inv.trangThai === 'DA_HUY' || inv.dangKyHoc?.trangThai === 'DA_HUY') {
+      alert('Không thể thu tiền cho hóa đơn hoặc đơn đăng ký đã bị hủy!');
+      return;
+    }
     setSelectedInvoice(inv);
     const remaining = Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra);
     setPaymentAmount(remaining);
@@ -470,7 +474,8 @@ export default function AdminFeesPage() {
                     </tr>
                   ) : (
                     displayedInvoices.map((inv) => {
-                      const remaining = Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra);
+                      const isCancelled = inv.trangThai === 'DA_HUY' || inv.dangKyHoc?.trangThai === 'DA_HUY';
+                      const remaining = isCancelled ? 0 : Math.max(0, Number(inv.soTienPhaiTra) - Number(inv.soTienDaTra));
                       return (
                         <tr key={inv.id} className="hover:bg-teal-50/30 transition">
                           <td className="px-4 py-3 font-mono font-bold text-teal-700 whitespace-nowrap">
@@ -495,20 +500,26 @@ export default function AdminFeesPage() {
                           <td className="px-4 py-3 font-mono font-bold text-emerald-700 whitespace-nowrap">
                             {Number(inv.soTienDaTra).toLocaleString()} đ
                           </td>
-                          <td className="px-4 py-3 font-mono font-bold text-rose-700 whitespace-nowrap">
-                            {remaining.toLocaleString()} đ
+                          <td className="px-4 py-3 font-mono font-bold whitespace-nowrap">
+                            {isCancelled ? (
+                              <span className="text-slate-400 italic text-[11px]">Đã hủy nợ</span>
+                            ) : (
+                              <span className="text-rose-700">{remaining.toLocaleString()} đ</span>
+                            )}
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-center">
                             <span
                               className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${
-                                inv.trangThai === 'DA_HOAN_THANH'
+                                isCancelled
+                                  ? 'bg-slate-100 text-slate-600 border-slate-300'
+                                  : inv.trangThai === 'DA_HOAN_THANH'
                                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                   : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
                                   ? 'bg-amber-50 text-amber-700 border-amber-200'
                                   : 'bg-rose-50 text-rose-700 border-rose-200'
                               }`}
                             >
-                              {formatTrangThaiHoaDon(inv.trangThai)}
+                              {isCancelled ? 'Đã Hủy Đăng Ký' : formatTrangThaiHoaDon(inv.trangThai)}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-right whitespace-nowrap space-x-1.5 min-w-[120px]">
@@ -521,7 +532,11 @@ export default function AdminFeesPage() {
                               <Eye className="w-4 h-4" />
                             </button>
 
-                            {remaining > 0 ? (
+                            {isCancelled ? (
+                              <span className="text-slate-400 font-medium text-[11px] italic inline-flex items-center justify-end whitespace-nowrap px-1">
+                                Khóa thu tiền
+                              </span>
+                            ) : remaining > 0 ? (
                               <button
                                 onClick={() => handleOpenPayment(inv)}
                                 className="px-2.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition text-xs inline-flex items-center space-x-1 shadow-sm cursor-pointer whitespace-nowrap"

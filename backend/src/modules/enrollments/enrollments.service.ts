@@ -322,6 +322,14 @@ export class EnrollmentsService {
       throw new BadRequestException('Đăng ký lớp học này đã được hủy trước đó.');
     }
 
+    // Nghiệp vụ: Chính sách học phí không hoàn lại. Một khi đã phát sinh thanh toán (paidAmount > 0) thì tuyệt đối không cho tự hủy trên hệ thống
+    const paidAmount = Number(enrollment.hoaDon?.soTienDaTra || 0);
+    if (paidAmount > 0) {
+      throw new BadRequestException(
+        `Đăng ký này đã phát sinh thanh toán học phí (${paidAmount.toLocaleString()} đ). Theo quy chế trung tâm, học phí đã đóng không hoàn lại và không thể tự hủy trên hệ thống. Vui lòng liên hệ trực tiếp Quầy tư vấn viên hoặc Quản lý để được hướng dẫn bảo lưu hoặc chuyển lớp theo quy định.`,
+      );
+    }
+
     // ACID Transaction Soft-Cancel: Cập nhật trạng thái DA_HUY cho Đăng ký & Hóa đơn, giảm sĩ số lớp, bảo toàn toàn bộ dữ liệu tài chính
     await this.prisma.$transaction(async (tx) => {
       // 1. Cập nhật trạng thái đăng ký học -> DA_HUY
@@ -448,6 +456,15 @@ export class EnrollmentsService {
       });
 
       if (!invoice) throw new NotFoundException('Hóa đơn không tồn tại.');
+
+      if (
+        invoice.trangThai === TrangThaiHoaDon.DA_HUY ||
+        invoice.dangKyHoc?.trangThai === TrangThaiDangKy.DA_HUY
+      ) {
+        throw new BadRequestException(
+          'Không thể thu học phí cho đơn đăng ký hoặc hóa đơn đã bị hủy. Vui lòng hướng dẫn học viên đăng ký lại lớp học trước khi thu tiền.',
+        );
+      }
 
       const soTienPhaiTra = Number(invoice.soTienPhaiTra);
       const soTienDaTraHienTai = Number(invoice.soTienDaTra);

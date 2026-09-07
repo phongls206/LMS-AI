@@ -631,23 +631,8 @@ export default function StudentEnrollPage() {
                               {st.enrollment?.hoaDon?.maHoaDon || 'HĐ-OK'}
                             </span>
                           </div>
-                          <div className="flex items-center justify-end">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setCancelModalError(null);
-                                setConfirmCancelClass({
-                                  ...c,
-                                  paidAmount: st.paidAmount,
-                                });
-                              }}
-                              disabled={cancellingId === c.id}
-                              className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline flex items-center gap-1 font-medium transition cursor-pointer py-1"
-                              title="Hủy đăng ký lớp này (chỗ ngồi được giải phóng, lịch sử tài chính được bảo toàn)"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                              <span>Hủy đăng ký lớp này</span>
-                            </button>
+                          <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1">
+                            <span className="italic text-emerald-700 dark:text-emerald-400 font-medium">✓ Đã thanh toán đầy đủ — Liên hệ tư vấn viên nếu muốn chuyển lớp/bảo lưu</span>
                           </div>
                         </div>
                       ) : st.isPartiallyPaid ? (
@@ -668,30 +653,17 @@ export default function StudentEnrollPage() {
                               <span>Còn nợ: <strong className="text-rose-600 dark:text-rose-400 font-bold">{st.debtAmount.toLocaleString('vi-VN')} đ</strong></span>
                             </div>
                           </div>
-                          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                          <div className="flex flex-col gap-1.5">
                             <Link
                               href="/student/fees"
-                              className="flex-1 min-h-[42px] py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer"
+                              className="w-full min-h-[42px] py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer"
                             >
                               <CreditCard className="w-3.5 h-3.5 shrink-0" />
                               <span>Nộp Phần Còn Lại ({st.debtAmount.toLocaleString('vi-VN')} đ)</span>
                             </Link>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setCancelModalError(null);
-                                setConfirmCancelClass({
-                                  ...c,
-                                  paidAmount: st.paidAmount,
-                                });
-                              }}
-                              disabled={cancellingId === c.id}
-                              className="min-h-[42px] py-2 px-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition cursor-pointer bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 shrink-0"
-                              title="Hủy đăng ký lớp này"
-                            >
-                              <X className="w-3.5 h-3.5 shrink-0" />
-                              <span>Hủy Lớp</span>
-                            </button>
+                            <span className="text-[11px] text-slate-500 dark:text-slate-400 italic text-center">
+                              Học phí không hoàn lại — Liên hệ quầy tư vấn nếu cần bảo lưu / đổi lớp
+                            </span>
                           </div>
                         </div>
                       ) : (
@@ -942,59 +914,23 @@ export default function StudentEnrollPage() {
                             {enr.hoaDon?.maHoaDon}
                           </span>
                         </div>
-                        <div className="flex items-center justify-end">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCancelModalError(null);
-                              setConfirmCancelClass({
-                                id: Number(c.id),
-                                maLopHoc: c.maLopHoc,
-                                tenLopHoc: c.tenLopHoc,
-                                khoaHoc: c.khoaHoc,
-                                paidAmount,
-                              });
-                            }}
-                            disabled={cancellingId === Number(c.id)}
-                            className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline flex items-center gap-1 font-medium transition cursor-pointer py-1"
-                            title="Hủy đăng ký lớp này (chỗ ngồi được giải phóng, lịch sử tài chính được bảo toàn)"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                            <span>Hủy đăng ký lớp này</span>
-                          </button>
+                        <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-1">
+                          <span className="italic text-emerald-700 dark:text-emerald-400 font-medium">✓ Đã hoàn thành học phí — Vui lòng liên hệ trung tâm nếu cần bảo lưu hoặc chuyển lớp</span>
                         </div>
                       </div>
                     ) : isPartiallyPaid ? (
-                      /* ĐÃ ĐÓNG 1 PHẦN: HIỂN THỊ NÚT NỘP TIẾP VÀ NÚT HỦY */
-                      <div className="space-y-2 w-full mt-auto">
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-                          <Link
-                            href="/student/fees"
-                            className="flex-1 min-h-[42px] py-2 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition cursor-pointer"
-                          >
-                            <CreditCard className="w-3.5 h-3.5 shrink-0" />
-                            <span>Nộp Phần Còn Lại ({remainingFee.toLocaleString('vi-VN')} đ)</span>
-                          </Link>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCancelModalError(null);
-                              setConfirmCancelClass({
-                                id: Number(c.id),
-                                maLopHoc: c.maLopHoc,
-                                tenLopHoc: c.tenLopHoc,
-                                khoaHoc: c.khoaHoc,
-                                paidAmount,
-                              });
-                            }}
-                            disabled={cancellingId === Number(c.id)}
-                            className="min-h-[42px] py-2 px-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 hover:border-rose-300 shadow-xs shrink-0"
-                            title="Hủy đăng ký lớp này"
-                          >
-                            <X className="w-3.5 h-3.5 shrink-0" />
-                            <span>Hủy Đăng Ký</span>
-                          </button>
-                        </div>
+                      /* ĐÃ ĐÓNG 1 PHẦN: HIỂN THỊ NÚT NỘP TIẾP (KHÔNG CHO TỰ HỦY KHI ĐÃ ĐÓNG TIỀN) */
+                      <div className="space-y-1.5 w-full mt-auto">
+                        <Link
+                          href="/student/fees"
+                          className="w-full min-h-[42px] py-2 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition cursor-pointer"
+                        >
+                          <CreditCard className="w-3.5 h-3.5 shrink-0" />
+                          <span>Nộp Phần Còn Lại ({remainingFee.toLocaleString('vi-VN')} đ)</span>
+                        </Link>
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 italic text-center">
+                          Học phí không hoàn lại — Vui lòng liên hệ trung tâm nếu cần bảo lưu / đổi lớp
+                        </p>
                       </div>
                     ) : (
                       /* CHƯA ĐÓNG TIỀN: CHO PHÉP HỦY HOẶC NỘP TIỀN */
@@ -1236,19 +1172,11 @@ export default function StudentEnrollPage() {
                 <div className="flex items-start space-x-2">
                   <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
                   <div className="space-y-1">
-                    <p className="font-bold">Chính sách chuyển trạng thái Đã Hủy & Bảo toàn tài chính:</p>
+                    <p className="font-bold">Chính sách Hủy đăng ký trước khi nộp học phí:</p>
                     <ul className="list-disc pl-4 space-y-0.5 text-[11px]">
-                      <li>Đăng ký lớp học sẽ được chuyển sang trạng thái <strong>Đã Hủy</strong> (không xóa lịch sử).</li>
-                      <li>Hệ thống tự động <strong>giải phóng 01 vị trí chỗ ngồi</strong> để nhường cho học viên khác.</li>
-                      <li>
-                        {confirmCancelClass.paidAmount > 0 ? (
-                          <span>
-                            Khoản tiền bạn đã nộp (<strong className="font-mono">{Number(confirmCancelClass.paidAmount).toLocaleString('vi-VN')} đ</strong>) cùng toàn bộ chứng từ phiếu thu <strong>vẫn được giữ nguyên 100% trong lịch sử giao dịch</strong> để phục vụ đối soát, bảo lưu hoặc hoàn phí theo quy chế trung tâm.
-                          </span>
-                        ) : (
-                          <span>Lớp chưa phát sinh thanh toán, hóa đơn học phí tương ứng sẽ được hủy công nợ.</span>
-                        )}
-                      </li>
+                      <li>Đăng ký lớp học sẽ được chuyển sang trạng thái <strong>Đã Hủy</strong>.</li>
+                      <li>Hệ thống tự động <strong>giải phóng 01 vị trí chỗ ngồi</strong> để nhường chỗ cho học viên khác.</li>
+                      <li>Lớp chưa phát sinh thanh toán, hóa đơn học phí tương ứng sẽ được <strong>hủy bỏ công nợ hoàn toàn</strong>.</li>
                     </ul>
                   </div>
                 </div>
