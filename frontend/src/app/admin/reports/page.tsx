@@ -424,33 +424,30 @@ export default function AdminReportsPage() {
             <div className="flex items-center space-x-2 overflow-x-auto pb-1 md:pb-0">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 whitespace-nowrap cursor-pointer ${
-                  activeTab === 'overview'
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 whitespace-nowrap cursor-pointer ${activeTab === 'overview'
                     ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
                     : 'bg-slate-100 text-slate-700 hover:bg-teal-50 hover:text-teal-800'
-                }`}
+                  }`}
               >
                 <DollarSign className="w-4 h-4" />
                 <span>Tổng Quan & Tài Chính</span>
               </button>
               <button
                 onClick={() => setActiveTab('students_cefr')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 whitespace-nowrap cursor-pointer ${
-                  activeTab === 'students_cefr'
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 whitespace-nowrap cursor-pointer ${activeTab === 'students_cefr'
                     ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
                     : 'bg-slate-100 text-slate-700 hover:bg-teal-50 hover:text-teal-800'
-                }`}
+                  }`}
               >
                 <Users className="w-4 h-4" />
                 <span>Học Viên & Chuẩn CEFR</span>
               </button>
               <button
                 onClick={() => setActiveTab('classes_fill')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 whitespace-nowrap cursor-pointer ${
-                  activeTab === 'classes_fill'
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 whitespace-nowrap cursor-pointer ${activeTab === 'classes_fill'
                     ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
                     : 'bg-slate-100 text-slate-700 hover:bg-teal-50 hover:text-teal-800'
-                }`}
+                  }`}
               >
                 <GraduationCap className="w-4 h-4" />
                 <span>Hiệu Suất Lớp & Đạt Chuẩn</span>
@@ -621,22 +618,22 @@ export default function AdminReportsPage() {
 
               {/* Cơ Cấu Hình Thức Thanh Toán & Tiến Độ Tài Chính */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
-                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                    <CreditCard className="w-4 h-4 text-teal-600" />
+                <div className="p-6 rounded-2xl bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-4">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider flex items-center space-x-2">
+                    <CreditCard className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                     <span>Cơ Cấu Hình Thức Thu Phí</span>
                   </h3>
                   <div className="space-y-3 pt-2">
                     <div>
                       <div className="flex justify-between text-xs font-bold mb-1">
-                        <span className="text-teal-700 flex items-center gap-1.5">
+                        <span className="text-teal-700 dark:text-teal-400 flex items-center gap-1.5">
                           <span>💳 Chuyển Khoản Ngân Hàng</span>
                         </span>
-                        <span className="text-slate-800">
+                        <span className="text-slate-800 dark:text-slate-200">
                           {financeMetrics.bankPayments.toLocaleString()} đ ({financeMetrics.bankPercent}%)
                         </span>
                       </div>
-                      <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
+                      <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full transition-all duration-500"
                           style={{ width: `${financeMetrics.bankPercent}%` }}
@@ -646,14 +643,14 @@ export default function AdminReportsPage() {
 
                     <div>
                       <div className="flex justify-between text-xs font-bold mb-1">
-                        <span className="text-amber-700 flex items-center gap-1.5">
+                        <span className="text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
                           <span>💵 Tiền Mặt Trực Tiếp</span>
                         </span>
-                        <span className="text-slate-800">
+                        <span className="text-slate-800 dark:text-slate-200">
                           {financeMetrics.cashPayments.toLocaleString()} đ ({financeMetrics.cashPercent}%)
                         </span>
                       </div>
-                      <div className="w-full h-3 rounded-full bg-slate-100 overflow-hidden">
+                      <div className="w-full h-3 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-500"
                           style={{ width: `${financeMetrics.cashPercent}%` }}
@@ -661,27 +658,27 @@ export default function AdminReportsPage() {
                       </div>
                     </div>
                   </div>
-                  <p className="text-[11px] text-slate-500 italic pt-2">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 italic pt-2">
                     * Thống kê tự động từ các phiếu thu thực tế đã quyết toán qua cổng kế toán của ETC English.
                   </p>
                 </div>
 
                 {/* Khối Hiệu Suất Đào Tạo & Chuẩn Đầu Ra (Rõ Ràng, Mạch Lạc, Nhấp Vào Từng Ô Để Xem Danh Sách) */}
-                <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div className="p-6 rounded-2xl bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-[#1e2d45] pb-3">
                     <div>
-                      <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                        <Award className="w-4 h-4 text-teal-600" />
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 uppercase tracking-wider flex items-center space-x-2">
+                        <Award className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                         <span>Kết Quả Đào Tạo & Chuẩn Đầu Ra</span>
                       </h3>
-                      <p className="text-xs text-slate-500 mt-0.5">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                         Thống kê đánh giá điểm cuối khóa trên các lớp ({stats?.tyLeHoanThanh?.tongLuotDanhGia || 81} lượt)
                       </p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setActiveTab('students_cefr')}
-                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold transition border border-teal-200 cursor-pointer self-start sm:self-auto"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-700 dark:text-teal-300 text-xs font-bold transition border border-teal-200 dark:border-teal-800/60 cursor-pointer self-start sm:self-auto"
                       title="Xem cơ cấu hồ sơ học viên tại Tab Học Viên & Chuẩn CEFR"
                     >
                       <Users className="w-3.5 h-3.5" />
@@ -704,14 +701,14 @@ export default function AdminReportsPage() {
                             (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'DAT')
                           )
                         }
-                        className="p-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        className="p-3 rounded-xl bg-emerald-500/10 dark:bg-emerald-950/40 hover:bg-emerald-500/15 dark:hover:bg-emerald-900/50 border border-emerald-500/25 dark:border-emerald-700/50 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
                       >
-                        <div className="flex items-center justify-between text-[10px] font-bold text-emerald-700 uppercase">
+                        <div className="flex items-center justify-between text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase">
                           <span>ĐẠT CHUẨN</span>
-                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-700" />
+                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-700 dark:text-emerald-400" />
                         </div>
-                        <p className="text-xl font-black text-emerald-800 mt-1">{stats?.tyLeHoanThanh?.dat || 0}</p>
-                        <p className="text-[10px] text-emerald-600 mt-0.5">Cấp chứng nhận</p>
+                        <p className="text-xl font-black text-emerald-800 dark:text-emerald-300 mt-1">{stats?.tyLeHoanThanh?.dat || 0}</p>
+                        <p className="text-[10px] text-emerald-600 dark:text-emerald-400/80 mt-0.5">Cấp chứng nhận</p>
                       </div>
 
                       {/* Chưa đạt */}
@@ -726,14 +723,14 @@ export default function AdminReportsPage() {
                             (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'KHONG_DAT')
                           )
                         }
-                        className="p-3 rounded-xl bg-rose-50/80 hover:bg-rose-100/80 border border-rose-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        className="p-3 rounded-xl bg-rose-500/10 dark:bg-rose-950/40 hover:bg-rose-500/15 dark:hover:bg-rose-900/50 border border-rose-500/25 dark:border-rose-700/50 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
                       >
-                        <div className="flex items-center justify-between text-[10px] font-bold text-rose-700 uppercase">
+                        <div className="flex items-center justify-between text-[10px] font-bold text-rose-700 dark:text-rose-400 uppercase">
                           <span>CHƯA ĐẠT</span>
-                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-700" />
+                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-700 dark:text-rose-400" />
                         </div>
-                        <p className="text-xl font-black text-rose-800 mt-1">{stats?.tyLeHoanThanh?.khongDat || 0}</p>
-                        <p className="text-[10px] text-rose-600 mt-0.5">Cần thi lại</p>
+                        <p className="text-xl font-black text-rose-800 dark:text-rose-300 mt-1">{stats?.tyLeHoanThanh?.khongDat || 0}</p>
+                        <p className="text-[10px] text-rose-600 dark:text-rose-400/80 mt-0.5">Cần thi lại</p>
                       </div>
 
                       {/* Đang học */}
@@ -748,14 +745,14 @@ export default function AdminReportsPage() {
                             (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'CHUA_XEP_LOAI')
                           )
                         }
-                        className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        className="p-3 rounded-xl bg-slate-500/10 dark:bg-slate-800/60 hover:bg-slate-500/15 dark:hover:bg-slate-800/90 border border-slate-300 dark:border-slate-700/60 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
                       >
-                        <div className="flex items-center justify-between text-[10px] font-bold text-slate-600 uppercase">
+                        <div className="flex items-center justify-between text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">
                           <span>ĐANG HỌC</span>
-                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-600" />
+                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-700 dark:text-slate-300" />
                         </div>
-                        <p className="text-xl font-black text-slate-800 mt-1">{stats?.tyLeHoanThanh?.chuaXepLoai || 0}</p>
-                        <p className="text-[10px] text-slate-500 mt-0.5">Chưa xếp loại</p>
+                        <p className="text-xl font-black text-slate-800 dark:text-slate-100 mt-1">{stats?.tyLeHoanThanh?.chuaXepLoai || 0}</p>
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Chưa xếp loại</p>
                       </div>
 
                       {/* Chưa phát sinh điểm */}
@@ -770,23 +767,23 @@ export default function AdminReportsPage() {
                             (stats?.chiTietHocVien || students).filter((s: any) => !s.ketQua || s.ketQua.length === 0)
                           )
                         }
-                        className="p-3 rounded-xl bg-amber-50/70 hover:bg-amber-100/70 border border-amber-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        className="p-3 rounded-xl bg-amber-500/10 dark:bg-amber-950/40 hover:bg-amber-500/15 dark:hover:bg-amber-900/50 border border-amber-500/25 dark:border-amber-700/50 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
                       >
-                        <div className="flex items-center justify-between text-[10px] font-bold text-amber-700 uppercase">
+                        <div className="flex items-center justify-between text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase">
                           <span>MỚI GHI DANH</span>
-                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-amber-700" />
+                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-amber-700 dark:text-amber-400" />
                         </div>
-                        <p className="text-xl font-black text-amber-800 mt-1">{stats?.tyLeHoanThanh?.chuaCoDiem || 4}</p>
-                        <p className="text-[10px] text-amber-600 mt-0.5">Chưa có điểm</p>
+                        <p className="text-xl font-black text-amber-800 dark:text-amber-300 mt-1">{stats?.tyLeHoanThanh?.chuaCoDiem || 4}</p>
+                        <p className="text-[10px] text-amber-600 dark:text-amber-400/80 mt-0.5">Chưa có điểm</p>
                       </div>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center">
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 text-xs text-slate-600 dark:text-slate-300 flex justify-between items-center">
                       <span className="font-medium">Tỷ lệ đạt chuẩn trên số lượt đã đánh giá:</span>
-                      <strong className="text-teal-700 text-sm font-black">{stats?.tyLeHoanThanh?.tyLeDatPhanTram || 89.3}%</strong>
+                      <strong className="text-teal-700 dark:text-teal-400 text-sm font-black">{stats?.tyLeHoanThanh?.tyLeDatPhanTram || 89.3}%</strong>
                     </div>
-                    <p className="text-[11px] text-teal-700/80 bg-teal-50/60 p-2 rounded-lg border border-teal-100 flex items-center gap-1.5 font-medium">
-                      <Eye className="w-3.5 h-3.5 shrink-0" />
+                    <p className="text-[11px] text-teal-700/90 dark:text-teal-300 bg-teal-50/60 dark:bg-teal-950/30 p-2 rounded-lg border border-teal-100 dark:border-teal-900/60 flex items-center gap-1.5 font-medium">
+                      <Eye className="w-3.5 h-3.5 shrink-0 text-teal-600 dark:text-teal-400" />
                       <span>Mẹo: Nhấp vào từng ô chỉ số phía trên để xem bảng điểm, chi tiết từng thành phần và nhận xét của giáo viên.</span>
                     </p>
                   </div>
@@ -844,13 +841,12 @@ export default function AdminReportsPage() {
                         </div>
                         <div className="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all duration-500 ${
-                              ['A1', 'A2'].includes(item.level)
+                            className={`h-full rounded-full transition-all duration-500 ${['A1', 'A2'].includes(item.level)
                                 ? 'bg-cyan-500'
                                 : ['B1', 'B2'].includes(item.level)
-                                ? 'bg-teal-600'
-                                : 'bg-blue-600'
-                            }`}
+                                  ? 'bg-teal-600'
+                                  : 'bg-blue-600'
+                              }`}
                             style={{ width: `${item.percent}%` }}
                           ></div>
                         </div>
@@ -881,10 +877,10 @@ export default function AdminReportsPage() {
                             status.key === 'DANG_HOC'
                               ? 'teal'
                               : status.key === 'DA_TOT_NGHIEP'
-                              ? 'emerald'
-                              : status.key === 'BAO_LUU'
-                              ? 'amber'
-                              : 'rose',
+                                ? 'emerald'
+                                : status.key === 'BAO_LUU'
+                                  ? 'amber'
+                                  : 'rose',
                             'students',
                             (stats?.chiTietHocVien || students).filter(
                               (s: any) => (s.trangThai || s.trangThaiHoc) === status.key
@@ -980,13 +976,12 @@ export default function AdminReportsPage() {
                                 </div>
                                 <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
                                   <div
-                                    className={`h-full rounded-full transition-all duration-300 ${
-                                      fillPercent >= 90
+                                    className={`h-full rounded-full transition-all duration-300 ${fillPercent >= 90
                                         ? 'bg-rose-500'
                                         : fillPercent >= 60
-                                        ? 'bg-teal-600'
-                                        : 'bg-cyan-500'
-                                    }`}
+                                          ? 'bg-teal-600'
+                                          : 'bg-cyan-500'
+                                      }`}
                                     style={{ width: `${fillPercent}%` }}
                                   ></div>
                                 </div>
@@ -994,13 +989,12 @@ export default function AdminReportsPage() {
                             </td>
                             <td className="px-5 py-4 text-center whitespace-nowrap">
                               <span
-                                className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${
-                                  c.trangThai === 'DANG_MO_DANG_KY'
+                                className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${c.trangThai === 'DANG_MO_DANG_KY'
                                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                     : c.trangThai === 'DANG_HOC'
-                                    ? 'bg-sky-50 text-sky-700 border-sky-200'
-                                    : 'bg-slate-100 text-slate-700 border-slate-200'
-                                }`}
+                                      ? 'bg-sky-50 text-sky-700 border-sky-200'
+                                      : 'bg-slate-100 text-slate-700 border-slate-200'
+                                  }`}
                               >
                                 {formatTrangThaiLopHoc(c.trangThai)}
                               </span>
@@ -1023,29 +1017,29 @@ export default function AdminReportsPage() {
               onClick={closeModal}
             >
               <div
-                className="bg-white w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+                className="bg-white dark:bg-[#111928] w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#1e2d45] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Modal Header */}
-                <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
+                <div className="px-6 py-4 border-b border-slate-100 dark:border-[#1e2d45] flex items-center justify-between bg-gradient-to-r from-slate-50 to-white dark:from-[#162032] dark:to-[#111928]">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2.5 rounded-xl bg-teal-50 text-teal-700 border border-teal-200/80">
+                    <div className="p-2.5 rounded-xl bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200/80 dark:border-teal-800/60">
                       <GraduationCap className="w-5 h-5" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-base font-bold text-slate-900">{modalState.title}</h2>
-                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200 font-mono">
+                        <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{modalState.title}</h2>
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 font-mono">
                           {modalState.badgeText}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 mt-0.5">{modalState.subtitle}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{modalState.subtitle}</p>
                     </div>
                   </div>
 
                   <button
                     onClick={closeModal}
-                    className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+                    className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
                     title="Đóng cửa sổ"
                   >
                     <X className="w-5 h-5" />
@@ -1053,7 +1047,7 @@ export default function AdminReportsPage() {
                 </div>
 
                 {/* Search & Filter Toolbar */}
-                <div className="px-6 py-3.5 bg-slate-50/70 border-b border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="px-6 py-3.5 bg-slate-50/70 dark:bg-[#162032]/60 border-b border-slate-200/80 dark:border-[#1e2d45] flex flex-col sm:flex-row items-center justify-between gap-3">
                   <div className="flex items-center space-x-2 w-full sm:w-auto flex-1">
                     <div className="relative flex-1 max-w-md">
                       <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -1062,12 +1056,12 @@ export default function AdminReportsPage() {
                         placeholder="Tìm kiếm theo Tên học viên, Mã HV, Lớp học..."
                         value={modalSearch}
                         onChange={(e) => setModalSearch(e.target.value)}
-                        className="w-full pl-9 pr-3 py-1.5 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                        className="w-full pl-9 pr-3 py-1.5 text-xs bg-white dark:bg-[#162032] rounded-xl border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                       />
                       {modalSearch && (
                         <button
                           onClick={() => setModalSearch('')}
-                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs"
                         >
                           ✕
                         </button>
@@ -1079,7 +1073,7 @@ export default function AdminReportsPage() {
                         <select
                           value={modalClassFilter}
                           onChange={(e) => setModalClassFilter(e.target.value)}
-                          className="pl-3 pr-8 py-1.5 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition font-medium text-slate-700 cursor-pointer"
+                          className="pl-3 pr-8 py-1.5 text-xs bg-white dark:bg-[#162032] rounded-xl border border-slate-200 dark:border-[#22324e] focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition font-medium text-slate-700 dark:text-slate-300 cursor-pointer"
                         >
                           <option value="">Tất cả các lớp ({modalClassOptions.length})</option>
                           {modalClassOptions.map((code) => (
@@ -1095,10 +1089,10 @@ export default function AdminReportsPage() {
                   <div className="flex items-center space-x-2 self-end sm:self-auto shrink-0">
                     <button
                       onClick={exportModalCSV}
-                      className="px-3 py-1.5 rounded-xl bg-white hover:bg-teal-50 text-teal-800 hover:text-teal-900 text-xs font-bold flex items-center space-x-1.5 border border-teal-200 transition shadow-2xs cursor-pointer"
+                      className="px-3 py-1.5 rounded-xl bg-white dark:bg-[#162032] hover:bg-teal-50 dark:hover:bg-teal-950/40 text-teal-800 dark:text-teal-300 hover:text-teal-900 dark:hover:text-teal-200 text-xs font-bold flex items-center space-x-1.5 border border-teal-200 dark:border-teal-800/60 transition shadow-2xs cursor-pointer"
                       title="Xuất file CSV danh sách đang lọc"
                     >
-                      <Download className="w-3.5 h-3.5 text-teal-600" />
+                      <Download className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                       <span>Xuất Danh Sách Này (CSV)</span>
                     </button>
                   </div>
@@ -1112,9 +1106,9 @@ export default function AdminReportsPage() {
                       <p className="text-xs text-slate-400">Vui lòng thử tìm kiếm với từ khóa khác.</p>
                     </div>
                   ) : modalState.type === 'grades' ? (
-                    <div className="overflow-x-auto rounded-xl border border-slate-200">
-                      <table className="w-full text-left text-xs text-slate-700">
-                        <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+                    <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-[#1e2d45]">
+                      <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                        <thead className="bg-slate-50 dark:bg-[#162032] text-slate-600 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-[#1e2d45]">
                           <tr>
                             <th className="px-4 py-3 text-center w-12">STT</th>
                             <th className="px-4 py-3 whitespace-nowrap">Mã HV</th>
@@ -1128,7 +1122,7 @@ export default function AdminReportsPage() {
                             <th className="px-4 py-3 min-w-[200px]">Nhận Xét Giáo Viên</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-100 dark:divide-[#1e2d45]">
                           {filteredModalData.map((item: any, idx: number) => {
                             const isPass = item.trangThaiHoanThanh === 'DAT';
                             const isFail = item.trangThaiHoanThanh === 'KHONG_DAT';
@@ -1147,11 +1141,10 @@ export default function AdminReportsPage() {
                                 </td>
                                 <td className="px-4 py-3 text-center font-mono font-semibold">
                                   <span
-                                    className={`px-1.5 py-0.5 rounded ${
-                                      Number(item.diemChuyenCan || 0) < 80
+                                    className={`px-1.5 py-0.5 rounded ${Number(item.diemChuyenCan || 0) < 80
                                         ? 'bg-rose-50 text-rose-700 font-bold border border-rose-200'
                                         : 'text-slate-800'
-                                    }`}
+                                      }`}
                                   >
                                     {item.diemChuyenCan !== null && item.diemChuyenCan !== undefined
                                       ? `${item.diemChuyenCan}%`
@@ -1166,26 +1159,24 @@ export default function AdminReportsPage() {
                                 </td>
                                 <td className="px-4 py-3 text-center font-mono font-black text-sm">
                                   <span
-                                    className={`${
-                                      isPass
+                                    className={`${isPass
                                         ? 'text-emerald-700'
                                         : isFail
-                                        ? 'text-rose-600'
-                                        : 'text-slate-600'
-                                    }`}
+                                          ? 'text-rose-600'
+                                          : 'text-slate-600'
+                                      }`}
                                   >
                                     {item.diemTongKet !== null && item.diemTongKet !== undefined ? item.diemTongKet : '—'}
                                   </span>
                                 </td>
                                 <td className="px-4 py-3 text-center whitespace-nowrap">
                                   <span
-                                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                                      isPass
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${isPass
                                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                         : isFail
-                                        ? 'bg-rose-50 text-rose-700 border-rose-200'
-                                        : 'bg-slate-100 text-slate-700 border-slate-200'
-                                    }`}
+                                          ? 'bg-rose-50 text-rose-700 border-rose-200'
+                                          : 'bg-slate-100 text-slate-700 border-slate-200'
+                                      }`}
                                   >
                                     {isPass ? 'ĐẠT CHUẨN' : isFail ? 'CHƯA ĐẠT' : 'ĐANG HỌC'}
                                   </span>
@@ -1200,9 +1191,9 @@ export default function AdminReportsPage() {
                       </table>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto rounded-xl border border-slate-200">
-                      <table className="w-full text-left text-xs text-slate-700">
-                        <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+                    <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-[#1e2d45]">
+                      <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                        <thead className="bg-slate-50 dark:bg-[#162032] text-slate-600 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-[#1e2d45]">
                           <tr>
                             <th className="px-4 py-3 text-center w-12">STT</th>
                             <th className="px-4 py-3 whitespace-nowrap">Mã HV</th>
@@ -1213,7 +1204,7 @@ export default function AdminReportsPage() {
                             <th className="px-4 py-3 whitespace-nowrap">Liên Hệ</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-100 dark:divide-[#1e2d45]">
                           {filteredModalData.map((s: any, idx: number) => {
                             const statusLabel = formatTrangThaiHocVien(s.trangThai);
                             const isStudying = s.trangThai === 'DANG_HOC';
@@ -1221,30 +1212,29 @@ export default function AdminReportsPage() {
                             const isSuspended = s.trangThai === 'BAO_LUU';
 
                             return (
-                              <tr key={s.id || idx} className="hover:bg-teal-50/30 transition">
+                              <tr key={s.id || idx} className="hover:bg-teal-50/30 dark:hover:bg-teal-950/20 transition">
                                 <td className="px-4 py-3 text-center font-mono text-slate-400">{idx + 1}</td>
-                                <td className="px-4 py-3 font-mono font-bold text-teal-700 whitespace-nowrap">
+                                <td className="px-4 py-3 font-mono font-bold text-teal-700 dark:text-teal-400 whitespace-nowrap">
                                   {s.maHocVien}
                                 </td>
-                                <td className="px-4 py-3 font-bold text-slate-900 whitespace-nowrap">
+                                <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap">
                                   {s.hoTen}
                                 </td>
                                 <td className="px-4 py-3 text-center whitespace-nowrap">
-                                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-teal-50 text-teal-800 border border-teal-200">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-teal-50 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60">
                                     CEFR {s.trinhDoCEFR || 'A1'}
                                   </span>
                                 </td>
                                 <td className="px-4 py-3 text-center whitespace-nowrap">
                                   <span
-                                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                                      isStudying
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${isStudying
                                         ? 'bg-teal-50 text-teal-700 border-teal-200'
                                         : isGraduated
-                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                        : isSuspended
-                                        ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                        : 'bg-rose-50 text-rose-700 border-rose-200'
-                                    }`}
+                                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                          : isSuspended
+                                            ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                                      }`}
                                   >
                                     {statusLabel}
                                   </span>

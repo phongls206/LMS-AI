@@ -11,7 +11,7 @@ import {
   GenerateSessionsDto,
   UpdateSessionDto,
 } from './dto/attendances.dto';
-import { TrangThaiBuoiHoc, TrangThaiPhanCong, TrangThaiLopHoc, VaiTro } from '@prisma/client';
+import { TrangThaiBuoiHoc, TrangThaiPhanCong, TrangThaiLopHoc, VaiTro, TrangThaiDangKy } from '@prisma/client';
 
 @Injectable()
 export class AttendancesService {
@@ -109,6 +109,9 @@ export class AttendancesService {
       where: { id: BigInt(classId) },
       include: {
         dangKyHoc: {
+          where: {
+            trangThai: { not: TrangThaiDangKy.DA_HUY },
+          },
           include: {
             hocVien: { select: { id: true, maHocVien: true, hoTen: true, trinhDoCEFR: true } },
           },

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
-import { classesService, gradesService } from '../../../services/api';
+import { classesService, gradesService, authStorage } from '../../../services/api';
 import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download, Award } from 'lucide-react';
 import { exportClassGradeBookExcel } from '../../../utils/excel-exporter';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
@@ -24,11 +24,8 @@ export default function TeacherGradesPage() {
       try {
         let isManager = false;
         try {
-          const stored = localStorage.getItem('etc_user_session');
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (parsed.vaiTro === 'QUAN_LY') isManager = true;
-          }
+          const user = authStorage.getUser();
+          if (user && user.vaiTro === 'QUAN_LY') isManager = true;
         } catch {}
 
         let assignedClasses: any[] = [];

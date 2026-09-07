@@ -47,6 +47,35 @@ const formatDate = (d?: string | Date) => {
   return new Date(d).toLocaleDateString('vi-VN');
 };
 
+const formatTimeSlot = (timeStr?: string) => {
+  if (!timeStr) return '';
+  if (typeof timeStr === 'string') {
+    if (timeStr.includes('T')) {
+      const match = timeStr.match(/T(\d{2}:\d{2})/);
+      if (match) return match[1];
+    }
+    return timeStr.substring(0, 5);
+  }
+  return String(timeStr);
+};
+
+const formatScheduleDay = (thu?: number | string) => {
+  const n = Number(thu);
+  if (n === 8) return 'Chủ Nhật';
+  if (n >= 2 && n <= 7) return `Thứ ${n}`;
+  return `Thứ ${thu}`;
+};
+
+const formatFullScheduleItem = (l: any) => {
+  const day = formatScheduleDay(l.thuTrongTuan);
+  const start = formatTimeSlot(l.gioBatDau);
+  const end = formatTimeSlot(l.gioKetThuc);
+  if (start && end) {
+    return `${day} (${start} - ${end})`;
+  }
+  return day;
+};
+
 export default function StudentEnrollPage() {
   const [classes, setClasses] = useState<LopHoc[]>([]);
   const [user, setUser] = useState<any>(null);
@@ -185,7 +214,7 @@ export default function StudentEnrollPage() {
         return true;
       });
       if (conflict) {
-        return `Trùng Lịch Thứ ${newSch.thuTrongTuan}`;
+        return `Trùng Lịch ${formatScheduleDay(newSch.thuTrongTuan)}`;
       }
     }
     return null;
@@ -201,10 +230,24 @@ export default function StudentEnrollPage() {
     );
     const isEnrolled = !!enrollment;
     const paidAmount = Number(enrollment?.hoaDon?.soTienDaTra || 0);
-    const isPaid =
-      paidAmount > 0 ||
-      enrollment?.hoaDon?.trangThai === 'DA_HOAN_THANH' ||
-      enrollment?.trangThai === 'DA_XAC_NHAN';
+    const totalFee = Number(
+      enrollment?.hoaDon?.soTienPhaiTra || c.khoaHoc?.hocPhi || 0
+    );
+    const debtAmount = Math.max(0, totalFee - paidAmount);
+
+    // Phân định rõ 3 trạng thái thanh toán riêng biệt
+    const isFullyPaid =
+      isEnrolled &&
+      ((paidAmount > 0 && paidAmount >= totalFee) ||
+        enrollment?.hoaDon?.trangThai === 'DA_HOAN_THANH' ||
+        enrollment?.trangThai === 'DA_XAC_NHAN');
+
+    const isPartiallyPaid =
+      isEnrolled &&
+      !isFullyPaid &&
+      (paidAmount > 0 || enrollment?.hoaDon?.trangThai === 'THANH_TOAN_MOT_PHAN');
+
+    const isUnpaid = isEnrolled && !isFullyPaid && !isPartiallyPaid;
 
     const isFull = c.siSoHienTai >= c.siSoToiDa;
     const isCourseSuspended = c.khoaHoc?.trangThai === 'NGUNG_HOAT_DONG';
@@ -223,7 +266,11 @@ export default function StudentEnrollPage() {
       reason = 'Khóa học này hiện đang ngừng hoạt động';
     } else if (isEnrolled) {
       canEnroll = false;
-      statusText = isPaid ? 'Đã Ghi Danh (Đã Đóng Phí)' : 'Đã Ghi Danh (Chờ Nộp Phí)';
+      statusText = isFullyPaid
+        ? 'Đã Ghi Danh (Đã Đóng Đủ Phí)'
+        : isPartiallyPaid
+        ? `Đã Ghi Danh (Nợ ${debtAmount.toLocaleString('vi-VN')} đ)`
+        : 'Đã Ghi Danh (Chờ Nộp Phí)';
       reason = 'Bạn đã đăng ký lớp học này';
     } else if (isCefrIneligible) {
       canEnroll = false;
@@ -241,9 +288,13 @@ export default function StudentEnrollPage() {
 
     return {
       isEnrolled,
-      isPaid,
+      isFullyPaid,
+      isPartiallyPaid,
+      isUnpaid,
       enrollment,
       paidAmount,
+      totalFee,
+      debtAmount,
       isFull,
       isCourseSuspended,
       isCefrIneligible,
@@ -488,16 +539,22 @@ export default function StudentEnrollPage() {
                         </span>
 
                         {st.isEnrolled ? (
-                          <span
-                            className={`text-xs px-2.5 py-0.5 rounded-lg font-bold border flex items-center gap-1 shrink-0 ${
-                              st.isPaid
-                                ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
-                                : 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-                            }`}
-                          >
-                            <Check className="w-3 h-3" />
-                            <span>{st.isPaid ? 'Đã Ghi Danh & Đóng Học Phí' : 'Đã Ghi Danh (Chờ Đóng Phí)'}</span>
-                          </span>
+                          st.isFullyPaid ? (
+                            <span className="text-xs px-2.5 py-0.5 rounded-lg font-bold border flex items-center gap-1 shrink-0 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+                              <Check className="w-3 h-3" />
+                              <span>Đã Hoàn Thành Học Phí</span>
+                            </span>
+                          ) : st.isPartiallyPaid ? (
+                            <span className="text-xs px-2.5 py-0.5 rounded-lg font-bold border flex items-center gap-1 shrink-0 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800">
+                              <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
+                              <span>Đã Đóng 1 Phần (Nợ: {st.debtAmount.toLocaleString('vi-VN')} đ)</span>
+                            </span>
+                          ) : (
+                            <span className="text-xs px-2.5 py-0.5 rounded-lg font-bold border flex items-center gap-1 shrink-0 bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800">
+                              <Clock className="w-3 h-3 text-sky-500 shrink-0" />
+                              <span>Chờ Nộp Học Phí</span>
+                            </span>
+                          )
                         ) : st.isCefrIneligible ? (
                           <span className="text-xs px-2.5 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-bold border border-amber-200 dark:border-amber-800/60 flex items-center gap-1 shrink-0">
                             <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
@@ -545,7 +602,7 @@ export default function StudentEnrollPage() {
                           <span className="text-slate-500 dark:text-slate-400">Lịch học:</span>
                           <span className="font-medium text-slate-800 dark:text-slate-200 text-right">
                             {c.lichHoc && c.lichHoc.length > 0
-                              ? c.lichHoc.map((l: any) => `Thứ ${l.thuTrongTuan}`).join(', ')
+                              ? c.lichHoc.map((l: any) => formatFullScheduleItem(l)).join(', ')
                               : 'Chưa xếp lịch'}
                           </span>
                         </div>
@@ -562,9 +619,9 @@ export default function StudentEnrollPage() {
 
                     {/* Action Button Area */}
                     {st.isEnrolled ? (
-                      st.isPaid ? (
-                        /* ĐÃ ĐÓNG TIỀN: BẢO VỆ CHẶT CHẼ, KHÔNG HIỂN THỊ NÚT HỦY ĐĂNG KÝ */
-                        <div className="space-y-1.5 w-full mt-auto">
+                      st.isFullyPaid ? (
+                        /* ĐÃ HOÀN THÀNH TOÀN BỘ TIỀN: BẢO TOÀN LỊCH SỬ KHI HỦY */
+                        <div className="space-y-2 w-full mt-auto">
                           <div className="min-h-[42px] py-2 px-3.5 rounded-xl bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 font-bold text-xs flex items-center justify-between">
                             <span className="flex items-center gap-1.5">
                               <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
@@ -574,9 +631,68 @@ export default function StudentEnrollPage() {
                               {st.enrollment?.hoaDon?.maHoaDon || 'HĐ-OK'}
                             </span>
                           </div>
-                          <p className="text-[11px] text-slate-500 dark:text-slate-400 italic px-1">
-                            * Học phí đã thanh toán. Vui lòng liên hệ Phòng Giáo vụ / Kế toán nếu cần bảo lưu hoặc chuyển lớp.
-                          </p>
+                          <div className="flex items-center justify-end">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCancelModalError(null);
+                                setConfirmCancelClass({
+                                  ...c,
+                                  paidAmount: st.paidAmount,
+                                });
+                              }}
+                              disabled={cancellingId === c.id}
+                              className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline flex items-center gap-1 font-medium transition cursor-pointer py-1"
+                              title="Hủy đăng ký lớp này (chỗ ngồi được giải phóng, lịch sử tài chính được bảo toàn)"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                              <span>Hủy đăng ký lớp này</span>
+                            </button>
+                          </div>
+                        </div>
+                      ) : st.isPartiallyPaid ? (
+                        /* ĐÃ ĐÓNG 1 PHẦN: HIỂN THỊ CÔNG NỢ, NÚT NỘP TIẾP VÀ NÚT HỦY ĐĂNG KÝ */
+                        <div className="space-y-2 w-full mt-auto">
+                          <div className="p-2.5 rounded-xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-xs">
+                            <div className="flex items-center justify-between font-bold text-amber-800 dark:text-amber-300 mb-1">
+                              <span className="flex items-center gap-1.5">
+                                <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                                <span>Thanh Toán 1 Phần</span>
+                              </span>
+                              <span className="font-mono text-[11px] bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 px-2 py-0.5 rounded font-semibold">
+                                {st.enrollment?.hoaDon?.maHoaDon}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-[11px] text-slate-600 dark:text-slate-300">
+                              <span>Đã đóng: <strong className="text-teal-700 dark:text-teal-300">{st.paidAmount.toLocaleString('vi-VN')} đ</strong></span>
+                              <span>Còn nợ: <strong className="text-rose-600 dark:text-rose-400 font-bold">{st.debtAmount.toLocaleString('vi-VN')} đ</strong></span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                            <Link
+                              href="/student/fees"
+                              className="flex-1 min-h-[42px] py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer"
+                            >
+                              <CreditCard className="w-3.5 h-3.5 shrink-0" />
+                              <span>Nộp Phần Còn Lại ({st.debtAmount.toLocaleString('vi-VN')} đ)</span>
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setCancelModalError(null);
+                                setConfirmCancelClass({
+                                  ...c,
+                                  paidAmount: st.paidAmount,
+                                });
+                              }}
+                              disabled={cancellingId === c.id}
+                              className="min-h-[42px] py-2 px-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition cursor-pointer bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 shrink-0"
+                              title="Hủy đăng ký lớp này"
+                            >
+                              <X className="w-3.5 h-3.5 shrink-0" />
+                              <span>Hủy Lớp</span>
+                            </button>
+                          </div>
                         </div>
                       ) : (
                         /* CHƯA ĐÓNG TIỀN: CHO PHÉP HỦY HOẶC NỘP HỌC PHÍ */
@@ -592,11 +708,14 @@ export default function StudentEnrollPage() {
                             type="button"
                             onClick={() => {
                               setCancelModalError(null);
-                              setConfirmCancelClass(c);
+                              setConfirmCancelClass({
+                                ...c,
+                                paidAmount: 0,
+                              });
                             }}
                             disabled={cancellingId === c.id}
                             className="min-h-[42px] py-2 px-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 hover:border-rose-300 shadow-xs shrink-0"
-                            title="Hủy đăng ký lớp học này khi chưa đóng học phí"
+                            title="Hủy đăng ký lớp học này"
                           >
                             <X className="w-3.5 h-3.5 shrink-0" />
                             <span>Hủy Đăng Ký</span>
@@ -678,10 +797,17 @@ export default function StudentEnrollPage() {
                 const paidAmount = Number(enr.hoaDon?.soTienDaTra || 0);
                 const tuitionFee = Number(enr.hoaDon?.soTienPhaiTra || c.khoaHoc?.hocPhi || 0);
                 const remainingFee = Math.max(0, tuitionFee - paidAmount);
-                const isPaid =
-                  paidAmount > 0 ||
+
+                const isFullyPaid =
+                  (paidAmount > 0 && paidAmount >= tuitionFee) ||
                   enr.hoaDon?.trangThai === 'DA_HOAN_THANH' ||
                   enr.trangThai === 'DA_XAC_NHAN';
+
+                const isPartiallyPaid =
+                  !isFullyPaid &&
+                  (paidAmount > 0 || enr.hoaDon?.trangThai === 'THANH_TOAN_MOT_PHAN');
+
+                const isUnpaid = !isFullyPaid && !isPartiallyPaid;
 
                 return (
                   <div
@@ -708,16 +834,22 @@ export default function StudentEnrollPage() {
                           </span>
                         </div>
 
-                        <span
-                          className={`text-xs px-2.5 py-0.5 rounded-lg font-bold border flex items-center gap-1 shrink-0 ${
-                            isPaid
-                              ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
-                              : 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-                          }`}
-                        >
-                          <Check className="w-3 h-3" />
-                          <span>{formatTrangThaiDangKy(enr.trangThai)}</span>
-                        </span>
+                        {isFullyPaid ? (
+                          <span className="text-xs px-2.5 py-0.5 rounded-lg font-bold border flex items-center gap-1 shrink-0 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800">
+                            <Check className="w-3 h-3" />
+                            <span>Đã Hoàn Thành Học Phí</span>
+                          </span>
+                        ) : isPartiallyPaid ? (
+                          <span className="text-xs px-2.5 py-0.5 rounded-lg font-bold border flex items-center gap-1 shrink-0 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800">
+                            <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
+                            <span>Đã Đóng 1 Phần</span>
+                          </span>
+                        ) : (
+                          <span className="text-xs px-2.5 py-0.5 rounded-lg font-bold border flex items-center gap-1 shrink-0 bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800">
+                            <Clock className="w-3 h-3 text-sky-500 shrink-0" />
+                            <span>Chờ Nộp Học Phí</span>
+                          </span>
+                        )}
                       </div>
 
                       <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-1 leading-snug">
@@ -747,7 +879,7 @@ export default function StudentEnrollPage() {
                           <span className="text-slate-500 dark:text-slate-400">Lịch học:</span>
                           <span className="font-medium text-slate-800 dark:text-slate-200 text-right">
                             {c.lichHoc && c.lichHoc.length > 0
-                              ? c.lichHoc.map((l: any) => `Thứ ${l.thuTrongTuan} (${l.gioBatDau || ''} - ${l.gioKetThuc || ''})`).join(', ')
+                              ? c.lichHoc.map((l: any) => formatFullScheduleItem(l)).join(', ')
                               : 'Chưa xếp lịch'}
                           </span>
                         </div>
@@ -798,21 +930,71 @@ export default function StudentEnrollPage() {
                     </div>
 
                     {/* Action Area for Enrolled Class */}
-                    {isPaid ? (
-                      /* ĐÃ ĐÓNG TIỀN: BẢO VỆ CHẶT CHẼ, KHÔNG HIỂN THỊ NÚT HỦY ĐĂNG KÝ */
-                      <div className="space-y-1.5 w-full mt-auto">
+                    {isFullyPaid ? (
+                      /* ĐÃ HOÀN THÀNH TOÀN BỘ TIỀN: BẢO TOÀN LỊCH SỬ KHI HỦY */
+                      <div className="space-y-2 w-full mt-auto">
                         <div className="min-h-[42px] py-2 px-3.5 rounded-xl bg-emerald-50/90 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-800 dark:text-emerald-300 font-bold text-xs flex items-center justify-between">
                           <span className="flex items-center gap-1.5">
                             <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                            <span>Đã Đóng Học Phí — Chỗ Ngồi Đã Được Xác Nhận</span>
+                            <span>Đã Đóng Đủ Học Phí — Chỗ Ngồi Đã Được Xác Nhận</span>
                           </span>
                           <span className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 font-semibold font-mono">
                             {enr.hoaDon?.maHoaDon}
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-500 dark:text-slate-400 italic px-1">
-                          * Để bảo toàn dữ liệu sổ sách tài chính, học viên không thể tự hủy đăng ký sau khi đã hoàn tất học phí. Vui lòng liên hệ trực tiếp Phòng Giáo vụ / Kế toán nếu bạn có nhu cầu bảo lưu hoặc đổi lớp.
-                        </p>
+                        <div className="flex items-center justify-end">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCancelModalError(null);
+                              setConfirmCancelClass({
+                                id: Number(c.id),
+                                maLopHoc: c.maLopHoc,
+                                tenLopHoc: c.tenLopHoc,
+                                khoaHoc: c.khoaHoc,
+                                paidAmount,
+                              });
+                            }}
+                            disabled={cancellingId === Number(c.id)}
+                            className="text-xs text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:underline flex items-center gap-1 font-medium transition cursor-pointer py-1"
+                            title="Hủy đăng ký lớp này (chỗ ngồi được giải phóng, lịch sử tài chính được bảo toàn)"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                            <span>Hủy đăng ký lớp này</span>
+                          </button>
+                        </div>
+                      </div>
+                    ) : isPartiallyPaid ? (
+                      /* ĐÃ ĐÓNG 1 PHẦN: HIỂN THỊ NÚT NỘP TIẾP VÀ NÚT HỦY */
+                      <div className="space-y-2 w-full mt-auto">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                          <Link
+                            href="/student/fees"
+                            className="flex-1 min-h-[42px] py-2 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition cursor-pointer"
+                          >
+                            <CreditCard className="w-3.5 h-3.5 shrink-0" />
+                            <span>Nộp Phần Còn Lại ({remainingFee.toLocaleString('vi-VN')} đ)</span>
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCancelModalError(null);
+                              setConfirmCancelClass({
+                                id: Number(c.id),
+                                maLopHoc: c.maLopHoc,
+                                tenLopHoc: c.tenLopHoc,
+                                khoaHoc: c.khoaHoc,
+                                paidAmount,
+                              });
+                            }}
+                            disabled={cancellingId === Number(c.id)}
+                            className="min-h-[42px] py-2 px-3.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-950/50 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/60 hover:border-rose-300 shadow-xs shrink-0"
+                            title="Hủy đăng ký lớp này"
+                          >
+                            <X className="w-3.5 h-3.5 shrink-0" />
+                            <span>Hủy Đăng Ký</span>
+                          </button>
+                        </div>
                       </div>
                     ) : (
                       /* CHƯA ĐÓNG TIỀN: CHO PHÉP HỦY HOẶC NỘP TIỀN */
@@ -833,6 +1015,7 @@ export default function StudentEnrollPage() {
                               maLopHoc: c.maLopHoc,
                               tenLopHoc: c.tenLopHoc,
                               khoaHoc: c.khoaHoc,
+                              paidAmount: 0,
                             });
                           }}
                           disabled={cancellingId === Number(c.id)}
@@ -916,7 +1099,7 @@ export default function StudentEnrollPage() {
                   <span className="text-slate-500 dark:text-slate-400">Lịch học:</span>
                   <span className="font-medium text-slate-800 dark:text-slate-200">
                     {confirmEnrollClass.lichHoc && confirmEnrollClass.lichHoc.length > 0
-                      ? confirmEnrollClass.lichHoc.map((l: any) => `Thứ ${l.thuTrongTuan} (${l.gioBatDau || ''} - ${l.gioKetThuc || ''})`).join(', ')
+                      ? confirmEnrollClass.lichHoc.map((l: any) => formatFullScheduleItem(l)).join(', ')
                       : 'Chưa xếp lịch cụ thể'}
                   </span>
                 </div>
@@ -1032,18 +1215,42 @@ export default function StudentEnrollPage() {
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-500 dark:text-slate-400">Học phí:</span>
+                  <span className="text-slate-500 dark:text-slate-400">Học phí niêm yết:</span>
                   <span className="font-bold text-slate-700 dark:text-slate-300 font-mono">
                     {Number(confirmCancelClass.khoaHoc?.hocPhi).toLocaleString('vi-VN')} đ
                   </span>
                 </div>
+
+                {confirmCancelClass.paidAmount > 0 && (
+                  <div className="flex justify-between items-center text-teal-700 dark:text-teal-300 pt-1 border-t border-slate-200/60 dark:border-[#22324e]/50">
+                    <span className="font-medium">Số tiền bạn đã nộp:</span>
+                    <span className="font-mono font-bold">
+                      {Number(confirmCancelClass.paidAmount).toLocaleString('vi-VN')} đ
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Notice */}
-              <div className="p-3 rounded-xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-[11px] leading-relaxed flex items-start space-x-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
-                <div>
-                  <strong>Quy trình hủy đăng ký:</strong> Lớp học này chưa phát sinh thanh toán học phí. Khi bạn xác nhận hủy, hệ thống sẽ cập nhật trạng thái đăng ký và hóa đơn tương ứng sang <strong>Đã Hủy</strong>, đồng thời <strong>giải phóng 01 vị trí chỗ ngồi</strong> cho học viên khác. Lịch sử hóa đơn đã hủy vẫn được bảo lưu an toàn trong hệ thống để đối soát sổ sách.
+              <div className="p-3.5 rounded-xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 text-[11px] leading-relaxed space-y-1">
+                <div className="flex items-start space-x-2">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="font-bold">Chính sách chuyển trạng thái Đã Hủy & Bảo toàn tài chính:</p>
+                    <ul className="list-disc pl-4 space-y-0.5 text-[11px]">
+                      <li>Đăng ký lớp học sẽ được chuyển sang trạng thái <strong>Đã Hủy</strong> (không xóa lịch sử).</li>
+                      <li>Hệ thống tự động <strong>giải phóng 01 vị trí chỗ ngồi</strong> để nhường cho học viên khác.</li>
+                      <li>
+                        {confirmCancelClass.paidAmount > 0 ? (
+                          <span>
+                            Khoản tiền bạn đã nộp (<strong className="font-mono">{Number(confirmCancelClass.paidAmount).toLocaleString('vi-VN')} đ</strong>) cùng toàn bộ chứng từ phiếu thu <strong>vẫn được giữ nguyên 100% trong lịch sử giao dịch</strong> để phục vụ đối soát, bảo lưu hoặc hoàn phí theo quy chế trung tâm.
+                          </span>
+                        ) : (
+                          <span>Lớp chưa phát sinh thanh toán, hóa đơn học phí tương ứng sẽ được hủy công nợ.</span>
+                        )}
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 

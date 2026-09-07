@@ -110,7 +110,7 @@ export default function TeacherClassesPage() {
 
                     {/* Banner nếu lớp đang tuyển sinh */}
                     {isRecruiting && (
-                      <div className="mb-4 p-3.5 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-800 flex items-start gap-2.5">
+                      <div className="mb-4 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-800 flex items-start gap-2.5">
                         <AlertCircle className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
                         <div>
                           <strong className="block font-bold">Lớp học đang mở tuyển sinh (Chưa vào học chính thức):</strong>
@@ -316,13 +316,12 @@ export default function TeacherClassesPage() {
                                       </td>
                                       <td className="py-2.5 px-3 text-center">
                                         <span
-                                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                            isDone
+                                          className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${isDone
                                               ? 'bg-slate-100 text-slate-600'
                                               : s.trangThai === 'DANG_DIEN_RA'
-                                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                                              : 'bg-teal-50 text-teal-700 border border-teal-200'
-                                          }`}
+                                                ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                                                : 'bg-teal-50 text-teal-700 border border-teal-200'
+                                            }`}
                                         >
                                           {isDone ? 'Đã học' : s.trangThai === 'DANG_DIEN_RA' ? 'Đang học' : 'Chưa học'}
                                         </span>

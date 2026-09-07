@@ -2,21 +2,21 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { authStorage } from '../services/api';
 
 export default function RootPage() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('etc_access_token');
-    const userStr = localStorage.getItem('etc_user_session');
+    const token = authStorage.getToken();
+    const user = authStorage.getUser();
 
-    if (!token || !userStr) {
+    if (!token || !user) {
       router.replace('/login');
       return;
     }
 
     try {
-      const user = JSON.parse(userStr);
       switch (user.vaiTro) {
         case 'QUAN_LY': router.replace('/admin/dashboard'); break;
         case 'GIAO_VIEN': router.replace('/teacher/dashboard'); break;

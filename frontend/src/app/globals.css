@@ -183,9 +183,59 @@ html.dark .text-teal-800 {
   color: #5eead4 !important;
 }
 
-/* Emerald accent */
+/* Accent Text & Badges in Dark Mode */
 html.dark .text-emerald-700 {
   color: #34d399 !important;
+}
+html.dark .text-emerald-800 {
+  color: #6ee7b7 !important;
+}
+html.dark .text-rose-700 {
+  color: #fb7185 !important;
+}
+html.dark .text-rose-800 {
+  color: #fda4af !important;
+}
+html.dark .text-amber-700 {
+  color: #fbbf24 !important;
+}
+html.dark .text-amber-800 {
+  color: #fde68a !important;
+}
+
+/* Status Card Backgrounds & Borders in Dark Mode */
+html.dark .bg-emerald-50,
+html.dark .bg-emerald-50\/80,
+html.dark .bg-emerald-50\/90 {
+  background-color: rgba(6, 78, 59, 0.25) !important;
+}
+html.dark .bg-rose-50,
+html.dark .bg-rose-50\/80,
+html.dark .bg-rose-50\/90 {
+  background-color: rgba(136, 19, 55, 0.25) !important;
+}
+html.dark .bg-amber-50,
+html.dark .bg-amber-50\/80,
+html.dark .bg-amber-50\/90 {
+  background-color: rgba(120, 53, 15, 0.25) !important;
+}
+html.dark .bg-teal-50,
+html.dark .bg-teal-50\/60,
+html.dark .bg-teal-50\/80 {
+  background-color: rgba(19, 78, 74, 0.25) !important;
+}
+
+html.dark .border-emerald-200 {
+  border-color: rgba(5, 150, 105, 0.35) !important;
+}
+html.dark .border-rose-200 {
+  border-color: rgba(225, 29, 72, 0.35) !important;
+}
+html.dark .border-amber-200 {
+  border-color: rgba(217, 119, 6, 0.35) !important;
+}
+html.dark .border-teal-200 {
+  border-color: rgba(20, 184, 166, 0.35) !important;
 }
 
 /* ── Sidebar ─────────────────────────────────────────────────────────── */

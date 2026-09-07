@@ -9,10 +9,82 @@ export const api = axios.create({
   },
 });
 
-// Gắn JWT Bearer Token tự động vào mọi request
+/**
+ * Quản lý lưu trữ phiên đăng nhập cô lập theo từng Tab (Tab-Isolated Auth Storage)
+ * - Sử dụng sessionStorage làm nguồn ưu tiên số 1 để mỗi tab trình duyệt duy trì tài khoản riêng biệt.
+ * - Khi login ở tab khác, tab cũ vẫn giữ nguyên tài khoản của chính nó, reload không bao giờ bị nhảy tài khoản.
+ * - Đồng bộ thông minh với localStorage để hỗ trợ mở tab mới hoặc khôi phục phiên khi mở lại trình duyệt.
+ */
+export const authStorage = {
+  getToken: (): string | null => {
+    if (typeof window === 'undefined') return null;
+    // 1. Kiểm tra sessionStorage của chính tab này
+    let token = sessionStorage.getItem('etc_access_token');
+    if (!token) {
+      // 2. Nếu tab mới mở chưa có sessionStorage, lấy phiên gần nhất từ localStorage
+      token = localStorage.getItem('etc_access_token');
+      if (token) {
+        // Khóa phiên của tab này để không bị ảnh hưởng nếu tab khác login tài khoản khác sau đó
+        sessionStorage.setItem('etc_access_token', token);
+        const user = localStorage.getItem('etc_user_session');
+        if (user) sessionStorage.setItem('etc_user_session', user);
+      }
+    }
+    return token;
+  },
+
+  getUser: (): any | null => {
+    if (typeof window === 'undefined') return null;
+    let userStr = sessionStorage.getItem('etc_user_session');
+    if (!userStr) {
+      userStr = localStorage.getItem('etc_user_session');
+      if (userStr) {
+        sessionStorage.setItem('etc_user_session', userStr);
+        const token = localStorage.getItem('etc_access_token');
+        if (token) sessionStorage.setItem('etc_access_token', token);
+      }
+    }
+    if (!userStr) return null;
+    try {
+      return JSON.parse(userStr);
+    } catch {
+      return null;
+    }
+  },
+
+  setAuth: (accessToken: string, user: any) => {
+    if (typeof window === 'undefined') return;
+    // Lưu vào sessionStorage để cô lập hoàn toàn phiên của tab hiện tại
+    sessionStorage.setItem('etc_access_token', accessToken);
+    sessionStorage.setItem('etc_user_session', JSON.stringify(user));
+    // Cập nhật localStorage để làm tài khoản mặc định cho các tab mới mở sau này
+    localStorage.setItem('etc_access_token', accessToken);
+    localStorage.setItem('etc_user_session', JSON.stringify(user));
+  },
+
+  clearAuth: () => {
+    if (typeof window === 'undefined') return;
+    const currentToken = sessionStorage.getItem('etc_access_token');
+    sessionStorage.removeItem('etc_access_token');
+    sessionStorage.removeItem('etc_user_session');
+    // Xóa các cache AI của tab này
+    sessionStorage.removeItem('etc_ai_teacher_exercises');
+    sessionStorage.removeItem('etc_ai_progress_session');
+    sessionStorage.removeItem('etc_ai_practice_session');
+    sessionStorage.removeItem('etc_ai_consult_session');
+
+    // Chỉ xóa localStorage nếu token trong localStorage trùng với token của tab đang đăng xuất
+    if (localStorage.getItem('etc_access_token') === currentToken) {
+      localStorage.removeItem('etc_access_token');
+      localStorage.removeItem('etc_user_session');
+    }
+  },
+};
+
+// Gắn JWT Bearer Token tự động vào mọi request từ authStorage của tab
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('etc_access_token');
+    const token = authStorage.getToken();
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -32,9 +104,7 @@ api.interceptors.response.use(
         msg.includes('kết thúc') ||
         msg.includes('phiên làm việc');
 
-      localStorage.removeItem('etc_access_token');
-      localStorage.removeItem('etc_user_session');
-      sessionStorage.clear();
+      authStorage.clearAuth();
 
       if (window.location.pathname !== '/login') {
         if (isKicked) {
@@ -56,9 +126,7 @@ export const authService = {
   login: async (tenDangNhap: string, matKhau: string) => {
     const res = await api.post('/auth/login', { tenDangNhap, matKhau });
     if (res.data.accessToken) {
-      sessionStorage.clear(); // Xóa phiên làm việc AI cũ khi đăng nhập mới
-      localStorage.setItem('etc_access_token', res.data.accessToken);
-      localStorage.setItem('etc_user_session', JSON.stringify(res.data.user));
+      authStorage.setAuth(res.data.accessToken, res.data.user);
     }
     return res.data;
   },
@@ -69,9 +137,7 @@ export const authService = {
     try {
       await api.post('/auth/logout');
     } catch (e) {}
-    localStorage.removeItem('etc_access_token');
-    localStorage.removeItem('etc_user_session');
-    sessionStorage.clear(); // Xóa sạch phiên AI khi đăng xuất
+    authStorage.clearAuth();
     window.location.href = '/login';
   },
 };

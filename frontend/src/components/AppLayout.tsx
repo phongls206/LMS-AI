@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
-import { authService } from '../services/api';
+import { authService, authStorage } from '../services/api';
 import { VaiTro } from '../types';
 import {
   Menu,
@@ -94,7 +94,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const token = localStorage.getItem('etc_access_token');
+        const token = authStorage.getToken();
         if (!token) {
           router.replace('/login');
           return;

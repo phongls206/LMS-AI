@@ -159,15 +159,32 @@ export class EnrollmentsService {
 
         let invoice;
         if (existingEnrollment.hoaDon) {
+          const paid = Number(existingEnrollment.hoaDon.soTienDaTra || 0);
+          const fee = Number(classRecord.khoaHoc.hocPhi);
+          const isFull = paid >= fee;
+          const isPartial = paid > 0 && paid < fee;
+          const invStatus = isFull
+            ? TrangThaiHoaDon.DA_HOAN_THANH
+            : isPartial
+            ? TrangThaiHoaDon.THANH_TOAN_MOT_PHAN
+            : TrangThaiHoaDon.CHUA_THANH_TOAN;
+
           invoice = await tx.hoaDon.update({
             where: { id: existingEnrollment.hoaDon.id },
             data: {
               soTienPhaiTra: classRecord.khoaHoc.hocPhi,
-              soTienDaTra: 0,
+              soTienDaTra: existingEnrollment.hoaDon.soTienDaTra,
               hanThanhToan: classRecord.ngayBatDau,
-              trangThai: TrangThaiHoaDon.CHUA_THANH_TOAN,
+              trangThai: invStatus,
             },
           });
+
+          if (isFull) {
+            await tx.dangKyHoc.update({
+              where: { id: enrollment.id },
+              data: { trangThai: TrangThaiDangKy.DA_XAC_NHAN },
+            });
+          }
         } else {
           const maHoaDon = `HD-${Date.now().toString().slice(-6)}-${dto.hocVienId}`;
           invoice = await tx.hoaDon.create({
@@ -266,7 +283,7 @@ export class EnrollmentsService {
   }
 
   /**
-   * UC006 — Hủy đăng ký lớp học (Khi học viên bấm nhầm hoặc đổi ý trước khi nộp học phí)
+   * UC006 — Hủy đăng ký lớp học (Soft-cancel: chuyển DA_HUY, giải phóng sĩ số, bảo toàn 100% hóa đơn & phiếu thu)
    */
   async cancelEnrollment(dto: CreateEnrollmentDto, currentUser?: any) {
     const student = await this.prisma.hoSoHocVien.findUnique({
@@ -305,21 +322,7 @@ export class EnrollmentsService {
       throw new BadRequestException('Đăng ký lớp học này đã được hủy trước đó.');
     }
 
-    // Nghiệp vụ bảo toàn tài chính & lịch sử:
-    // Nếu học viên đã phát sinh nộp học phí (dù là một phần hay toàn phần) hoặc đã được xác nhận nhập học,
-    // tuyệt đối KHÔNG cho phép tự hủy trực tuyến, phải liên hệ Phòng Giáo vụ / Kế toán.
-    const paidAmount = Number(enrollment.hoaDon?.soTienDaTra || 0);
-    if (
-      paidAmount > 0 ||
-      enrollment.hoaDon?.trangThai === TrangThaiHoaDon.DA_HOAN_THANH ||
-      enrollment.trangThai === TrangThaiDangKy.DA_XAC_NHAN
-    ) {
-      throw new BadRequestException(
-        'Lớp học đã phát sinh thanh toán học phí hoặc đã hoàn tất xác nhận nhập học. Vui lòng liên hệ Phòng Giáo vụ / Kế toán để thực hiện thủ tục theo quy chế trung tâm.',
-      );
-    }
-
-    // ACID Transaction Soft-Cancel: Cập nhật trạng thái DA_HUY cho Đăng ký & Hóa đơn, giảm sĩ số lớp, bảo toàn dữ liệu
+    // ACID Transaction Soft-Cancel: Cập nhật trạng thái DA_HUY cho Đăng ký & Hóa đơn, giảm sĩ số lớp, bảo toàn toàn bộ dữ liệu tài chính
     await this.prisma.$transaction(async (tx) => {
       // 1. Cập nhật trạng thái đăng ký học -> DA_HUY
       await tx.dangKyHoc.update({
@@ -327,7 +330,7 @@ export class EnrollmentsService {
         data: { trangThai: TrangThaiDangKy.DA_HUY },
       });
 
-      // 2. Cập nhật hóa đơn -> DA_HUY (giữ nguyên để lưu vết lịch sử sổ sách)
+      // 2. Cập nhật hóa đơn -> DA_HUY (giữ nguyên soTienDaTra và toàn bộ bản ghi thanhToan để lưu vết lịch sử sổ sách)
       if (enrollment.hoaDon) {
         await tx.hoaDon.update({
           where: { id: enrollment.hoaDon.id },
@@ -351,7 +354,8 @@ export class EnrollmentsService {
 
     return {
       success: true,
-      message: 'Hủy đăng ký lớp học thành công. Đã giải phóng chỗ trống và cập nhật trạng thái hủy.',
+      message:
+        'Hủy đăng ký lớp học thành công. Đã giải phóng chỗ trống và chuyển trạng thái sang Đã hủy. Mọi thông tin hóa đơn và lịch sử giao dịch thanh toán vẫn được bảo toàn nguyên vẹn trong hệ thống.',
     };
   }
 
