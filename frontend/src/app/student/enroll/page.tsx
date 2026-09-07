@@ -523,12 +523,12 @@ export default function StudentEnrollPage() {
                 return (
                   <div
                     key={c.id}
-                    className={`p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111928] border shadow-sm flex flex-col justify-between transition-all ${
+                    className={`group p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111928] border shadow-xs flex flex-col justify-between transition-all duration-200 ${
                       st.isEnrolled
-                        ? 'border-blue-300 dark:border-blue-800/60 bg-blue-50/20 dark:bg-blue-950/10'
+                        ? 'border-blue-300 dark:border-blue-800/70 bg-blue-50/20 dark:bg-blue-950/15 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/5 hover:-translate-y-1'
                         : st.isCefrIneligible
-                        ? 'border-slate-200 dark:border-[#1e2d45] opacity-85 hover:opacity-100'
-                        : 'border-slate-200/90 dark:border-[#1e2d45] hover:border-teal-400 dark:hover:border-teal-500 hover:shadow-md'
+                        ? 'border-slate-200/90 dark:border-[#1e2d45] hover:border-amber-400/80 dark:hover:border-amber-500/70 hover:shadow-lg hover:shadow-amber-500/5 hover:-translate-y-1'
+                        : 'border-slate-200/90 dark:border-[#1e2d45] hover:border-teal-400 dark:hover:border-teal-500/80 hover:shadow-lg hover:shadow-teal-500/5 hover:-translate-y-1'
                     }`}
                   >
                     <div>
@@ -568,7 +568,15 @@ export default function StudentEnrollPage() {
                         )}
                       </div>
 
-                      <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-1 leading-snug">
+                      <h3
+                        className={`text-base font-bold text-slate-900 dark:text-slate-100 mb-1 leading-snug transition-colors ${
+                          st.isEnrolled
+                            ? 'group-hover:text-blue-600 dark:group-hover:text-blue-400'
+                            : st.isCefrIneligible
+                            ? 'group-hover:text-amber-600 dark:group-hover:text-amber-400'
+                            : 'group-hover:text-teal-600 dark:group-hover:text-teal-400'
+                        }`}
+                      >
                         {c.tenLopHoc}
                       </h3>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
@@ -784,7 +792,7 @@ export default function StudentEnrollPage() {
                 return (
                   <div
                     key={enr.id}
-                    className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111928] border border-blue-200/80 dark:border-blue-900/40 shadow-sm flex flex-col justify-between hover:shadow-md transition-all"
+                    className="group p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111928] border border-blue-200/80 dark:border-blue-900/40 shadow-xs flex flex-col justify-between hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/5 hover:-translate-y-1 transition-all duration-200"
                   >
                     <div>
                       {/* Top Badges */}
@@ -824,7 +832,7 @@ export default function StudentEnrollPage() {
                         )}
                       </div>
 
-                      <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-1 leading-snug">
+                      <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-1 leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                         {c.tenLopHoc}
                       </h3>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">

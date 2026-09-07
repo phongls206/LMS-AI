@@ -214,7 +214,7 @@ export default function AdminCoursesPage() {
             {courses.map((course) => (
               <div
                 key={course.id}
-                className="group rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-teal-500/70 hover:shadow-lg hover:shadow-teal-500/5 transition-all duration-200 flex flex-col justify-between overflow-hidden"
+                className="group rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-teal-500/70 hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between overflow-hidden"
               >
                 <div className="p-6">
                   {/* Top Badges */}
@@ -231,7 +231,7 @@ export default function AdminCoursesPage() {
                   </div>
 
                   {/* Title & Description */}
-                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug group-hover:text-teal-600 transition-colors">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-slate-100 mb-2 leading-snug group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                     {course.tenKhoaHoc}
                   </h3>
                   <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 mb-4">
