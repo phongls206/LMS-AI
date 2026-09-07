@@ -31,6 +31,7 @@ import {
   Check,
   ChevronRight,
   ExternalLink,
+  RefreshCw,
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatTrangThaiHocVien, formatTrangThaiLopHoc, formatTrangThaiHoaDon } from '../../../utils/formatters';
@@ -67,33 +68,38 @@ export default function AdminReportsPage() {
 
   const [modalSearch, setModalSearch] = useState('');
   const [modalClassFilter, setModalClassFilter] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async (isManual = false) => {
+    try {
+      if (isManual) setRefreshing(true);
+      else setLoading(true);
+
+      const [statsData, classesData, studentsData, invoicesData, paymentsData] = await Promise.all([
+        statisticsService.getDashboard().catch(() => null),
+        classesService.getAll().catch(() => []),
+        usersService.getStudents(1, 200).catch(() => ({ data: [] })),
+        enrollmentsService.getInvoices().catch(() => []),
+        enrollmentsService.getPayments().catch(() => []),
+      ]);
+
+      setStats(statsData);
+      setClasses(Array.isArray(classesData) ? classesData : []);
+      const studentList = Array.isArray(studentsData)
+        ? studentsData
+        : studentsData?.data || studentsData?.items || [];
+      setStudents(studentList);
+      setInvoices(Array.isArray(invoicesData) ? invoicesData : []);
+      setPayments(Array.isArray(paymentsData) ? paymentsData : []);
+    } catch (err) {
+      console.error('Lỗi khi tải dữ liệu báo cáo:', err);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [statsData, classesData, studentsData, invoicesData, paymentsData] = await Promise.all([
-          statisticsService.getDashboard().catch(() => null),
-          classesService.getAll().catch(() => []),
-          usersService.getStudents(1, 200).catch(() => ({ data: [] })),
-          enrollmentsService.getInvoices().catch(() => []),
-          enrollmentsService.getPayments().catch(() => []),
-        ]);
-
-        setStats(statsData);
-        setClasses(Array.isArray(classesData) ? classesData : []);
-        const studentList = Array.isArray(studentsData)
-          ? studentsData
-          : studentsData?.data || studentsData?.items || [];
-        setStudents(studentList);
-        setInvoices(Array.isArray(invoicesData) ? invoicesData : []);
-        setPayments(Array.isArray(paymentsData) ? paymentsData : []);
-      } catch (err) {
-        console.error('Lỗi khi tải dữ liệu báo cáo:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
 
@@ -456,6 +462,15 @@ export default function AdminReportsPage() {
 
             {/* Export Actions */}
             <div className="flex items-center space-x-2 self-end md:self-auto flex-wrap gap-1">
+              <button
+                onClick={() => fetchData(true)}
+                disabled={refreshing}
+                className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 transition shadow-sm cursor-pointer disabled:opacity-50"
+                title="Cập nhật lại số liệu thống kê & báo cáo mới nhất (không cần tải lại trang)"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+                <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+              </button>
               <button
                 onClick={exportInvoicesCSV}
                 className="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 hover:text-emerald-800 text-xs font-bold flex items-center space-x-1.5 border border-emerald-200 transition shadow-sm cursor-pointer"

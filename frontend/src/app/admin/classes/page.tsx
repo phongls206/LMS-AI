@@ -7,7 +7,7 @@ import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
 import {
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
   Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock, Users,
-  Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
+  Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, RefreshCw
 } from 'lucide-react';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
@@ -163,7 +163,10 @@ export default function AdminClassesPage() {
     setSelectedDays([2, 4, 6]);
   };
 
-  const fetchData = async () => {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async (isManual = false) => {
+    if (isManual) setRefreshing(true);
     try {
       const [classList, courseList, teacherList] = await Promise.all([
         classesService.getAll(),
@@ -179,6 +182,7 @@ export default function AdminClassesPage() {
       console.error(err);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -507,13 +511,25 @@ export default function AdminClassesPage() {
             </span>
           </div>
 
-          <button
-            onClick={() => setShowCreateClass(true)}
-            className="w-full sm:w-auto h-10 min-h-[40px] flex items-center justify-center space-x-2 px-4 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer shrink-0"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Mở Lớp Học Mới</span>
-          </button>
+          <div className="flex items-center space-x-2 shrink-0">
+            <button
+              onClick={() => fetchData(true)}
+              disabled={refreshing}
+              className="h-10 min-h-[40px] flex items-center justify-center space-x-1.5 px-3.5 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 text-xs font-bold transition cursor-pointer shadow-sm disabled:opacity-50"
+              title="Cập nhật lại danh sách lớp học và sĩ số mới nhất"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+              <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+            </button>
+
+            <button
+              onClick={() => setShowCreateClass(true)}
+              className="w-full sm:w-auto h-10 min-h-[40px] flex items-center justify-center space-x-2 px-4 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Mở Lớp Học Mới</span>
+            </button>
+          </div>
         </div>
 
         {message && (

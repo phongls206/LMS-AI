@@ -405,7 +405,12 @@ export class EnrollmentsService {
             lopHoc: { select: { maLopHoc: true, tenLopHoc: true } },
           },
         },
-        thanhToan: true,
+        thanhToan: {
+          include: {
+            nguoiThu: { select: { id: true, tenDangNhap: true, hoTen: true } },
+          },
+          orderBy: { id: 'asc' },
+        },
       },
       orderBy: { id: 'desc' },
     });

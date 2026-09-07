@@ -23,6 +23,9 @@ import {
   X,
   XCircle,
   AlertTriangle,
+  RefreshCw,
+  ArrowLeft,
+  History,
 } from 'lucide-react';
 import { formatTrangThaiHoaDon, formatTrangThaiLopHoc, docSoThanhChu, formatReceiptDate } from '../../../utils/formatters';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
@@ -47,9 +50,12 @@ export default function AdminFeesPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(8);
 
+  const [refreshing, setRefreshing] = useState(false);
+
   // Modal Phiếu Thu Riêng Cho Đơn
   const [receiptData, setReceiptData] = useState<{
     invoice: HoaDon;
+    selectedPayment?: any | null;
     paymentAmount: number;
     paymentMethod: 'TIEN_MAT' | 'CHUYEN_KHOAN';
     note: string;
@@ -57,7 +63,8 @@ export default function AdminFeesPage() {
     soPhieu: string;
   } | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = async (isManual = false) => {
+    if (isManual) setRefreshing(true);
     try {
       const [invList, stuRes, classList] = await Promise.all([
         enrollmentsService.getInvoices(),
@@ -73,13 +80,14 @@ export default function AdminFeesPage() {
           c.khoaHoc?.trangThai !== 'NGUNG_HOAT_DONG',
       );
       setClasses(enrollableClasses);
-      if (stuRes.data.length > 0) setSelectedStudentId(stuRes.data[0].id);
-      if (enrollableClasses.length > 0) setSelectedClassId(enrollableClasses[0].id);
-      else setSelectedClassId(0);
+      if (stuRes.data.length > 0 && !selectedStudentId) setSelectedStudentId(stuRes.data[0].id);
+      if (enrollableClasses.length > 0 && !selectedClassId) setSelectedClassId(enrollableClasses[0].id);
+      else if (!selectedClassId) setSelectedClassId(0);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -213,20 +221,29 @@ export default function AdminFeesPage() {
     setNote('');
   };
 
-  const handleOpenReceipt = (inv: HoaDon) => {
+  const handleOpenReceipt = (inv: HoaDon, payment?: any | null) => {
     const isCancelled = inv.trangThai === 'DA_HUY' || inv.dangKyHoc?.trangThai === 'DA_HUY';
     const paid = Number(inv.soTienDaTra || 0);
+    const targetPayment = payment || null;
+
     setReceiptData({
       invoice: inv,
-      paymentAmount: paid,
-      paymentMethod: 'TIEN_MAT',
-      note: isCancelled
+      selectedPayment: targetPayment,
+      paymentAmount: targetPayment ? Number(targetPayment.soTien) : paid,
+      paymentMethod: targetPayment ? targetPayment.phuongThuc : 'TIEN_MAT',
+      note: targetPayment
+        ? targetPayment.ghiChu || 'Thanh toán học phí khóa học'
+        : isCancelled
         ? 'Hóa đơn đã hủy bỏ theo đơn đăng ký học viên'
         : paid === 0
         ? 'Học phí chưa thanh toán'
         : 'Thanh toán học phí khóa học',
-      date: inv.ngayLap ? new Date(inv.ngayLap) : new Date(),
-      soPhieu: isCancelled ? `HD-HUY-${inv.maHoaDon}` : `PT-${inv.maHoaDon}`,
+      date: targetPayment?.thoiGianThanhToan
+        ? new Date(targetPayment.thoiGianThanhToan)
+        : inv.ngayLap
+        ? new Date(inv.ngayLap)
+        : new Date(),
+      soPhieu: targetPayment?.maGiaoDich || (isCancelled ? `HD-HUY-${inv.maHoaDon}` : `HD-${inv.maHoaDon}`),
     });
   };
 
@@ -242,13 +259,23 @@ export default function AdminFeesPage() {
         ghiChu: note,
       });
 
-      const soPhieu = paymentRes?.maGiaoDich || `PT-${selectedInvoice.maHoaDon}`;
+      const soPhieu = paymentRes?.payment?.maGiaoDich || paymentRes?.maGiaoDich || `PT-${selectedInvoice.maHoaDon}`;
+      const newPayment = paymentRes?.payment || {
+        id: Date.now(),
+        maGiaoDich: soPhieu,
+        soTien: paymentAmount,
+        phuongThuc: paymentMethod,
+        ghiChu: note || 'Thu học phí tại quầy tiếp nhận',
+        thoiGianThanhToan: new Date().toISOString(),
+      };
 
       setReceiptData({
         invoice: {
           ...selectedInvoice,
           soTienDaTra: Number(selectedInvoice.soTienDaTra) + paymentAmount,
+          thanhToan: [...(selectedInvoice.thanhToan || []), newPayment],
         },
+        selectedPayment: newPayment,
         paymentAmount,
         paymentMethod,
         note: note || 'Thu học phí tại quầy tiếp nhận',
@@ -380,6 +407,15 @@ export default function AdminFeesPage() {
               <span className="text-xs text-slate-500 font-bold whitespace-nowrap">
                 {totalInvoices} hóa đơn
               </span>
+              <button
+                onClick={() => fetchData(true)}
+                disabled={refreshing}
+                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#162032] hover:bg-teal-50 dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 transition cursor-pointer shadow-sm whitespace-nowrap disabled:opacity-50"
+                title="Cập nhật nhanh dữ liệu mới nhất (không cần tải lại trang)"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+                <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+              </button>
               <button
                 onClick={exportInvoicesCSV}
                 className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center space-x-1.5 border border-emerald-200 transition cursor-pointer shadow-sm whitespace-nowrap"
@@ -712,13 +748,32 @@ export default function AdminFeesPage() {
         {/* Modal Chi Tiết Hóa Đơn / Phiếu Thu Học Phí Riêng Cho Đơn */}
         {receiptData && (() => {
           const isCancelled = receiptData.invoice.trangThai === 'DA_HUY' || receiptData.invoice.dangKyHoc?.trangThai === 'DA_HUY';
-          const isUnpaid = !isCancelled && Number(receiptData.invoice.soTienDaTra || 0) === 0 && Number(receiptData.paymentAmount || 0) === 0;
-          const remaining = Math.max(0, Number(receiptData.invoice.soTienPhaiTra) - Number(receiptData.invoice.soTienDaTra));
+          const totalFee = Number(receiptData.invoice.soTienPhaiTra || 0);
+          const totalPaid = Number(receiptData.invoice.soTienDaTra || 0);
+          const remaining = Math.max(0, totalFee - totalPaid);
+          const isUnpaid = !isCancelled && totalPaid === 0 && (!receiptData.selectedPayment || Number(receiptData.selectedPayment.soTien || 0) === 0);
+
+          // Danh sách các lần nộp tiền (payments list)
+          const paymentsList: any[] = (receiptData.invoice.thanhToan && receiptData.invoice.thanhToan.length > 0)
+            ? receiptData.invoice.thanhToan
+            : totalPaid > 0
+            ? [{
+                id: receiptData.invoice.id,
+                maGiaoDich: `PT-${receiptData.invoice.maHoaDon}`,
+                soTien: totalPaid,
+                phuongThuc: receiptData.paymentMethod || 'TIEN_MAT',
+                ghiChu: receiptData.note || 'Thanh toán học phí khóa học',
+                thoiGianThanhToan: receiptData.date || receiptData.invoice.ngayLap || receiptData.invoice.createdAt,
+                nguoiThu: null,
+              }]
+            : [];
+
+          const viewingSingleReceipt = !!receiptData.selectedPayment;
 
           return (
             <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 z-50 overflow-y-auto animate-fadeIn">
-              <div className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-2xl w-full max-w-xl shadow-2xl p-4 sm:p-5 space-y-3 text-slate-800 dark:text-slate-100 my-auto max-h-[96vh] overflow-y-auto">
-                {/* Header Modal Bar (ẩn khi in) */}
+              <div className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-2xl w-full max-w-2xl shadow-2xl p-4 sm:p-5 space-y-3 text-slate-800 dark:text-slate-100 my-auto max-h-[96vh] overflow-y-auto">
+                {/* Header Modal Bar (ẩn khi in - Không để nút in trùng lặp ở đây) */}
                 <div className="flex justify-between items-center pb-2 border-b border-slate-200 dark:border-slate-800 print:hidden">
                   <div className="flex items-center space-x-2 font-bold text-xs sm:text-sm">
                     {isCancelled ? (
@@ -731,23 +786,19 @@ export default function AdminFeesPage() {
                         <Receipt className="w-4 h-4" />
                         <span>HÓA ĐƠN HỌC PHÍ (CHỜ THANH TOÁN)</span>
                       </span>
-                    ) : (
+                    ) : viewingSingleReceipt ? (
                       <span className="text-teal-600 dark:text-teal-400 flex items-center space-x-1.5">
                         <Receipt className="w-4 h-4" />
-                        <span>PHIẾU THU HỌC PHÍ</span>
+                        <span>PHIẾU THU HỌC PHÍ — SỐ: {receiptData.soPhieu}</span>
+                      </span>
+                    ) : (
+                      <span className="text-teal-600 dark:text-teal-400 flex items-center space-x-1.5">
+                        <History className="w-4 h-4" />
+                        <span>BẢNG KÊ HÓA ĐƠN & LỊCH SỬ NỘP TIỀN ({paymentsList.length} ĐỢT)</span>
                       </span>
                     )}
                   </div>
                   <div className="flex items-center space-x-2">
-                    {!isCancelled && (
-                      <button
-                        onClick={() => window.print()}
-                        className="px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition cursor-pointer"
-                      >
-                        <Printer className="w-3.5 h-3.5" />
-                        <span>{isUnpaid ? 'In Báo Học Phí' : 'In Phiếu Thu'}</span>
-                      </button>
-                    )}
                     <button
                       onClick={() => setReceiptData(null)}
                       className="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"
@@ -757,6 +808,19 @@ export default function AdminFeesPage() {
                     </button>
                   </div>
                 </div>
+
+                {/* Thanh điều hướng quay lại bảng kê tổng hợp nếu đang xem phiếu thu đơn lẻ */}
+                {viewingSingleReceipt && !isCancelled && (
+                  <div className="print:hidden">
+                    <button
+                      onClick={() => setReceiptData((prev) => (prev ? { ...prev, selectedPayment: null } : null))}
+                      className="w-full py-1.5 px-3 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/60 font-bold text-xs flex items-center justify-center space-x-1.5 border border-teal-200 dark:border-teal-800 transition cursor-pointer"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>Quay lại Bảng Kê Tổng Hợp Hóa Đơn & Lịch Sử {paymentsList.length} Đợt Nộp</span>
+                    </button>
+                  </div>
+                )}
 
                 {/* PHẦN NỘI DUNG PHIẾU THU / HÓA ĐƠN (Printable Container) */}
                 <div id="etc-printable-receipt" className="space-y-3 p-4 sm:p-5 rounded-xl bg-slate-50/70 dark:bg-[#0f172a] border border-slate-200/90 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-sans print:border-none print:p-0 print:bg-white print:text-black">
@@ -778,7 +842,7 @@ export default function AdminFeesPage() {
                         Mẫu số: <span className="font-mono">01-TT/ETC</span>
                       </p>
                       <p className="font-mono text-teal-700 dark:text-teal-400 font-bold mt-0.5">
-                        Số: {receiptData.soPhieu}
+                        Số: {viewingSingleReceipt ? receiptData.soPhieu : `HD-${receiptData.invoice.maHoaDon}`}
                       </p>
                     </div>
                   </div>
@@ -803,10 +867,24 @@ export default function AdminFeesPage() {
                           THÔNG BÁO NỘP HỌC PHÍ
                         </h1>
                       </div>
+                    ) : viewingSingleReceipt ? (
+                      <div>
+                        <h1 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                          PHIẾU THU HỌC PHÍ
+                        </h1>
+                        <p className="text-[11px] font-medium text-teal-600 dark:text-teal-400">
+                          (Số phiếu: {receiptData.soPhieu})
+                        </p>
+                      </div>
                     ) : (
-                      <h1 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white uppercase tracking-wider">
-                        PHIẾU THU HỌC PHÍ
-                      </h1>
+                      <div>
+                        <h1 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white uppercase tracking-wider">
+                          BẢNG KÊ HÓA ĐƠN & TIẾN ĐỘ NỘP TIỀN
+                        </h1>
+                        <p className="text-[11px] font-medium text-teal-600 dark:text-teal-400">
+                          (Hóa đơn mã: {receiptData.invoice.maHoaDon})
+                        </p>
+                      </div>
                     )}
                     <p className="text-[11px] italic text-slate-500 dark:text-slate-400">
                       {formatReceiptDate(receiptData.date)}
@@ -836,21 +914,14 @@ export default function AdminFeesPage() {
                       </span>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:justify-between py-0.5 border-b border-dashed border-slate-200 dark:border-slate-800">
-                      <span className="text-slate-500 dark:text-slate-400">Nội dung ghi chú:</span>
-                      <span className="font-medium text-slate-700 dark:text-slate-300">
-                        {receiptData.note}
-                      </span>
-                    </div>
-
-                    {/* Bảng kê số tiền theo từng trạng thái */}
-                    {isCancelled ? (
+                    {/* TH1: Hóa đơn đã hủy */}
+                    {isCancelled && (
                       <div className="mt-2 space-y-2">
                         <div className="p-3 rounded-xl bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-slate-700 space-y-1.5">
                           <div className="flex justify-between items-center text-xs">
                             <span className="text-slate-500 dark:text-slate-400">Học phí niêm yết ban đầu:</span>
                             <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
-                              {Number(receiptData.invoice.soTienPhaiTra).toLocaleString()} đ
+                              {totalFee.toLocaleString()} đ
                             </span>
                           </div>
                           <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-slate-700 dark:text-slate-300 pt-1 border-t border-slate-100 dark:border-slate-800">
@@ -870,56 +941,188 @@ export default function AdminFeesPage() {
                           ℹ️ <strong>Lưu ý nghiệp vụ:</strong> Đăng ký lớp học này đã bị hủy trước khi nộp học phí. Hóa đơn không còn giá trị thu tiền, không phát sinh phiếu thu và toàn bộ công nợ đã được hủy bỏ.
                         </div>
                       </div>
-                    ) : isUnpaid ? (
+                    )}
+
+                    {/* TH2: Hóa đơn chưa nộp tiền */}
+                    {isUnpaid && (
                       <div className="mt-2 space-y-2">
                         <div className="p-3 rounded-xl bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-slate-700 space-y-1.5">
                           <div className="flex justify-between items-center text-xs">
                             <span className="text-slate-500 dark:text-slate-400">Tổng học phí khóa học:</span>
                             <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
-                              {Number(receiptData.invoice.soTienPhaiTra).toLocaleString()} đ
+                              {totalFee.toLocaleString()} đ
                             </span>
                           </div>
                           <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-rose-600 dark:text-rose-400 pt-1 border-t border-slate-100 dark:border-slate-800">
                             <span>SỐ TIỀN CẦN NỘP:</span>
                             <span className="font-mono text-sm sm:text-base font-black">
-                              {Number(receiptData.invoice.soTienPhaiTra).toLocaleString()} đ
+                              {totalFee.toLocaleString()} đ
                             </span>
                           </div>
                           <p className="text-[11px] italic text-slate-600 dark:text-slate-400 pt-0.5">
-                            (Viết bằng chữ: <strong className="text-slate-800 dark:text-slate-200">{docSoThanhChu(Number(receiptData.invoice.soTienPhaiTra))}</strong>)
+                            (Viết bằng chữ: <strong className="text-slate-800 dark:text-slate-200">{docSoThanhChu(totalFee)}</strong>)
                           </p>
                           <div className="flex justify-between items-center text-[11px] pt-1 border-t border-slate-100 dark:border-slate-800">
                             <span className="text-slate-500 dark:text-slate-400">Tình trạng thanh toán:</span>
                             <span className="font-bold font-mono text-rose-600 dark:text-rose-400">
-                              CHƯA THANH TOÁN (CÒN NỢ: {Number(receiptData.invoice.soTienPhaiTra).toLocaleString()} đ)
+                              CHƯA THANH TOÁN (CÒN NỢ: {totalFee.toLocaleString()} đ)
                             </span>
                           </div>
                         </div>
                       </div>
-                    ) : (
-                      <div className="mt-2 p-3 rounded-xl bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-slate-700 space-y-1.5">
-                        <div className="flex justify-between items-center text-xs">
-                          <span className="text-slate-500 dark:text-slate-400">Tổng học phí khóa học:</span>
-                          <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
-                            {Number(receiptData.invoice.soTienPhaiTra).toLocaleString()} đ
+                    )}
+
+                    {/* TH3: Xem một Phiếu Thu Cụ Thể (Khi thu tiền xong hoặc chọn 1 đợt) */}
+                    {!isCancelled && !isUnpaid && viewingSingleReceipt && (
+                      <div className="mt-2 space-y-2">
+                        <div className="flex flex-col sm:flex-row sm:justify-between py-0.5 border-b border-dashed border-slate-200 dark:border-slate-800">
+                          <span className="text-slate-500 dark:text-slate-400">Phương thức thanh toán:</span>
+                          <span className="font-bold text-slate-800 dark:text-slate-200">
+                            {receiptData.paymentMethod === 'CHUYEN_KHOAN' ? 'Chuyển Khoản Ngân Hàng' : 'Tiền Mặt'}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-teal-700 dark:text-teal-400 pt-1 border-t border-slate-100 dark:border-slate-800">
-                          <span>SỐ TIỀN THỰC THU KỲ NÀY:</span>
-                          <span className="font-mono text-sm sm:text-base font-black">
-                            {Number(receiptData.paymentAmount).toLocaleString()} đ
+
+                        <div className="flex flex-col sm:flex-row sm:justify-between py-0.5 border-b border-dashed border-slate-200 dark:border-slate-800">
+                          <span className="text-slate-500 dark:text-slate-400">Nội dung / Ghi chú đợt nộp này:</span>
+                          <span className="font-bold text-teal-700 dark:text-teal-400">
+                            {receiptData.note || 'Thanh toán học phí khóa học'}
                           </span>
                         </div>
-                        <p className="text-[11px] italic text-slate-600 dark:text-slate-400 pt-0.5">
-                          (Viết bằng chữ: <strong className="text-slate-800 dark:text-slate-200">{docSoThanhChu(receiptData.paymentAmount)}</strong>)
-                        </p>
-                        <div className="flex justify-between items-center text-[11px] pt-1 border-t border-slate-100 dark:border-slate-800">
-                          <span className="text-slate-500 dark:text-slate-400">Tình trạng công nợ sau thanh toán:</span>
-                          <span className={`font-bold font-mono ${remaining === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
-                            {remaining === 0
-                              ? 'ĐÃ THANH TOÁN ĐỦ (0 đ)'
-                              : `CÒN NỢ: ${remaining.toLocaleString()} đ`}
-                          </span>
+
+                        <div className="p-3 rounded-xl bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-slate-700 space-y-1.5">
+                          <div className="flex justify-between items-center text-xs">
+                            <span className="text-slate-500 dark:text-slate-400">Tổng học phí khóa học:</span>
+                            <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                              {totalFee.toLocaleString()} đ
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-teal-700 dark:text-teal-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+                            <span>SỐ TIỀN THỰC THU ĐỢT NÀY:</span>
+                            <span className="font-mono text-sm sm:text-base font-black">
+                              {Number(receiptData.paymentAmount).toLocaleString()} đ
+                            </span>
+                          </div>
+                          <p className="text-[11px] italic text-slate-600 dark:text-slate-400 pt-0.5">
+                            (Viết bằng chữ: <strong className="text-slate-800 dark:text-slate-200">{docSoThanhChu(receiptData.paymentAmount)}</strong>)
+                          </p>
+                          <div className="flex justify-between items-center text-[11px] pt-1 border-t border-slate-100 dark:border-slate-800">
+                            <span className="text-slate-500 dark:text-slate-400">Tình trạng công nợ sau thanh toán:</span>
+                            <span className={`font-bold font-mono ${remaining === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>
+                              {remaining === 0
+                                ? 'ĐÃ THANH TOÁN ĐỦ (0 đ)'
+                                : `CÒN NỢ: ${remaining.toLocaleString()} đ`}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* TH4: Xem Bảng Kê Tổng Hợp Hóa Đơn & Lịch Sử Từng Lần Nộp Kèm Ghi Chú */}
+                    {!isCancelled && !isUnpaid && !viewingSingleReceipt && (
+                      <div className="mt-2 space-y-3">
+                        {/* Hộp tóm tắt tổng quan hóa đơn */}
+                        <div className="p-3 rounded-xl bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-slate-700 space-y-1.5">
+                          <div className="flex justify-between items-center text-xs">
+                            <span className="text-slate-500 dark:text-slate-400">Tổng học phí khóa học:</span>
+                            <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                              {totalFee.toLocaleString()} đ
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 pt-1 border-t border-slate-100 dark:border-slate-800">
+                            <span>TỔNG TIỀN ĐÃ NỘP ({paymentsList.length} LẦN):</span>
+                            <span className="font-mono text-sm sm:text-base font-black">
+                              {totalPaid.toLocaleString()} đ
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center text-[11px] pt-1 border-t border-slate-100 dark:border-slate-800">
+                            <span className="text-slate-500 dark:text-slate-400">Công nợ hiện tại:</span>
+                            <span className={`font-bold font-mono ${remaining === 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                              {remaining === 0
+                                ? 'ĐÃ THANH TOÁN TOÀN BỘ (0 đ)'
+                                : `CÒN NỢ: ${remaining.toLocaleString()} đ`}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Lịch Sử Chi Tiết Từng Lần Nộp Tiền & Ghi Chú */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between pb-1 border-b border-slate-200 dark:border-slate-800">
+                            <div className="flex items-center space-x-1.5 font-bold text-xs uppercase text-teal-800 dark:text-teal-300">
+                              <History className="w-3.5 h-3.5 text-teal-600" />
+                              <span>Lịch Sử Các Lần Nộp Tiền ({paymentsList.length} đợt)</span>
+                            </div>
+                            <span className="text-[10px] text-slate-400 print:hidden">
+                              Click đợt để xem/in phiếu thu riêng
+                            </span>
+                          </div>
+
+                          {paymentsList.length === 0 ? (
+                            <p className="text-xs italic text-slate-400 py-2 text-center">Chưa phát sinh lần nộp tiền nào.</p>
+                          ) : (
+                            <div className="space-y-2">
+                              {paymentsList.map((pm, idx) => (
+                                <div
+                                  key={pm.id || idx}
+                                  className="p-2.5 rounded-xl bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-slate-700/80 shadow-xs space-y-1.5"
+                                >
+                                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-1">
+                                    <div className="flex items-center space-x-2">
+                                      <span className="px-2 py-0.5 rounded-md bg-teal-100 dark:bg-teal-900/60 text-teal-800 dark:text-teal-300 font-bold text-[10px] uppercase">
+                                        Đợt {idx + 1}
+                                      </span>
+                                      <span className="font-mono font-bold text-xs text-slate-700 dark:text-slate-300">
+                                        {pm.maGiaoDich || `PT-${idx + 1}`}
+                                      </span>
+                                      <span className="text-[11px] text-slate-400">
+                                        • {pm.thoiGianThanhToan ? new Date(pm.thoiGianThanhToan).toLocaleString('vi-VN') : 'Mới nộp'}
+                                      </span>
+                                    </div>
+                                    <div className="flex items-center justify-between sm:justify-end space-x-2">
+                                      <span className="font-mono font-black text-xs text-emerald-600 dark:text-emerald-400">
+                                        +{Number(pm.soTien).toLocaleString()} đ
+                                      </span>
+                                      {/* Nút Xem Phiếu Thu Đợt Này (Ẩn khi in) */}
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          setReceiptData({
+                                            ...receiptData,
+                                            selectedPayment: pm,
+                                            paymentAmount: Number(pm.soTien),
+                                            paymentMethod: pm.phuongThuc || 'TIEN_MAT',
+                                            note: pm.ghiChu || 'Thanh toán học phí',
+                                            soPhieu: pm.maGiaoDich || `PT-${pm.id}`,
+                                            date: pm.thoiGianThanhToan ? new Date(pm.thoiGianThanhToan) : new Date(),
+                                          })
+                                        }
+                                        className="px-2 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/50 hover:bg-teal-100 dark:hover:bg-teal-900 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-[10px] font-bold transition cursor-pointer flex items-center space-x-1 print:hidden"
+                                        title="Xem và in phiếu thu riêng cho đợt này"
+                                      >
+                                        <Eye className="w-3 h-3" />
+                                        <span>Xem Phiếu Thu Đợt Này</span>
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Ghi chú từng lần nộp */}
+                                  <div className="text-[11px] bg-slate-50 dark:bg-slate-900/50 p-1.5 rounded-lg border border-slate-100 dark:border-slate-800/60 flex flex-wrap items-center justify-between gap-1">
+                                    <div>
+                                      <span className="text-slate-500 dark:text-slate-400 font-medium">Ghi chú: </span>
+                                      <span className="font-semibold text-slate-800 dark:text-slate-200">
+                                        {pm.ghiChu || 'Không có ghi chú thêm'}
+                                      </span>
+                                    </div>
+                                    <div className="text-[10px] text-slate-400">
+                                      Hình thức: <strong className="text-slate-600 dark:text-slate-300">{pm.phuongThuc === 'CHUYEN_KHOAN' ? 'Chuyển khoản' : 'Tiền mặt'}</strong>
+                                      {pm.nguoiThu?.hoTen && (
+                                        <span className="ml-2">• Thủ quỹ: <strong className="text-slate-600 dark:text-slate-300">{pm.nguoiThu.hoTen}</strong></span>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
@@ -938,13 +1141,13 @@ export default function AdminFeesPage() {
                       <p className="font-bold text-slate-800 dark:text-slate-200 uppercase">Người Lập Phiếu / Thủ Quỹ</p>
                       <p className="text-[10px] text-slate-400 italic">(Ký và ghi rõ họ tên)</p>
                       <div className="h-9 flex items-end justify-center font-semibold text-teal-700 dark:text-teal-400">
-                        Bộ phận Tài vụ ETC
+                        {receiptData.selectedPayment?.nguoiThu?.hoTen || 'Bộ phận Tài vụ ETC'}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Footer modal buttons (ẩn khi in) */}
+                {/* Footer modal buttons (ẩn khi in) - NÚT IN DUY NHẤT ĐƯỢC ĐẶT Ở ĐÂY */}
                 <div className="flex justify-between items-center pt-1 print:hidden text-[11px]">
                   <span className="text-slate-400 text-[10px] sm:text-[11px]">
                     Dữ liệu hóa đơn được lưu trữ bảo mật trên hệ thống LMS ETC
@@ -962,7 +1165,13 @@ export default function AdminFeesPage() {
                         className="px-3.5 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition cursor-pointer"
                       >
                         <Printer className="w-3.5 h-3.5" />
-                        <span>{isUnpaid ? 'In Báo Học Phí' : 'In Phiếu Thu'}</span>
+                        <span>
+                          {isUnpaid
+                            ? 'In Báo Học Phí'
+                            : viewingSingleReceipt
+                            ? 'In Phiếu Thu Này'
+                            : 'In Bảng Kê Hóa Đơn'}
+                        </span>
                       </button>
                     )}
                   </div>

@@ -5,7 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { classesService } from '../../../services/api';
 import {
   GraduationCap, Users, Calendar, Clock, MapPin, AlertCircle,
-  CheckCircle, ChevronDown, ChevronUp, BookOpen, Lock, ChevronRight
+  CheckCircle, ChevronDown, ChevronUp, BookOpen, Lock, ChevronRight, RefreshCw
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatTrangThaiLopHoc } from '../../../utils/formatters';
@@ -21,18 +21,25 @@ export default function TeacherClassesPage() {
     code?: string;
   } | null>(null);
 
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchClasses = async (isManual = false) => {
+    try {
+      if (isManual) setRefreshing(true);
+      else setLoading(true);
+
+      const list = await classesService.getTeacherSchedule();
+      setClasses(list || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const list = await classesService.getTeacherSchedule();
-        setClasses(list || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
+    fetchClasses();
   }, []);
 
   const formatTime = (timeStr?: string) => {
@@ -61,6 +68,20 @@ export default function TeacherClassesPage() {
           </div>
         ) : classes.length > 0 ? (
           <div className="space-y-6">
+            <div className="flex justify-between items-center bg-white dark:bg-[#111928] p-3 sm:p-3.5 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-xs">
+              <span className="text-xs font-bold text-slate-500 dark:text-slate-400">
+                Tổng cộng {classes.length} lớp học được phân công phụ trách
+              </span>
+              <button
+                onClick={() => fetchClasses(true)}
+                disabled={refreshing}
+                className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer shadow-2xs disabled:opacity-50"
+                title="Cập nhật nhanh lịch dạy và tiến độ lớp học"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+                <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+              </button>
+            </div>
             {classes.map((item) => {
               const lop = item.lopHoc;
               const isRecruiting = lop?.trangThai === 'DANG_MO_DANG_KY' || lop?.trangThai === 'SAP_MO';
