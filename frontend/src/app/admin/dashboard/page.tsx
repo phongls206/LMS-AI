@@ -193,7 +193,7 @@ export default function AdminDashboardPage() {
           {/* Sĩ số các lớp & Tỷ lệ đạt */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Sĩ số lớp học */}
-            <div className="lg:col-span-2 p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs">
+            <div className="lg:col-span-2 p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
                 <div>
                   <h3 className="font-bold text-slate-900 dark:text-white text-base">Tình Trạng Sĩ Số Các Lớp Đang Mở</h3>
@@ -262,7 +262,7 @@ export default function AdminDashboardPage() {
             </div>
 
             {/* Tỷ lệ hoàn thành */}
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between hover:border-teal-500/40 hover:shadow-lg transition-all duration-200">
+            <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col justify-between hover:border-teal-500/40 hover:shadow-lg transition-all duration-200">
               <div>
                 <div className="flex items-center space-x-2 mb-4">
                   <Award className="w-5 h-5 text-amber-500" />

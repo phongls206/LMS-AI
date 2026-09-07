@@ -185,35 +185,35 @@ export default function StaffDashboardPage() {
         </div>
 
         {/* Tab Control & Data Tables */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
-            <div className="flex items-center space-x-2">
+        <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <button
                 onClick={() => setActiveTab('my_payments')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   activeTab === 'my_payments'
                     ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 <UserCheck className="w-4 h-4" />
-                Phiếu Thu Của Tôi ({currentUser?.tenDangNhap}) ({myPayments.length})
+                <span>Phiếu Thu Của Tôi ({currentUser?.tenDangNhap}) ({myPayments.length})</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('pending_invoices')}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                   activeTab === 'pending_invoices'
                     ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20'
                     : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
                 }`}
               >
                 <AlertCircle className="w-4 h-4" />
-                Hóa Đơn Chờ Thu ({pendingInvoices.length})
+                <span>Hóa Đơn Chờ Thu ({pendingInvoices.length})</span>
               </button>
             </div>
 
-            <span className="text-[11px] text-slate-500 dark:text-slate-400">
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 self-start sm:self-auto">
               Đang làm việc với tư cách: <strong className="text-teal-700 dark:text-teal-400 font-bold">{currentUser?.tenDangNhap}</strong>
             </span>
           </div>
@@ -221,7 +221,7 @@ export default function StaffDashboardPage() {
           {/* Nội dung Tab 1: Phiếu Thu Của Tôi */}
           {activeTab === 'my_payments' && (
             <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-              <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+              <table className="w-full min-w-[680px] text-left text-xs text-slate-700 dark:text-slate-300">
                 <thead className="bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
                   <tr>
                     <th className="px-4 py-3">Mã Giao Dịch</th>
@@ -307,7 +307,7 @@ export default function StaffDashboardPage() {
           {/* Nội dung Tab 2: Hóa Đơn Chờ Thu Tiền */}
           {activeTab === 'pending_invoices' && (
             <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
-              <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+              <table className="w-full min-w-[650px] text-left text-xs text-slate-700 dark:text-slate-300">
                 <thead className="bg-slate-50 dark:bg-slate-900/60 text-slate-600 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
                   <tr>
                     <th className="px-4 py-3">Mã Hóa Đơn</th>

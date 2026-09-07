@@ -96,7 +96,7 @@ export default function TeacherDashboardPage() {
         </div>
 
         {/* Schedule với Hover Card sinh động & Lối tắt tác vụ */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs">
+        <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <Calendar className="w-5 h-5 text-teal-600 dark:text-teal-400" />
@@ -120,7 +120,7 @@ export default function TeacherDashboardPage() {
               {schedule.map((item) => (
                 <div
                   key={item.id}
-                  className="p-5 rounded-xl bg-slate-50 dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800/90 hover:border-teal-400 dark:hover:border-teal-500/60 hover:bg-white dark:hover:bg-[#162032] hover:shadow-lg hover:shadow-teal-500/5 hover:-translate-y-1 transition-all duration-200 group relative overflow-hidden"
+                  className="p-4 sm:p-5 rounded-xl bg-slate-50 dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800/90 hover:border-teal-400 dark:hover:border-teal-500/60 hover:bg-white dark:hover:bg-[#162032] hover:shadow-lg hover:shadow-teal-500/5 hover:-translate-y-1 transition-all duration-200 group relative overflow-hidden"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <span className="px-2.5 py-1 rounded-md bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border border-teal-200/70 dark:border-teal-800 font-mono text-xs font-bold group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-600 transition-colors">
@@ -160,7 +160,7 @@ export default function TeacherDashboardPage() {
                   </div>
 
                   {/* Lối tắt tác vụ nhanh của giảng viên */}
-                  <div className="mt-3.5 pt-2.5 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-end space-x-2">
+                  <div className="mt-3.5 pt-2.5 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between sm:justify-end gap-2">
                     <Link
                       href="/teacher/attendance"
                       className="px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/50 hover:bg-teal-100 dark:hover:bg-teal-900 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800 text-[11px] font-bold transition-all hover:scale-105 inline-flex items-center gap-1 shadow-2xs"

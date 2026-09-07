@@ -39,35 +39,35 @@ export default function StudentDashboardPage() {
       title="Góc Học Tập Cá Nhân"
       subtitle="Theo dõi tiến độ học, thời khóa biểu và trợ lý học tập thông minh"
     >
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Profile Banner - Trắng Xanh Teal Rực Rỡ với hiệu ứng hover sinh động */}
-        <div className="p-6 rounded-2xl bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-700/15 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all duration-300 hover:shadow-xl hover:shadow-teal-600/20 relative overflow-hidden group">
+        <div className="p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-teal-700 via-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-700/15 flex flex-col md:flex-row justify-between items-start md:items-center gap-3 sm:gap-4 transition-all duration-300 hover:shadow-xl hover:shadow-teal-600/20 relative overflow-hidden group">
           {/* Subtle light sheen overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-          <div className="relative z-10">
-            <div className="flex items-center space-x-2 mb-1">
+          <div className="relative z-10 w-full sm:w-auto">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="p-1 rounded-lg bg-white/20 backdrop-blur-xs text-amber-200">
                 <Sparkles className="w-4 h-4 animate-pulse" />
               </span>
-              <h3 className="text-xl font-black text-white tracking-tight">
+              <h3 className="text-lg sm:text-xl font-black text-white tracking-tight">
                 {user?.hoSoHocVien?.hoTen || 'Học Viên'}
               </h3>
               <span className="px-2.5 py-0.5 rounded-md bg-white/20 text-white font-mono text-xs font-bold border border-white/30 backdrop-blur-sm group-hover:bg-white/30 transition-colors">
                 {user?.hoSoHocVien?.maHocVien || 'HV001'}
               </span>
             </div>
-            <p className="text-xs text-teal-100 flex items-center gap-1.5 mt-0.5">
+            <p className="text-xs text-teal-100 flex flex-wrap items-center gap-1.5 mt-0.5">
               <span>{user?.email}</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span className="text-teal-200 font-medium">Chúc bạn một ngày học tập hứng khởi! 🌟</span>
             </p>
           </div>
 
-          <div className="flex items-center space-x-3 bg-black/20 hover:bg-black/30 backdrop-blur-md p-3 px-4 rounded-xl border border-white/15 transition-all duration-200 hover:scale-105 hover:border-white/30 shadow-xs cursor-default relative z-10">
+          <div className="flex items-center space-x-3 bg-black/20 hover:bg-black/30 backdrop-blur-md p-2.5 sm:p-3 px-3.5 sm:px-4 rounded-xl border border-white/15 transition-all duration-200 hover:scale-105 hover:border-white/30 shadow-xs cursor-default relative z-10 w-full sm:w-auto justify-between sm:justify-start">
             <div>
               <p className="text-[10px] text-teal-100 uppercase font-bold tracking-wider">Trình Độ Hiện Tại</p>
-              <p className="text-lg font-black text-amber-300 font-mono tracking-wide flex items-center gap-1">
+              <p className="text-base sm:text-lg font-black text-amber-300 font-mono tracking-wide flex items-center gap-1">
                 CEFR {user?.hoSoHocVien?.trinhDoCEFR || 'B1'}
               </p>
             </div>
@@ -75,7 +75,7 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* AI Quick Tools với Micro-animations & Interactive Hover */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           <Link
             href="/student/ai-consult"
             className="p-5 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs hover:border-teal-500 hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1.5 transition-all duration-200 group flex flex-col justify-between relative overflow-hidden"
@@ -138,7 +138,7 @@ export default function StudentDashboardPage() {
         </div>
 
         {/* Enrolled Classes với hover card sinh động */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs">
+        <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <BookOpen className="w-5 h-5 text-teal-600 dark:text-teal-400" />

@@ -84,7 +84,7 @@ export default function StaffCollectFeePage() {
 
   // Modal Thu Tiền
   const [selectedInvoice, setSelectedInvoice] = useState<HoaDon | null>(null);
-  const [paymentAmount, setPaymentAmount] = useState<number>(0);
+  const [paymentAmount, setPaymentAmount] = useState<number | ''>('');
   const [paymentMethod, setPaymentMethod] = useState<'TIEN_MAT' | 'CHUYEN_KHOAN'>('TIEN_MAT');
   const [note, setNote] = useState('');
 
@@ -279,12 +279,18 @@ export default function StaffCollectFeePage() {
 
   const handleSubmitPayment = async (e: React.FormEvent) => {
     e.preventDefault();
+    const numAmount = Number(paymentAmount) || 0;
     if (!selectedInvoice || submittingPayment) return;
+    if (numAmount < 1000) {
+      alert('Số tiền thu tối thiểu là 1.000 đ.');
+      return;
+    }
+
     setSubmittingPayment(true);
 
     try {
       const paymentRes = await enrollmentsService.createPayment(selectedInvoice.id, {
-        soTien: paymentAmount,
+        soTien: numAmount,
         phuongThuc: paymentMethod,
         ghiChu: note,
       });
@@ -293,7 +299,7 @@ export default function StaffCollectFeePage() {
       const newPayment = paymentRes?.payment || {
         id: Date.now(),
         maGiaoDich: soPhieu,
-        soTien: paymentAmount,
+        soTien: numAmount,
         phuongThuc: paymentMethod,
         ghiChu: note || 'Thu học phí tại quầy tiếp nhận',
         thoiGianThanhToan: new Date().toISOString(),
@@ -303,11 +309,11 @@ export default function StaffCollectFeePage() {
       setReceiptData({
         invoice: {
           ...selectedInvoice,
-          soTienDaTra: Number(selectedInvoice.soTienDaTra) + paymentAmount,
+          soTienDaTra: Number(selectedInvoice.soTienDaTra) + numAmount,
           thanhToan: [...(selectedInvoice.thanhToan || []), newPayment],
         },
         selectedPayment: newPayment,
-        paymentAmount,
+        paymentAmount: numAmount,
         paymentMethod,
         note: note || 'Thu học phí tại quầy tiếp nhận',
         date: new Date(),
@@ -318,7 +324,7 @@ export default function StaffCollectFeePage() {
       setNote('');
       setMessage({
         type: 'success',
-        text: `Thu thành công ${paymentAmount.toLocaleString()} đ cho hóa đơn ${selectedInvoice.maHoaDon}! Đã xuất phiếu thu số ${soPhieu}.`,
+        text: `Thu thành công ${numAmount.toLocaleString()} đ cho hóa đơn ${selectedInvoice.maHoaDon}! Đã xuất phiếu thu số ${soPhieu}.`,
       });
       fetchData();
     } catch (err: any) {
@@ -451,8 +457,8 @@ export default function StaffCollectFeePage() {
         </div>
 
         {/* 2. Quầy thu tiền & Danh sách Hóa đơn */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pb-3 border-b border-slate-100">
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
             <div className="flex items-center space-x-2 w-full sm:w-auto">
               <CreditCard className="w-5 h-5 text-teal-600 shrink-0" />
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
@@ -460,8 +466,8 @@ export default function StaffCollectFeePage() {
               </h3>
             </div>
             
-            <div className="flex items-center space-x-3 w-full sm:w-auto">
-              <div className="relative flex-1 sm:w-60">
+            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-60 min-w-[200px]">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
@@ -471,26 +477,30 @@ export default function StaffCollectFeePage() {
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 pl-9 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
                 />
               </div>
-              <span className="text-xs text-slate-500 font-bold whitespace-nowrap">
-                {totalInvoices} hóa đơn
-              </span>
-              <button
-                onClick={() => fetchData(true)}
-                disabled={refreshing}
-                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#162032] hover:bg-teal-50 dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 transition cursor-pointer shadow-sm whitespace-nowrap disabled:opacity-50"
-                title="Cập nhật nhanh dữ liệu mới nhất (không cần tải lại trang)"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
-                <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
-              </button>
-              <button
-                onClick={exportInvoicesCSV}
-                className="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center space-x-1.5 border border-emerald-200 transition cursor-pointer shadow-sm whitespace-nowrap"
-                title="Xuất danh sách hóa đơn ra file CSV"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Xuất CSV</span>
-              </button>
+              <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
+                <span className="text-xs text-slate-500 font-bold whitespace-nowrap">
+                  {totalInvoices} hóa đơn
+                </span>
+                <div className="flex items-center space-x-1.5">
+                  <button
+                    onClick={() => fetchData(true)}
+                    disabled={refreshing}
+                    className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#162032] hover:bg-teal-50 dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 transition cursor-pointer shadow-sm whitespace-nowrap disabled:opacity-50"
+                    title="Cập nhật nhanh dữ liệu mới nhất (không cần tải lại trang)"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+                    <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+                  </button>
+                  <button
+                    onClick={exportInvoicesCSV}
+                    className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-bold flex items-center space-x-1.5 border border-emerald-200 transition cursor-pointer shadow-sm whitespace-nowrap"
+                    title="Xuất danh sách hóa đơn ra file CSV"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Xuất CSV</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -670,16 +680,38 @@ export default function StaffCollectFeePage() {
 
               <form onSubmit={handleSubmitPayment} className="space-y-3 text-xs">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Số Tiền Thu (VNĐ)</label>
+                  <div className="flex justify-between items-center mb-1">
+                    <label className="block text-slate-700 font-bold">Số Tiền Thu (VNĐ)</label>
+                    <button
+                      type="button"
+                      onClick={() => setPaymentAmount(Number(selectedInvoice.soTienPhaiTra) - Number(selectedInvoice.soTienDaTra))}
+                      className="text-[11px] text-teal-600 hover:underline font-bold cursor-pointer"
+                    >
+                      Nộp Đủ Toàn Bộ ({(Number(selectedInvoice.soTienPhaiTra) - Number(selectedInvoice.soTienDaTra)).toLocaleString()} đ)
+                    </button>
+                  </div>
                   <input
                     type="number"
                     required
                     min={1000}
                     max={Number(selectedInvoice.soTienPhaiTra) - Number(selectedInvoice.soTienDaTra)}
-                    value={paymentAmount}
-                    onChange={(e) => setPaymentAmount(+e.target.value)}
+                    value={paymentAmount === '' ? '' : paymentAmount}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === '') {
+                        setPaymentAmount('');
+                      } else {
+                        setPaymentAmount(Number(val));
+                      }
+                    }}
+                    placeholder="Nhập số tiền cần thu..."
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono text-base font-black focus:outline-none focus:border-teal-500"
                   />
+                  {paymentAmount !== '' && Number(paymentAmount) > 0 && (
+                    <p className="text-[11px] text-slate-500 mt-1 font-mono">
+                      ≈ <strong className="text-teal-600 font-bold">{Number(paymentAmount).toLocaleString()} đ</strong>
+                    </p>
+                  )}
                 </div>
 
                 <div>
