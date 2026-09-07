@@ -42,18 +42,70 @@ export class StatisticsService {
       }),
     ]);
 
-    // 3. Tỷ lệ hoàn thành khóa học (DAT vs KHONG_DAT)
-    const [passCount, failCount, unrankedCount] = await Promise.all([
-      this.prisma.ketQuaHocTap.count({
-        where: { trangThaiHoanThanh: TrangThaiHoanThanh.DAT },
+    // 3. Toàn bộ bảng điểm & đánh giá kết quả học tập (KetQuaHocTap)
+    const [allGrades, allStudents] = await Promise.all([
+      this.prisma.ketQuaHocTap.findMany({
+        include: {
+          hocVien: {
+            select: {
+              id: true,
+              maHocVien: true,
+              hoTen: true,
+              trinhDoCEFR: true,
+              trangThai: true,
+              nguoiDung: { select: { email: true, soDienThoai: true } },
+            },
+          },
+          lopHoc: {
+            select: {
+              id: true,
+              maLopHoc: true,
+              tenLopHoc: true,
+              trangThai: true,
+              khoaHoc: { select: { tenKhoaHoc: true, trinhDoYeuCau: true } },
+            },
+          },
+        },
+        orderBy: [{ lopHoc: { maLopHoc: 'asc' } }, { hocVien: { maHocVien: 'asc' } }],
       }),
-      this.prisma.ketQuaHocTap.count({
-        where: { trangThaiHoanThanh: TrangThaiHoanThanh.KHONG_DAT },
-      }),
-      this.prisma.ketQuaHocTap.count({
-        where: { trangThaiHoanThanh: TrangThaiHoanThanh.CHUA_XEP_LOAI },
+      this.prisma.hoSoHocVien.findMany({
+        include: {
+          nguoiDung: { select: { email: true, soDienThoai: true } },
+          dangKyHoc: {
+            select: {
+              id: true,
+              trangThai: true,
+              lopHoc: { select: { id: true, maLopHoc: true, tenLopHoc: true, trangThai: true } },
+            },
+          },
+          ketQua: {
+            select: {
+              id: true,
+              lopHocId: true,
+              diemTongKet: true,
+              trangThaiHoanThanh: true,
+              lopHoc: { select: { maLopHoc: true, tenLopHoc: true } },
+            },
+          },
+        },
+        orderBy: { maHocVien: 'asc' },
       }),
     ]);
+
+    const passCount = allGrades.filter((g) => g.trangThaiHoanThanh === TrangThaiHoanThanh.DAT).length;
+    const failCount = allGrades.filter((g) => g.trangThaiHoanThanh === TrangThaiHoanThanh.KHONG_DAT).length;
+    const unrankedCount = allGrades.filter((g) => g.trangThaiHoanThanh === TrangThaiHoanThanh.CHUA_XEP_LOAI).length;
+    const studentsWithoutGrades = allStudents.filter((s) => s.ketQua.length === 0);
+
+    const uniquePassedStudents = new Set(
+      allGrades.filter((g) => g.trangThaiHoanThanh === TrangThaiHoanThanh.DAT).map((g) => g.hocVienId.toString()),
+    ).size;
+    const uniqueFailedStudents = new Set(
+      allGrades.filter((g) => g.trangThaiHoanThanh === TrangThaiHoanThanh.KHONG_DAT).map((g) => g.hocVienId.toString()),
+    ).size;
+    const uniqueUnrankedStudents = new Set(
+      allGrades.filter((g) => g.trangThaiHoanThanh === TrangThaiHoanThanh.CHUA_XEP_LOAI).map((g) => g.hocVienId.toString()),
+    ).size;
 
     const totalEvaluated = passCount + failCount;
     const passRate = totalEvaluated > 0 ? Number(((passCount / totalEvaluated) * 100).toFixed(1)) : 0;
@@ -107,6 +159,7 @@ export class StatisticsService {
 
     const studentStatusMetrics = [
       {
+        key: 'DANG_HOC',
         label: 'Đang Theo Học',
         count: dangHoc,
         percent: totalStudents > 0 ? Math.round((dangHoc / totalStudents) * 100) : 0,
@@ -114,6 +167,7 @@ export class StatisticsService {
         text: 'text-teal-700',
       },
       {
+        key: 'DA_TOT_NGHIEP',
         label: 'Đã Hoàn Thành Khóa',
         count: daTotNghiep,
         percent: totalStudents > 0 ? Math.round((daTotNghiep / totalStudents) * 100) : 0,
@@ -121,6 +175,7 @@ export class StatisticsService {
         text: 'text-emerald-700',
       },
       {
+        key: 'BAO_LUU',
         label: 'Đang Bảo Lưu',
         count: baoLuu,
         percent: totalStudents > 0 ? Math.round((baoLuu / totalStudents) * 100) : 0,
@@ -128,6 +183,7 @@ export class StatisticsService {
         text: 'text-amber-700',
       },
       {
+        key: 'NGHI_HOC',
         label: 'Đã Thôi Học',
         count: nghiHoc,
         percent: totalStudents > 0 ? Math.round((nghiHoc / totalStudents) * 100) : 0,
@@ -145,14 +201,25 @@ export class StatisticsService {
         tongDoanhThu: totalRevenue,
       },
       tyLeHoanThanh: {
+        // Tầng 1: Đánh giá kết quả theo lượt môn học (KetQuaHocTap)
         dat: passCount,
         khongDat: failCount,
         chuaXepLoai: unrankedCount,
+        chuaCoDiem: studentsWithoutGrades.length,
+        tongLuotDanhGia: allGrades.length,
         tyLeDatPhanTram: passRate,
+
+        // Tầng 2: Đánh giá theo từng học viên (Unique Students)
+        hocVienDat: uniquePassedStudents,
+        hocVienKhongDat: uniqueFailedStudents,
+        hocVienChuaXepLoai: uniqueUnrankedStudents,
+        hocVienChuaCoDiem: studentsWithoutGrades.length,
       },
       siSoCacLop: classEnrollments,
       phanBoCEFR: cefrDistribution,
       coCauTrangThaiHocVien: studentStatusMetrics,
+      chiTietKetQua: allGrades,
+      chiTietHocVien: allStudents,
     });
   }
 }

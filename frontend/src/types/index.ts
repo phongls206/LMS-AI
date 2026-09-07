@@ -1,7 +1,7 @@
 export type VaiTro = 'QUAN_LY' | 'GIAO_VIEN' | 'HOC_VIEN' | 'TU_VAN_VIEN';
 export type TrinhDoCEFR = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
 export type TrangThaiLopHoc = 'SAP_MO' | 'DANG_MO_DANG_KY' | 'DANG_HOC' | 'DA_KET_THUC' | 'DA_HUY';
-export type TrangThaiHoaDon = 'CHUA_THANH_TOAN' | 'THANH_TOAN_MOT_PHAN' | 'DA_HOAN_THANH' | 'QUA_HAN';
+export type TrangThaiHoaDon = 'CHUA_THANH_TOAN' | 'THANH_TOAN_MOT_PHAN' | 'DA_HOAN_THANH' | 'QUA_HAN' | 'DA_HUY';
 export type TrangThaiDiemDanh = 'CO_MAT' | 'VANG' | 'DI_MUON' | 'CO_PHEP';
 export type TrangThaiHoanThanh = 'DAT' | 'KHONG_DAT' | 'CHUA_XEP_LOAI';
 

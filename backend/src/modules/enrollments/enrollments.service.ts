@@ -93,10 +93,100 @@ export class EnrollmentsService {
           hocVienId: BigInt(dto.hocVienId),
         },
       },
+      include: { hoaDon: true },
     });
 
     if (existingEnrollment) {
-      throw new ConflictException('Học viên đã đăng ký lớp học này trước đó.');
+      if (existingEnrollment.trangThai !== TrangThaiDangKy.DA_HUY) {
+        throw new ConflictException('Học viên đã đăng ký lớp học này trước đó.');
+      }
+
+      // Nếu đã từng hủy, cho phép tái kích hoạt đăng ký (Reactivate)
+      // 3. Kiểm tra Trình độ CEFR học viên >= Yêu cầu của khóa học
+      const studentRank = CEFR_RANKS[student.trinhDoCEFR];
+      const courseRank = CEFR_RANKS[classRecord.khoaHoc.trinhDoYeuCau];
+
+      if (studentRank < courseRank) {
+        throw new BadRequestException(
+          `Trình độ hiện tại của học viên (${student.trinhDoCEFR}) chưa đạt yêu cầu đầu vào của khóa học (${classRecord.khoaHoc.trinhDoYeuCau}).`,
+        );
+      }
+
+      // 4. Kiểm tra Lịch học xung đột
+      const studentActiveSchedules = await this.prisma.lichHoc.findMany({
+        where: {
+          lopHoc: {
+            dangKyHoc: {
+              some: {
+                hocVienId: BigInt(dto.hocVienId),
+                trangThai: { in: [TrangThaiDangKy.CHO_THANH_TOAN, TrangThaiDangKy.DA_XAC_NHAN] },
+              },
+            },
+            trangThai: { in: [TrangThaiLopHoc.DANG_MO_DANG_KY, TrangThaiLopHoc.DANG_HOC] },
+          },
+        },
+        include: { lopHoc: { select: { tenLopHoc: true } } },
+      });
+
+      for (const newSch of classRecord.lichHoc) {
+        const conflict = studentActiveSchedules.find(
+          (activeSch) =>
+            activeSch.thuTrongTuan === newSch.thuTrongTuan &&
+            activeSch.gioBatDau < newSch.gioKetThuc &&
+            activeSch.gioKetThuc > newSch.gioBatDau,
+        );
+
+        if (conflict) {
+          throw new ConflictException(
+            `Lịch học lớp mới bị trùng vào Thứ ${newSch.thuTrongTuan} với lớp bạn đang học (${conflict.lopHoc.tenLopHoc}).`,
+          );
+        }
+      }
+
+      const result = await this.prisma.$transaction(async (tx) => {
+        const enrollment = await tx.dangKyHoc.update({
+          where: { id: existingEnrollment.id },
+          data: {
+            trangThai: TrangThaiDangKy.CHO_THANH_TOAN,
+            ngayDangKy: new Date(),
+          },
+        });
+
+        await tx.lopHoc.update({
+          where: { id: BigInt(dto.lopHocId) },
+          data: { siSoHienTai: { increment: 1 } },
+        });
+
+        let invoice;
+        if (existingEnrollment.hoaDon) {
+          invoice = await tx.hoaDon.update({
+            where: { id: existingEnrollment.hoaDon.id },
+            data: {
+              soTienPhaiTra: classRecord.khoaHoc.hocPhi,
+              soTienDaTra: 0,
+              hanThanhToan: classRecord.ngayBatDau,
+              trangThai: TrangThaiHoaDon.CHUA_THANH_TOAN,
+            },
+          });
+        } else {
+          const maHoaDon = `HD-${Date.now().toString().slice(-6)}-${dto.hocVienId}`;
+          invoice = await tx.hoaDon.create({
+            data: {
+              maHoaDon,
+              dangKyHocId: enrollment.id,
+              hocVienId: BigInt(dto.hocVienId),
+              soTienPhaiTra: classRecord.khoaHoc.hocPhi,
+              soTienDaTra: 0,
+              hanThanhToan: classRecord.ngayBatDau,
+              trangThai: TrangThaiHoaDon.CHUA_THANH_TOAN,
+            },
+          });
+        }
+
+        return { enrollment, invoice };
+      });
+
+      return this.serializeBigInt(result);
     }
 
     // 3. Kiểm tra Trình độ CEFR học viên >= Yêu cầu của khóa học
@@ -211,24 +301,41 @@ export class EnrollmentsService {
       throw new NotFoundException('Không tìm thấy thông tin đăng ký của lớp học này.');
     }
 
-    // ACID Transaction: Xóa các lượt thanh toán con (nếu có) -> Xóa hóa đơn -> Xóa đăng ký học -> Giảm sĩ số hiện tại của lớp
-    await this.prisma.$transaction(async (tx) => {
-      if (enrollment.hoaDon) {
-        // Xóa các bản ghi thanh toán con trước để tránh Foreign Key Constraint
-        await tx.thanhToan.deleteMany({
-          where: { hoaDonId: enrollment.hoaDon.id },
-        });
+    if (enrollment.trangThai === TrangThaiDangKy.DA_HUY) {
+      throw new BadRequestException('Đăng ký lớp học này đã được hủy trước đó.');
+    }
 
-        await tx.hoaDon.delete({
+    // Nghiệp vụ bảo toàn tài chính & lịch sử:
+    // Nếu học viên đã phát sinh nộp học phí (dù là một phần hay toàn phần) hoặc đã được xác nhận nhập học,
+    // tuyệt đối KHÔNG cho phép tự hủy trực tuyến, phải liên hệ Phòng Giáo vụ / Kế toán.
+    const paidAmount = Number(enrollment.hoaDon?.soTienDaTra || 0);
+    if (
+      paidAmount > 0 ||
+      enrollment.hoaDon?.trangThai === TrangThaiHoaDon.DA_HOAN_THANH ||
+      enrollment.trangThai === TrangThaiDangKy.DA_XAC_NHAN
+    ) {
+      throw new BadRequestException(
+        'Lớp học đã phát sinh thanh toán học phí hoặc đã hoàn tất xác nhận nhập học. Vui lòng liên hệ Phòng Giáo vụ / Kế toán để thực hiện thủ tục theo quy chế trung tâm.',
+      );
+    }
+
+    // ACID Transaction Soft-Cancel: Cập nhật trạng thái DA_HUY cho Đăng ký & Hóa đơn, giảm sĩ số lớp, bảo toàn dữ liệu
+    await this.prisma.$transaction(async (tx) => {
+      // 1. Cập nhật trạng thái đăng ký học -> DA_HUY
+      await tx.dangKyHoc.update({
+        where: { id: enrollment.id },
+        data: { trangThai: TrangThaiDangKy.DA_HUY },
+      });
+
+      // 2. Cập nhật hóa đơn -> DA_HUY (giữ nguyên để lưu vết lịch sử sổ sách)
+      if (enrollment.hoaDon) {
+        await tx.hoaDon.update({
           where: { id: enrollment.hoaDon.id },
+          data: { trangThai: TrangThaiHoaDon.DA_HUY },
         });
       }
 
-      await tx.dangKyHoc.delete({
-        where: { id: enrollment.id },
-      });
-
-      // Giảm sĩ số lớp học (đảm bảo không âm)
+      // 3. Giảm sĩ số lớp học (đảm bảo không âm)
       const currentClass = await tx.lopHoc.findUnique({
         where: { id: BigInt(dto.lopHocId) },
         select: { siSoHienTai: true },
@@ -244,7 +351,7 @@ export class EnrollmentsService {
 
     return {
       success: true,
-      message: 'Hủy đăng ký lớp học thành công. Đã giải phóng chỗ trống cho học viên khác.',
+      message: 'Hủy đăng ký lớp học thành công. Đã giải phóng chỗ trống và cập nhật trạng thái hủy.',
     };
   }
 

@@ -235,6 +235,7 @@ enum TrangThaiHoaDon {
   THANH_TOAN_MOT_PHAN
   DA_HOAN_THANH
   QUA_HAN
+  DA_HUY
 }
 
 model HoaDon {

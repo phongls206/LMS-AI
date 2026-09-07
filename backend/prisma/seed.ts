@@ -898,17 +898,17 @@ async function main() {
     idx++;
   }
 
-  // 5.6 Lớp BUS-B2-01 (Đang tuyển sinh - 2 học viên: 1 đã đóng tiền, 1 chờ đóng tiền)
+  // 5.6 Lớp IELTS-B1-02 (Đang tuyển sinh - 2 học viên: 1 đã đóng tiền 3.500.000 đ, 1 chờ đóng tiền)
   await enrollAndPay({
     lopId: class6.id,
     studentId: studentProfiles['student01'].id,
     staffUserId: staffUsers['staff02'].id,
     enrollStatus: TrangThaiDangKy.DA_XAC_NHAN,
-    invoiceCode: 'HD-BUS-B2-001',
-    amountDue: 4500000,
-    amountPaid: 4500000,
+    invoiceCode: 'HD-IELTS-B1-02-001',
+    amountDue: 3500000,
+    amountPaid: 3500000,
     invoiceStatus: TrangThaiHoaDon.DA_HOAN_THANH,
-    payCode: 'TX-BUS-B2-001',
+    payCode: 'TX-IELTS-B1-02-001',
     payMethod: PhuongThucThanhToan.CHUYEN_KHOAN,
   });
 
@@ -916,8 +916,8 @@ async function main() {
     lopId: class6.id,
     studentId: studentProfiles['student02'].id,
     enrollStatus: TrangThaiDangKy.CHO_THANH_TOAN,
-    invoiceCode: 'HD-BUS-B2-002',
-    amountDue: 4500000,
+    invoiceCode: 'HD-IELTS-B1-02-002',
+    amountDue: 3500000,
     amountPaid: 0,
     invoiceStatus: TrangThaiHoaDon.CHUA_THANH_TOAN,
   });

@@ -23,6 +23,14 @@ import {
   CreditCard,
   Building2,
   BookOpen,
+  Search,
+  X,
+  Eye,
+  Filter,
+  Info,
+  Check,
+  ChevronRight,
+  ExternalLink,
 } from 'lucide-react';
 import { formatTrangThaiHocVien, formatTrangThaiLopHoc, formatTrangThaiHoaDon } from '../../../utils/formatters';
 
@@ -36,6 +44,31 @@ export default function AdminReportsPage() {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
+
+  // Chế độ xem hiệu suất đầu ra: Theo Bảng điểm môn học vs Theo Hồ sơ học viên
+  const [outcomeViewMode, setOutcomeViewMode] = useState<'classes_grade' | 'students_profile'>('classes_grade');
+
+  // Drill-down Modal State
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    title: string;
+    subtitle: string;
+    badgeText: string;
+    badgeColor: string;
+    type: 'grades' | 'students';
+    data: any[];
+  }>({
+    isOpen: false,
+    title: '',
+    subtitle: '',
+    badgeText: '',
+    badgeColor: 'emerald',
+    type: 'grades',
+    data: [],
+  });
+
+  const [modalSearch, setModalSearch] = useState('');
+  const [modalClassFilter, setModalClassFilter] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
