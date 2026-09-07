@@ -424,83 +424,50 @@ export default function AdminReportsPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Header Action Bar & Navigation Tabs */}
-          <div className="bg-white dark:bg-[#141c2e] p-3 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-3 sm:space-y-3.5 2xl:space-y-0 2xl:flex 2xl:items-center 2xl:justify-between 2xl:gap-4">
+          {/* Header Action Bar: 3 Tabs Navigation & In Báo Cáo */}
+          <div className="bg-white dark:bg-[#141c2e] p-3 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             {/* Tabs Navigation */}
             <div className="flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1 sm:mx-0 sm:px-0 overscroll-x-contain touch-pan-x">
               <button
                 onClick={() => setActiveTab('overview')}
-                className={`px-3 sm:px-4 py-2 min-h-[38px] sm:min-h-0 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center space-x-1.5 sm:space-x-2 whitespace-nowrap cursor-pointer shrink-0 ${activeTab === 'overview'
+                className={`px-3.5 sm:px-4 py-2 min-h-[38px] sm:min-h-0 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 whitespace-nowrap cursor-pointer shrink-0 ${activeTab === 'overview'
                     ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
                     : 'bg-slate-100 dark:bg-[#162032] text-slate-700 dark:text-slate-300 hover:bg-teal-50 hover:text-teal-800 dark:hover:bg-teal-950/40 dark:hover:text-teal-300 border border-transparent hover:border-teal-200 dark:hover:border-teal-800/40'
                   }`}
               >
-                <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <DollarSign className="w-4 h-4 shrink-0" />
                 <span>Tổng Quan & Tài Chính</span>
               </button>
               <button
                 onClick={() => setActiveTab('students_cefr')}
-                className={`px-3 sm:px-4 py-2 min-h-[38px] sm:min-h-0 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center space-x-1.5 sm:space-x-2 whitespace-nowrap cursor-pointer shrink-0 ${activeTab === 'students_cefr'
+                className={`px-3.5 sm:px-4 py-2 min-h-[38px] sm:min-h-0 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 whitespace-nowrap cursor-pointer shrink-0 ${activeTab === 'students_cefr'
                     ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
                     : 'bg-slate-100 dark:bg-[#162032] text-slate-700 dark:text-slate-300 hover:bg-teal-50 hover:text-teal-800 dark:hover:bg-teal-950/40 dark:hover:text-teal-300 border border-transparent hover:border-teal-200 dark:hover:border-teal-800/40'
                   }`}
               >
-                <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <Users className="w-4 h-4 shrink-0" />
                 <span>Học Viên & Chuẩn CEFR</span>
               </button>
               <button
                 onClick={() => setActiveTab('classes_fill')}
-                className={`px-3 sm:px-4 py-2 min-h-[38px] sm:min-h-0 rounded-xl text-[11px] sm:text-xs font-bold transition-all flex items-center space-x-1.5 sm:space-x-2 whitespace-nowrap cursor-pointer shrink-0 ${activeTab === 'classes_fill'
+                className={`px-3.5 sm:px-4 py-2 min-h-[38px] sm:min-h-0 rounded-xl text-xs font-bold transition-all flex items-center space-x-2 whitespace-nowrap cursor-pointer shrink-0 ${activeTab === 'classes_fill'
                     ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md shadow-teal-600/20'
                     : 'bg-slate-100 dark:bg-[#162032] text-slate-700 dark:text-slate-300 hover:bg-teal-50 hover:text-teal-800 dark:hover:bg-teal-950/40 dark:hover:text-teal-300 border border-transparent hover:border-teal-200 dark:hover:border-teal-800/40'
                   }`}
               >
-                <GraduationCap className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                <GraduationCap className="w-4 h-4 shrink-0" />
                 <span>Hiệu Suất Lớp & Đạt Chuẩn</span>
               </button>
             </div>
 
-            {/* Export & Print Actions Toolbar */}
-            <div className="flex items-center justify-start sm:justify-end gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar pt-2.5 sm:pt-3 2xl:pt-0 border-t 2xl:border-t-0 border-slate-100 dark:border-[#1e2d45]/70 flex-nowrap -mx-1 px-1 sm:mx-0 sm:px-0 overscroll-x-contain touch-pan-x print:hidden">
-              <button
-                onClick={() => fetchData(true)}
-                disabled={refreshing}
-                className="px-2.5 sm:px-3 py-2 min-h-[38px] sm:min-h-0 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 text-[11px] sm:text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 transition shadow-2xs cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap"
-                title="Cập nhật lại số liệu thống kê & báo cáo mới nhất (không cần tải lại trang)"
-              >
-                <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
-                <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
-              </button>
-              <button
-                onClick={exportInvoicesCSV}
-                className="px-2.5 sm:px-3 py-2 min-h-[38px] sm:min-h-0 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-700 hover:text-emerald-800 dark:text-emerald-300 text-[11px] sm:text-xs font-bold flex items-center space-x-1.5 border border-emerald-200 dark:border-emerald-800/50 transition shadow-2xs cursor-pointer shrink-0 whitespace-nowrap"
-                title="Xuất CSV báo cáo học phí & công nợ đầy đủ"
-              >
-                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                <span>CSV Học Phí</span>
-              </button>
-              <button
-                onClick={exportPaymentsCSV}
-                className="px-2.5 sm:px-3 py-2 min-h-[38px] sm:min-h-0 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/30 dark:hover:bg-teal-900/40 text-teal-700 hover:text-teal-800 dark:text-teal-300 text-[11px] sm:text-xs font-bold flex items-center space-x-1.5 border border-teal-200 dark:border-teal-800/50 transition shadow-2xs cursor-pointer shrink-0 whitespace-nowrap"
-                title="Xuất CSV lịch sử phiếu thu thanh toán"
-              >
-                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                <span>CSV Phiếu Thu</span>
-              </button>
-              <button
-                onClick={exportClassesCSV}
-                className="px-2.5 sm:px-3 py-2 min-h-[38px] sm:min-h-0 rounded-xl bg-white hover:bg-slate-50 dark:bg-[#162032] dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-200 text-[11px] sm:text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] transition shadow-2xs cursor-pointer shrink-0 whitespace-nowrap"
-                title="Xuất CSV báo cáo sĩ số & lớp học"
-              >
-                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600 dark:text-slate-400 shrink-0" />
-                <span>CSV Lớp Học</span>
-              </button>
+            {/* Print Action Button */}
+            <div className="flex items-center justify-end shrink-0 print:hidden">
               <button
                 onClick={() => window.print()}
-                className="px-2.5 sm:px-3 py-2 min-h-[38px] sm:min-h-0 rounded-xl bg-white hover:bg-slate-50 dark:bg-[#162032] dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-200 text-[11px] sm:text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] transition shadow-2xs cursor-pointer shrink-0 whitespace-nowrap"
-                title="In hoặc lưu định dạng PDF"
+                className="w-full sm:w-auto px-4 py-2 min-h-[38px] sm:min-h-0 rounded-xl bg-white hover:bg-slate-50 dark:bg-[#162032] dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-200 text-xs font-bold flex items-center justify-center space-x-1.5 border border-slate-200 dark:border-[#22324e] transition shadow-xs cursor-pointer whitespace-nowrap"
+                title="In hoặc lưu định dạng PDF toàn bộ báo cáo"
               >
-                <Printer className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-600 dark:text-slate-400 shrink-0" />
+                <Printer className="w-4 h-4 text-slate-600 dark:text-slate-400 shrink-0" />
                 <span>In Báo Cáo</span>
               </button>
             </div>
@@ -509,6 +476,45 @@ export default function AdminReportsPage() {
           {/* TAB 1: TỔNG QUAN & TÀI CHÍNH */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
+              {/* Toolbar Tài Chính: Làm mới & Xuất Báo Cáo */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#141c2e] p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-xs">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                    <DollarSign className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                    <span>Tổng Quan Doanh Thu & Sổ Thu Chi</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Theo dõi số liệu thực thu, công nợ và lịch sử thanh toán toàn hệ thống
+                  </p>
+                </div>
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                  <button
+                    onClick={() => fetchData(true)}
+                    disabled={refreshing}
+                    className="px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 transition shadow-2xs cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap"
+                    title="Cập nhật lại số liệu thống kê & báo cáo mới nhất"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+                    <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+                  </button>
+                  <button
+                    onClick={exportInvoicesCSV}
+                    className="px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-700 hover:text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center space-x-1.5 border border-emerald-200 dark:border-emerald-800/50 transition shadow-2xs cursor-pointer shrink-0 whitespace-nowrap"
+                    title="Xuất CSV báo cáo học phí & công nợ đầy đủ"
+                  >
+                    <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                    <span>CSV Học Phí</span>
+                  </button>
+                  <button
+                    onClick={exportPaymentsCSV}
+                    className="px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/30 dark:hover:bg-teal-900/40 text-teal-700 hover:text-teal-800 dark:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-teal-200 dark:border-teal-800/50 transition shadow-2xs cursor-pointer shrink-0 whitespace-nowrap"
+                    title="Xuất CSV lịch sử phiếu thu thanh toán"
+                  >
+                    <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                    <span>CSV Phiếu Thu</span>
+                  </button>
+                </div>
+              </div>
               {/* 4 Cards Chỉ Số Tài Chính & Vận Hành (Nhấp vào để nhảy sang trang quản lý tương ứng) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 <Link
@@ -810,6 +816,38 @@ export default function AdminReportsPage() {
           {/* TAB 2: PHÂN TÍCH HỌC VIÊN & CHUẨN CEFR */}
           {activeTab === 'students_cefr' && (
             <div className="space-y-6">
+              {/* Header Toolbar Tab 2: Làm mới & Xuất CSV Học Viên */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#141c2e] p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-xs">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                    <Users className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                    <span>Cơ Cấu Học Viên & Khung Trình Độ CEFR</span>
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                    Thống kê tỷ lệ phân bổ A1 đến C2 và tình trạng học tập thực tế
+                  </p>
+                </div>
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                  <button
+                    onClick={() => fetchData(true)}
+                    disabled={refreshing}
+                    className="px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 transition shadow-2xs cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap"
+                    title="Cập nhật lại số liệu thống kê & báo cáo mới nhất"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+                    <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+                  </button>
+                  <button
+                    onClick={exportInvoicesCSV}
+                    className="px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/40 text-emerald-700 hover:text-emerald-800 dark:text-emerald-300 text-xs font-bold flex items-center space-x-1.5 border border-emerald-200 dark:border-emerald-800/50 transition shadow-2xs cursor-pointer shrink-0 whitespace-nowrap"
+                    title="Xuất CSV báo cáo dữ liệu học viên & học phí"
+                  >
+                    <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                    <span>CSV Dữ Liệu Học Viên</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Phân bổ CEFR */}
                 <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
@@ -937,15 +975,34 @@ export default function AdminReportsPage() {
           {activeTab === 'classes_fill' && (
             <div className="space-y-6">
               {/* Bảng Chi Tiết Hiệu Suất Từng Lớp */}
-              <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-[#1e2d45]">
                   <div>
-                    <h3 className="text-base font-bold text-slate-900">Hiệu Suất Tuyển Sinh & Tỷ Lệ Lấp Đầy Từng Lớp</h3>
-                    <p className="text-xs text-slate-500">Theo dõi số lượng học viên ghi danh so với sĩ số quy định của từng lớp</p>
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white">Hiệu Suất Tuyển Sinh & Tỷ Lệ Lấp Đầy Từng Lớp</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Theo dõi số lượng học viên ghi danh so với sĩ số quy định của từng lớp</p>
                   </div>
-                  <span className="text-xs font-bold px-3 py-1 rounded-full bg-teal-50 text-teal-700 border border-teal-200 self-start">
-                    Tổng {classes.length} Lớp Học
-                  </span>
+                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                    <span className="text-xs font-bold px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 flex items-center shrink-0">
+                      Tổng {classes.length} Lớp Học
+                    </span>
+                    <button
+                      onClick={() => fetchData(true)}
+                      disabled={refreshing}
+                      className="px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 transition shadow-2xs cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap"
+                      title="Cập nhật lại danh sách và sĩ số lớp học mới nhất"
+                    >
+                      <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+                      <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+                    </button>
+                    <button
+                      onClick={exportClassesCSV}
+                      className="px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-white hover:bg-slate-50 dark:bg-[#162032] dark:hover:bg-slate-800 text-slate-700 hover:text-slate-900 dark:text-slate-200 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-[#22324e] transition shadow-2xs cursor-pointer shrink-0 whitespace-nowrap"
+                      title="Xuất CSV báo cáo sĩ số & lớp học"
+                    >
+                      <Download className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400 shrink-0" />
+                      <span>CSV Lớp Học</span>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="overflow-x-auto rounded-xl border border-slate-200">
