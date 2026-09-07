@@ -32,6 +32,7 @@ import {
   ChevronRight,
   ExternalLink,
 } from 'lucide-react';
+import Link from 'next/link';
 import { formatTrangThaiHocVien, formatTrangThaiLopHoc, formatTrangThaiHoaDon } from '../../../utils/formatters';
 
 type TabType = 'overview' | 'students_cefr' | 'classes_fill';
@@ -44,9 +45,6 @@ export default function AdminReportsPage() {
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('overview');
-
-  // Chế độ xem hiệu suất đầu ra: Theo Bảng điểm môn học vs Theo Hồ sơ học viên
-  const [outcomeViewMode, setOutcomeViewMode] = useState<'classes_grade' | 'students_profile'>('classes_grade');
 
   // Drill-down Modal State
   const [modalState, setModalState] = useState<{
@@ -499,76 +497,126 @@ export default function AdminReportsPage() {
           {/* TAB 1: TỔNG QUAN & TÀI CHÍNH */}
           {activeTab === 'overview' && (
             <div className="space-y-6">
-              {/* 4 Cards Chỉ Số Tài Chính */}
+              {/* 4 Cards Chỉ Số Tài Chính & Vận Hành (Nhấp vào để nhảy sang trang quản lý tương ứng) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
+                <Link
+                  href="/admin/fees"
+                  className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden transition-all duration-200 hover:border-emerald-400 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group block"
+                  title="Nhấn để quản lý chi tiết sổ thu & học phí"
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Doanh Thu Đã Thu</p>
+                      <div className="flex items-center gap-1">
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-emerald-700 transition">
+                          Doanh Thu Đã Thu
+                        </p>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition" />
+                      </div>
                       <p className="text-2xl font-black text-emerald-700 mt-1">
                         {financeMetrics.totalCollected.toLocaleString()} đ
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600">
+                    <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100 transition">
                       <DollarSign className="w-6 h-6" />
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center text-xs text-emerald-700 font-semibold">
-                    <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
-                    <span>Tỷ lệ thu hồi học phí: {financeMetrics.collectionRate}%</span>
+                  <div className="mt-3 flex items-center justify-between text-xs text-emerald-700 font-semibold">
+                    <span className="flex items-center">
+                      <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
+                      Thu hồi: {financeMetrics.collectionRate}%
+                    </span>
+                    <span className="text-[11px] text-emerald-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+                      Xem sổ thu <ChevronRight className="w-3 h-3 ml-0.5" />
+                    </span>
                   </div>
-                </div>
+                </Link>
 
-                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
+                <Link
+                  href="/admin/fees"
+                  className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden transition-all duration-200 hover:border-amber-400 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group block"
+                  title="Nhấn để theo dõi danh sách học viên còn nợ học phí"
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Công Nợ Còn Phải Thu</p>
+                      <div className="flex items-center gap-1">
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-amber-700 transition">
+                          Công Nợ Còn Phải Thu
+                        </p>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition" />
+                      </div>
                       <p className="text-2xl font-black text-amber-700 mt-1">
                         {financeMetrics.totalDebt.toLocaleString()} đ
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-amber-50 text-amber-600">
+                    <div className="p-3 rounded-xl bg-amber-50 text-amber-600 group-hover:bg-amber-100 transition">
                       <Clock className="w-6 h-6" />
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center text-xs text-slate-500 font-medium">
-                    <span>Học viên đang học chưa thanh toán đủ</span>
+                  <div className="mt-3 flex items-center justify-between text-xs text-slate-500 font-medium">
+                    <span>Học viên chưa đóng đủ</span>
+                    <span className="text-[11px] text-amber-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+                      Theo dõi nợ <ChevronRight className="w-3 h-3 ml-0.5" />
+                    </span>
                   </div>
-                </div>
+                </Link>
 
-                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
+                <Link
+                  href="/admin/students"
+                  className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden transition-all duration-200 hover:border-teal-400 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group block"
+                  title="Nhấn để quản lý 81 hồ sơ học viên"
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Quy Mô Học Viên</p>
+                      <div className="flex items-center gap-1">
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-teal-700 transition">
+                          Quy Mô Học Viên
+                        </p>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-teal-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition" />
+                      </div>
                       <p className="text-2xl font-black text-teal-700 mt-1">
                         {stats?.tongQuan?.tongHocVien || students.length || 0}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-teal-50 text-teal-600">
+                    <div className="p-3 rounded-xl bg-teal-50 text-teal-600 group-hover:bg-teal-100 transition">
                       <Users className="w-6 h-6" />
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center text-xs text-teal-700 font-semibold">
-                    <span>Học viên ghi danh toàn hệ thống</span>
+                  <div className="mt-3 flex items-center justify-between text-xs text-teal-700 font-semibold">
+                    <span>Học viên toàn hệ thống</span>
+                    <span className="text-[11px] text-teal-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+                      Quản lý HV <ChevronRight className="w-3 h-3 ml-0.5" />
+                    </span>
                   </div>
-                </div>
+                </Link>
 
-                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden">
+                <Link
+                  href="/admin/classes"
+                  className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden transition-all duration-200 hover:border-sky-400 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer group block"
+                  title="Nhấn để xem danh sách & thời khóa biểu 15 lớp học"
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Lớp Đang Hoạt Động</p>
+                      <div className="flex items-center gap-1">
+                        <p className="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-sky-700 transition">
+                          Lớp Đang Hoạt Động
+                        </p>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition" />
+                      </div>
                       <p className="text-2xl font-black text-sky-700 mt-1">
                         {classes.length || stats?.tongQuan?.lopDangMo || 0}
                       </p>
                     </div>
-                    <div className="p-3 rounded-xl bg-sky-50 text-sky-600">
+                    <div className="p-3 rounded-xl bg-sky-50 text-sky-600 group-hover:bg-sky-100 transition">
                       <Building2 className="w-6 h-6" />
                     </div>
                   </div>
-                  <div className="mt-3 flex items-center text-xs text-sky-700 font-semibold">
-                    <span>Số lớp đang tuyển sinh & đang học</span>
+                  <div className="mt-3 flex items-center justify-between text-xs text-sky-700 font-semibold">
+                    <span>Số lớp tuyển sinh & đang học</span>
+                    <span className="text-[11px] text-sky-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity flex items-center">
+                      Xem lớp học <ChevronRight className="w-3 h-3 ml-0.5" />
+                    </span>
                   </div>
-                </div>
+                </Link>
               </div>
 
               {/* Cơ Cấu Hình Thức Thanh Toán & Tiến Độ Tài Chính */}
@@ -618,254 +666,130 @@ export default function AdminReportsPage() {
                   </p>
                 </div>
 
+                {/* Khối Hiệu Suất Đào Tạo & Chuẩn Đầu Ra (Rõ Ràng, Mạch Lạc, Nhấp Vào Từng Ô Để Xem Danh Sách) */}
                 <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                      <Award className="w-4 h-4 text-teal-600" />
-                      <span>Hiệu Suất Đào Tạo & Chuẩn Đầu Ra</span>
-                    </h3>
-                    {/* Toggle Chế độ xem: Bảng điểm môn học vs Hồ sơ học viên */}
-                    <div className="flex items-center p-1 bg-slate-100 rounded-xl text-[11px] font-bold">
-                      <button
-                        onClick={() => setOutcomeViewMode('classes_grade')}
-                        className={`px-2.5 py-1 rounded-lg transition ${
-                          outcomeViewMode === 'classes_grade'
-                            ? 'bg-white text-teal-800 shadow-xs font-black'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                        title="Thống kê dựa trên kết quả đánh giá điểm số từng lớp học"
-                      >
-                        Theo Lớp Học ({stats?.tyLeHoanThanh?.tongLuotDanhGia || 81})
-                      </button>
-                      <button
-                        onClick={() => setOutcomeViewMode('students_profile')}
-                        className={`px-2.5 py-1 rounded-lg transition ${
-                          outcomeViewMode === 'students_profile'
-                            ? 'bg-white text-teal-800 shadow-xs font-black'
-                            : 'text-slate-600 hover:text-slate-900'
-                        }`}
-                        title="Thống kê dựa trên trạng thái hồ sơ học viên toàn hệ thống"
-                      >
-                        Theo Học Viên ({stats?.tongQuan?.tongHocVien || students.length || 81})
-                      </button>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+                        <Award className="w-4 h-4 text-teal-600" />
+                        <span>Kết Quả Đào Tạo & Chuẩn Đầu Ra</span>
+                      </h3>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        Thống kê đánh giá điểm cuối khóa trên các lớp ({stats?.tyLeHoanThanh?.tongLuotDanhGia || 81} lượt)
+                      </p>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('students_cefr')}
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-bold transition border border-teal-200 cursor-pointer self-start sm:self-auto"
+                      title="Xem cơ cấu hồ sơ học viên tại Tab Học Viên & Chuẩn CEFR"
+                    >
+                      <Users className="w-3.5 h-3.5" />
+                      <span>Xem Hồ Sơ Học Viên</span>
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
                   </div>
 
-                  {/* LĂNG KÍNH 1: THEO KẾT QUẢ BẢNG ĐIỂM MÔN HỌC */}
-                  {outcomeViewMode === 'classes_grade' ? (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center pt-1">
-                        {/* Đạt chuẩn */}
-                        <div
-                          onClick={() =>
-                            openDrillDown(
-                              'Danh Sách Học Viên Đạt Chuẩn Đầu Ra Môn Học',
-                              'Tổng hợp các lượt học viên có Điểm Tổng Kết ≥ 50 và Chuyên Cần ≥ 80%',
-                              `${stats?.tyLeHoanThanh?.dat || 67} Lượt Đạt`,
-                              'emerald',
-                              'grades',
-                              (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'DAT')
-                            )
-                          }
-                          className="p-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
-                        >
-                          <div className="flex items-center justify-between text-[10px] font-bold text-emerald-700 uppercase">
-                            <span>ĐẠT CHUẨN</span>
-                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-700" />
-                          </div>
-                          <p className="text-xl font-black text-emerald-800 mt-1">{stats?.tyLeHoanThanh?.dat || 0}</p>
-                          <p className="text-[10px] text-emerald-600 mt-0.5">Cấp chứng nhận</p>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center pt-1">
+                      {/* Đạt chuẩn */}
+                      <div
+                        onClick={() =>
+                          openDrillDown(
+                            'Danh Sách Học Viên Đạt Chuẩn Đầu Ra Môn Học',
+                            'Tổng hợp các lượt học viên có Điểm Tổng Kết ≥ 50 và Chuyên Cần ≥ 80%',
+                            `${stats?.tyLeHoanThanh?.dat || 67} Lượt Đạt`,
+                            'emerald',
+                            'grades',
+                            (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'DAT')
+                          )
+                        }
+                        className="p-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                      >
+                        <div className="flex items-center justify-between text-[10px] font-bold text-emerald-700 uppercase">
+                          <span>ĐẠT CHUẨN</span>
+                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-700" />
                         </div>
-
-                        {/* Chưa đạt */}
-                        <div
-                          onClick={() =>
-                            openDrillDown(
-                              'Danh Sách Học Viên Chưa Đạt Chuẩn Môn Học',
-                              'Học viên có Chuyên Cần < 80% hoặc Điểm Tổng Kết < 50 (cần thi lại / học lại)',
-                              `${stats?.tyLeHoanThanh?.khongDat || 8} Lượt Chưa Đạt`,
-                              'rose',
-                              'grades',
-                              (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'KHONG_DAT')
-                            )
-                          }
-                          className="p-3 rounded-xl bg-rose-50/80 hover:bg-rose-100/80 border border-rose-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
-                        >
-                          <div className="flex items-center justify-between text-[10px] font-bold text-rose-700 uppercase">
-                            <span>CHƯA ĐẠT</span>
-                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-700" />
-                          </div>
-                          <p className="text-xl font-black text-rose-800 mt-1">{stats?.tyLeHoanThanh?.khongDat || 0}</p>
-                          <p className="text-[10px] text-rose-600 mt-0.5">Cần thi lại</p>
-                        </div>
-
-                        {/* Đang học */}
-                        <div
-                          onClick={() =>
-                            openDrillDown(
-                              'Danh Sách Học Viên Đang Học / Chưa Thi Cuối Kỳ',
-                              'Học viên đã hoàn thành điểm giữa kỳ, đang học nửa chặng đường và chờ thi cuối khóa',
-                              `${stats?.tyLeHoanThanh?.chuaXepLoai || 6} Lượt Đang Học`,
-                              'slate',
-                              'grades',
-                              (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'CHUA_XEP_LOAI')
-                            )
-                          }
-                          className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
-                        >
-                          <div className="flex items-center justify-between text-[10px] font-bold text-slate-600 uppercase">
-                            <span>ĐANG HỌC</span>
-                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-600" />
-                          </div>
-                          <p className="text-xl font-black text-slate-800 mt-1">{stats?.tyLeHoanThanh?.chuaXepLoai || 0}</p>
-                          <p className="text-[10px] text-slate-500 mt-0.5">Chưa xếp loại</p>
-                        </div>
-
-                        {/* Chưa phát sinh điểm */}
-                        <div
-                          onClick={() =>
-                            openDrillDown(
-                              'Danh Sách Học Viên Mới Ghi Danh (Chưa Phát Sinh Điểm)',
-                              'Học viên mới đăng ký lớp học hoặc lớp chưa bước vào kỳ kiểm tra đánh giá',
-                              `${stats?.tyLeHoanThanh?.chuaCoDiem || 4} Học Viên`,
-                              'amber',
-                              'students',
-                              (stats?.chiTietHocVien || students).filter((s: any) => !s.ketQua || s.ketQua.length === 0)
-                            )
-                          }
-                          className="p-3 rounded-xl bg-amber-50/70 hover:bg-amber-100/70 border border-amber-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
-                        >
-                          <div className="flex items-center justify-between text-[10px] font-bold text-amber-700 uppercase">
-                            <span>MỚI GHI DANH</span>
-                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-amber-700" />
-                          </div>
-                          <p className="text-xl font-black text-amber-800 mt-1">{stats?.tyLeHoanThanh?.chuaCoDiem || 4}</p>
-                          <p className="text-[10px] text-amber-600 mt-0.5">Chưa có điểm</p>
-                        </div>
+                        <p className="text-xl font-black text-emerald-800 mt-1">{stats?.tyLeHoanThanh?.dat || 0}</p>
+                        <p className="text-[10px] text-emerald-600 mt-0.5">Cấp chứng nhận</p>
                       </div>
 
-                      <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center">
-                        <span className="font-medium">Tỷ lệ đạt chuẩn trên số lượt đã đánh giá:</span>
-                        <strong className="text-teal-700 text-sm font-black">{stats?.tyLeHoanThanh?.tyLeDatPhanTram || 89.3}%</strong>
+                      {/* Chưa đạt */}
+                      <div
+                        onClick={() =>
+                          openDrillDown(
+                            'Danh Sách Học Viên Chưa Đạt Chuẩn Môn Học',
+                            'Học viên có Chuyên Cần < 80% hoặc Điểm Tổng Kết < 50 (cần thi lại / học lại)',
+                            `${stats?.tyLeHoanThanh?.khongDat || 8} Lượt Chưa Đạt`,
+                            'rose',
+                            'grades',
+                            (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'KHONG_DAT')
+                          )
+                        }
+                        className="p-3 rounded-xl bg-rose-50/80 hover:bg-rose-100/80 border border-rose-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                      >
+                        <div className="flex items-center justify-between text-[10px] font-bold text-rose-700 uppercase">
+                          <span>CHƯA ĐẠT</span>
+                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-700" />
+                        </div>
+                        <p className="text-xl font-black text-rose-800 mt-1">{stats?.tyLeHoanThanh?.khongDat || 0}</p>
+                        <p className="text-[10px] text-rose-600 mt-0.5">Cần thi lại</p>
                       </div>
-                      <p className="text-[11px] text-teal-700/80 bg-teal-50/60 p-2 rounded-lg border border-teal-100 flex items-center gap-1.5 font-medium">
-                        <Eye className="w-3.5 h-3.5 shrink-0" />
-                        <span>Mẹo: Nhấp vào từng ô chỉ số phía trên để xem danh sách học viên, bảng điểm và nhận xét chi tiết.</span>
-                      </p>
+
+                      {/* Đang học */}
+                      <div
+                        onClick={() =>
+                          openDrillDown(
+                            'Danh Sách Học Viên Đang Học / Chưa Thi Cuối Kỳ',
+                            'Học viên đã hoàn thành điểm giữa kỳ, đang học nửa chặng đường và chờ thi cuối khóa',
+                            `${stats?.tyLeHoanThanh?.chuaXepLoai || 6} Lượt Đang Học`,
+                            'slate',
+                            'grades',
+                            (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'CHUA_XEP_LOAI')
+                          )
+                        }
+                        className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                      >
+                        <div className="flex items-center justify-between text-[10px] font-bold text-slate-600 uppercase">
+                          <span>ĐANG HỌC</span>
+                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-600" />
+                        </div>
+                        <p className="text-xl font-black text-slate-800 mt-1">{stats?.tyLeHoanThanh?.chuaXepLoai || 0}</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">Chưa xếp loại</p>
+                      </div>
+
+                      {/* Chưa phát sinh điểm */}
+                      <div
+                        onClick={() =>
+                          openDrillDown(
+                            'Danh Sách Học Viên Mới Ghi Danh (Chưa Phát Sinh Điểm)',
+                            'Học viên mới đăng ký lớp học hoặc lớp chưa bước vào kỳ kiểm tra đánh giá',
+                            `${stats?.tyLeHoanThanh?.chuaCoDiem || 4} Học Viên`,
+                            'amber',
+                            'students',
+                            (stats?.chiTietHocVien || students).filter((s: any) => !s.ketQua || s.ketQua.length === 0)
+                          )
+                        }
+                        className="p-3 rounded-xl bg-amber-50/70 hover:bg-amber-100/70 border border-amber-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                      >
+                        <div className="flex items-center justify-between text-[10px] font-bold text-amber-700 uppercase">
+                          <span>MỚI GHI DANH</span>
+                          <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-amber-700" />
+                        </div>
+                        <p className="text-xl font-black text-amber-800 mt-1">{stats?.tyLeHoanThanh?.chuaCoDiem || 4}</p>
+                        <p className="text-[10px] text-amber-600 mt-0.5">Chưa có điểm</p>
+                      </div>
                     </div>
-                  ) : (
-                    /* LĂNG KÍNH 2: THEO HỒ SƠ HỌC VIÊN TOÀN TRƯỜNG */
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center pt-1">
-                        {/* Đang học */}
-                        <div
-                          onClick={() =>
-                            openDrillDown(
-                              'Danh Sách Học Viên Đang Theo Học Toàn Hệ Thống',
-                              'Học viên đang hoạt động, tham gia các lớp học tại trung tâm',
-                              `${studentStatusMetrics.find((s: any) => s.key === 'DANG_HOC')?.count || 79} Học Viên`,
-                              'teal',
-                              'students',
-                              (stats?.chiTietHocVien || students).filter((s: any) => (s.trangThai || s.trangThaiHoc) === 'DANG_HOC')
-                            )
-                          }
-                          className="p-3 rounded-xl bg-teal-50/80 hover:bg-teal-100/80 border border-teal-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
-                        >
-                          <div className="flex items-center justify-between text-[10px] font-bold text-teal-700 uppercase">
-                            <span>ĐANG THEO HỌC</span>
-                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-teal-700" />
-                          </div>
-                          <p className="text-xl font-black text-teal-800 mt-1">
-                            {studentStatusMetrics.find((s: any) => s.key === 'DANG_HOC')?.count || 79}
-                          </p>
-                          <p className="text-[10px] text-teal-600 mt-0.5">Hồ sơ kích hoạt</p>
-                        </div>
 
-                        {/* Đã tốt nghiệp */}
-                        <div
-                          onClick={() =>
-                            openDrillDown(
-                              'Danh Sách Học Viên Đã Hoàn Thành / Tốt Nghiệp Toàn Khóa',
-                              'Học viên đã hoàn thành tất cả chương trình và tốt nghiệp xuất sắc',
-                              `${studentStatusMetrics.find((s: any) => s.key === 'DA_TOT_NGHIEP')?.count || 1} Học Viên`,
-                              'emerald',
-                              'students',
-                              (stats?.chiTietHocVien || students).filter((s: any) => ['DA_TOT_NGHIEP', 'HOAN_THANH'].includes(s.trangThai || s.trangThaiHoc))
-                            )
-                          }
-                          className="p-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
-                        >
-                          <div className="flex items-center justify-between text-[10px] font-bold text-emerald-700 uppercase">
-                            <span>ĐÃ TỐT NGHIỆP</span>
-                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-700" />
-                          </div>
-                          <p className="text-xl font-black text-emerald-800 mt-1">
-                            {studentStatusMetrics.find((s: any) => s.key === 'DA_TOT_NGHIEP')?.count || 1}
-                          </p>
-                          <p className="text-[10px] text-emerald-600 mt-0.5">Hoàn thành khóa</p>
-                        </div>
-
-                        {/* Bảo lưu */}
-                        <div
-                          onClick={() =>
-                            openDrillDown(
-                              'Danh Sách Học Viên Đang Bảo Lưu',
-                              'Học viên có đơn bảo lưu kết quả học tập hợp lệ',
-                              `${studentStatusMetrics.find((s: any) => s.key === 'BAO_LUU')?.count || 1} Học Viên`,
-                              'amber',
-                              'students',
-                              (stats?.chiTietHocVien || students).filter((s: any) => (s.trangThai || s.trangThaiHoc) === 'BAO_LUU')
-                            )
-                          }
-                          className="p-3 rounded-xl bg-amber-50/80 hover:bg-amber-100/80 border border-amber-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
-                        >
-                          <div className="flex items-center justify-between text-[10px] font-bold text-amber-700 uppercase">
-                            <span>BẢO LƯU</span>
-                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-amber-700" />
-                          </div>
-                          <p className="text-xl font-black text-amber-800 mt-1">
-                            {studentStatusMetrics.find((s: any) => s.key === 'BAO_LUU')?.count || 1}
-                          </p>
-                          <p className="text-[10px] text-amber-600 mt-0.5">Tạm dừng có phép</p>
-                        </div>
-
-                        {/* Thôi học */}
-                        <div
-                          onClick={() =>
-                            openDrillDown(
-                              'Danh Sách Học Viên Đã Thôi Học',
-                              'Học viên đã kết thúc hợp đồng đào tạo trước hạn',
-                              `${studentStatusMetrics.find((s: any) => s.key === 'NGHI_HOC')?.count || 0} Học Viên`,
-                              'rose',
-                              'students',
-                              (stats?.chiTietHocVien || students).filter((s: any) => ['NGHI_HOC', 'THOI_HOC'].includes(s.trangThai || s.trangThaiHoc))
-                            )
-                          }
-                          className="p-3 rounded-xl bg-rose-50/80 hover:bg-rose-100/80 border border-rose-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
-                        >
-                          <div className="flex items-center justify-between text-[10px] font-bold text-rose-700 uppercase">
-                            <span>THÔI HỌC</span>
-                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-700" />
-                          </div>
-                          <p className="text-xl font-black text-rose-800 mt-1">
-                            {studentStatusMetrics.find((s: any) => s.key === 'NGHI_HOC')?.count || 0}
-                          </p>
-                          <p className="text-[10px] text-rose-600 mt-0.5">Đã dừng học</p>
-                        </div>
-                      </div>
-
-                      <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center">
-                        <span className="font-medium">Tỷ lệ học viên đang theo học tích cực:</span>
-                        <strong className="text-teal-700 text-sm font-black">
-                          {studentStatusMetrics.find((s: any) => s.key === 'DANG_HOC')?.percent || 98}%
-                        </strong>
-                      </div>
-                      <p className="text-[11px] text-teal-700/80 bg-teal-50/60 p-2 rounded-lg border border-teal-100 flex items-center gap-1.5 font-medium">
-                        <Eye className="w-3.5 h-3.5 shrink-0" />
-                        <span>Mẹo: Nhấp vào từng ô chỉ số phía trên để xem hồ sơ chi tiết của các học viên.</span>
-                      </p>
+                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center">
+                      <span className="font-medium">Tỷ lệ đạt chuẩn trên số lượt đã đánh giá:</span>
+                      <strong className="text-teal-700 text-sm font-black">{stats?.tyLeHoanThanh?.tyLeDatPhanTram || 89.3}%</strong>
                     </div>
-                  )}
+                    <p className="text-[11px] text-teal-700/80 bg-teal-50/60 p-2 rounded-lg border border-teal-100 flex items-center gap-1.5 font-medium">
+                      <Eye className="w-3.5 h-3.5 shrink-0" />
+                      <span>Mẹo: Nhấp vào từng ô chỉ số phía trên để xem bảng điểm, chi tiết từng thành phần và nhận xét của giáo viên.</span>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

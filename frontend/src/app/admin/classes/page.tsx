@@ -192,7 +192,7 @@ export default function AdminClassesPage() {
     if (selectedCourse?.trangThai === 'NGUNG_HOAT_DONG') {
       setMessage({
         type: 'error',
-        text: `Khóa học "${selectedCourse.tenKhoaHoc}" hiện đang tạm ngừng tuyển sinh. Không thể mở lớp mới cho khóa này!`,
+        text: `Khóa học "${selectedCourse.tenKhoaHoc}" hiện đang ngừng hoạt động. Không thể mở lớp mới cho chương trình này!`,
       });
       return;
     }
@@ -856,7 +856,7 @@ export default function AdminClassesPage() {
                         value={c.id}
                         disabled={c.trangThai === 'NGUNG_HOAT_DONG'}
                       >
-                        [{c.maKhoaHoc}] {c.tenKhoaHoc} (CEFR {c.trinhDoYeuCau}) {c.trangThai === 'NGUNG_HOAT_DONG' ? '— [🔴 TẠM NGỪNG TUYỂN SINH]' : '— [🟢 Đang tuyển sinh]'}
+                        [{c.maKhoaHoc}] {c.tenKhoaHoc} (CEFR {c.trinhDoYeuCau}) {c.trangThai === 'NGUNG_HOAT_DONG' ? '— [🔴 NGỪNG HOẠT ĐỘNG]' : '— [🟢 Đang hoạt động]'}
                       </option>
                     ))}
                   </select>

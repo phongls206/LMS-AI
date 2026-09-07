@@ -144,15 +144,15 @@ export default function AdminCoursesPage() {
     if (status === 'HOAT_DONG' || status === 'DANG_MO') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 shadow-sm">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-          Đang Mở Tuyển Sinh
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+          Đang Hoạt Động
         </span>
       );
     }
     return (
       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 dark:bg-rose-950/50 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 shadow-sm">
         <span className="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
-        Tạm Ngừng Tuyển Sinh
+        Ngừng Hoạt Động
       </span>
     );
   };
@@ -328,7 +328,7 @@ export default function AdminCoursesPage() {
                     <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-xs text-rose-800 dark:text-rose-300 flex items-center gap-2">
                       <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                       <span>
-                        Khóa học này đang <strong>Tạm Ngừng Tuyển Sinh</strong>. Mọi lớp học trực thuộc đều đang bị khóa ghi danh học viên mới trên toàn hệ thống.
+                        Khóa học này đang <strong>Ngừng Hoạt Động</strong>. Không thể mở thêm lớp học mới thuộc chương trình đào tạo này.
                       </span>
                     </div>
                   )}
@@ -549,19 +549,19 @@ export default function AdminCoursesPage() {
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Trạng Thái Hoạt Động</label>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Trạng Thái Chương Trình</label>
                     <select
                       value={editFormData.trangThai === 'DANG_MO' ? 'HOAT_DONG' : (editFormData.trangThai || 'HOAT_DONG')}
                       onChange={(e) => setEditFormData({ ...editFormData, trangThai: e.target.value })}
                       className="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-teal-500 font-bold cursor-pointer"
                     >
-                      <option value="HOAT_DONG">🟢 Đang Mở Tuyển Sinh</option>
-                      <option value="NGUNG_HOAT_DONG">🔴 Tạm Ngừng Tuyển Sinh</option>
+                      <option value="HOAT_DONG">🟢 Đang Hoạt Động (Cho phép mở lớp)</option>
+                      <option value="NGUNG_HOAT_DONG">🔴 Ngừng Hoạt Động (Dừng mở lớp mới)</option>
                     </select>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                       {editFormData.trangThai === 'NGUNG_HOAT_DONG'
-                        ? '⚠️ Khi tạm ngừng, học viên và tư vấn viên sẽ bị khóa không thể ghi danh vào bất kỳ lớp nào của khóa này.'
-                        : '✓ Khóa học mở tuyển sinh bình thường cho các lớp trực thuộc.'}
+                        ? '⚠️ Khi ngừng hoạt động, khóa học sẽ không thể tạo thêm lớp học mới.'
+                        : '✓ Khóa học đang được áp dụng, cho phép lên lịch và mở các lớp học trực thuộc.'}
                     </p>
                   </div>
                 </div>

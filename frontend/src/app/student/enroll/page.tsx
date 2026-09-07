@@ -219,8 +219,8 @@ export default function StudentEnrollPage() {
 
     if (isCourseSuspended) {
       canEnroll = false;
-      statusText = 'Khóa Học Tạm Ngừng Tuyển Sinh';
-      reason = 'Khóa học tạm ngưng tuyển sinh';
+      statusText = 'Chương Trình Ngừng Hoạt Động';
+      reason = 'Khóa học này hiện đang ngừng hoạt động';
     } else if (isEnrolled) {
       canEnroll = false;
       statusText = isPaid ? 'Đã Ghi Danh (Đã Đóng Phí)' : 'Đã Ghi Danh (Chờ Nộp Phí)';

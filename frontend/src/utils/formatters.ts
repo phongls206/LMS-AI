@@ -71,6 +71,10 @@ export const STATUS_MAP: Record<string, string> = {
   // 11. TrangThaiBuoiHoc
   CHUA_DIEN_RA: 'Chưa Diễn Ra',
   DANG_DIEN_RA: 'Đang Diễn Ra',
+
+  // 12. TrangThaiKhoaHoc (Khóa học / Chương trình đào tạo)
+  HOAT_DONG: 'Đang Hoạt Động',
+  NGUNG_HOAT_DONG: 'Ngừng Hoạt Động',
 };
 
 /**
