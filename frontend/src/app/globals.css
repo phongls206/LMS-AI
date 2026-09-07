@@ -49,6 +49,16 @@ body {
   background: #94a3b8;
 }
 
+/* Ẩn thanh cuộn nhưng vẫn cho phép cuộn nội dung mượt mà */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Ẩn hoàn toàn logo và menu Next.js Dev Indicator */
 nextjs-portal,
 [data-next-badge],
