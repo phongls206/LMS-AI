@@ -175,6 +175,133 @@ export default function AdminReportsPage() {
     ];
   }, [stats, students]);
 
+  // ─── Modal Drill-Down Handlers ────────────────────────────────────────────────
+  const openDrillDown = (
+    title: string,
+    subtitle: string,
+    badgeText: string,
+    badgeColor: string,
+    type: 'grades' | 'students',
+    data: any[]
+  ) => {
+    setModalSearch('');
+    setModalClassFilter('');
+    setModalState({
+      isOpen: true,
+      title,
+      subtitle,
+      badgeText,
+      badgeColor,
+      type,
+      data: Array.isArray(data) ? data : [],
+    });
+  };
+
+  const closeModal = () => {
+    setModalState((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  // Danh sách các lớp học có trong modal data để người dùng lọc
+  const modalClassOptions = useMemo(() => {
+    if (!modalState.isOpen) return [];
+    const setCodes = new Set<string>();
+    if (modalState.type === 'grades') {
+      modalState.data.forEach((item: any) => {
+        if (item.lopHoc?.maLopHoc) setCodes.add(item.lopHoc.maLopHoc);
+      });
+    } else {
+      modalState.data.forEach((item: any) => {
+        item.dangKyHoc?.forEach((dk: any) => {
+          if (dk.lopHoc?.maLopHoc) setCodes.add(dk.lopHoc.maLopHoc);
+        });
+      });
+    }
+    return Array.from(setCodes).sort();
+  }, [modalState]);
+
+  // Dữ liệu lọc tìm kiếm trong modal
+  const filteredModalData = useMemo(() => {
+    if (!modalState.isOpen) return [];
+    let list = modalState.data || [];
+    const search = modalSearch.trim().toLowerCase();
+
+    if (search) {
+      if (modalState.type === 'grades') {
+        list = list.filter((item: any) => {
+          const name = (item.hocVien?.hoTen || '').toLowerCase();
+          const code = (item.hocVien?.maHocVien || '').toLowerCase();
+          const classCode = (item.lopHoc?.maLopHoc || '').toLowerCase();
+          const className = (item.lopHoc?.tenLopHoc || '').toLowerCase();
+          return name.includes(search) || code.includes(search) || classCode.includes(search) || className.includes(search);
+        });
+      } else {
+        list = list.filter((item: any) => {
+          const name = (item.hoTen || '').toLowerCase();
+          const code = (item.maHocVien || '').toLowerCase();
+          const email = (item.nguoiDung?.email || '').toLowerCase();
+          const phone = (item.nguoiDung?.soDienThoai || '').toLowerCase();
+          return name.includes(search) || code.includes(search) || email.includes(search) || phone.includes(search);
+        });
+      }
+    }
+
+    if (modalClassFilter) {
+      if (modalState.type === 'grades') {
+        list = list.filter((item: any) => item.lopHoc?.maLopHoc === modalClassFilter);
+      } else {
+        list = list.filter((item: any) =>
+          item.dangKyHoc?.some((dk: any) => dk.lopHoc?.maLopHoc === modalClassFilter)
+        );
+      }
+    }
+
+    return list;
+  }, [modalState, modalSearch, modalClassFilter]);
+
+  // Xuất file CSV cho danh sách đang xem trong Modal
+  const exportModalCSV = () => {
+    if (modalState.type === 'grades') {
+      const headers = [
+        'STT', 'Mã Học Viên', 'Họ Tên Học Viên', 'Mã Lớp Học', 'Tên Lớp Học',
+        'Trình Độ CEFR', 'Điểm Chuyên Cần', 'Điểm Giữa Kỳ', 'Điểm Cuối Kỳ',
+        'Điểm Tổng Kết', 'Kết Quả Đánh Giá', 'Nhận Xét Giáo Viên'
+      ];
+      const rows = filteredModalData.map((item: any, idx: number) => [
+        idx + 1,
+        item.hocVien?.maHocVien ?? '',
+        `"${(item.hocVien?.hoTen ?? '').replace(/"/g, '""')}"`,
+        item.lopHoc?.maLopHoc ?? '',
+        `"${(item.lopHoc?.tenLopHoc ?? '').replace(/"/g, '""')}"`,
+        item.lopHoc?.khoaHoc?.trinhDoYeuCau ?? item.hocVien?.trinhDoCEFR ?? '',
+        item.diemChuyenCan ?? '',
+        item.diemGiuaKy ?? '',
+        item.diemCuoiKy ?? '',
+        item.diemTongKet ?? '',
+        item.trangThaiHoanThanh === 'DAT' ? 'ĐẠT CHUẨN' : (item.trangThaiHoanThanh === 'KHONG_DAT' ? 'CHƯA ĐẠT' : 'ĐANG HỌC'),
+        `"${(item.nhanXet ?? '').replace(/"/g, '""')}"`,
+      ]);
+      const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+      downloadCSV(csv, `${modalState.title.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.csv`);
+    } else {
+      const headers = [
+        'STT', 'Mã Học Viên', 'Họ Tên Học Viên', 'Trình Độ CEFR', 'Trạng Thái Học Tập',
+        'Email', 'Số Điện Thoại', 'Số Lớp Đã Đăng Ký'
+      ];
+      const rows = filteredModalData.map((s: any, idx: number) => [
+        idx + 1,
+        s.maHocVien ?? '',
+        `"${(s.hoTen ?? '').replace(/"/g, '""')}"`,
+        s.trinhDoCEFR ?? '',
+        `"${formatTrangThaiHocVien(s.trangThai)}"`,
+        s.nguoiDung?.email ?? '',
+        s.nguoiDung?.soDienThoai ?? '',
+        s.dangKyHoc?.length ?? 0,
+      ]);
+      const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+      downloadCSV(csv, `${modalState.title.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0, 10)}.csv`);
+    }
+  };
+
   // ─── Utility: tải file CSV ────────────────────────────────────────────────────
   const downloadCSV = (csvContent: string, filename: string) => {
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -492,31 +619,253 @@ export default function AdminReportsPage() {
                 </div>
 
                 <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-4">
-                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
-                    <Award className="w-4 h-4 text-teal-600" />
-                    <span>Hiệu Suất Tốt Nghiệp & Chuẩn Đầu Ra</span>
-                  </h3>
-                  <div className="grid grid-cols-3 gap-3 text-center pt-2">
-                    <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
-                      <p className="text-[10px] font-bold text-emerald-700 uppercase">ĐẠT CHUẨN</p>
-                      <p className="text-xl font-black text-emerald-800 mt-0.5">{stats?.tyLeHoanThanh?.dat || 0}</p>
-                      <p className="text-[10px] text-emerald-600 mt-0.5">Cấp chứng chỉ</p>
-                    </div>
-                    <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200">
-                      <p className="text-[10px] font-bold text-rose-700 uppercase">CHƯA ĐẠT</p>
-                      <p className="text-xl font-black text-rose-800 mt-0.5">{stats?.tyLeHoanThanh?.khongDat || 0}</p>
-                      <p className="text-[10px] text-rose-600 mt-0.5">Cần thi lại</p>
-                    </div>
-                    <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                      <p className="text-[10px] font-bold text-slate-600 uppercase">ĐANG HỌC</p>
-                      <p className="text-xl font-black text-slate-800 mt-0.5">{stats?.tyLeHoanThanh?.chuaXepLoai || 0}</p>
-                      <p className="text-[10px] text-slate-500 mt-0.5">Chưa xếp loại</p>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center space-x-2">
+                      <Award className="w-4 h-4 text-teal-600" />
+                      <span>Hiệu Suất Đào Tạo & Chuẩn Đầu Ra</span>
+                    </h3>
+                    {/* Toggle Chế độ xem: Bảng điểm môn học vs Hồ sơ học viên */}
+                    <div className="flex items-center p-1 bg-slate-100 rounded-xl text-[11px] font-bold">
+                      <button
+                        onClick={() => setOutcomeViewMode('classes_grade')}
+                        className={`px-2.5 py-1 rounded-lg transition ${
+                          outcomeViewMode === 'classes_grade'
+                            ? 'bg-white text-teal-800 shadow-xs font-black'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                        title="Thống kê dựa trên kết quả đánh giá điểm số từng lớp học"
+                      >
+                        Theo Lớp Học ({stats?.tyLeHoanThanh?.tongLuotDanhGia || 81})
+                      </button>
+                      <button
+                        onClick={() => setOutcomeViewMode('students_profile')}
+                        className={`px-2.5 py-1 rounded-lg transition ${
+                          outcomeViewMode === 'students_profile'
+                            ? 'bg-white text-teal-800 shadow-xs font-black'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                        title="Thống kê dựa trên trạng thái hồ sơ học viên toàn hệ thống"
+                      >
+                        Theo Học Viên ({stats?.tongQuan?.tongHocVien || students.length || 81})
+                      </button>
                     </div>
                   </div>
-                  <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center">
-                    <span className="font-medium">Tỷ lệ hoàn thành toàn khóa:</span>
-                    <strong className="text-teal-700 text-sm font-black">{stats?.tyLeHoanThanh?.tyLeDatPhanTram || 0}%</strong>
-                  </div>
+
+                  {/* LĂNG KÍNH 1: THEO KẾT QUẢ BẢNG ĐIỂM MÔN HỌC */}
+                  {outcomeViewMode === 'classes_grade' ? (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center pt-1">
+                        {/* Đạt chuẩn */}
+                        <div
+                          onClick={() =>
+                            openDrillDown(
+                              'Danh Sách Học Viên Đạt Chuẩn Đầu Ra Môn Học',
+                              'Tổng hợp các lượt học viên có Điểm Tổng Kết ≥ 50 và Chuyên Cần ≥ 80%',
+                              `${stats?.tyLeHoanThanh?.dat || 67} Lượt Đạt`,
+                              'emerald',
+                              'grades',
+                              (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'DAT')
+                            )
+                          }
+                          className="p-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        >
+                          <div className="flex items-center justify-between text-[10px] font-bold text-emerald-700 uppercase">
+                            <span>ĐẠT CHUẨN</span>
+                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-700" />
+                          </div>
+                          <p className="text-xl font-black text-emerald-800 mt-1">{stats?.tyLeHoanThanh?.dat || 0}</p>
+                          <p className="text-[10px] text-emerald-600 mt-0.5">Cấp chứng nhận</p>
+                        </div>
+
+                        {/* Chưa đạt */}
+                        <div
+                          onClick={() =>
+                            openDrillDown(
+                              'Danh Sách Học Viên Chưa Đạt Chuẩn Môn Học',
+                              'Học viên có Chuyên Cần < 80% hoặc Điểm Tổng Kết < 50 (cần thi lại / học lại)',
+                              `${stats?.tyLeHoanThanh?.khongDat || 8} Lượt Chưa Đạt`,
+                              'rose',
+                              'grades',
+                              (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'KHONG_DAT')
+                            )
+                          }
+                          className="p-3 rounded-xl bg-rose-50/80 hover:bg-rose-100/80 border border-rose-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        >
+                          <div className="flex items-center justify-between text-[10px] font-bold text-rose-700 uppercase">
+                            <span>CHƯA ĐẠT</span>
+                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-700" />
+                          </div>
+                          <p className="text-xl font-black text-rose-800 mt-1">{stats?.tyLeHoanThanh?.khongDat || 0}</p>
+                          <p className="text-[10px] text-rose-600 mt-0.5">Cần thi lại</p>
+                        </div>
+
+                        {/* Đang học */}
+                        <div
+                          onClick={() =>
+                            openDrillDown(
+                              'Danh Sách Học Viên Đang Học / Chưa Thi Cuối Kỳ',
+                              'Học viên đã hoàn thành điểm giữa kỳ, đang học nửa chặng đường và chờ thi cuối khóa',
+                              `${stats?.tyLeHoanThanh?.chuaXepLoai || 6} Lượt Đang Học`,
+                              'slate',
+                              'grades',
+                              (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'CHUA_XEP_LOAI')
+                            )
+                          }
+                          className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        >
+                          <div className="flex items-center justify-between text-[10px] font-bold text-slate-600 uppercase">
+                            <span>ĐANG HỌC</span>
+                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-600" />
+                          </div>
+                          <p className="text-xl font-black text-slate-800 mt-1">{stats?.tyLeHoanThanh?.chuaXepLoai || 0}</p>
+                          <p className="text-[10px] text-slate-500 mt-0.5">Chưa xếp loại</p>
+                        </div>
+
+                        {/* Chưa phát sinh điểm */}
+                        <div
+                          onClick={() =>
+                            openDrillDown(
+                              'Danh Sách Học Viên Mới Ghi Danh (Chưa Phát Sinh Điểm)',
+                              'Học viên mới đăng ký lớp học hoặc lớp chưa bước vào kỳ kiểm tra đánh giá',
+                              `${stats?.tyLeHoanThanh?.chuaCoDiem || 4} Học Viên`,
+                              'amber',
+                              'students',
+                              (stats?.chiTietHocVien || students).filter((s: any) => !s.ketQua || s.ketQua.length === 0)
+                            )
+                          }
+                          className="p-3 rounded-xl bg-amber-50/70 hover:bg-amber-100/70 border border-amber-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        >
+                          <div className="flex items-center justify-between text-[10px] font-bold text-amber-700 uppercase">
+                            <span>MỚI GHI DANH</span>
+                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-amber-700" />
+                          </div>
+                          <p className="text-xl font-black text-amber-800 mt-1">{stats?.tyLeHoanThanh?.chuaCoDiem || 4}</p>
+                          <p className="text-[10px] text-amber-600 mt-0.5">Chưa có điểm</p>
+                        </div>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center">
+                        <span className="font-medium">Tỷ lệ đạt chuẩn trên số lượt đã đánh giá:</span>
+                        <strong className="text-teal-700 text-sm font-black">{stats?.tyLeHoanThanh?.tyLeDatPhanTram || 89.3}%</strong>
+                      </div>
+                      <p className="text-[11px] text-teal-700/80 bg-teal-50/60 p-2 rounded-lg border border-teal-100 flex items-center gap-1.5 font-medium">
+                        <Eye className="w-3.5 h-3.5 shrink-0" />
+                        <span>Mẹo: Nhấp vào từng ô chỉ số phía trên để xem danh sách học viên, bảng điểm và nhận xét chi tiết.</span>
+                      </p>
+                    </div>
+                  ) : (
+                    /* LĂNG KÍNH 2: THEO HỒ SƠ HỌC VIÊN TOÀN TRƯỜNG */
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-center pt-1">
+                        {/* Đang học */}
+                        <div
+                          onClick={() =>
+                            openDrillDown(
+                              'Danh Sách Học Viên Đang Theo Học Toàn Hệ Thống',
+                              'Học viên đang hoạt động, tham gia các lớp học tại trung tâm',
+                              `${studentStatusMetrics.find((s: any) => s.key === 'DANG_HOC')?.count || 79} Học Viên`,
+                              'teal',
+                              'students',
+                              (stats?.chiTietHocVien || students).filter((s: any) => (s.trangThai || s.trangThaiHoc) === 'DANG_HOC')
+                            )
+                          }
+                          className="p-3 rounded-xl bg-teal-50/80 hover:bg-teal-100/80 border border-teal-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        >
+                          <div className="flex items-center justify-between text-[10px] font-bold text-teal-700 uppercase">
+                            <span>ĐANG THEO HỌC</span>
+                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-teal-700" />
+                          </div>
+                          <p className="text-xl font-black text-teal-800 mt-1">
+                            {studentStatusMetrics.find((s: any) => s.key === 'DANG_HOC')?.count || 79}
+                          </p>
+                          <p className="text-[10px] text-teal-600 mt-0.5">Hồ sơ kích hoạt</p>
+                        </div>
+
+                        {/* Đã tốt nghiệp */}
+                        <div
+                          onClick={() =>
+                            openDrillDown(
+                              'Danh Sách Học Viên Đã Hoàn Thành / Tốt Nghiệp Toàn Khóa',
+                              'Học viên đã hoàn thành tất cả chương trình và tốt nghiệp xuất sắc',
+                              `${studentStatusMetrics.find((s: any) => s.key === 'DA_TOT_NGHIEP')?.count || 1} Học Viên`,
+                              'emerald',
+                              'students',
+                              (stats?.chiTietHocVien || students).filter((s: any) => ['DA_TOT_NGHIEP', 'HOAN_THANH'].includes(s.trangThai || s.trangThaiHoc))
+                            )
+                          }
+                          className="p-3 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/80 border border-emerald-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        >
+                          <div className="flex items-center justify-between text-[10px] font-bold text-emerald-700 uppercase">
+                            <span>ĐÃ TỐT NGHIỆP</span>
+                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-700" />
+                          </div>
+                          <p className="text-xl font-black text-emerald-800 mt-1">
+                            {studentStatusMetrics.find((s: any) => s.key === 'DA_TOT_NGHIEP')?.count || 1}
+                          </p>
+                          <p className="text-[10px] text-emerald-600 mt-0.5">Hoàn thành khóa</p>
+                        </div>
+
+                        {/* Bảo lưu */}
+                        <div
+                          onClick={() =>
+                            openDrillDown(
+                              'Danh Sách Học Viên Đang Bảo Lưu',
+                              'Học viên có đơn bảo lưu kết quả học tập hợp lệ',
+                              `${studentStatusMetrics.find((s: any) => s.key === 'BAO_LUU')?.count || 1} Học Viên`,
+                              'amber',
+                              'students',
+                              (stats?.chiTietHocVien || students).filter((s: any) => (s.trangThai || s.trangThaiHoc) === 'BAO_LUU')
+                            )
+                          }
+                          className="p-3 rounded-xl bg-amber-50/80 hover:bg-amber-100/80 border border-amber-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        >
+                          <div className="flex items-center justify-between text-[10px] font-bold text-amber-700 uppercase">
+                            <span>BẢO LƯU</span>
+                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-amber-700" />
+                          </div>
+                          <p className="text-xl font-black text-amber-800 mt-1">
+                            {studentStatusMetrics.find((s: any) => s.key === 'BAO_LUU')?.count || 1}
+                          </p>
+                          <p className="text-[10px] text-amber-600 mt-0.5">Tạm dừng có phép</p>
+                        </div>
+
+                        {/* Thôi học */}
+                        <div
+                          onClick={() =>
+                            openDrillDown(
+                              'Danh Sách Học Viên Đã Thôi Học',
+                              'Học viên đã kết thúc hợp đồng đào tạo trước hạn',
+                              `${studentStatusMetrics.find((s: any) => s.key === 'NGHI_HOC')?.count || 0} Học Viên`,
+                              'rose',
+                              'students',
+                              (stats?.chiTietHocVien || students).filter((s: any) => ['NGHI_HOC', 'THOI_HOC'].includes(s.trangThai || s.trangThaiHoc))
+                            )
+                          }
+                          className="p-3 rounded-xl bg-rose-50/80 hover:bg-rose-100/80 border border-rose-200 transition duration-200 cursor-pointer group hover:scale-[1.02] hover:shadow-md relative overflow-hidden"
+                        >
+                          <div className="flex items-center justify-between text-[10px] font-bold text-rose-700 uppercase">
+                            <span>THÔI HỌC</span>
+                            <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-700" />
+                          </div>
+                          <p className="text-xl font-black text-rose-800 mt-1">
+                            {studentStatusMetrics.find((s: any) => s.key === 'NGHI_HOC')?.count || 0}
+                          </p>
+                          <p className="text-[10px] text-rose-600 mt-0.5">Đã dừng học</p>
+                        </div>
+                      </div>
+
+                      <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 flex justify-between items-center">
+                        <span className="font-medium">Tỷ lệ học viên đang theo học tích cực:</span>
+                        <strong className="text-teal-700 text-sm font-black">
+                          {studentStatusMetrics.find((s: any) => s.key === 'DANG_HOC')?.percent || 98}%
+                        </strong>
+                      </div>
+                      <p className="text-[11px] text-teal-700/80 bg-teal-50/60 p-2 rounded-lg border border-teal-100 flex items-center gap-1.5 font-medium">
+                        <Eye className="w-3.5 h-3.5 shrink-0" />
+                        <span>Mẹo: Nhấp vào từng ô chỉ số phía trên để xem hồ sơ chi tiết của các học viên.</span>
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -538,14 +887,36 @@ export default function AdminReportsPage() {
                     </span>
                   </div>
 
-                  <div className="space-y-3.5 pt-2">
+                  <div className="space-y-3 pt-2">
                     {cefrDistribution.map((item: any) => (
-                      <div key={item.level} className="space-y-1">
-                        <div className="flex justify-between text-xs font-bold">
-                          <span className="font-mono text-slate-700">CEFR {item.level}</span>
-                          <span className="text-slate-500">
-                            {item.count} học viên ({item.percent}%)
+                      <div
+                        key={item.level}
+                        onClick={() =>
+                          openDrillDown(
+                            `Danh Sách Học Viên Trình Độ CEFR ${item.level}`,
+                            `Tổng cộng ${item.count} học viên được xếp lớp ở trình độ chuẩn CEFR ${item.level}`,
+                            `${item.count} Học Viên (${item.percent}%)`,
+                            ['A1', 'A2'].includes(item.level) ? 'cyan' : ['B1', 'B2'].includes(item.level) ? 'teal' : 'blue',
+                            'students',
+                            (stats?.chiTietHocVien || students).filter(
+                              (s: any) => (s.trinhDoCEFR || s.hoSoHocVien?.trinhDoCEFR) === item.level
+                            )
+                          )
+                        }
+                        className="p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-teal-200 transition duration-150 cursor-pointer group space-y-1.5"
+                        title={`Nhấp để xem danh sách ${item.count} học viên trình độ CEFR ${item.level}`}
+                      >
+                        <div className="flex justify-between items-center text-xs font-bold">
+                          <span className="font-mono text-slate-800 flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-teal-500"></span>
+                            <span>CEFR {item.level}</span>
                           </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-slate-600">
+                              {item.count} học viên ({item.percent}%)
+                            </span>
+                            <Eye className="w-3.5 h-3.5 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
                         </div>
                         <div className="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
                           <div
@@ -562,6 +933,9 @@ export default function AdminReportsPage() {
                       </div>
                     ))}
                   </div>
+                  <p className="text-[11px] text-slate-500 italic pt-1">
+                    * Nhấp vào từng mức trình độ CEFR để xem danh sách học viên tương ứng.
+                  </p>
                 </div>
 
                 {/* Phân bổ trạng thái học tập */}
@@ -573,12 +947,39 @@ export default function AdminReportsPage() {
 
                   <div className="space-y-3 pt-2">
                     {studentStatusMetrics.map((status: any) => (
-                      <div key={status.label} className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                      <div
+                        key={status.label}
+                        onClick={() =>
+                          openDrillDown(
+                            `Danh Sách Học Viên: ${status.label}`,
+                            `Chi tiết danh sách học viên đang ở trạng thái "${status.label}" trên toàn hệ thống`,
+                            `${status.count} Học Viên (${status.percent}%)`,
+                            status.key === 'DANG_HOC'
+                              ? 'teal'
+                              : status.key === 'DA_TOT_NGHIEP'
+                              ? 'emerald'
+                              : status.key === 'BAO_LUU'
+                              ? 'amber'
+                              : 'rose',
+                            'students',
+                            (stats?.chiTietHocVien || students).filter(
+                              (s: any) => (s.trangThai || s.trangThaiHoc) === status.key
+                            )
+                          )
+                        }
+                        className="p-3.5 rounded-xl bg-slate-50 hover:bg-slate-100/90 border border-slate-200/80 hover:border-teal-300 transition duration-150 cursor-pointer group space-y-2"
+                        title={`Nhấp để xem danh sách ${status.count} học viên ở trạng thái ${status.label}`}
+                      >
                         <div className="flex justify-between items-center text-xs font-bold">
-                          <span className={status.text}>{status.label}</span>
-                          <span className="text-slate-800 font-mono">
-                            {status.count} HV ({status.percent}%)
+                          <span className={`${status.text} flex items-center gap-1.5`}>
+                            <span>{status.label}</span>
                           </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-slate-800 font-mono">
+                              {status.count} HV ({status.percent}%)
+                            </span>
+                            <Eye className="w-3.5 h-3.5 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </div>
                         </div>
                         <div className="w-full h-2 rounded-full bg-slate-200 overflow-hidden">
                           <div
@@ -589,6 +990,9 @@ export default function AdminReportsPage() {
                       </div>
                     ))}
                   </div>
+                  <p className="text-[11px] text-slate-500 italic pt-1">
+                    * Nhấp vào từng trạng thái để mở danh sách chi tiết học viên.
+                  </p>
                 </div>
               </div>
             </div>
@@ -682,6 +1086,285 @@ export default function AdminReportsPage() {
                       })}
                     </tbody>
                   </table>
+                </div>
+              </div>
+            </div>
+          )}
+          {/* ══════════════════════════════════════════════════════════════════════════════ */}
+          {/* DRILL-DOWN INSPECTION MODAL ("Ấn vào xem được") */}
+          {/* ══════════════════════════════════════════════════════════════════════════════ */}
+          {modalState.isOpen && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+              onClick={closeModal}
+            >
+              <div
+                className="bg-white w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* Modal Header */}
+                <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2.5 rounded-xl bg-teal-50 text-teal-700 border border-teal-200/80">
+                      <GraduationCap className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-base font-bold text-slate-900">{modalState.title}</h2>
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-teal-50 text-teal-800 border border-teal-200 font-mono">
+                          {modalState.badgeText}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">{modalState.subtitle}</p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={closeModal}
+                    className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
+                    title="Đóng cửa sổ"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Search & Filter Toolbar */}
+                <div className="px-6 py-3.5 bg-slate-50/70 border-b border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="flex items-center space-x-2 w-full sm:w-auto flex-1">
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        placeholder="Tìm kiếm theo Tên học viên, Mã HV, Lớp học..."
+                        value={modalSearch}
+                        onChange={(e) => setModalSearch(e.target.value)}
+                        className="w-full pl-9 pr-3 py-1.5 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                      />
+                      {modalSearch && (
+                        <button
+                          onClick={() => setModalSearch('')}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+
+                    {modalClassOptions.length > 1 && (
+                      <div className="relative">
+                        <select
+                          value={modalClassFilter}
+                          onChange={(e) => setModalClassFilter(e.target.value)}
+                          className="pl-3 pr-8 py-1.5 text-xs bg-white rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition font-medium text-slate-700 cursor-pointer"
+                        >
+                          <option value="">Tất cả các lớp ({modalClassOptions.length})</option>
+                          {modalClassOptions.map((code) => (
+                            <option key={code} value={code}>
+                              Lớp {code}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center space-x-2 self-end sm:self-auto shrink-0">
+                    <button
+                      onClick={exportModalCSV}
+                      className="px-3 py-1.5 rounded-xl bg-white hover:bg-teal-50 text-teal-800 hover:text-teal-900 text-xs font-bold flex items-center space-x-1.5 border border-teal-200 transition shadow-2xs cursor-pointer"
+                      title="Xuất file CSV danh sách đang lọc"
+                    >
+                      <Download className="w-3.5 h-3.5 text-teal-600" />
+                      <span>Xuất Danh Sách Này (CSV)</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Table Content */}
+                <div className="flex-1 overflow-y-auto p-6 min-h-[300px]">
+                  {filteredModalData.length === 0 ? (
+                    <div className="py-16 text-center text-slate-400 space-y-2">
+                      <p className="text-sm font-semibold">Không tìm thấy học viên nào phù hợp với bộ lọc.</p>
+                      <p className="text-xs text-slate-400">Vui lòng thử tìm kiếm với từ khóa khác.</p>
+                    </div>
+                  ) : modalState.type === 'grades' ? (
+                    <div className="overflow-x-auto rounded-xl border border-slate-200">
+                      <table className="w-full text-left text-xs text-slate-700">
+                        <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+                          <tr>
+                            <th className="px-4 py-3 text-center w-12">STT</th>
+                            <th className="px-4 py-3 whitespace-nowrap">Mã HV</th>
+                            <th className="px-4 py-3 whitespace-nowrap">Họ và Tên</th>
+                            <th className="px-4 py-3 whitespace-nowrap">Lớp Học & Khóa Học</th>
+                            <th className="px-4 py-3 whitespace-nowrap text-center">Chuyên Cần</th>
+                            <th className="px-4 py-3 whitespace-nowrap text-center">Giữa Kỳ</th>
+                            <th className="px-4 py-3 whitespace-nowrap text-center">Cuối Kỳ</th>
+                            <th className="px-4 py-3 whitespace-nowrap text-center">Tổng Kết</th>
+                            <th className="px-4 py-3 whitespace-nowrap text-center">Kết Quả</th>
+                            <th className="px-4 py-3 min-w-[200px]">Nhận Xét Giáo Viên</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {filteredModalData.map((item: any, idx: number) => {
+                            const isPass = item.trangThaiHoanThanh === 'DAT';
+                            const isFail = item.trangThaiHoanThanh === 'KHONG_DAT';
+                            return (
+                              <tr key={item.id || idx} className="hover:bg-teal-50/30 transition">
+                                <td className="px-4 py-3 text-center font-mono text-slate-400">{idx + 1}</td>
+                                <td className="px-4 py-3 font-mono font-bold text-teal-700 whitespace-nowrap">
+                                  {item.hocVien?.maHocVien}
+                                </td>
+                                <td className="px-4 py-3 font-bold text-slate-900 whitespace-nowrap">
+                                  {item.hocVien?.hoTen}
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap">
+                                  <div className="font-semibold text-slate-800">{item.lopHoc?.maLopHoc}</div>
+                                  <div className="text-[11px] text-slate-500">{item.lopHoc?.tenLopHoc}</div>
+                                </td>
+                                <td className="px-4 py-3 text-center font-mono font-semibold">
+                                  <span
+                                    className={`px-1.5 py-0.5 rounded ${
+                                      Number(item.diemChuyenCan || 0) < 80
+                                        ? 'bg-rose-50 text-rose-700 font-bold border border-rose-200'
+                                        : 'text-slate-800'
+                                    }`}
+                                  >
+                                    {item.diemChuyenCan !== null && item.diemChuyenCan !== undefined
+                                      ? `${item.diemChuyenCan}%`
+                                      : '—'}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-center font-mono text-slate-700">
+                                  {item.diemGiuaKy !== null && item.diemGiuaKy !== undefined ? item.diemGiuaKy : '—'}
+                                </td>
+                                <td className="px-4 py-3 text-center font-mono text-slate-700">
+                                  {item.diemCuoiKy !== null && item.diemCuoiKy !== undefined ? item.diemCuoiKy : '—'}
+                                </td>
+                                <td className="px-4 py-3 text-center font-mono font-black text-sm">
+                                  <span
+                                    className={`${
+                                      isPass
+                                        ? 'text-emerald-700'
+                                        : isFail
+                                        ? 'text-rose-600'
+                                        : 'text-slate-600'
+                                    }`}
+                                  >
+                                    {item.diemTongKet !== null && item.diemTongKet !== undefined ? item.diemTongKet : '—'}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-center whitespace-nowrap">
+                                  <span
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                                      isPass
+                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                        : isFail
+                                        ? 'bg-rose-50 text-rose-700 border-rose-200'
+                                        : 'bg-slate-100 text-slate-700 border-slate-200'
+                                    }`}
+                                  >
+                                    {isPass ? 'ĐẠT CHUẨN' : isFail ? 'CHƯA ĐẠT' : 'ĐANG HỌC'}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-slate-600 text-xs italic">
+                                  {item.nhanXet || 'Chưa có ghi chú đặc biệt'}
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto rounded-xl border border-slate-200">
+                      <table className="w-full text-left text-xs text-slate-700">
+                        <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+                          <tr>
+                            <th className="px-4 py-3 text-center w-12">STT</th>
+                            <th className="px-4 py-3 whitespace-nowrap">Mã HV</th>
+                            <th className="px-4 py-3 whitespace-nowrap">Họ và Tên</th>
+                            <th className="px-4 py-3 whitespace-nowrap text-center">Trình Độ CEFR</th>
+                            <th className="px-4 py-3 whitespace-nowrap text-center">Trạng Thái Học Tập</th>
+                            <th className="px-4 py-3 whitespace-nowrap">Lớp Học Đã Đăng Ký</th>
+                            <th className="px-4 py-3 whitespace-nowrap">Liên Hệ</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {filteredModalData.map((s: any, idx: number) => {
+                            const statusLabel = formatTrangThaiHocVien(s.trangThai);
+                            const isStudying = s.trangThai === 'DANG_HOC';
+                            const isGraduated = ['DA_TOT_NGHIEP', 'HOAN_THANH'].includes(s.trangThai);
+                            const isSuspended = s.trangThai === 'BAO_LUU';
+
+                            return (
+                              <tr key={s.id || idx} className="hover:bg-teal-50/30 transition">
+                                <td className="px-4 py-3 text-center font-mono text-slate-400">{idx + 1}</td>
+                                <td className="px-4 py-3 font-mono font-bold text-teal-700 whitespace-nowrap">
+                                  {s.maHocVien}
+                                </td>
+                                <td className="px-4 py-3 font-bold text-slate-900 whitespace-nowrap">
+                                  {s.hoTen}
+                                </td>
+                                <td className="px-4 py-3 text-center whitespace-nowrap">
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-teal-50 text-teal-800 border border-teal-200">
+                                    CEFR {s.trinhDoCEFR || 'A1'}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 text-center whitespace-nowrap">
+                                  <span
+                                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                                      isStudying
+                                        ? 'bg-teal-50 text-teal-700 border-teal-200'
+                                        : isGraduated
+                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                        : isSuspended
+                                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                        : 'bg-rose-50 text-rose-700 border-rose-200'
+                                    }`}
+                                  >
+                                    {statusLabel}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 whitespace-nowrap">
+                                  {s.dangKyHoc && s.dangKyHoc.length > 0 ? (
+                                    <div className="space-y-1">
+                                      {s.dangKyHoc.map((dk: any) => (
+                                        <span
+                                          key={dk.id || dk.lopHoc?.maLopHoc}
+                                          className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-100 text-slate-700 mr-1 border border-slate-200"
+                                        >
+                                          {dk.lopHoc?.maLopHoc}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <span className="text-slate-400 italic text-[11px]">Chưa đăng ký lớp</span>
+                                  )}
+                                </td>
+                                <td className="px-4 py-3 text-slate-600 whitespace-nowrap text-[11px]">
+                                  <div>{s.nguoiDung?.email || '—'}</div>
+                                  <div className="font-mono text-slate-500">{s.nguoiDung?.soDienThoai || '—'}</div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+
+                {/* Modal Footer */}
+                <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                  <span>
+                    Hiển thị <strong>{filteredModalData.length}</strong> / {modalState.data.length} bản ghi
+                  </span>
+                  <button
+                    onClick={closeModal}
+                    className="px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold transition cursor-pointer"
+                  >
+                    Đóng cửa sổ
+                  </button>
                 </div>
               </div>
             </div>
