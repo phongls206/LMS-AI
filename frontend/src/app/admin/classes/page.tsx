@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, coursesService, usersService, attendancesService } from '../../../services/api';
 import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
-import { 
+import {
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
   Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock, Users,
   Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight
@@ -518,11 +518,10 @@ export default function AdminClassesPage() {
 
         {message && (
           <div
-            className={`p-3.5 rounded-xl text-xs flex items-center space-x-2 shadow-sm ${
-              message.type === 'success'
-                ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                : 'bg-rose-50 border border-rose-200 text-rose-800'
-            }`}
+            className={`p-3.5 rounded-xl text-xs flex items-center space-x-2 shadow-sm ${message.type === 'success'
+              ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+              : 'bg-rose-50 border border-rose-200 text-rose-800'
+              }`}
           >
             {message.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" /> : <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />}
             <span>{message.text}</span>
@@ -614,127 +613,125 @@ export default function AdminClassesPage() {
                     </tr>
                   ) : (
                     displayedClasses.map((c) => (
-                    <tr key={c.id} className="hover:bg-teal-50/30 transition">
-                      <td className="px-5 py-4 font-mono font-bold text-teal-700">{c.maLopHoc}</td>
-                      <td className="px-5 py-4">
-                        <p className="font-bold text-slate-900">{c.tenLopHoc}</p>
-                        <p className="text-[11px] text-slate-500">{c.khoaHoc?.tenKhoaHoc}</p>
-                      </td>
-                      <td className="px-5 py-4">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setSelectedClassForStudents({
-                              id: Number(c.id),
-                              name: c.tenLopHoc,
-                              code: c.maLopHoc,
-                            })
-                          }
-                          className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 text-slate-700 hover:text-teal-700 border border-slate-200 hover:border-teal-400 transition-all cursor-pointer group shadow-sm text-xs font-semibold"
-                          title="Nhấn để xem danh sách học viên của lớp này"
-                        >
-                          <Users className="w-3.5 h-3.5 text-teal-600 group-hover:scale-110 transition-transform" />
-                          <span className="font-bold text-slate-900 group-hover:text-teal-700">
-                            {c.siSoHienTai}
-                          </span>
-                          <span className="text-slate-400">/</span>
-                          <span>{c.siSoToiDa} HV</span>
-                        </button>
-                      </td>
-                      <td className="px-5 py-4">
-                        {c.lichHoc && c.lichHoc.length > 0 ? (
-                          <div className="space-y-1">
-                            {c.lichHoc.map((l: any) => (
-                              <span
-                                key={l.id}
-                                className="inline-block mr-1 px-2 py-0.5 rounded bg-slate-100 text-[11px] text-slate-700 font-mono font-semibold border border-slate-200"
-                              >
-                                T{l.thuTrongTuan} ({l.phongHoc})
-                              </span>
-                            ))}
-                          </div>
-                        ) : (
-                          <span className="text-amber-700 text-[11px] font-semibold">Chưa xếp lịch</span>
-                        )}
-                      </td>
-                      <td className="px-5 py-4">
-                        {c.phanCong && c.phanCong.length > 0 ? (
-                          <span className="text-teal-700 font-bold">{c.phanCong[0].giaoVien?.hoTen}</span>
-                        ) : (
-                          <span className="text-slate-400 italic">Chưa phân công</span>
-                        )}
-                      </td>
-                      <td className="px-5 py-4">
-                        <select
-                          value={c.trangThai}
-                          onChange={(e) => handleStatusChange(Number(c.id), e.target.value)}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-bold focus:outline-none border transition cursor-pointer ${
-                            c.trangThai === 'DANG_MO_DANG_KY'
+                      <tr key={c.id} className="hover:bg-teal-50/30 transition">
+                        <td className="px-5 py-4 font-mono font-bold text-teal-700">{c.maLopHoc}</td>
+                        <td className="px-5 py-4">
+                          <p className="font-bold text-slate-900">{c.tenLopHoc}</p>
+                          <p className="text-[11px] text-slate-500">{c.khoaHoc?.tenKhoaHoc}</p>
+                        </td>
+                        <td className="px-5 py-4">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setSelectedClassForStudents({
+                                id: Number(c.id),
+                                name: c.tenLopHoc,
+                                code: c.maLopHoc,
+                              })
+                            }
+                            className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 text-slate-700 hover:text-teal-700 border border-slate-200 hover:border-teal-400 transition-all cursor-pointer group shadow-sm text-xs font-semibold"
+                            title="Nhấn để xem danh sách học viên của lớp này"
+                          >
+                            <Users className="w-3.5 h-3.5 text-teal-600 group-hover:scale-110 transition-transform" />
+                            <span className="font-bold text-slate-900 group-hover:text-teal-700">
+                              {c.siSoHienTai}
+                            </span>
+                            <span className="text-slate-400">/</span>
+                            <span>{c.siSoToiDa} </span>
+                          </button>
+                        </td>
+                        <td className="px-5 py-4">
+                          {c.lichHoc && c.lichHoc.length > 0 ? (
+                            <div className="space-y-1">
+                              {c.lichHoc.map((l: any) => (
+                                <span
+                                  key={l.id}
+                                  className="inline-block mr-1 px-2 py-0.5 rounded bg-slate-100 text-[11px] text-slate-700 font-mono font-semibold border border-slate-200"
+                                >
+                                  T{l.thuTrongTuan} ({l.phongHoc})
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-amber-700 text-[11px] font-semibold">Chưa xếp lịch</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4">
+                          {c.phanCong && c.phanCong.length > 0 ? (
+                            <span className="text-teal-700 font-bold">{c.phanCong[0].giaoVien?.hoTen}</span>
+                          ) : (
+                            <span className="text-slate-400 italic">Chưa phân công</span>
+                          )}
+                        </td>
+                        <td className="px-5 py-4">
+                          <select
+                            value={c.trangThai}
+                            onChange={(e) => handleStatusChange(Number(c.id), e.target.value)}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold focus:outline-none border transition cursor-pointer ${c.trangThai === 'DANG_MO_DANG_KY'
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
                               : c.trangThai === 'DANG_HOC'
-                              ? 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100'
-                              : c.trangThai === 'SAP_MO'
-                              ? 'bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100'
-                              : c.trangThai === 'DA_KET_THUC'
-                              ? 'bg-slate-100 text-slate-600 border-slate-200'
-                              : 'bg-rose-50 text-rose-700 border-rose-200'
-                          }`}
-                        >
-                          <option value="SAP_MO" className="bg-white text-sky-700">🔵 Sắp Mở</option>
-                          <option value="DANG_MO_DANG_KY" className="bg-white text-emerald-700">🟢 Đang Mở Tuyển Sinh</option>
-                          <option value="DANG_HOC" className="bg-white text-teal-700">🟣 Đang Học</option>
-                          <option value="DA_KET_THUC" className="bg-white text-slate-700">⚪ Đã Kết Thúc</option>
-                          <option value="DA_HUY" className="bg-white text-rose-700">🔴 Đã Hủy</option>
-                        </select>
-                      </td>
-                      <td className="px-5 py-4 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-2">
-                          {c.trangThai === 'DA_HUY' ? (
-                            <span className="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-bold">
-                              Lớp Đã Hủy
-                            </span>
-                          ) : (
-                            <>
-                              <button
-                                onClick={() => handleOpenSessions(Number(c.id))}
-                                className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer ${
-                                  (c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0
+                                ? 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100'
+                                : c.trangThai === 'SAP_MO'
+                                  ? 'bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100'
+                                  : c.trangThai === 'DA_KET_THUC'
+                                    ? 'bg-slate-100 text-slate-600 border-slate-200'
+                                    : 'bg-rose-50 text-rose-700 border-rose-200'
+                              }`}
+                          >
+                            <option value="SAP_MO" className="bg-white text-sky-700">🔵 Sắp Mở</option>
+                            <option value="DANG_MO_DANG_KY" className="bg-white text-emerald-700">🟢 Đang Mở Tuyển Sinh</option>
+                            <option value="DANG_HOC" className="bg-white text-teal-700">🟣 Đang Học</option>
+                            <option value="DA_KET_THUC" className="bg-white text-slate-700">⚪ Đã Kết Thúc</option>
+                            <option value="DA_HUY" className="bg-white text-rose-700">🔴 Đã Hủy</option>
+                          </select>
+                        </td>
+                        <td className="px-5 py-4 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-2">
+                            {c.trangThai === 'DA_HUY' ? (
+                              <span className="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-bold">
+                                Lớp Đã Hủy
+                              </span>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => handleOpenSessions(Number(c.id))}
+                                  className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer ${(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0
                                     ? 'bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white border-amber-300'
                                     : 'bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border-indigo-200'
-                                }`}
-                                title="Xem và quản lý các buổi học để điểm danh"
-                              >
-                                <Calendar className="w-3.5 h-3.5" />
-                                <span>
-                                  {(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0 ? '⚠️ 0 Buổi (Tạo)' : `${c._count?.buoiHoc ?? c.buoiHoc?.length} Buổi`}
-                                </span>
-                              </button>
-                              <button
-                                onClick={() => handleOpenAddSchedule(c.id)}
-                                className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
-                              >
-                                + Lịch Học
-                              </button>
-                              <button
-                                onClick={() => setShowAssignTeacher(c.id)}
-                                className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 hover:border-emerald-600 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
-                              >
-                                + Gán GV
-                              </button>
-                              <button
-                                onClick={() => handleOpenEditClass(c)}
-                                className="inline-flex items-center p-1.5 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 border border-slate-200 hover:border-teal-200 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
-                                title="Chỉnh sửa thông tin & phòng học của lớp"
-                              >
-                                <Edit3 className="w-3.5 h-3.5" />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
+                                    }`}
+                                  title="Xem và quản lý các buổi học để điểm danh"
+                                >
+                                  <Calendar className="w-3.5 h-3.5" />
+                                  <span>
+                                    {(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0 ? '⚠️ 0 Buổi (Tạo)' : `${c._count?.buoiHoc ?? c.buoiHoc?.length} Buổi`}
+                                  </span>
+                                </button>
+                                <button
+                                  onClick={() => handleOpenAddSchedule(c.id)}
+                                  className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
+                                >
+                                  + Lịch Học
+                                </button>
+                                <button
+                                  onClick={() => setShowAssignTeacher(c.id)}
+                                  className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 hover:border-emerald-600 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
+                                >
+                                  + Gán GV
+                                </button>
+                                <button
+                                  onClick={() => handleOpenEditClass(c)}
+                                  className="inline-flex items-center p-1.5 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 border border-slate-200 hover:border-teal-200 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
+                                  title="Chỉnh sửa thông tin & phòng học của lớp"
+                                >
+                                  <Edit3 className="w-3.5 h-3.5" />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
@@ -803,11 +800,10 @@ export default function AdminClassesPage() {
                         <button
                           key={p}
                           onClick={() => setPage(p)}
-                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
-                            page === p
-                              ? 'bg-teal-600 text-white shadow-sm'
-                              : 'bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#1f2d45]'
-                          }`}
+                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${page === p
+                            ? 'bg-teal-600 text-white shadow-sm'
+                            : 'bg-white dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-[#1f2d45]'
+                            }`}
                         >
                           {p}
                         </button>
@@ -960,11 +956,10 @@ export default function AdminClassesPage() {
                           key={num}
                           type="button"
                           onClick={() => setClassForm({ ...classForm, soBuoiHoc: num })}
-                          className={`px-2 py-1 rounded-md text-[11px] font-bold border transition cursor-pointer ${
-                            classForm.soBuoiHoc === num
-                              ? 'bg-teal-600 text-white border-teal-600'
-                              : 'bg-white dark:bg-slate-800 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-700 hover:bg-teal-100 dark:hover:bg-teal-900/50'
-                          }`}
+                          className={`px-2 py-1 rounded-md text-[11px] font-bold border transition cursor-pointer ${classForm.soBuoiHoc === num
+                            ? 'bg-teal-600 text-white border-teal-600'
+                            : 'bg-white dark:bg-slate-800 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-700 hover:bg-teal-100 dark:hover:bg-teal-900/50'
+                            }`}
                         >
                           {num} buổi
                         </button>
@@ -1160,11 +1155,10 @@ export default function AdminClassesPage() {
                           key={p.label}
                           type="button"
                           onClick={() => setSelectedDays([...p.days])}
-                          className={`px-2 py-1 rounded-lg text-[11px] font-bold border transition cursor-pointer ${
-                            isMatch
-                              ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
-                              : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
-                          }`}
+                          className={`px-2 py-1 rounded-lg text-[11px] font-bold border transition cursor-pointer ${isMatch
+                            ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
+                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                            }`}
                         >
                           {p.label}
                         </button>
@@ -1190,11 +1184,10 @@ export default function AdminClassesPage() {
                           key={day.value}
                           type="button"
                           onClick={() => toggleDay(day.value)}
-                          className={`py-2 px-1 rounded-xl text-xs font-bold border text-center transition flex flex-col items-center justify-center cursor-pointer ${
-                            isSelected
-                              ? 'bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20'
-                              : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
-                          }`}
+                          className={`py-2 px-1 rounded-xl text-xs font-bold border text-center transition flex flex-col items-center justify-center cursor-pointer ${isSelected
+                            ? 'bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20'
+                            : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                            }`}
                         >
                           <span className="text-sm">{isSelected ? '✓' : day.short}</span>
                           <span className="text-[10px] mt-0.5 opacity-90">{day.label}</span>
@@ -1629,19 +1622,18 @@ export default function AdminClassesPage() {
                                   </td>
                                   <td className="py-2.5 px-3">
                                     <span
-                                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                                        s.trangThai === 'DA_KET_THUC'
-                                          ? 'bg-slate-100 text-slate-600'
-                                          : s.trangThai === 'DANG_DIEN_RA'
+                                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${s.trangThai === 'DA_KET_THUC'
+                                        ? 'bg-slate-100 text-slate-600'
+                                        : s.trangThai === 'DANG_DIEN_RA'
                                           ? 'bg-amber-50 text-amber-700 border border-amber-200'
                                           : 'bg-teal-50 text-teal-700 border border-teal-200'
-                                      }`}
+                                        }`}
                                     >
                                       {s.trangThai === 'DA_KET_THUC'
                                         ? 'Đã học'
                                         : s.trangThai === 'DANG_DIEN_RA'
-                                        ? 'Đang diễn ra'
-                                        : 'Chưa học'}
+                                          ? 'Đang diễn ra'
+                                          : 'Chưa học'}
                                     </span>
                                   </td>
                                   <td className="py-2.5 px-3 text-right">
