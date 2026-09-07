@@ -719,7 +719,7 @@ export default function AdminClassesPage() {
                                 >
                                   <Calendar className="w-3.5 h-3.5" />
                                   <span>
-                                    {(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0 ? '⚠️ 0 Buổi (Tạo)' : `${c._count?.buoiHoc ?? c.buoiHoc?.length} Buổi`}
+                                    {(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0 ? '⚠️ 0 Buổi' : `${c._count?.buoiHoc ?? c.buoiHoc?.length} Buổi`}
                                   </span>
                                 </button>
                                 <button
@@ -1708,7 +1708,7 @@ export default function AdminClassesPage() {
                         </table>
                       </div>
                     ) : (
-                      <div className="p-8 rounded-xl border-2 border-dashed border-amber-200 bg-amber-50/50 text-center space-y-3">
+                      <div className="p-8 rounded-xl border-2 border-dashed border-amber-200 bg-amber-50 text-center space-y-3">
                         <AlertCircle className="w-8 h-8 text-amber-500 mx-auto" />
                         <div>
                           <h4 className="text-sm font-bold text-amber-900">Lớp học này chưa có buổi học nào</h4>
