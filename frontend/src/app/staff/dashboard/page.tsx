@@ -190,32 +190,28 @@ export default function StaffDashboardPage() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <button
                 onClick={() => setActiveTab('my_payments')}
-                className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                  activeTab === 'my_payments'
-                    ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                }`}
+                className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${activeTab === 'my_payments'
+                  ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
               >
                 <UserCheck className="w-4 h-4" />
-                <span>Phiếu Thu Của Tôi ({currentUser?.tenDangNhap}) ({myPayments.length})</span>
+                <span>Phiếu Thu Của Tôi ({myPayments.length})</span>
               </button>
 
               <button
                 onClick={() => setActiveTab('pending_invoices')}
-                className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                  activeTab === 'pending_invoices'
-                    ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                }`}
+                className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${activeTab === 'pending_invoices'
+                  ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
               >
                 <AlertCircle className="w-4 h-4" />
                 <span>Hóa Đơn Chờ Thu ({pendingInvoices.length})</span>
               </button>
             </div>
 
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 self-start sm:self-auto">
-              Đang làm việc với tư cách: <strong className="text-teal-700 dark:text-teal-400 font-bold">{currentUser?.tenDangNhap}</strong>
-            </span>
+
           </div>
 
           {/* Nội dung Tab 1: Phiếu Thu Của Tôi */}
