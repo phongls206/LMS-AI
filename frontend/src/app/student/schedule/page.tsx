@@ -235,11 +235,7 @@ export default function StudentSchedulePage() {
                         )}
                       </button>
 
-                      <div className="flex items-center gap-3 flex-wrap">
-                        <span className="text-[11px] text-slate-400">
-                          {isRecruiting ? '• Lớp chưa khai giảng' : '• Lớp đã vào học chính thức'}
-                        </span>
-                      </div>
+
                     </div>
                   </div>
 
