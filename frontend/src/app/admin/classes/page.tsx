@@ -764,7 +764,7 @@ export default function AdminClassesPage() {
                           <select
                             value={c.trangThai}
                             onChange={(e) => handleStatusChange(Number(c.id), e.target.value)}
-                            className={`px-2 py-1 rounded-lg text-[11px] font-bold focus:outline-none border transition cursor-pointer w-full tracking-tight ${c.trangThai === 'DANG_MO_DANG_KY'
+                            className={`px-1 py-1 rounded-lg text-[11px] font-bold focus:outline-none border transition cursor-pointer w-full tracking-tight ${c.trangThai === 'DANG_MO_DANG_KY'
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
                               : c.trangThai === 'DANG_HOC'
                                 ? 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100 dark:bg-teal-950/50 dark:text-teal-300 dark:border-teal-800'
