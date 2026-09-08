@@ -114,7 +114,7 @@ export default function AdminReportsPage() {
     const totalBilled = invoices.reduce((sum, inv) => sum + Number(inv.soTienPhaiTra || 0), 0);
     const totalCollected = invoices.reduce((sum, inv) => sum + Number(inv.soTienDaTra || 0), 0);
     const totalDebt = Math.max(0, totalBilled - totalCollected);
-    const collectionRate = totalBilled > 0 ? ((totalCollected / totalBilled) * 100).toFixed(1) : '100';
+    const collectionRate = totalBilled > 0 ? ((totalCollected / totalBilled) * 100).toFixed(1) : '0.0';
 
     // Cơ cấu thanh toán
     const bankPayments = payments
@@ -123,10 +123,10 @@ export default function AdminReportsPage() {
     const cashPayments = payments
       .filter((p) => p.phuongThuc === 'TIEN_MAT')
       .reduce((sum, p) => sum + Number(p.soTien || 0), 0);
-    const totalPaymentSum = bankPayments + cashPayments || 1;
+    const totalPaymentSum = bankPayments + cashPayments;
 
-    const bankPercent = Math.round((bankPayments / totalPaymentSum) * 100);
-    const cashPercent = 100 - bankPercent;
+    const bankPercent = totalPaymentSum > 0 ? Math.round((bankPayments / totalPaymentSum) * 100) : 0;
+    const cashPercent = totalPaymentSum > 0 ? 100 - bankPercent : 0;
 
     return {
       totalBilled,
@@ -728,7 +728,7 @@ export default function AdminReportsPage() {
                         <span>Kết Quả Đào Tạo & Chuẩn Đầu Ra</span>
                       </h3>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                        Thống kê đánh giá điểm cuối khóa trên các lớp ({stats?.tyLeHoanThanh?.tongLuotDanhGia || 81} lượt)
+                        Thống kê đánh giá điểm cuối khóa trên các lớp ({stats?.tyLeHoanThanh?.tongLuotDanhGia ?? 0} lượt)
                       </p>
                     </div>
                     <button
@@ -751,7 +751,7 @@ export default function AdminReportsPage() {
                           openDrillDown(
                             'Danh Sách Học Viên Đạt Chuẩn Đầu Ra Môn Học',
                             'Tổng hợp các lượt học viên có Điểm Tổng Kết ≥ 50 và Chuyên Cần ≥ 80%',
-                            `${stats?.tyLeHoanThanh?.dat || 67} Lượt Đạt`,
+                            `${stats?.tyLeHoanThanh?.dat ?? 0} Lượt Đạt`,
                             'emerald',
                             'grades',
                             (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'DAT')
@@ -763,7 +763,7 @@ export default function AdminReportsPage() {
                           <span>ĐẠT CHUẨN</span>
                           <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-700 dark:text-emerald-400" />
                         </div>
-                        <p className="text-xl font-black text-emerald-800 dark:text-emerald-300 mt-1">{stats?.tyLeHoanThanh?.dat || 0}</p>
+                        <p className="text-xl font-black text-emerald-800 dark:text-emerald-300 mt-1">{stats?.tyLeHoanThanh?.dat ?? 0}</p>
                         <p className="text-[10px] text-emerald-600 dark:text-emerald-400/80 mt-0.5">Cấp chứng nhận</p>
                       </div>
 
@@ -773,7 +773,7 @@ export default function AdminReportsPage() {
                           openDrillDown(
                             'Danh Sách Học Viên Chưa Đạt Chuẩn Môn Học',
                             'Học viên có Chuyên Cần < 80% hoặc Điểm Tổng Kết < 50 (cần thi lại / học lại)',
-                            `${stats?.tyLeHoanThanh?.khongDat || 8} Lượt Chưa Đạt`,
+                            `${stats?.tyLeHoanThanh?.khongDat ?? 0} Lượt Chưa Đạt`,
                             'rose',
                             'grades',
                             (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'KHONG_DAT')
@@ -785,7 +785,7 @@ export default function AdminReportsPage() {
                           <span>CHƯA ĐẠT</span>
                           <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-700 dark:text-rose-400" />
                         </div>
-                        <p className="text-xl font-black text-rose-800 dark:text-rose-300 mt-1">{stats?.tyLeHoanThanh?.khongDat || 0}</p>
+                        <p className="text-xl font-black text-rose-800 dark:text-rose-300 mt-1">{stats?.tyLeHoanThanh?.khongDat ?? 0}</p>
                         <p className="text-[10px] text-rose-600 dark:text-rose-400/80 mt-0.5">Cần thi lại</p>
                       </div>
 
@@ -795,7 +795,7 @@ export default function AdminReportsPage() {
                           openDrillDown(
                             'Danh Sách Học Viên Đang Học / Chưa Thi Cuối Kỳ',
                             'Học viên đã hoàn thành điểm giữa kỳ, đang học nửa chặng đường và chờ thi cuối khóa',
-                            `${stats?.tyLeHoanThanh?.chuaXepLoai || 6} Lượt Đang Học`,
+                            `${stats?.tyLeHoanThanh?.chuaXepLoai ?? 0} Lượt Đang Học`,
                             'slate',
                             'grades',
                             (stats?.chiTietKetQua || []).filter((g: any) => g.trangThaiHoanThanh === 'CHUA_XEP_LOAI')
@@ -807,7 +807,7 @@ export default function AdminReportsPage() {
                           <span>ĐANG HỌC</span>
                           <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-700 dark:text-slate-300" />
                         </div>
-                        <p className="text-xl font-black text-slate-800 dark:text-slate-100 mt-1">{stats?.tyLeHoanThanh?.chuaXepLoai || 0}</p>
+                        <p className="text-xl font-black text-slate-800 dark:text-slate-100 mt-1">{stats?.tyLeHoanThanh?.chuaXepLoai ?? 0}</p>
                         <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Chưa xếp loại</p>
                       </div>
 
@@ -817,7 +817,7 @@ export default function AdminReportsPage() {
                           openDrillDown(
                             'Danh Sách Học Viên Mới Ghi Danh (Chưa Phát Sinh Điểm)',
                             'Học viên mới đăng ký lớp học hoặc lớp chưa bước vào kỳ kiểm tra đánh giá',
-                            `${stats?.tyLeHoanThanh?.chuaCoDiem || 4} Học Viên`,
+                            `${stats?.tyLeHoanThanh?.chuaCoDiem ?? 0} Học Viên`,
                             'amber',
                             'students',
                             (stats?.chiTietHocVien || students).filter((s: any) => !s.ketQua || s.ketQua.length === 0)
@@ -829,14 +829,14 @@ export default function AdminReportsPage() {
                           <span>MỚI GHI DANH</span>
                           <Eye className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-amber-700 dark:text-amber-400" />
                         </div>
-                        <p className="text-xl font-black text-amber-800 dark:text-amber-300 mt-1">{stats?.tyLeHoanThanh?.chuaCoDiem || 4}</p>
+                        <p className="text-xl font-black text-amber-800 dark:text-amber-300 mt-1">{stats?.tyLeHoanThanh?.chuaCoDiem ?? 0}</p>
                         <p className="text-[10px] text-amber-600 dark:text-amber-400/80 mt-0.5">Chưa có điểm</p>
                       </div>
                     </div>
 
                     <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/60 text-xs text-slate-600 dark:text-slate-300 flex justify-between items-center">
                       <span className="font-medium">Tỷ lệ đạt chuẩn trên số lượt đã đánh giá:</span>
-                      <strong className="text-teal-700 dark:text-teal-400 text-sm font-black">{stats?.tyLeHoanThanh?.tyLeDatPhanTram || 89.3}%</strong>
+                      <strong className="text-teal-700 dark:text-teal-400 text-sm font-black">{stats?.tyLeHoanThanh?.tyLeDatPhanTram ?? 0}%</strong>
                     </div>
                     <p className="text-[11px] text-teal-700/90 dark:text-teal-300 bg-teal-50/60 dark:bg-teal-950/30 p-2 rounded-lg border border-teal-100 dark:border-teal-900/60 flex items-center gap-1.5 font-medium">
                       <Eye className="w-3.5 h-3.5 shrink-0 text-teal-600 dark:text-teal-400" />

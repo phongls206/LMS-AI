@@ -1,8 +1,17 @@
 import * as XLSX from 'xlsx';
 
+export interface GradeItem {
+  cc: number | '' | null;
+  gk: number | '' | null;
+  ck: number | '' | null;
+  nhanXet?: string;
+}
+
 export interface GradeExportOptions {
   classDetail: any;
-  gradesMap: Record<number, { cc: number; gk: number; ck: number; nhanXet: string }>;
+  gradesMap: Record<number, GradeItem>;
+  calculateFinal?: any;
+  isPass?: any;
   teacherName?: string;
 }
 
@@ -16,7 +25,7 @@ export interface AttendanceExportOptions {
 
 export interface FullClassExportOptions {
   classDetail: any;
-  gradesMap: Record<number, { cc: number; gk: number; ck: number; nhanXet: string }>;
+  gradesMap: Record<number, GradeItem>;
   sessions: any[];
   matrixData?: any;
   teacherName?: string;
@@ -48,8 +57,6 @@ export function exportClassGradeBookExcel({ classDetail, gradesMap, teacherName 
     .map((dk: any) => dk.hocVien)
     .filter(Boolean);
 
-  let passedCount = 0;
-  let failedCount = 0;
 
   const rows: any[][] = [
     ['TRUNG TÂM ANH NGỮ QUỐC TẾ ETC — ETC ENGLISH CENTER'],
@@ -76,41 +83,65 @@ export function exportClassGradeBookExcel({ classDetail, gradesMap, teacherName 
     ],
   ];
 
-  students.forEach((stu: any, idx: number) => {
-    const g = gradesMap[stu.id] || { cc: 90, gk: 75, ck: 80, nhanXet: '' };
-    const cc = Number(g.cc);
-    const gk = Number(g.gk);
-    const ck = Number(g.ck);
-    const finalScore = Number((cc * 0.2 + gk * 0.3 + ck * 0.5).toFixed(2));
-    const isPass = finalScore >= 50.0 && cc >= 80.0;
+  let passedCount = 0;
+  let failedCount = 0;
+  let inProgressCount = 0;
 
-    if (isPass) passedCount++;
-    else failedCount++;
+  students.forEach((stu: any, idx: number) => {
+    const g = gradesMap[stu.id] || { cc: '', gk: '', ck: '', nhanXet: '' };
+    const hasAllGrades =
+      g.cc !== '' && g.cc !== null && g.cc !== undefined && !isNaN(Number(g.cc)) &&
+      g.gk !== '' && g.gk !== null && g.gk !== undefined && !isNaN(Number(g.gk)) &&
+      g.ck !== '' && g.ck !== null && g.ck !== undefined && !isNaN(Number(g.ck));
+
+    let finalScore: number | string = '—';
+    let resultText = 'Chưa đủ điểm';
+
+    if (hasAllGrades) {
+      const cc = Number(g.cc);
+      const gk = Number(g.gk);
+      const ck = Number(g.ck);
+      const score = Number((cc * 0.2 + gk * 0.3 + ck * 0.5).toFixed(2));
+      finalScore = score;
+      const isPassed = score >= 50.0 && cc >= 80.0;
+      if (isPassed) {
+        passedCount++;
+        resultText = 'ĐẠT (Passed)';
+      } else {
+        failedCount++;
+        resultText = 'KHÔNG ĐẠT (Failed)';
+      }
+    } else {
+      inProgressCount++;
+    }
 
     rows.push([
       idx + 1,
       stu.maHocVien || `HV${String(stu.id).padStart(3, '0')}`,
       stu.hoTen,
       stu.trinhDoCEFR ? `CEFR ${stu.trinhDoCEFR}` : 'B1',
-      cc,
-      gk,
-      ck,
+      g.cc !== '' && g.cc !== null && g.cc !== undefined ? Number(g.cc) : '—',
+      g.gk !== '' && g.gk !== null && g.gk !== undefined ? Number(g.gk) : '—',
+      g.ck !== '' && g.ck !== null && g.ck !== undefined ? Number(g.ck) : '—',
       finalScore,
-      isPass ? 'ĐẠT (Passed)' : 'KHÔNG ĐẠT (Failed)',
+      resultText,
       g.nhanXet || '',
     ]);
   });
 
   // Thống kê tổng hợp ở cuối bảng
   const total = students.length;
-  const passRate = total > 0 ? ((passedCount / total) * 100).toFixed(1) : '0';
-  const failRate = total > 0 ? ((failedCount / total) * 100).toFixed(1) : '0';
+  const totalEvaluated = passedCount + failedCount;
+  const passRate = totalEvaluated > 0 ? ((passedCount / totalEvaluated) * 100).toFixed(1) : '0.0';
+  const failRate = totalEvaluated > 0 ? ((failedCount / totalEvaluated) * 100).toFixed(1) : '0.0';
 
   rows.push(['']);
   rows.push(['TỔNG KẾT & THỐNG KÊ LỚP HỌC:']);
   rows.push(['Tổng số học viên:', total]);
   rows.push(['Số lượng học viên ĐẠT:', `${passedCount} học viên (${passRate}%)`]);
   rows.push(['Số lượng học viên KHÔNG ĐẠT:', `${failedCount} học viên (${failRate}%)`]);
+  rows.push(['Số học viên đang học / chưa đủ điểm:', `${inProgressCount} học viên`]);
+  rows.push(['Tỷ lệ đạt chuẩn (trên số đã đánh giá):', `${passRate}%`]);
   rows.push(['']);
   rows.push([
     'Giảng Viên Phụ Trách',
@@ -401,25 +432,41 @@ export function exportFullClassPackageExcel({
   ];
 
   students.forEach((stu: any, idx: number) => {
-    const g = gradesMap[stu.id] || { cc: 90, gk: 75, ck: 80, nhanXet: '' };
-    const cc = Number(g.cc);
-    const gk = Number(g.gk);
-    const ck = Number(g.ck);
-    const finalScore = Number((cc * 0.2 + gk * 0.3 + ck * 0.5).toFixed(2));
-    const isPass = finalScore >= 50.0 && cc >= 80.0;
-    if (isPass) passedCount++;
-    else failedCount++;
+    const g = gradesMap[stu.id] || { cc: '', gk: '', ck: '', nhanXet: '' };
+    const hasAllGrades =
+      g.cc !== '' && g.cc !== null && g.cc !== undefined && !isNaN(Number(g.cc)) &&
+      g.gk !== '' && g.gk !== null && g.gk !== undefined && !isNaN(Number(g.gk)) &&
+      g.ck !== '' && g.ck !== null && g.ck !== undefined && !isNaN(Number(g.ck));
+
+    let finalScore: number | string = '—';
+    let resultText = 'Chưa đủ điểm';
+
+    if (hasAllGrades) {
+      const cc = Number(g.cc);
+      const gk = Number(g.gk);
+      const ck = Number(g.ck);
+      const score = Number((cc * 0.2 + gk * 0.3 + ck * 0.5).toFixed(2));
+      finalScore = score;
+      const isPassed = score >= 50.0 && cc >= 80.0;
+      if (isPassed) {
+        passedCount++;
+        resultText = 'ĐẠT';
+      } else {
+        failedCount++;
+        resultText = 'KHÔNG ĐẠT';
+      }
+    }
 
     gradeRows.push([
       idx + 1,
       stu.maHocVien || `HV${String(stu.id).padStart(3, '0')}`,
       stu.hoTen,
       stu.trinhDoCEFR || 'B1',
-      cc,
-      gk,
-      ck,
+      g.cc !== '' && g.cc !== null && g.cc !== undefined ? Number(g.cc) : '—',
+      g.gk !== '' && g.gk !== null && g.gk !== undefined ? Number(g.gk) : '—',
+      g.ck !== '' && g.ck !== null && g.ck !== undefined ? Number(g.ck) : '—',
       finalScore,
-      isPass ? 'ĐẠT' : 'KHÔNG ĐẠT',
+      resultText,
       g.nhanXet || '',
     ]);
   });
@@ -465,8 +512,8 @@ export function exportFullClassPackageExcel({
     });
 
     const attended = coMat + diMuon + coPhep;
-    const totalSessions = sortedSessions.length || 1;
-    const rate = Math.round((attended / totalSessions) * 100);
+    const totalSessions = sortedSessions.length;
+    const rateStr = totalSessions > 0 ? `${Math.round((attended / totalSessions) * 100)}%` : '-';
 
     attendanceRows.push([
       idx + 1,
@@ -477,7 +524,7 @@ export function exportFullClassPackageExcel({
       diMuon,
       coPhep,
       vang,
-      `${rate}%`,
+      rateStr,
     ]);
   });
 

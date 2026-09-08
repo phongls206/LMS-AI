@@ -906,11 +906,11 @@ RÀNG BUỘC NGHIÊM NGẶT:
     const absentSessions = attendances.filter((a) => a.trangThai === 'VANG').length;
     const lateSessions = attendances.filter((a) => a.trangThai === 'DI_MUON').length;
     const excusedSessions = attendances.filter((a) => a.trangThai === 'CO_PHEP').length;
-    const attendanceRate = totalSessions > 0 ? ((presentSessions / totalSessions) * 100).toFixed(1) : '100';
+    const attendanceRate = totalSessions > 0 ? ((presentSessions / totalSessions) * 100).toFixed(1) : '0.0';
 
     // Xác định giai đoạn tiến độ học tập thực tế
     let giaiDoan = 'DANG_HOC_DAU_KHOA';
-    let giaiDoanText = 'Đang học giai đoạn đầu (Chưa có điểm kiểm tra)';
+    let giaiDoanText = totalSessions === 0 ? 'Mới đăng ký (Chưa diễn ra buổi học nào)' : 'Đang học giai đoạn đầu (Chưa có điểm kiểm tra)';
     if (grade?.diemCuoiKy != null || grade?.diemTongKet != null) {
       giaiDoan = 'DA_TONG_KET_CUOI_KHOA';
       giaiDoanText = 'Đã hoàn thành và tổng kết khóa học';
@@ -930,7 +930,7 @@ RÀNG BUỘC NGHIÊM NGẶT:
       vang: absentSessions,
       diMuon: lateSessions,
       coPhep: excusedSessions,
-      tyLeChuyenCan: `${attendanceRate}%`,
+      tyLeChuyenCan: totalSessions > 0 ? `${attendanceRate}%` : 'Chưa học',
       diemChuyenCan: grade?.diemChuyenCan != null ? Number(grade.diemChuyenCan) : null,
       diemGiuaKy: grade?.diemGiuaKy != null ? Number(grade.diemGiuaKy) : null,
       diemCuoiKy: grade?.diemCuoiKy != null ? Number(grade.diemCuoiKy) : null,
@@ -945,7 +945,7 @@ Dữ liệu học tập thực tế (Ground Truth) của học viên:
 - Họ và tên: ${student.hoTen} (Mã HV: ${student.maHocVien}, Trình độ: ${student.trinhDoCEFR})
 - Lớp học: ${lopHoc.tenLopHoc} (${lopHoc.maLopHoc}) - Khóa học: ${lopHoc.khoaHoc?.tenKhoaHoc || ''}
 - Giai đoạn học tập hiện tại: ${giaiDoanText}
-- Chuyên cần: ${presentSessions}/${totalSessions} buổi tham gia (${attendanceRate}%), Vắng: ${absentSessions} buổi, Đi muộn: ${lateSessions} buổi, Có phép: ${excusedSessions} buổi.
+- Chuyên cần: ${totalSessions > 0 ? `${presentSessions}/${totalSessions} buổi tham gia (${attendanceRate}%), Vắng: ${absentSessions} buổi, Đi muộn: ${lateSessions} buổi, Có phép: ${excusedSessions} buổi.` : 'Lớp học chưa bắt đầu / Chưa có buổi học nào được ghi nhận điểm danh.'}
 - Điểm chuyên cần (20%): ${grade?.diemChuyenCan != null ? grade.diemChuyenCan : 'Chưa có'}
 - Điểm giữa kỳ (30%): ${grade?.diemGiuaKy != null ? grade.diemGiuaKy : 'Chưa thi'}
 - Điểm cuối kỳ (50%): ${grade?.diemCuoiKy != null ? grade.diemCuoiKy : 'Chưa thi'}
@@ -995,7 +995,7 @@ Trả về đúng định dạng JSON hợp lệ:
             cachedGroundTruth &&
             cachedGroundTruth.tongBuoiHoc === duLieuGoc.tongBuoiHoc &&
             cachedGroundTruth.coMat === duLieuGoc.coMat &&
-            cachedGroundTruth.tyLeChuyenCan === `${attendanceRate}%` &&
+            cachedGroundTruth.tyLeChuyenCan === duLieuGoc.tyLeChuyenCan &&
             cachedGroundTruth.diemChuyenCan === duLieuGoc.diemChuyenCan &&
             cachedGroundTruth.diemGiuaKy === duLieuGoc.diemGiuaKy &&
             cachedGroundTruth.diemCuoiKy === duLieuGoc.diemCuoiKy &&
@@ -1057,11 +1057,15 @@ Trả về đúng định dạng JSON hợp lệ:
       const isMidterm = grade?.diemGiuaKy != null && grade?.diemCuoiKy == null;
       aiInsights = {
         diemManh:
-          Number(attendanceRate) >= 80
+          totalSessions === 0
+            ? 'Học viên đã hoàn tất ghi danh và sẵn sàng cho các buổi học đầu tiên.'
+            : Number(attendanceRate) >= 80
             ? `Học viên duy trì tỷ lệ chuyên cần xuất sắc (${attendanceRate}%), tích cực tham gia các buổi học.`
             : `Học viên đã tham gia ${presentSessions} buổi học trong chương trình.`,
         canKhacPhuc:
-          Number(attendanceRate) < 80
+          totalSessions === 0
+            ? 'Lớp học hiện tại chưa diễn ra buổi học nào. Cần chuẩn bị tài liệu và đi học đúng giờ ngay từ buổi khai giảng.'
+            : Number(attendanceRate) < 80
             ? `Tỷ lệ chuyên cần hiện tại (${attendanceRate}%) chưa đạt chuẩn tối thiểu 80%. Cần đi học đầy đủ để đảm bảo điều kiện hoàn thành khóa.`
             : grade?.diemGiuaKy != null && Number(grade.diemGiuaKy) < 60
             ? `Điểm giữa kỳ (${grade.diemGiuaKy}/100) còn thấp, cần ôn tập thêm để kéo điểm ở kỳ thi cuối khóa.`
@@ -1069,13 +1073,16 @@ Trả về đúng định dạng JSON hợp lệ:
         loiKhuyen: isMidterm
           ? `Học viên đang ở giai đoạn giữa khóa. Cần tập trung ôn luyện các chủ điểm ngữ pháp và từ vựng trọng tâm để chuẩn bị cho bài thi cuối kỳ (chiếm 50% tổng số điểm).`
           : `Tập trung ôn tập theo chuẩn khung CEFR ${student.trinhDoCEFR}, tích cực hoàn thành các bài tập trắc nghiệm AI.`,
-        tomTatChung: isMidterm
-          ? `Học viên đã hoàn thành giai đoạn giữa khóa với điểm giữa kỳ: ${grade?.diemGiuaKy}/100 và chuyên cần ${attendanceRate}%. Đang trong tiến trình hướng đến bài thi cuối khóa.`
-          : `Học viên tham gia ${presentSessions}/${totalSessions} buổi học (${attendanceRate}% chuyên cần). ${
-              grade?.diemTongKet != null
-                ? `Điểm tổng kết đạt ${grade.diemTongKet}/100 (${grade.trangThaiHoanThanh === 'DAT' ? 'ĐẠT' : 'KHÔNG ĐẠT'}).`
-                : 'Đang trong quá trình tích lũy điểm đánh giá kết quả học tập.'
-            }`,
+        tomTatChung:
+          totalSessions === 0
+            ? `Lớp học chưa có buổi học nào diễn ra. Học viên chưa có dữ liệu chuyên cần và điểm số.`
+            : isMidterm
+            ? `Học viên đã hoàn thành giai đoạn giữa khóa với điểm giữa kỳ: ${grade?.diemGiuaKy}/100 và chuyên cần ${attendanceRate}%. Đang trong tiến trình hướng đến bài thi cuối khóa.`
+            : `Học viên tham gia ${presentSessions}/${totalSessions} buổi học (${attendanceRate}% chuyên cần). ${
+                grade?.diemTongKet != null
+                  ? `Điểm tổng kết đạt ${grade.diemTongKet}/100 (${grade.trangThaiHoanThanh === 'DAT' ? 'ĐẠT' : 'KHÔNG ĐẠT'}).`
+                  : 'Đang trong quá trình tích lũy điểm đánh giá kết quả học tập.'
+              }`,
       };
     }
 
