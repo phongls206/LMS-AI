@@ -271,23 +271,28 @@ export default function AdminDashboardPage() {
 
                 <div className="py-6 text-center">
                   <div className="inline-flex items-center justify-center w-28 h-28 rounded-full bg-teal-50 dark:bg-teal-950/60 border-4 border-teal-600 dark:border-teal-500 text-3xl font-black text-teal-700 dark:text-teal-300 mb-2 shadow-sm hover:scale-105 transition-transform cursor-default">
-                    {stats?.tyLeHoanThanh?.tyLeDatPhanTram || 0}%
+                    {stats?.tyLeHoanThanh?.tyLeDatPhanTram ?? 0}%
                   </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Tỷ lệ học viên đạt yêu cầu hoàn thành khóa</p>
+                  <p className="text-xs text-slate-700 dark:text-slate-300 font-bold">
+                    Đạt {stats?.tyLeHoanThanh?.dat ?? 0}/{(stats?.tyLeHoanThanh?.dat ?? 0) + (stats?.tyLeHoanThanh?.khongDat ?? 0)} học viên đã đánh giá
+                  </p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                    (Chiếm {stats?.tongQuan?.tongHocVien ? (((stats?.tyLeHoanThanh?.dat ?? 0) / stats.tongQuan.tongHocVien) * 100).toFixed(1) : 0}% trên tổng {stats?.tongQuan?.tongHocVien || 0} học viên toàn trung tâm)
+                  </p>
                 </div>
 
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between p-2.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100/70 transition-colors">
                     <span>ĐẠT yêu cầu:</span>
-                    <span className="font-bold">{stats?.tyLeHoanThanh?.dat || 0} học viên</span>
+                    <span className="font-bold">{stats?.tyLeHoanThanh?.dat ?? 0} học viên</span>
                   </div>
                   <div className="flex justify-between p-2.5 rounded-lg bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 hover:bg-rose-100/70 transition-colors">
                     <span>KHÔNG ĐẠT:</span>
-                    <span className="font-bold">{stats?.tyLeHoanThanh?.khongDat || 0} học viên</span>
+                    <span className="font-bold">{stats?.tyLeHoanThanh?.khongDat ?? 0} học viên</span>
                   </div>
                   <div className="flex justify-between p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors">
                     <span>Đang học / Chưa xếp loại:</span>
-                    <span className="font-bold">{stats?.tyLeHoanThanh?.chuaXepLoai || 0} học viên</span>
+                    <span className="font-bold">{stats?.tyLeHoanThanh?.chuaXepLoai ?? 0} học viên</span>
                   </div>
                 </div>
               </div>
