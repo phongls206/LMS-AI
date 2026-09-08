@@ -306,14 +306,14 @@ export default function AdminStudentsPage() {
             <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
           </div>
         ) : (
-          <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm">
+          <div className="bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm">
             <div className="w-full overflow-x-auto scrollbar-thin">
-              <table className="w-full text-left text-xs text-slate-700 min-w-[880px]">
-                <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+              <table className="w-full text-left text-xs text-slate-700 dark:text-slate-200 min-w-full">
+                <thead className="bg-slate-50 dark:bg-[#101726] text-slate-600 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-slate-800">
                   <tr>
                     <th
                       onClick={() => toggleSort('maHocVien')}
-                      className="px-5 py-3.5 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Mã học viên"
                     >
                       <div className="flex items-center space-x-1">
@@ -323,7 +323,7 @@ export default function AdminStudentsPage() {
                     </th>
                     <th
                       onClick={() => toggleSort('hoTen')}
-                      className="px-5 py-3.5 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Họ và tên"
                     >
                       <div className="flex items-center space-x-1">
@@ -333,7 +333,7 @@ export default function AdminStudentsPage() {
                     </th>
                     <th
                       onClick={() => toggleSort('trinhDoCEFR')}
-                      className="px-5 py-3.5 whitespace-nowrap text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-center cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Trình độ CEFR"
                     >
                       <div className="flex items-center justify-center space-x-1">
@@ -343,7 +343,7 @@ export default function AdminStudentsPage() {
                     </th>
                     <th
                       onClick={() => toggleSort('lopHoc')}
-                      className="px-5 py-3.5 min-w-[220px] cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 min-w-[150px] max-w-[210px] cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Lớp & khóa đang học"
                     >
                       <div className="flex items-center space-x-1">
@@ -353,7 +353,7 @@ export default function AdminStudentsPage() {
                     </th>
                     <th
                       onClick={() => toggleSort('email')}
-                      className="px-5 py-3.5 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Email & SĐT"
                     >
                       <div className="flex items-center space-x-1">
@@ -363,7 +363,7 @@ export default function AdminStudentsPage() {
                     </th>
                     <th
                       onClick={() => toggleSort('hocPhi')}
-                      className="px-5 py-3.5 whitespace-nowrap text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-center cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Tình trạng học phí"
                     >
                       <div className="flex items-center justify-center space-x-1">
@@ -373,7 +373,7 @@ export default function AdminStudentsPage() {
                     </th>
                     <th
                       onClick={() => toggleSort('trangThai')}
-                      className="px-5 py-3.5 whitespace-nowrap text-center cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-center cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Trạng thái học viên"
                     >
                       <div className="flex items-center justify-center space-x-1">
@@ -381,10 +381,10 @@ export default function AdminStudentsPage() {
                         <SortIndicator sortKey="trangThai" activeKey={sortKey} sortOrder={sortOrder} />
                       </div>
                     </th>
-                    <th className="px-5 py-3.5 whitespace-nowrap text-right">THAO TÁC</th>
+                    <th className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-right">THAO TÁC</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80">
                   {sortedStudents.map((s: any) => {
                     const enrollments = s.dangKyHoc || [];
                     const invoices = s.hoaDon || [];
@@ -393,44 +393,44 @@ export default function AdminStudentsPage() {
                     const isFullyPaid = invoices.length > 0 && paidFee >= totalFee;
 
                     return (
-                      <tr key={s.id} className="hover:bg-teal-50/30 transition">
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <span className="font-mono font-bold text-teal-700 block">{s.maHocVien}</span>
-                          <span className="font-mono text-[11px] text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200 inline-block mt-0.5">
+                      <tr key={s.id} className="hover:bg-teal-50/30 dark:hover:bg-teal-950/20 transition">
+                        <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap">
+                          <span className="font-mono font-bold text-teal-700 dark:text-teal-400 block">{s.maHocVien}</span>
+                          <span className="font-mono text-[11px] text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700 inline-block mt-0.5">
                             {s.nguoiDung?.tenDangNhap || s.maHocVien.toLowerCase()}
                           </span>
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap">
+                        <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap">
                           <button
                             onClick={() => setDetailStudent(s)}
-                            className="font-bold text-slate-900 hover:text-teal-600 text-left transition block whitespace-nowrap cursor-pointer"
+                            className="font-bold text-slate-900 dark:text-white hover:text-teal-600 dark:hover:text-teal-400 text-left transition block whitespace-nowrap cursor-pointer"
                             title="Bấm để xem hồ sơ chi tiết"
                           >
                             <span>{s.hoTen}</span>
                           </button>
-                          <span className="text-[11px] text-slate-500 block mt-0.5">
+                          <span className="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5">
                             {s.gioiTinh === 'Nữ' || s.gioiTinh === 'NU' ? 'Nữ' : 'Nam'}
                             {s.ngaySinh && ` • ${new Date(s.ngaySinh).toLocaleDateString('vi-VN')}`}
                           </span>
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap text-center">
-                          <span className="inline-block whitespace-nowrap px-2.5 py-0.5 rounded-md bg-teal-50 border border-teal-200 text-teal-700 font-bold font-mono text-xs">
+                        <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-center">
+                          <span className="inline-block whitespace-nowrap px-2.5 py-0.5 rounded-md bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 font-bold font-mono text-xs">
                             {s.trinhDoCEFR}
                           </span>
                         </td>
-                        <td className="px-5 py-4 min-w-[220px]">
+                        <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 min-w-[150px] max-w-[210px]">
                           {enrollments.length > 0 ? (
                             <div className="space-y-1.5">
                               {enrollments.map((dk: any) => (
                                 <div key={dk.id || dk.lopHoc?.id} className="flex flex-col">
-                                  <span className="font-bold text-teal-700 font-mono text-xs block whitespace-nowrap">
+                                  <span className="font-bold text-teal-700 dark:text-teal-400 font-mono text-xs block whitespace-nowrap">
                                     [{dk.lopHoc?.maLopHoc}]
                                   </span>
-                                  <span className="text-slate-800 text-xs font-semibold block">
+                                  <span className="text-slate-800 dark:text-slate-200 text-xs font-semibold block truncate">
                                     {dk.lopHoc?.tenLopHoc}
                                   </span>
                                   {dk.lopHoc?.khoaHoc && (
-                                    <span className="text-[11px] text-slate-500 block mt-0.5">
+                                    <span className="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5 truncate">
                                       Khóa: {dk.lopHoc?.khoaHoc?.tenKhoaHoc}
                                     </span>
                                   )}
@@ -438,22 +438,22 @@ export default function AdminStudentsPage() {
                               ))}
                             </div>
                           ) : (
-                            <span className="inline-block whitespace-nowrap text-slate-400 italic text-[11px] bg-slate-50 px-2.5 py-1 rounded border border-slate-200">
+                            <span className="inline-block whitespace-nowrap text-slate-400 dark:text-slate-500 italic text-[11px] bg-slate-50 dark:bg-slate-800/60 px-2.5 py-1 rounded border border-slate-200 dark:border-slate-700">
                               Chưa xếp lớp
                             </span>
                           )}
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap">
-                          <p className="text-slate-800 font-medium">{s.nguoiDung?.email}</p>
-                          <p className="text-[11px] text-slate-500 mt-0.5">{s.nguoiDung?.soDienThoai || 'Chưa cập nhật'}</p>
+                        <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap">
+                          <p className="text-slate-800 dark:text-slate-200 font-medium">{s.nguoiDung?.email}</p>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{s.nguoiDung?.soDienThoai || 'Chưa cập nhật'}</p>
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap text-center">
+                        <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-center">
                           {invoices.length > 0 ? (
                             <span
                               className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${
                                 isFullyPaid
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                  : 'bg-amber-50 text-amber-700 border-amber-200'
+                                  ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                                  : 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
                               }`}
                             >
                               {isFullyPaid ? 'Đã Hoàn Tất' : 'Chờ Thu'}
@@ -462,41 +462,41 @@ export default function AdminStudentsPage() {
                             <span className="text-slate-400 text-xs">-</span>
                           )}
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap text-center">
+                        <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-center">
                           <span
                             className={`inline-block whitespace-nowrap px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
                               s.trangThai === 'DANG_HOC'
-                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                                 : s.trangThai === 'HOAN_THANH'
-                                ? 'bg-teal-50 text-teal-700 border-teal-200'
+                                ? 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800'
                                 : s.trangThai === 'BAO_LUU'
-                                ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                : 'bg-slate-100 text-slate-600 border-slate-200'
+                                ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
                             }`}
                           >
                             {formatTrangThaiHocVien(s.trangThai)}
                           </span>
                         </td>
-                        <td className="px-5 py-4 whitespace-nowrap text-right">
+                        <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-right">
                           <div className="flex items-center justify-end space-x-1.5">
                             <button
                               onClick={() => setDetailStudent(s)}
                               title="Xem chi tiết hồ sơ"
-                              className="p-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white transition cursor-pointer border border-teal-200 hover:border-teal-600"
+                              className="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-600 text-teal-700 dark:text-teal-300 hover:text-white transition cursor-pointer border border-teal-200 dark:border-teal-800 hover:border-teal-600"
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleOpenEdit(s)}
                               title="Sửa thông tin"
-                              className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer border border-slate-200"
+                              className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition cursor-pointer border border-slate-200 dark:border-slate-700"
                             >
                               <Edit3 className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => setDeletingStudent(s)}
                               title="Xóa học viên"
-                              className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white transition cursor-pointer border border-rose-200 hover:border-rose-600"
+                              className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-600 text-rose-600 dark:text-rose-400 hover:text-white transition cursor-pointer border border-rose-200 dark:border-rose-800 hover:border-rose-600"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -510,27 +510,27 @@ export default function AdminStudentsPage() {
             </div>
 
             {/* Pagination Controls */}
-            <div className="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-slate-600">
+            <div className="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-50 dark:bg-[#101726] border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-slate-600 dark:text-slate-400">
                 <span>Hiển thị</span>
-                <span className="font-bold text-slate-900">
+                <span className="font-bold text-slate-900 dark:text-white">
                   {total > 0 ? (page - 1) * limit + 1 : 0} - {Math.min(page * limit, total)}
                 </span>
                 <span>trên tổng số</span>
-                <span className="font-bold text-teal-700">{total}</span>
+                <span className="font-bold text-teal-700 dark:text-teal-400">{total}</span>
                 <span>học viên</span>
 
-                <span className="text-slate-300">|</span>
+                <span className="text-slate-300 dark:text-slate-700">|</span>
 
                 <div className="flex items-center gap-1.5">
-                  <span className="text-slate-600">Số dòng:</span>
+                  <span className="text-slate-600 dark:text-slate-400">Số dòng:</span>
                   <select
                     value={limit}
                     onChange={(e) => {
                       setLimit(Number(e.target.value));
                       setPage(1);
                     }}
-                    className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs text-slate-800 focus:outline-none focus:border-teal-500 cursor-pointer"
+                    className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
                   >
                     <option value={10}>10 / trang</option>
                     <option value={15}>15 / trang</option>
@@ -545,7 +545,7 @@ export default function AdminStudentsPage() {
                   onClick={() => setPage(1)}
                   disabled={page === 1}
                   title="Trang đầu"
-                  className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
                 >
                   <ChevronsLeft className="w-4 h-4" />
                 </button>
@@ -554,7 +554,7 @@ export default function AdminStudentsPage() {
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                   title="Trang trước"
-                  className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -576,7 +576,7 @@ export default function AdminStudentsPage() {
                           className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
                             page === p
                               ? 'bg-teal-600 text-white shadow-sm'
-                              : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                              : 'bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
                           }`}
                         >
                           {p}
@@ -589,7 +589,7 @@ export default function AdminStudentsPage() {
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
                   title="Trang kế tiếp"
-                  className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -598,7 +598,7 @@ export default function AdminStudentsPage() {
                   onClick={() => setPage(totalPages)}
                   disabled={page >= totalPages}
                   title="Trang cuối"
-                  className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
                 >
                   <ChevronsRight className="w-4 h-4" />
                 </button>

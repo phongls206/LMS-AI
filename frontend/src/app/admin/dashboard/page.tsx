@@ -191,13 +191,13 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Sĩ số các lớp & Tỷ lệ đạt */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Sĩ số lớp học */}
-            <div className="lg:col-span-2 p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
+            <div className="lg:col-span-2 p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#141c2e] border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2 shrink-0">
                 <div>
                   <h3 className="font-bold text-slate-900 dark:text-white text-base">Tình Trạng Sĩ Số Các Lớp Đang Mở</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Nhấn vào lớp học bất kỳ để xem danh sách học viên chi tiết</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Nhấn vào lớp học bất kỳ để xem danh sách học viên chi tiết ({stats?.siSoCacLop?.length || 0} lớp)</p>
                 </div>
                 <span className="self-start sm:self-auto text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2.5 py-1 rounded-lg border border-teal-200 dark:border-teal-800 flex items-center gap-1.5 shadow-xs">
                   <Users className="w-3.5 h-3.5" />
@@ -205,7 +205,7 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3 max-h-[440px] overflow-y-auto pr-1.5 scrollbar-thin">
                 {stats?.siSoCacLop?.length > 0 ? (
                   stats.siSoCacLop.map((c: any) => {
                     const percent = Math.min(100, Math.round((c.siSoHienTai / c.siSoToiDa) * 100));
