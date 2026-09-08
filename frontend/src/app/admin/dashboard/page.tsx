@@ -139,14 +139,7 @@ export default function AdminDashboardPage() {
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
               </div>
               <div className="flex flex-col">
-                {/* Dòng 1: Dữ liệu thời gian thực */}
-                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-100">
-                  <span>Dữ liệu thời gian thực</span>
-                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800/80 px-1.5 py-0.2 rounded-md">
-                    LIVE
-                  </span>
-                </div>
-                {/* Dòng 2: Đồng bộ lần cuối */}
+                {/* Dòng 1: Đồng bộ lần cuối */}
                 <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                   <Clock className="w-3 h-3 text-slate-400 shrink-0" />
                   <span>Đồng bộ lần cuối:</span>
