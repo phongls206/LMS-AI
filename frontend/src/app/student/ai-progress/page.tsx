@@ -349,8 +349,8 @@ export default function StudentAiProgressPage() {
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-amber-50 border border-slate-200/70 space-y-1.5 hover:border-teal-400 transition">
-                  <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-blue-700 font-bold">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5 hover:border-teal-400 transition">
+                  <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-blue-700 font-bold">
                     <Target className="w-4 h-4" />
                   </div>
                   <h4 className="font-bold text-slate-900 text-xs">Lời Khuyên Ôn Tập</h4>
