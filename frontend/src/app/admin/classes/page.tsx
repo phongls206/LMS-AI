@@ -911,14 +911,14 @@ export default function AdminClassesPage() {
                         value={c.trangThai}
                         onChange={(e) => handleStatusChange(Number(c.id), e.target.value)}
                         className={`px-1 py-1 rounded-lg text-[11px] font-bold border transition cursor-pointer shrink-0 max-w-[130px] truncate tracking-tight ${c.trangThai === 'DANG_MO_DANG_KY'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
-                            : c.trangThai === 'DANG_HOC'
-                              ? 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/50 dark:text-teal-300 dark:border-teal-800'
-                              : c.trangThai === 'SAP_MO'
-                                ? 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/50 dark:text-sky-300 dark:border-sky-800'
-                                : c.trangThai === 'DA_KET_THUC'
-                                  ? 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
-                                  : 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
+                          : c.trangThai === 'DANG_HOC'
+                            ? 'bg-teal-50 text-teal-700 border-teal-200 dark:bg-teal-950/50 dark:text-teal-300 dark:border-teal-800'
+                            : c.trangThai === 'SAP_MO'
+                              ? 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-950/50 dark:text-sky-300 dark:border-sky-800'
+                              : c.trangThai === 'DA_KET_THUC'
+                                ? 'bg-slate-100 text-slate-600 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
+                                : 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800'
                           }`}
                       >
                         <option value="SAP_MO">🔵 Sắp Mở</option>
@@ -1009,8 +1009,8 @@ export default function AdminClassesPage() {
                           type="button"
                           onClick={() => handleOpenSessions(Number(c.id))}
                           className={`h-11 rounded-xl border flex flex-col items-center justify-center transition cursor-pointer shadow-xs ${(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0
-                              ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-700'
-                              : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-700'
+                            ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-700'
+                            : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:border-indigo-700'
                             }`}
                         >
                           <div className="flex items-center gap-1">
