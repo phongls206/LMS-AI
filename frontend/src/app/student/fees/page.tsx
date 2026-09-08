@@ -55,9 +55,21 @@ export default function StudentFeesPage() {
                     }`}
                 >
                   <div className="flex justify-between items-center flex-wrap gap-2">
-                    <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 px-2.5 py-1 rounded-lg">
-                      {inv.maHoaDon}
-                    </span>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 px-2.5 py-1 rounded-lg">
+                        {inv.maHoaDon}
+                      </span>
+                      {(inv.ngayLap || inv.dangKyHoc?.ngayDangKy) && (
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                          Ngày lập: {new Date(inv.ngayLap || inv.dangKyHoc?.ngayDangKy!).toLocaleDateString('vi-VN')}
+                        </span>
+                      )}
+                      {inv.hanThanhToan && (
+                        <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                          (Hạn nộp: {new Date(inv.hanThanhToan).toLocaleDateString('vi-VN')})
+                        </span>
+                      )}
+                    </div>
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${isCancelled
                           ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'

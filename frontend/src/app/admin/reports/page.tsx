@@ -34,7 +34,13 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import Link from 'next/link';
-import { formatTrangThaiHocVien, formatTrangThaiLopHoc, formatTrangThaiHoaDon } from '../../../utils/formatters';
+import {
+  formatTrangThaiHocVien,
+  formatTrangThaiLopHoc,
+  formatTrangThaiHoaDon,
+  formatCSVDate,
+  formatCSVDateTime,
+} from '../../../utils/formatters';
 
 type TabType = 'overview' | 'students_cefr' | 'classes_fill';
 
@@ -350,9 +356,8 @@ export default function AdminReportsPage() {
       const daTra = Number(inv.soTienDaTra ?? 0);
       const conNo = Math.max(0, phaiTra - daTra);
       const tiLe = phaiTra > 0 ? Math.round((daTra / phaiTra) * 100) : 0;
-      const ngayLap = inv.ngayLap
-        ? new Date(inv.ngayLap).toLocaleDateString('vi-VN')
-        : (inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('vi-VN') : '');
+      const rawDate = inv.ngayLap || inv.dangKyHoc?.ngayDangKy || inv.createdAt;
+      const ngayLap = formatCSVDate(rawDate);
       return [
         inv.maHoaDon ?? '',
         inv.hocVien?.maHocVien ?? '',
@@ -364,7 +369,7 @@ export default function AdminReportsPage() {
         conNo,
         tiLe,
         `"${formatTrangThaiHoaDon(inv.trangThai)}"`,
-        ngayLap,
+        `"${ngayLap}"`,
       ];
     });
     const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
@@ -379,9 +384,8 @@ export default function AdminReportsPage() {
       'Người Thu', 'Ghi Chú', 'Thời Gian Thanh Toán',
     ];
     const rows = payments.map((p) => {
-      const ngayThu = p.thoiGianThanhToan
-        ? new Date(p.thoiGianThanhToan).toLocaleString('vi-VN')
-        : (p.createdAt ? new Date(p.createdAt).toLocaleString('vi-VN') : '');
+      const rawDate = p.thoiGianThanhToan || p.createdAt;
+      const ngayThu = formatCSVDateTime(rawDate);
       const ptTT = p.phuongThuc === 'CHUYEN_KHOAN' ? 'Chuyển Khoản' : 'Tiền Mặt';
       const trangThai = p.trangThai === 'THANH_CONG' ? 'Thành Công' : (p.trangThai === 'THAT_BAI' ? 'Thất Bại' : p.trangThai ?? '');
       return [
@@ -395,7 +399,7 @@ export default function AdminReportsPage() {
         trangThai,
         p.nguoiThu?.tenDangNhap ?? '',
         `"${(p.ghiChu ?? '').replace(/"/g, '""')}"`,
-        ngayThu,
+        `"${ngayThu}"`,
       ];
     });
     const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
@@ -423,9 +427,40 @@ export default function AdminReportsPage() {
           <p className="text-xs text-slate-500 font-semibold">Đang tổng hợp dữ liệu phân tích hệ thống...</p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div id="etc-printable-report" className="space-y-6">
+          {/* Header A4 chính quy khi in ra giấy/PDF (ẩn trên màn hình, chỉ hiện khi in) */}
+          <div className="hidden print:block border-b-2 border-slate-900 pb-4 mb-4 text-black font-sans">
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-xl font-black tracking-wider text-black uppercase">
+                  TRUNG TÂM NGOẠI NGỮ ETC — ETC ENGLISH CENTER
+                </h1>
+                <p className="text-xs text-slate-700 font-semibold mt-0.5">
+                  Hệ Thống Báo Cáo Thống Kê & Phân Tích Dữ Liệu Đào Tạo Toàn Diện
+                </p>
+                <p className="text-xs font-bold text-teal-800 mt-1 uppercase">
+                  PHÂN HỆ BÁO CÁO:{' '}
+                  {activeTab === 'overview'
+                    ? 'TỔNG QUAN TÀI CHÍNH, DOANH THU & SỔ THU CHI'
+                    : activeTab === 'students_cefr'
+                      ? 'CƠ CẤU HỌC VIÊN & CHUẨN ĐẦU RA CEFR'
+                      : 'HIỆU SUẤT LỚP HỌC & TỶ LỆ HOÀN THÀNH'}
+                </p>
+              </div>
+              <div className="text-right text-xs text-slate-700 space-y-0.5">
+                <p>
+                  <strong>Thời gian in:</strong> {new Date().toLocaleString('vi-VN')}
+                </p>
+                <p>
+                  <strong>Người xuất báo cáo:</strong> Ban Quản Trị Hệ Thống
+                </p>
+                <p className="italic text-[11px] text-slate-500">Tài liệu lưu hành nội bộ ETC English</p>
+              </div>
+            </div>
+          </div>
+
           {/* Header Action Bar: 3 Tabs Navigation & In Báo Cáo */}
-          <div className="bg-white dark:bg-[#141c2e] p-3 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="bg-white dark:bg-[#141c2e] p-3 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 print:hidden">
             {/* Tabs Navigation */}
             <div className="flex items-center space-x-1.5 sm:space-x-2 overflow-x-auto no-scrollbar py-0.5 -mx-1 px-1 sm:mx-0 sm:px-0 overscroll-x-contain touch-pan-x">
               <button
@@ -487,7 +522,7 @@ export default function AdminReportsPage() {
                     Theo dõi số liệu thực thu, công nợ và lịch sử thanh toán toàn hệ thống
                   </p>
                 </div>
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 print:hidden">
                   <button
                     onClick={() => fetchData(true)}
                     disabled={refreshing}
@@ -827,7 +862,7 @@ export default function AdminReportsPage() {
                     Thống kê tỷ lệ phân bổ A1 đến C2 và tình trạng học tập thực tế
                   </p>
                 </div>
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 print:hidden">
                   <button
                     onClick={() => fetchData(true)}
                     disabled={refreshing}
@@ -981,7 +1016,7 @@ export default function AdminReportsPage() {
                     <h3 className="text-base font-bold text-slate-900 dark:text-white">Hiệu Suất Tuyển Sinh & Tỷ Lệ Lấp Đầy Từng Lớp</h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400">Theo dõi số lượng học viên ghi danh so với sĩ số quy định của từng lớp</p>
                   </div>
-                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-2">
+                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 print:hidden">
                     <span className="text-xs font-bold px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800/60 flex items-center shrink-0">
                       Tổng {classes.length} Lớp Học
                     </span>
@@ -1085,7 +1120,7 @@ export default function AdminReportsPage() {
           {/* ══════════════════════════════════════════════════════════════════════════════ */}
           {modalState.isOpen && (
             <div
-              className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200"
+              className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200 print:hidden"
               onClick={closeModal}
             >
               <div

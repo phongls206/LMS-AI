@@ -276,7 +276,13 @@ export class EnrollmentsService {
         },
       });
 
-      return { enrollment, invoice };
+      return {
+        enrollment,
+        invoice: {
+          ...invoice,
+          ngayLap: enrollment.ngayDangKy,
+        },
+      };
     });
 
     return this.serializeBigInt(result);
@@ -415,7 +421,12 @@ export class EnrollmentsService {
       orderBy: { id: 'desc' },
     });
 
-    return this.serializeBigInt(invoices);
+    const invoicesWithNgayLap = invoices.map((inv) => ({
+      ...inv,
+      ngayLap: inv.dangKyHoc?.ngayDangKy || null,
+    }));
+
+    return this.serializeBigInt(invoicesWithNgayLap);
   }
 
   /**
@@ -520,7 +531,13 @@ export class EnrollmentsService {
         });
       }
 
-      return { payment, invoice: updatedInvoice };
+      return {
+        payment,
+        invoice: {
+          ...updatedInvoice,
+          ngayLap: invoice.dangKyHoc?.ngayDangKy || null,
+        },
+      };
     });
 
     return this.serializeBigInt(result);

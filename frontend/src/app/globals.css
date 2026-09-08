@@ -489,7 +489,7 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   background: #334155;
 }
 
-/* ── Print Media Styles for Official Accounting Receipts & AI Progress Reports ─ */
+/* ── Print Media Styles for Official Receipts, AI Progress Reports & System Reports ─ */
 @media print {
   body * {
     visibility: hidden;
@@ -497,21 +497,37 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   #etc-printable-receipt,
   #etc-printable-receipt *,
   #etc-printable-progress,
-  #etc-printable-progress * {
+  #etc-printable-progress *,
+  #etc-printable-report,
+  #etc-printable-report * {
     visibility: visible;
   }
   #etc-printable-receipt,
-  #etc-printable-progress {
+  #etc-printable-progress,
+  #etc-printable-report {
     position: absolute;
     left: 0;
     top: 0;
     width: 100% !important;
     margin: 0 !important;
-    padding: 20px !important;
+    padding: 16px !important;
     background: #ffffff !important;
     color: #000000 !important;
     box-shadow: none !important;
     border: none !important;
     z-index: 999999;
+  }
+  /* Reset colors to crisp black-on-white regardless of Dark Mode */
+  #etc-printable-report *,
+  #etc-printable-receipt *,
+  #etc-printable-progress * {
+    color: #000000 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+  #etc-printable-report .bg-white,
+  #etc-printable-report [class*="dark:bg-"] {
+    background-color: #ffffff !important;
+    border-color: #cbd5e1 !important;
   }
 }

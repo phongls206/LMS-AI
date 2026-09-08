@@ -181,3 +181,33 @@ export function formatReceiptDate(d: Date | string): string {
   return `Ngày ${day} tháng ${month} năm ${year} (lúc ${hours}:${mins})`;
 }
 
+/**
+ * Format ngày cho file CSV hiển thị trên Excel không bị lỗi '########'
+ */
+export const formatCSVDate = (dateVal?: string | Date | null): string => {
+  if (!dateVal) return '';
+  const d = new Date(dateVal);
+  if (isNaN(d.getTime())) return '';
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  return `\t${day}/${month}/${year}`;
+};
+
+/**
+ * Format ngày giờ cho file CSV hiển thị trên Excel không bị lỗi '########'
+ */
+export const formatCSVDateTime = (dateVal?: string | Date | null): string => {
+  if (!dateVal) return '';
+  const d = new Date(dateVal);
+  if (isNaN(d.getTime())) return '';
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = d.getFullYear();
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+  return `\t${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+};
+
+

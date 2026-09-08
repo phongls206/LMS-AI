@@ -23,7 +23,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { classesService } from '../services/api';
-import { formatStatus } from '../utils/formatters';
+import { formatStatus, formatCSVDate } from '../utils/formatters';
 
 interface ClassStudentsModalProps {
   classId: number | null;
@@ -177,7 +177,7 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
         hv.trinhDoCEFR || '',
         hv.nguoiDung?.soDienThoai || '',
         hv.nguoiDung?.email || '',
-        dk.ngayDangKy ? new Date(dk.ngayDangKy).toLocaleDateString('vi-VN') : '',
+        `"${formatCSVDate(dk.ngayDangKy)}"`,
         formatStatus(dk.trangThai),
         formatStatus(hd.trangThai || 'CHUA_THANH_TOAN'),
         hd.soTienPhaiTra ? Number(hd.soTienPhaiTra) : '',

@@ -5,64 +5,7 @@ import { AppLayout } from '../../../components/AppLayout';
 import { usersService, classesService, enrollmentsService } from '../../../services/api';
 import { HocVien, LopHoc, HoaDon } from '../../../types';
 import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck, Calendar, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Printer, X, FileText, Eye, XCircle, AlertTriangle, RefreshCw, ArrowLeft, History } from 'lucide-react';
-import { formatTrangThaiHoaDon, formatTrangThaiLopHoc } from '../../../utils/formatters';
-
-// Hàm đọc số tiền thành chữ tiếng Việt cho phiếu thu kế toán
-function docSoThanhChu(num: number): string {
-  if (!num || num <= 0) return 'Không đồng';
-  const chuSo = ['không', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
-  const tien = ['', 'nghìn', 'triệu', 'tỷ', 'nghìn tỷ'];
-
-  function readGroup(n: number, full: boolean): string {
-    let tr = Math.floor(n / 100);
-    let ch = Math.floor((n % 100) / 10);
-    let dv = n % 10;
-    let res = '';
-    if (full || tr > 0) {
-      res += chuSo[tr] + ' trăm ';
-      if (ch === 0 && dv > 0) res += 'lẻ ';
-    }
-    if (ch > 1) {
-      res += chuSo[ch] + ' mươi ';
-      if (dv === 1) res += 'mốt ';
-    } else if (ch === 1) {
-      res += 'mười ';
-      if (dv === 1) res += 'một ';
-    }
-    if (ch !== 1 && dv === 5 && (tr > 0 || ch > 0)) {
-      res += 'lăm ';
-    } else if (dv > 0 && !(ch > 1 && dv === 1) && !(ch === 1 && dv === 1)) {
-      res += chuSo[dv] + ' ';
-    }
-    return res.trim();
-  }
-
-  let s = '';
-  let n = Math.floor(num);
-  let groupIdx = 0;
-  while (n > 0) {
-    let g = n % 1000;
-    if (g > 0) {
-      let gStr = readGroup(g, n >= 1000 && g < 100);
-      s = gStr + ' ' + tien[groupIdx] + ' ' + s;
-    }
-    groupIdx++;
-    n = Math.floor(n / 1000);
-  }
-  s = s.trim().replace(/\s+/g, ' ');
-  if (!s) return 'Không đồng';
-  return s.charAt(0).toUpperCase() + s.slice(1) + ' đồng chẵn.';
-}
-
-function formatReceiptDate(d: Date): string {
-  const date = new Date(d);
-  const day = date.getDate().toString().padStart(2, '0');
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = date.getHours().toString().padStart(2, '0');
-  const mins = date.getMinutes().toString().padStart(2, '0');
-  return `Ngày ${day} tháng ${month} năm ${year} (lúc ${hours}:${mins})`;
-}
+import { formatTrangThaiHoaDon, formatTrangThaiLopHoc, docSoThanhChu, formatReceiptDate, formatCSVDate } from '../../../utils/formatters';
 
 export default function StaffCollectFeePage() {
   const [students, setStudents] = useState<HocVien[]>([]);
@@ -165,9 +108,8 @@ export default function StaffCollectFeePage() {
       const daTra = Number(inv.soTienDaTra ?? 0);
       const conNo = Math.max(0, phaiTra - daTra);
       const tiLe = phaiTra > 0 ? Math.round((daTra / phaiTra) * 100) : 0;
-      const ngayLap = inv.ngayLap
-        ? new Date(inv.ngayLap).toLocaleDateString('vi-VN')
-        : (inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('vi-VN') : '');
+      const rawDate = inv.ngayLap || inv.dangKyHoc?.ngayDangKy || inv.createdAt;
+      const ngayLap = formatCSVDate(rawDate);
       return [
         inv.maHoaDon ?? '',
         inv.hocVien?.maHocVien ?? '',
@@ -179,7 +121,7 @@ export default function StaffCollectFeePage() {
         conNo,
         tiLe,
         `"${formatTrangThaiHoaDon(inv.trangThai)}"`,
-        ngayLap,
+        `"${ngayLap}"`,
       ];
     });
     const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
@@ -256,6 +198,8 @@ export default function StaffCollectFeePage() {
     const paid = Number(inv.soTienDaTra || 0);
     const targetPayment = payment || null;
 
+    const targetDate = targetPayment?.thoiGianThanhToan || inv.ngayLap || inv.dangKyHoc?.ngayDangKy;
+
     setReceiptData({
       invoice: inv,
       selectedPayment: targetPayment,
@@ -268,11 +212,7 @@ export default function StaffCollectFeePage() {
           : paid === 0
             ? 'Học phí chưa thanh toán'
             : 'Thanh toán học phí khóa học',
-      date: targetPayment?.thoiGianThanhToan
-        ? new Date(targetPayment.thoiGianThanhToan)
-        : inv.ngayLap
-          ? new Date(inv.ngayLap)
-          : new Date(),
+      date: targetDate ? new Date(targetDate) : new Date(),
       soPhieu: targetPayment?.maGiaoDich || (isCancelled ? `HD-HUY-${inv.maHoaDon}` : `HD-${inv.maHoaDon}`),
     });
   };
@@ -898,7 +838,9 @@ export default function StaffCollectFeePage() {
                       </div>
                     )}
                     <p className="text-[11px] italic text-slate-500 dark:text-slate-400">
-                      {formatReceiptDate(receiptData.date)}
+                      {viewingSingleReceipt
+                        ? `Thời gian thu tiền: ${formatReceiptDate(receiptData.date)}`
+                        : `Ngày lập hóa đơn: ${formatReceiptDate(receiptData.date)}`}
                     </p>
                   </div>
 

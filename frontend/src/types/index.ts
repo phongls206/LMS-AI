@@ -155,6 +155,7 @@ export interface HoaDon {
     id?: number;
     lopHocId?: number;
     hocVienId?: number;
+    ngayDangKy?: string;
     trangThai?: string;
     lopHoc?: { id?: number; maLopHoc: string; tenLopHoc: string };
   };

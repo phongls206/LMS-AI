@@ -27,7 +27,7 @@ import {
   ArrowLeft,
   History,
 } from 'lucide-react';
-import { formatTrangThaiHoaDon, formatTrangThaiLopHoc, docSoThanhChu, formatReceiptDate } from '../../../utils/formatters';
+import { formatTrangThaiHoaDon, formatTrangThaiLopHoc, docSoThanhChu, formatReceiptDate, formatCSVDate } from '../../../utils/formatters';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
 export default function AdminFeesPage() {
@@ -151,11 +151,8 @@ export default function AdminFeesPage() {
       const daTra = Number(inv.soTienDaTra ?? 0);
       const conNo = Math.max(0, phaiTra - daTra);
       const tiLe = phaiTra > 0 ? Math.round((daTra / phaiTra) * 100) : 0;
-      const ngayLap = inv.ngayLap
-        ? new Date(inv.ngayLap).toLocaleDateString('vi-VN')
-        : inv.createdAt
-          ? new Date(inv.createdAt).toLocaleDateString('vi-VN')
-          : '';
+      const rawDate = inv.ngayLap || inv.dangKyHoc?.ngayDangKy || inv.createdAt;
+      const ngayLap = formatCSVDate(rawDate);
       return [
         inv.maHoaDon ?? '',
         inv.hocVien?.maHocVien ?? '',
@@ -167,7 +164,7 @@ export default function AdminFeesPage() {
         conNo,
         tiLe,
         `"${formatTrangThaiHoaDon(inv.trangThai)}"`,
-        ngayLap,
+        `"${ngayLap}"`,
       ];
     });
     const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
@@ -226,6 +223,8 @@ export default function AdminFeesPage() {
     const paid = Number(inv.soTienDaTra || 0);
     const targetPayment = payment || null;
 
+    const targetDate = targetPayment?.thoiGianThanhToan || inv.ngayLap || inv.dangKyHoc?.ngayDangKy;
+
     setReceiptData({
       invoice: inv,
       selectedPayment: targetPayment,
@@ -238,11 +237,7 @@ export default function AdminFeesPage() {
           : paid === 0
             ? 'Học phí chưa thanh toán'
             : 'Thanh toán học phí khóa học',
-      date: targetPayment?.thoiGianThanhToan
-        ? new Date(targetPayment.thoiGianThanhToan)
-        : inv.ngayLap
-          ? new Date(inv.ngayLap)
-          : new Date(),
+      date: targetDate ? new Date(targetDate) : new Date(),
       soPhieu: targetPayment?.maGiaoDich || (isCancelled ? `HD-HUY-${inv.maHoaDon}` : `HD-${inv.maHoaDon}`),
     });
   };
@@ -917,7 +912,9 @@ export default function AdminFeesPage() {
                       </div>
                     )}
                     <p className="text-[11px] italic text-slate-500 dark:text-slate-400">
-                      {formatReceiptDate(receiptData.date)}
+                      {viewingSingleReceipt
+                        ? `Thời gian thu tiền: ${formatReceiptDate(receiptData.date)}`
+                        : `Ngày lập hóa đơn: ${formatReceiptDate(receiptData.date)}`}
                     </p>
                   </div>
 
