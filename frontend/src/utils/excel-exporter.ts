@@ -291,8 +291,8 @@ export function exportClassAttendanceExcel({
     });
 
     const attended = coMat + diMuon + coPhep;
-    const totalSessions = sortedSessions.length || 1;
-    const rate = Math.round((attended / totalSessions) * 100);
+    const totalSessions = sortedSessions.length;
+    const rate = totalSessions > 0 ? `${Math.round((attended / totalSessions) * 100)}%` : '-';
 
     matrixRows.push([
       idx + 1,
@@ -303,7 +303,7 @@ export function exportClassAttendanceExcel({
       diMuon,
       coPhep,
       vang,
-      `${rate}%`,
+      rate,
     ]);
   });
 

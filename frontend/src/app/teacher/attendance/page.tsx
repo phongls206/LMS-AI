@@ -260,7 +260,7 @@ export default function TeacherAttendancePage() {
   const countLate = Object.values(attendanceRecords).filter((s) => s === 'DI_MUON').length;
   const countExcused = Object.values(attendanceRecords).filter((s) => s === 'CO_PHEP').length;
   const countAbsent = Object.values(attendanceRecords).filter((s) => s === 'VANG').length;
-  const presentRate = totalStudents > 0 ? Math.round(((countPresent + countLate * 0.5) / totalStudents) * 100) : 100;
+  const presentRate = totalStudents > 0 ? Math.round(((countPresent + countLate * 0.5) / totalStudents) * 100) : 0;
 
   // Lọc học viên theo tìm kiếm từ danh sách đang học
   const filteredEnrollments = activeClassEnrollments.filter((dk: any) => {
@@ -273,7 +273,9 @@ export default function TeacherAttendancePage() {
 
   // Tính toán tỷ lệ chuyên cần cho từng học viên trong Ma trận
   const calculateStudentAttendanceRate = (studentId: number) => {
-    if (!matrixData?.buoiHoc) return { totalSessions: 0, attended: 0, late: 0, excused: 0, absent: 0, rate: 100 };
+    if (!matrixData?.buoiHoc || matrixData.buoiHoc.length === 0) {
+      return { totalSessions: 0, attended: 0, late: 0, excused: 0, absent: 0, rate: 0 };
+    }
 
     let attended = 0;
     let late = 0;
@@ -292,7 +294,7 @@ export default function TeacherAttendancePage() {
       }
     });
 
-    const rate = pastSessions > 0 ? Math.round(((attended + late * 0.5 + excused * 0.5) / pastSessions) * 100) : 100;
+    const rate = pastSessions > 0 ? Math.round(((attended + late * 0.5 + excused * 0.5) / pastSessions) * 100) : 0;
     return { totalSessions: pastSessions, attended, late, excused, absent, rate };
   };
 
@@ -323,8 +325,15 @@ export default function TeacherAttendancePage() {
       hoTen: (dk: any) => dk.hocVien?.hoTen || '',
       coMat: (dk: any) => calculateStudentAttendanceRate(dk.hocVien?.id).attended,
       vang: (dk: any) => calculateStudentAttendanceRate(dk.hocVien?.id).absent,
-      rate: (dk: any) => calculateStudentAttendanceRate(dk.hocVien?.id).rate,
-      danhGia: (dk: any) => (calculateStudentAttendanceRate(dk.hocVien?.id).rate >= 80 ? 1 : 0),
+      rate: (dk: any) => {
+        const s = calculateStudentAttendanceRate(dk.hocVien?.id);
+        return s.totalSessions === 0 ? -1 : s.rate;
+      },
+      danhGia: (dk: any) => {
+        const s = calculateStudentAttendanceRate(dk.hocVien?.id);
+        if (s.totalSessions === 0) return 0; // Chưa học
+        return s.rate >= 80 ? 1 : -1; // 1: Đạt, -1: Nguy cơ
+      },
     },
   });
 
@@ -554,8 +563,8 @@ export default function TeacherAttendancePage() {
               <button
                 onClick={() => setActiveTab('take_attendance')}
                 className={`pb-3 min-h-[38px] text-xs font-bold flex items-center space-x-2 transition border-b-2 cursor-pointer whitespace-nowrap shrink-0 ${activeTab === 'take_attendance'
-                    ? 'text-teal-700 border-teal-600'
-                    : 'text-slate-500 border-transparent hover:text-slate-900'
+                  ? 'text-teal-700 border-teal-600'
+                  : 'text-slate-500 border-transparent hover:text-slate-900'
                   }`}
               >
                 <ListCheck className="w-4 h-4" />
@@ -565,8 +574,8 @@ export default function TeacherAttendancePage() {
               <button
                 onClick={() => setActiveTab('matrix_view')}
                 className={`pb-3 min-h-[38px] text-xs font-bold flex items-center space-x-2 transition border-b-2 cursor-pointer whitespace-nowrap shrink-0 ${activeTab === 'matrix_view'
-                    ? 'text-teal-700 border-teal-600'
-                    : 'text-slate-500 border-transparent hover:text-slate-900'
+                  ? 'text-teal-700 border-teal-600'
+                  : 'text-slate-500 border-transparent hover:text-slate-900'
                   }`}
               >
                 <BarChart3 className="w-4 h-4" />
@@ -699,8 +708,8 @@ export default function TeacherAttendancePage() {
                                     type="button"
                                     onClick={() => handleStatusChange(student.id, 'CO_MAT')}
                                     className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition cursor-pointer ${currentStatus === 'CO_MAT'
-                                        ? 'bg-emerald-600 text-white shadow-sm'
-                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                      ? 'bg-emerald-600 text-white shadow-sm'
+                                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                       }`}
                                   >
                                     ✅ Có Mặt
@@ -709,8 +718,8 @@ export default function TeacherAttendancePage() {
                                     type="button"
                                     onClick={() => handleStatusChange(student.id, 'DI_MUON')}
                                     className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition cursor-pointer ${currentStatus === 'DI_MUON'
-                                        ? 'bg-amber-600 text-white shadow-sm'
-                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                      ? 'bg-amber-600 text-white shadow-sm'
+                                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                       }`}
                                   >
                                     ⏱️ Đi Muộn
@@ -719,8 +728,8 @@ export default function TeacherAttendancePage() {
                                     type="button"
                                     onClick={() => handleStatusChange(student.id, 'CO_PHEP')}
                                     className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition cursor-pointer ${currentStatus === 'CO_PHEP'
-                                        ? 'bg-blue-600 text-white shadow-sm'
-                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                      ? 'bg-blue-600 text-white shadow-sm'
+                                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                       }`}
                                   >
                                     📝 Có Phép
@@ -729,8 +738,8 @@ export default function TeacherAttendancePage() {
                                     type="button"
                                     onClick={() => handleStatusChange(student.id, 'VANG')}
                                     className={`px-3 py-1.5 rounded-lg font-bold text-[11px] transition cursor-pointer ${currentStatus === 'VANG'
-                                        ? 'bg-rose-600 text-white shadow-sm'
-                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                      ? 'bg-rose-600 text-white shadow-sm'
+                                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                                       }`}
                                   >
                                     ❌ Vắng
@@ -773,15 +782,15 @@ export default function TeacherAttendancePage() {
 
             {/* TAB 2: MA TRẬN & THỐNG KÊ ĐIỂM DANH TOÀN KHÓA */}
             {activeTab === 'matrix_view' && (
-              <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-sm space-y-4 p-5">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100">
+              <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm space-y-4 p-5">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                      <h3 className="text-sm font-bold text-slate-900 flex items-center space-x-2">
-                        <BarChart3 className="w-4 h-4 text-teal-600" />
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white flex items-center space-x-2">
+                        <BarChart3 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                         <span>Ma Trận Chuyên Cần & Tiến Độ Lớp Học</span>
                       </h3>
-                      <p className="text-xs text-slate-500 mt-0.5">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                         Bấm vào tên học viên để xem chi tiết lịch sử các buổi học.
                       </p>
                     </div>
@@ -796,7 +805,7 @@ export default function TeacherAttendancePage() {
                         })
                       }
                       disabled={!selectedClassId || !classDetail?.dangKyHoc?.length}
-                      className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition flex items-center space-x-1.5 shadow-xs cursor-pointer self-start sm:self-auto disabled:opacity-50"
+                      className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800 text-xs font-bold transition flex items-center space-x-1.5 shadow-xs cursor-pointer self-start sm:self-auto disabled:opacity-50"
                       title="Xuất ma trận điểm danh toàn khóa học ra file Excel .xlsx"
                     >
                       <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
@@ -806,23 +815,42 @@ export default function TeacherAttendancePage() {
 
                   {/* Chú giải trạng thái */}
                   <div className="flex flex-wrap items-center gap-2 text-[11px]">
-                    <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
+                    <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
                       ✅ Có mặt
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-bold border border-amber-200">
+                    <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-bold border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
                       ⏱️ Đi muộn
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold border border-blue-200">
+                    <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold border border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800">
                       📝 Có phép
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-bold border border-rose-200">
+                    <span className="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-bold border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800">
                       ❌ Vắng
                     </span>
-                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium">
+                    <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-medium border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
                       ⚪ Chưa học
                     </span>
                   </div>
                 </div>
+
+                {(!matrixData?.buoiHoc || matrixData.buoiHoc.length === 0) && (
+                  <div className="p-3.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs text-amber-800 dark:text-amber-300">
+                    <div className="flex items-center space-x-2">
+                      <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                      <span>
+                        Lớp học này hiện chưa có buổi học nào được tạo trong hệ thống. Bạn có thể sang tab <strong>1. Bảng Điểm Danh Buổi Học</strong> và bấm <strong>⚡ Khởi Tạo 12 Buổi Cho Lớp</strong>.
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAutoGenerateSessions}
+                      disabled={generatingSessions}
+                      className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-[11px] shrink-0 transition flex items-center space-x-1 cursor-pointer disabled:opacity-50"
+                    >
+                      <span>⚡ Khởi tạo ngay</span>
+                    </button>
+                  </div>
+                )}
 
                 {loadingMatrix ? (
                   <div className="py-16 flex justify-center items-center">
@@ -831,11 +859,11 @@ export default function TeacherAttendancePage() {
                 ) : (
                   <div className="w-full overflow-x-auto scrollbar-thin">
                     <table className="min-w-[700px] w-full text-left text-xs text-slate-700 dark:text-slate-200 border-collapse">
-                      <thead className="bg-slate-50 text-slate-600 uppercase text-[10px] font-bold tracking-wider">
+                      <thead className="bg-slate-50 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 uppercase text-[10px] font-bold tracking-wider">
                         <tr>
                           <th
                             onClick={() => toggleSortMatrix('hoTen')}
-                            className="px-4 py-3 sticky left-0 bg-slate-50 z-10 border-b border-slate-200 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                            className="px-4 py-3 sticky left-0 bg-slate-50 dark:bg-slate-900 z-10 border-b border-slate-200 dark:border-slate-800 cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-700 dark:hover:text-teal-300 transition group"
                             title="Nhấn để sắp xếp theo Tên học viên"
                           >
                             <div className="flex items-center space-x-1">
@@ -846,7 +874,7 @@ export default function TeacherAttendancePage() {
                           {(matrixData?.buoiHoc || []).map((b: any) => (
                             <th
                               key={b.id}
-                              className="px-2.5 py-3 text-center border-b border-slate-200 whitespace-nowrap min-w-[50px]"
+                              className="px-2.5 py-3 text-center border-b border-slate-200 dark:border-slate-800 whitespace-nowrap min-w-[50px]"
                               title={`Buổi ${b.soThuTu}: ${b.chuDe || ''}`}
                             >
                               B{b.soThuTu}
@@ -854,7 +882,7 @@ export default function TeacherAttendancePage() {
                           ))}
                           <th
                             onClick={() => toggleSortMatrix('coMat')}
-                            className="px-3 py-3 text-center border-b border-slate-200 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                            className="px-3 py-3 text-center border-b border-slate-200 dark:border-slate-800 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-700 dark:hover:text-teal-300 transition group"
                             title="Nhấn để sắp xếp theo Số buổi có mặt"
                           >
                             <div className="flex items-center justify-center space-x-1">
@@ -864,7 +892,7 @@ export default function TeacherAttendancePage() {
                           </th>
                           <th
                             onClick={() => toggleSortMatrix('vang')}
-                            className="px-3 py-3 text-center border-b border-slate-200 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                            className="px-3 py-3 text-center border-b border-slate-200 dark:border-slate-800 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-700 dark:hover:text-teal-300 transition group"
                             title="Nhấn để sắp xếp theo Số buổi vắng"
                           >
                             <div className="flex items-center justify-center space-x-1">
@@ -874,7 +902,7 @@ export default function TeacherAttendancePage() {
                           </th>
                           <th
                             onClick={() => toggleSortMatrix('rate')}
-                            className="px-4 py-3 text-center border-b border-slate-200 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                            className="px-4 py-3 text-center border-b border-slate-200 dark:border-slate-800 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-700 dark:hover:text-teal-300 transition group"
                             title="Nhấn để sắp xếp theo Tỷ lệ % chuyên cần"
                           >
                             <div className="flex items-center justify-center space-x-1">
@@ -884,7 +912,7 @@ export default function TeacherAttendancePage() {
                           </th>
                           <th
                             onClick={() => toggleSortMatrix('danhGia')}
-                            className="px-3 py-3 text-center border-b border-slate-200 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                            className="px-3 py-3 text-center border-b border-slate-200 dark:border-slate-800 whitespace-nowrap cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-teal-700 dark:hover:text-teal-300 transition group"
                             title="Nhấn để sắp xếp theo Đánh giá"
                           >
                             <div className="flex items-center justify-center space-x-1">
@@ -894,47 +922,54 @@ export default function TeacherAttendancePage() {
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                         {(sortedMatrixEnrollments || []).map((dk: any) => {
                           const st = dk.hocVien;
                           const stats = calculateStudentAttendanceRate(st.id);
                           return (
-                            <tr key={st.id} className="hover:bg-teal-50/30 transition">
-                              <td className="px-4 py-2.5 sticky left-0 bg-white/95 backdrop-blur-sm z-10 font-bold text-slate-900 whitespace-nowrap border-r border-slate-100">
+                            <tr key={st.id} className="hover:bg-teal-50/30 dark:hover:bg-slate-800/40 transition">
+                              <td className="px-4 py-2.5 sticky left-0 bg-white dark:bg-slate-900 backdrop-blur-sm z-10 font-bold text-slate-900 dark:text-slate-100 whitespace-nowrap border-r border-slate-100 dark:border-slate-800">
                                 <button
                                   onClick={() => setViewStudentModal(st)}
-                                  className="text-left hover:text-teal-600 hover:underline flex items-center space-x-1.5 cursor-pointer"
+                                  className="text-left hover:text-teal-600 dark:hover:text-teal-400 hover:underline flex items-center space-x-1.5 cursor-pointer"
                                 >
-                                  <span className="font-mono text-xs text-teal-700 font-bold">{st.maHocVien}</span>
+                                  <span className="font-mono text-xs text-teal-700 dark:text-teal-400 font-bold">{st.maHocVien}</span>
                                   <span className="text-xs">{st.hoTen}</span>
                                 </button>
                               </td>
 
                               {(matrixData?.buoiHoc || []).map((b: any) => {
                                 const rec = b.diemDanh?.find((d: any) => Number(d.hocVienId) === Number(st.id));
-                                let badge = <span className="text-slate-300 font-mono text-[10px]">-</span>;
+                                let badge = (
+                                  <span
+                                    className="w-6 h-6 rounded-md bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-500 flex items-center justify-center font-mono text-[10px] mx-auto border border-dashed border-slate-200 dark:border-slate-700"
+                                    title="Chưa học / Chưa điểm danh"
+                                  >
+                                    -
+                                  </span>
+                                );
                                 if (rec) {
                                   if (rec.trangThai === 'CO_MAT') {
                                     badge = (
-                                      <span className="w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center font-bold text-[10px] mx-auto border border-emerald-200">
+                                      <span className="w-6 h-6 rounded-md bg-emerald-50 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 flex items-center justify-center font-bold text-[10px] mx-auto border border-emerald-200 dark:border-emerald-800">
                                         CM
                                       </span>
                                     );
                                   } else if (rec.trangThai === 'DI_MUON') {
                                     badge = (
-                                      <span className="w-6 h-6 rounded-md bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-[10px] mx-auto border border-amber-200">
+                                      <span className="w-6 h-6 rounded-md bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 flex items-center justify-center font-bold text-[10px] mx-auto border border-amber-200 dark:border-amber-800">
                                         DM
                                       </span>
                                     );
                                   } else if (rec.trangThai === 'CO_PHEP') {
                                     badge = (
-                                      <span className="w-6 h-6 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center font-bold text-[10px] mx-auto border border-blue-200">
+                                      <span className="w-6 h-6 rounded-md bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 flex items-center justify-center font-bold text-[10px] mx-auto border border-blue-200 dark:border-blue-800">
                                         CP
                                       </span>
                                     );
                                   } else if (rec.trangThai === 'VANG') {
                                     badge = (
-                                      <span className="w-6 h-6 rounded-md bg-rose-50 text-rose-700 flex items-center justify-center font-bold text-[10px] mx-auto border border-rose-200">
+                                      <span className="w-6 h-6 rounded-md bg-rose-50 text-rose-700 dark:bg-rose-950/50 dark:text-rose-300 flex items-center justify-center font-bold text-[10px] mx-auto border border-rose-200 dark:border-rose-800">
                                         V
                                       </span>
                                     );
@@ -947,27 +982,35 @@ export default function TeacherAttendancePage() {
                                 );
                               })}
 
-                              <td className="px-3 py-2 text-center font-mono font-bold text-emerald-700">
+                              <td className="px-3 py-2 text-center font-mono font-bold text-emerald-700 dark:text-emerald-400">
                                 {stats.attended}
                               </td>
-                              <td className="px-3 py-2 text-center font-mono font-bold text-rose-700">
+                              <td className="px-3 py-2 text-center font-mono font-bold text-rose-700 dark:text-rose-400">
                                 {stats.absent}
                               </td>
                               <td className="px-4 py-2 text-center">
-                                <span
-                                  className={`font-mono font-bold text-xs ${stats.rate >= 80 ? 'text-emerald-700' : 'text-rose-700'
-                                    }`}
-                                >
-                                  {stats.rate}%
-                                </span>
+                                {stats.totalSessions === 0 ? (
+                                  <span className="font-mono text-slate-400 dark:text-slate-500 text-xs">-</span>
+                                ) : (
+                                  <span
+                                    className={`font-mono font-bold text-xs ${stats.rate >= 80 ? 'text-emerald-700 dark:text-emerald-400' : 'text-rose-700 dark:text-rose-400'
+                                      }`}
+                                  >
+                                    {stats.rate}%
+                                  </span>
+                                )}
                               </td>
                               <td className="px-3 py-2 text-center">
-                                {stats.rate >= 80 ? (
-                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                {stats.totalSessions === 0 ? (
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700">
+                                    ⚪ Chưa học
+                                  </span>
+                                ) : stats.rate >= 80 ? (
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
                                     ĐẠT
                                   </span>
                                 ) : (
-                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 flex items-center justify-center space-x-1">
+                                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800 flex items-center justify-center space-x-1">
                                     <AlertTriangle className="w-3 h-3 mr-0.5 inline" />
                                     <span>NGUY CƠ</span>
                                   </span>
@@ -988,28 +1031,28 @@ export default function TeacherAttendancePage() {
         {/* MODAL CHI TIẾT ĐIỂM DANH HỌC VIÊN */}
         {viewStudentModal && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-slate-800">
-              <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl w-full max-w-2xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto text-slate-800 dark:text-slate-200">
+              <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-700 border border-teal-200 flex items-center justify-center font-bold text-base">
+                  <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800 flex items-center justify-center font-bold text-base">
                     {viewStudentModal.hoTen?.charAt(0)}
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-slate-900 flex items-center space-x-2">
+                    <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
                       <span>{viewStudentModal.hoTen}</span>
-                      <span className="font-mono text-xs px-2 py-0.5 rounded bg-teal-50 text-teal-700 border border-teal-200 font-bold">
+                      <span className="font-mono text-xs px-2 py-0.5 rounded bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-400 border border-teal-200 dark:border-teal-800 font-bold">
                         {viewStudentModal.maHocVien}
                       </span>
                     </h3>
-                    <p className="text-xs text-slate-500">
-                      Trình độ CEFR: <strong className="text-teal-700">{viewStudentModal.trinhDoCEFR}</strong>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      Trình độ CEFR: <strong className="text-teal-700 dark:text-teal-400">{viewStudentModal.trinhDoCEFR}</strong>
                     </p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setViewStudentModal(null)}
-                  className="p-1.5 rounded-lg bg-slate-100 text-slate-400 hover:text-slate-700 transition cursor-pointer"
+                  className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1020,25 +1063,29 @@ export default function TeacherAttendancePage() {
                 const stats = calculateStudentAttendanceRate(viewStudentModal.id);
                 return (
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                      <p className="text-[11px] text-slate-500 font-bold">Có mặt</p>
-                      <p className="text-base font-bold font-mono text-emerald-700">{stats.attended}</p>
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">Có mặt</p>
+                      <p className="text-base font-bold font-mono text-emerald-700 dark:text-emerald-400">{stats.attended}</p>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                      <p className="text-[11px] text-slate-500 font-bold">Đi muộn</p>
-                      <p className="text-base font-bold font-mono text-amber-700">{stats.late}</p>
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">Đi muộn</p>
+                      <p className="text-base font-bold font-mono text-amber-700 dark:text-amber-400">{stats.late}</p>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                      <p className="text-[11px] text-slate-500 font-bold">Có phép</p>
-                      <p className="text-base font-bold font-mono text-blue-700">{stats.excused}</p>
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">Có phép</p>
+                      <p className="text-base font-bold font-mono text-blue-700 dark:text-blue-400">{stats.excused}</p>
                     </div>
-                    <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                      <p className="text-[11px] text-slate-500 font-bold">Tỷ lệ Chuyên cần</p>
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-center">
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-bold">Tỷ lệ Chuyên cần</p>
                       <p
-                        className={`text-base font-bold font-mono ${stats.rate >= 80 ? 'text-emerald-700' : 'text-rose-700'
+                        className={`text-base font-bold font-mono ${stats.totalSessions === 0
+                            ? 'text-slate-400 dark:text-slate-500'
+                            : stats.rate >= 80
+                              ? 'text-emerald-700 dark:text-emerald-400'
+                              : 'text-rose-700 dark:text-rose-400'
                           }`}
                       >
-                        {stats.rate}%
+                        {stats.totalSessions === 0 ? '-' : `${stats.rate}%`}
                       </p>
                     </div>
                   </div>
@@ -1047,7 +1094,7 @@ export default function TeacherAttendancePage() {
 
               {/* Chi tiết từng buổi học */}
               <div>
-                <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5">
+                <h4 className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2.5">
                   Lịch Sử Điểm Danh Các Buổi Học
                 </h4>
                 <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
@@ -1056,32 +1103,32 @@ export default function TeacherAttendancePage() {
                     return (
                       <div
                         key={b.id}
-                        className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs"
+                        className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs"
                       >
                         <div className="space-y-0.5">
-                          <p className="font-bold text-slate-900">
+                          <p className="font-bold text-slate-900 dark:text-white">
                             Buổi {b.soThuTu} — {b.chuDe || 'Điểm danh chuyên cần'}
                           </p>
-                          <p className="text-[11px] text-slate-500 font-mono">
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                             {new Date(b.ngayHoc).toLocaleDateString('vi-VN')}
                           </p>
                         </div>
 
                         <div className="flex items-center space-x-3">
                           {rec?.ghiChu && (
-                            <span className="text-[11px] text-slate-600 italic bg-white px-2 py-0.5 rounded border border-slate-200">
+                            <span className="text-[11px] text-slate-600 dark:text-slate-300 italic bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
                               💬 {rec.ghiChu}
                             </span>
                           )}
                           {rec ? (
                             <span
                               className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${rec.trangThai === 'CO_MAT'
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                  : rec.trangThai === 'DI_MUON'
-                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                    : rec.trangThai === 'CO_PHEP'
-                                      ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
+                                : rec.trangThai === 'DI_MUON'
+                                  ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800'
+                                  : rec.trangThai === 'CO_PHEP'
+                                    ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800'
+                                    : 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:border-rose-800'
                                 }`}
                             >
                               {rec.trangThai === 'CO_MAT'

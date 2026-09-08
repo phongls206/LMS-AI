@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { enrollmentsService, authService } from '../../../services/api';
-import { UserPlus, Receipt, Sparkles, DollarSign, Clock, CheckCircle, AlertCircle, ArrowRight, UserCheck, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { UserPlus, Receipt, Sparkles, DollarSign, Clock, CheckCircle, AlertCircle, ArrowRight, UserCheck, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { formatTrangThaiHoaDon } from '../../../utils/formatters';
 
@@ -13,6 +13,7 @@ export default function StaffDashboardPage() {
   const [pendingInvoices, setPendingInvoices] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<'my_payments' | 'pending_invoices'>('my_payments');
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Pagination states
   const [pagePayments, setPagePayments] = useState(1);
@@ -20,29 +21,34 @@ export default function StaffDashboardPage() {
   const [pageInvoices, setPageInvoices] = useState(1);
   const limitInvoices = 8;
 
+  const fetchDashboardData = async (isManual = false) => {
+    try {
+      if (isManual) setRefreshing(true);
+      else setLoading(true);
+
+      const user = await authService.getMe();
+      setCurrentUser(user);
+
+      const [paymentsRes, invoicesRes] = await Promise.all([
+        enrollmentsService.getPayments(user?.id),
+        enrollmentsService.getInvoices(),
+      ]);
+
+      setMyPayments(paymentsRes || []);
+      const pending = (invoicesRes || []).filter(
+        (inv: any) => inv.trangThai === 'CHUA_THANH_TOAN' || inv.trangThai === 'THANH_TOAN_MOT_PHAN'
+      );
+      setPendingInvoices(pending);
+    } catch (err) {
+      console.error('Lỗi tải dữ liệu Staff Dashboard:', err);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const user = await authService.getMe();
-        setCurrentUser(user);
-
-        const [paymentsRes, invoicesRes] = await Promise.all([
-          enrollmentsService.getPayments(user.id),
-          enrollmentsService.getInvoices(),
-        ]);
-
-        setMyPayments(paymentsRes || []);
-        const pending = (invoicesRes || []).filter(
-          (inv: any) => inv.trangThai === 'CHUA_THANH_TOAN' || inv.trangThai === 'THANH_TOAN_MOT_PHAN'
-        );
-        setPendingInvoices(pending);
-      } catch (err) {
-        console.error('Lỗi tải dữ liệu Staff Dashboard:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetch();
+    fetchDashboardData();
   }, []);
 
   const totalCollectedByMe = myPayments.reduce(
@@ -211,7 +217,17 @@ export default function StaffDashboardPage() {
               </button>
             </div>
 
-
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              <button
+                onClick={() => fetchDashboardData(true)}
+                disabled={refreshing}
+                className="px-3 py-1.5 min-h-[38px] sm:min-h-0 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-slate-800 dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-slate-200 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-700 transition shadow-2xs cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap"
+                title="Cập nhật lại số liệu phiếu thu và hóa đơn mới nhất"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 shrink-0 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+                <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Nội dung Tab 1: Phiếu Thu Của Tôi */}
