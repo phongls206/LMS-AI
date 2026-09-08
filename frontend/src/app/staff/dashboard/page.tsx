@@ -17,9 +17,9 @@ export default function StaffDashboardPage() {
 
   // Pagination states
   const [pagePayments, setPagePayments] = useState(1);
-  const limitPayments = 8;
+  const [limitPayments, setLimitPayments] = useState(8);
   const [pageInvoices, setPageInvoices] = useState(1);
-  const limitInvoices = 8;
+  const [limitInvoices, setLimitInvoices] = useState(8);
 
   const fetchDashboardData = async (isManual = false) => {
     try {
@@ -287,11 +287,32 @@ export default function StaffDashboardPage() {
               </table>
 
               {/* Pagination cho Phiếu Thu */}
-              {totalPaymentsPages > 1 && (
-                <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-                  <span>
-                    Hiển thị {(pagePayments - 1) * limitPayments + 1} - {Math.min(pagePayments * limitPayments, myPayments.length)} / {myPayments.length} phiếu thu
-                  </span>
+              {myPayments.length > 0 && (
+                <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <span>
+                      Hiển thị {(pagePayments - 1) * limitPayments + 1} - {Math.min(pagePayments * limitPayments, myPayments.length)} / {myPayments.length} phiếu thu
+                    </span>
+                    <span className="text-slate-300 dark:text-slate-700">|</span>
+                    <div className="flex items-center gap-1.5">
+                      <span>Số dòng:</span>
+                      <select
+                        value={limitPayments}
+                        onChange={(e) => {
+                          setLimitPayments(Number(e.target.value));
+                          setPagePayments(1);
+                        }}
+                        className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                      >
+                        <option value={8}>8 / trang</option>
+                        <option value={15}>15 / trang</option>
+                        <option value={25}>25 / trang</option>
+                        <option value={50}>50 / trang</option>
+                        <option value={9999}>Tất cả</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div className="flex items-center space-x-1.5">
                     <button
                       onClick={() => setPagePayments((p) => Math.max(1, p - 1))}
@@ -374,11 +395,32 @@ export default function StaffDashboardPage() {
               </table>
 
               {/* Pagination cho Hóa Đơn Chờ Thu */}
-              {totalInvoicesPages > 1 && (
-                <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
-                  <span>
-                    Hiển thị {(pageInvoices - 1) * limitInvoices + 1} - {Math.min(pageInvoices * limitInvoices, pendingInvoices.length)} / {pendingInvoices.length} hóa đơn
-                  </span>
+              {pendingInvoices.length > 0 && (
+                <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <span>
+                      Hiển thị {(pageInvoices - 1) * limitInvoices + 1} - {Math.min(pageInvoices * limitInvoices, pendingInvoices.length)} / {pendingInvoices.length} hóa đơn
+                    </span>
+                    <span className="text-slate-300 dark:text-slate-700">|</span>
+                    <div className="flex items-center gap-1.5">
+                      <span>Số dòng:</span>
+                      <select
+                        value={limitInvoices}
+                        onChange={(e) => {
+                          setLimitInvoices(Number(e.target.value));
+                          setPageInvoices(1);
+                        }}
+                        className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                      >
+                        <option value={8}>8 / trang</option>
+                        <option value={15}>15 / trang</option>
+                        <option value={25}>25 / trang</option>
+                        <option value={50}>50 / trang</option>
+                        <option value={9999}>Tất cả</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div className="flex items-center space-x-1.5">
                     <button
                       onClick={() => setPageInvoices((p) => Math.max(1, p - 1))}

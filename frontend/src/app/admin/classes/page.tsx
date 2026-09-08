@@ -1081,6 +1081,7 @@ export default function AdminClassesPage() {
                     <option value={10}>10 / trang</option>
                     <option value={20}>20 / trang</option>
                     <option value={50}>50 / trang</option>
+                    <option value={9999}>Tất cả</option>
                   </select>
                 </div>
               </div>

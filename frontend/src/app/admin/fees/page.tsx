@@ -308,8 +308,8 @@ export default function AdminFeesPage() {
         {message && (
           <div
             className={`p-3.5 rounded-xl text-xs flex items-center space-x-2 shadow-sm ${message.type === 'success'
-                ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
-                : 'bg-rose-50 border border-rose-200 text-rose-800'
+              ? 'bg-emerald-50 border border-emerald-200 text-emerald-800'
+              : 'bg-rose-50 border border-rose-200 text-rose-800'
               }`}
           >
             {message.type === 'success' ? (
@@ -558,12 +558,12 @@ export default function AdminFeesPage() {
                           <td className="px-4 py-3 whitespace-nowrap text-center">
                             <span
                               className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${isCancelled
-                                  ? 'bg-slate-100 text-slate-600 border-slate-300'
-                                  : inv.trangThai === 'DA_HOAN_THANH'
-                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                    : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
-                                      ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                                ? 'bg-slate-100 text-slate-600 border-slate-300'
+                                : inv.trangThai === 'DA_HOAN_THANH'
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
+                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                    : 'bg-rose-50 text-rose-700 border-rose-200'
                                 }`}
                             >
                               {isCancelled ? 'Đã Hủy Đăng Ký' : formatTrangThaiHoaDon(inv.trangThai)}
@@ -607,13 +607,35 @@ export default function AdminFeesPage() {
 
               {/* Pagination Controls */}
               {totalInvoices > 0 && (
-                <div className="flex flex-col sm:flex-row items-center justify-between px-4 py-3 bg-slate-50 border-t border-slate-200 gap-3 text-xs">
-                  <div className="text-slate-500 font-medium">
-                    Hiển thị <span className="font-bold text-slate-800">{(page - 1) * limit + 1}</span> đến{' '}
-                    <span className="font-bold text-slate-800">
-                      {Math.min(page * limit, totalInvoices)}
-                    </span>{' '}
-                    trong tổng số <span className="font-bold text-teal-700">{totalInvoices}</span> hóa đơn
+                <div className="flex flex-col sm:flex-row items-center justify-between px-4 py-3 bg-slate-50 dark:bg-[#111928] border-t border-slate-200 dark:border-[#1e2d45] gap-3 text-xs">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-slate-500 dark:text-slate-400 font-medium">
+                    <span>
+                      Hiển thị <span className="font-bold text-slate-800 dark:text-slate-100">{(page - 1) * limit + 1}</span> đến{' '}
+                      <span className="font-bold text-slate-800 dark:text-slate-100">
+                        {Math.min(page * limit, totalInvoices)}
+                      </span>{' '}
+                      trong tổng số <span className="font-bold text-teal-700 dark:text-teal-400">{totalInvoices}</span> hóa đơn
+                    </span>
+
+                    <span className="text-slate-300 dark:text-slate-700">|</span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-slate-600 dark:text-slate-400">Số dòng:</span>
+                      <select
+                        value={limit}
+                        onChange={(e) => {
+                          setLimit(Number(e.target.value));
+                          setPage(1);
+                        }}
+                        className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                      >
+                        <option value={8}>8 / trang</option>
+                        <option value={15}>15 / trang</option>
+                        <option value={25}>25 / trang</option>
+                        <option value={50}>50 / trang</option>
+                        <option value={9999}>Tất cả</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div className="flex items-center space-x-1.5">

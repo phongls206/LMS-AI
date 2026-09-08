@@ -284,8 +284,8 @@ export default function StaffCollectFeePage() {
         {message && (
           <div
             className={`p-4 rounded-xl text-xs flex items-center space-x-2 shadow-sm ${message.type === 'success'
-                ? 'bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold'
-                : 'bg-rose-50 border border-rose-200 text-rose-800 font-bold'
+              ? 'bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold'
+              : 'bg-rose-50 border border-rose-200 text-rose-800 font-bold'
               }`}
           >
             {message.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" /> : <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />}
@@ -507,12 +507,12 @@ export default function StaffCollectFeePage() {
                           <td className="px-4 py-3 whitespace-nowrap text-center">
                             <span
                               className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${isCancelled
-                                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700'
-                                  : inv.trangThai === 'DA_HOAN_THANH'
-                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                    : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
-                                      ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                                ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700'
+                                : inv.trangThai === 'DA_HOAN_THANH'
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                  : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
+                                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                    : 'bg-rose-50 text-rose-700 border-rose-200'
                                 }`}
                             >
                               {isCancelled ? 'Đã Hủy Đăng Ký' : formatTrangThaiHoaDon(inv.trangThai)}
@@ -557,26 +557,49 @@ export default function StaffCollectFeePage() {
               </table>
 
               {/* Pagination Controls */}
-              {totalPages > 1 && (
-                <div className="px-4 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
-                  <span>
-                    Hiển thị {(page - 1) * limit + 1} - {Math.min(page * limit, totalInvoices)} / {totalInvoices} hóa đơn
-                  </span>
+              {totalInvoices > 0 && (
+                <div className="px-4 py-3 bg-slate-50 dark:bg-[#111928] border-t border-slate-200 dark:border-[#1e2d45] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                    <span>
+                      Hiển thị {(page - 1) * limit + 1} - {Math.min(page * limit, totalInvoices)} / {totalInvoices} hóa đơn
+                    </span>
+
+                    <span className="text-slate-300 dark:text-slate-700">|</span>
+
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-slate-600 dark:text-slate-400">Số dòng:</span>
+                      <select
+                        value={limit}
+                        onChange={(e) => {
+                          setLimit(Number(e.target.value));
+                          setPage(1);
+                        }}
+                        className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                      >
+                        <option value={8}>8 / trang</option>
+                        <option value={15}>15 / trang</option>
+                        <option value={25}>25 / trang</option>
+                        <option value={50}>50 / trang</option>
+                        <option value={9999}>Tất cả</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div className="flex items-center space-x-1.5">
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 disabled:opacity-30 transition cursor-pointer"
+                      className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 transition cursor-pointer"
                     >
                       <ChevronLeft className="w-3.5 h-3.5" />
                     </button>
-                    <span className="px-2 font-bold text-slate-900">
+                    <span className="px-2 font-bold text-slate-900 dark:text-white">
                       {page} / {totalPages}
                     </span>
                     <button
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page >= totalPages}
-                      className="p-1.5 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 disabled:opacity-30 transition cursor-pointer"
+                      className="p-1.5 rounded-lg bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 transition cursor-pointer"
                     >
                       <ChevronRight className="w-3.5 h-3.5" />
                     </button>

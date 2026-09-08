@@ -50,7 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     switch (role) {
       case 'QUAN_LY':
         return [
-          { label: 'Tổng Quan (Dashboard)', href: '/admin/dashboard', icon: LayoutDashboard },
+          { label: 'Tổng Quan', href: '/admin/dashboard', icon: LayoutDashboard },
           { label: 'Quản Lý Khóa Học', href: '/admin/courses', icon: BookOpen },
           { label: 'Quản Lý Lớp & Lịch', href: '/admin/classes', icon: GraduationCap },
           { label: 'Hồ Sơ Học Viên', href: '/admin/students', icon: Users },

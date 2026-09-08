@@ -104,7 +104,7 @@ export default function AdminStudentsPage() {
       const res = await usersService.getStudents(page, limit, search || undefined, cefrFilter || undefined);
       const studentList = Array.isArray(res) ? res : res.data || [];
       setStudents(studentList);
-      
+
       const totalCount = res.total ?? res.meta?.total ?? studentList.length;
       const pagesCount = res.totalPages ?? res.meta?.totalPages ?? Math.max(1, Math.ceil(totalCount / limit));
       setTotal(totalCount);
@@ -450,11 +450,10 @@ export default function AdminStudentsPage() {
                         <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-center">
                           {invoices.length > 0 ? (
                             <span
-                              className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${
-                                isFullyPaid
+                              className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${isFullyPaid
                                   ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                                   : 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-                              }`}
+                                }`}
                             >
                               {isFullyPaid ? 'Đã Hoàn Tất' : 'Chờ Thu'}
                             </span>
@@ -464,15 +463,14 @@ export default function AdminStudentsPage() {
                         </td>
                         <td className="px-3.5 py-3 2xl:px-4.5 2xl:py-3.5 whitespace-nowrap text-center">
                           <span
-                            className={`inline-block whitespace-nowrap px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
-                              s.trangThai === 'DANG_HOC'
+                            className={`inline-block whitespace-nowrap px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${s.trangThai === 'DANG_HOC'
                                 ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                                 : s.trangThai === 'HOAN_THANH'
-                                ? 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800'
-                                : s.trangThai === 'BAO_LUU'
-                                ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
-                            }`}
+                                  ? 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800'
+                                  : s.trangThai === 'BAO_LUU'
+                                    ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                              }`}
                           >
                             {formatTrangThaiHocVien(s.trangThai)}
                           </span>
@@ -536,6 +534,7 @@ export default function AdminStudentsPage() {
                     <option value={15}>15 / trang</option>
                     <option value={25}>25 / trang</option>
                     <option value={50}>50 / trang</option>
+                    <option value={9999}>Tất cả</option>
                   </select>
                 </div>
               </div>
@@ -573,11 +572,10 @@ export default function AdminStudentsPage() {
                         )}
                         <button
                           onClick={() => setPage(p)}
-                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
-                            page === p
+                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${page === p
                               ? 'bg-teal-600 text-white shadow-sm'
                               : 'bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800'
-                          }`}
+                            }`}
                         >
                           {p}
                         </button>
@@ -639,11 +637,10 @@ export default function AdminStudentsPage() {
                       required
                       value={createFormData.maHocVien}
                       onChange={(e) => setCreateFormData({ ...createFormData, maHocVien: e.target.value.toUpperCase() })}
-                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-mono ${
-                        createDuplicateErrors.maHocVien
+                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-mono ${createDuplicateErrors.maHocVien
                           ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
                           : 'border-slate-200 focus:border-teal-500'
-                      }`}
+                        }`}
                       placeholder="VD: HV055"
                     />
                     {createDuplicateErrors.maHocVien && (
@@ -674,11 +671,10 @@ export default function AdminStudentsPage() {
                       required
                       value={createFormData.tenDangNhap}
                       onChange={(e) => setCreateFormData({ ...createFormData, tenDangNhap: e.target.value.toLowerCase() })}
-                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${
-                        createDuplicateErrors.tenDangNhap
+                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${createDuplicateErrors.tenDangNhap
                           ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
                           : 'border-slate-200 focus:border-teal-500'
-                      }`}
+                        }`}
                       placeholder="VD: student55"
                     />
                     {createDuplicateErrors.tenDangNhap && (
@@ -709,11 +705,10 @@ export default function AdminStudentsPage() {
                       required
                       value={createFormData.email}
                       onChange={(e) => setCreateFormData({ ...createFormData, email: e.target.value })}
-                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${
-                        createDuplicateErrors.email
+                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${createDuplicateErrors.email
                           ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
                           : 'border-slate-200 focus:border-teal-500'
-                      }`}
+                        }`}
                       placeholder="VD: student55@gmail.com"
                     />
                     {createDuplicateErrors.email && (
@@ -1180,11 +1175,10 @@ export default function AdminStudentsPage() {
                             </div>
                           </div>
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                              isDone
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${isDone
                                 ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                                 : 'bg-amber-50 text-amber-700 border-amber-200'
-                            }`}
+                              }`}
                           >
                             {isDone ? 'Đã Thanh Toán' : 'Chưa Hoàn Tất'}
                           </span>

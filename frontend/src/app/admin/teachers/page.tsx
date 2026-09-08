@@ -487,21 +487,22 @@ export default function AdminTeachersPage() {
                 <span className="font-bold text-teal-700">{totalTeachers}</span>
                 <span>giáo viên</span>
 
-                <span className="text-slate-300">|</span>
+                <span className="text-slate-300 dark:text-slate-700">|</span>
 
                 <div className="flex items-center gap-1.5">
-                  <span className="text-slate-600">Số dòng:</span>
+                  <span className="text-slate-600 dark:text-slate-400">Số dòng:</span>
                   <select
                     value={limit}
                     onChange={(e) => {
                       setLimit(Number(e.target.value));
                       setPage(1);
                     }}
-                    className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs text-slate-800 focus:outline-none focus:border-teal-500 cursor-pointer"
+                    className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
                   >
                     <option value={10}>10 / trang</option>
                     <option value={20}>20 / trang</option>
                     <option value={50}>50 / trang</option>
+                    <option value={9999}>Tất cả</option>
                   </select>
                 </div>
               </div>
@@ -540,11 +541,10 @@ export default function AdminTeachersPage() {
                         <button
                           key={p}
                           onClick={() => setPage(p)}
-                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
-                            page === p
-                              ? 'bg-teal-600 text-white shadow-sm'
-                              : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                          }`}
+                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${page === p
+                            ? 'bg-teal-600 text-white shadow-sm'
+                            : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                            }`}
                         >
                           {p}
                         </button>
@@ -737,11 +737,10 @@ export default function AdminTeachersPage() {
                       required
                       value={createFormData.maGiaoVien}
                       onChange={(e) => setCreateFormData({ ...createFormData, maGiaoVien: e.target.value.toUpperCase() })}
-                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-mono ${
-                        createDuplicateErrors.maGiaoVien
-                          ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
-                          : 'border-slate-200 focus:border-teal-500'
-                      }`}
+                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none font-mono ${createDuplicateErrors.maGiaoVien
+                        ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
+                        : 'border-slate-200 focus:border-teal-500'
+                        }`}
                       placeholder="VD: GV011"
                     />
                     {createDuplicateErrors.maGiaoVien && (
@@ -772,11 +771,10 @@ export default function AdminTeachersPage() {
                       required
                       value={createFormData.tenDangNhap}
                       onChange={(e) => setCreateFormData({ ...createFormData, tenDangNhap: e.target.value.toLowerCase() })}
-                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${
-                        createDuplicateErrors.tenDangNhap
-                          ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
-                          : 'border-slate-200 focus:border-teal-500'
-                      }`}
+                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${createDuplicateErrors.tenDangNhap
+                        ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
+                        : 'border-slate-200 focus:border-teal-500'
+                        }`}
                       placeholder="VD: teacher11"
                     />
                     {createDuplicateErrors.tenDangNhap && (
@@ -807,11 +805,10 @@ export default function AdminTeachersPage() {
                       required
                       value={createFormData.email}
                       onChange={(e) => setCreateFormData({ ...createFormData, email: e.target.value })}
-                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${
-                        createDuplicateErrors.email
-                          ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
-                          : 'border-slate-200 focus:border-teal-500'
-                      }`}
+                      className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${createDuplicateErrors.email
+                        ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
+                        : 'border-slate-200 focus:border-teal-500'
+                        }`}
                       placeholder="VD: teacher11@etc-english.vn"
                     />
                     {createDuplicateErrors.email && (

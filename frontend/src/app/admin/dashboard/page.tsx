@@ -15,6 +15,7 @@ import {
   ArrowUpRight,
   ChevronRight,
   RefreshCw,
+  Clock,
 } from 'lucide-react';
 import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
 
@@ -22,11 +23,23 @@ export default function AdminDashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [selectedClassForStudents, setSelectedClassForStudents] = useState<{
     id: number;
     name?: string;
     code?: string;
   } | null>(null);
+
+  const formatLastUpdated = (d: Date | null) => {
+    if (!d) return 'Đang cập nhật...';
+    const hours = String(d.getHours()).padStart(2, '0');
+    const minutes = String(d.getMinutes()).padStart(2, '0');
+    const seconds = String(d.getSeconds()).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${hours}:${minutes}:${seconds} - ${day}/${month}/${year}`;
+  };
 
   const fetchStats = async (isManual = false) => {
     try {
@@ -35,6 +48,7 @@ export default function AdminDashboardPage() {
 
       const data = await statisticsService.getDashboard();
       setStats(data);
+      setLastUpdated(new Date());
     } catch (err) {
       console.error('Lỗi tải thống kê:', err);
     } finally {
@@ -59,12 +73,16 @@ export default function AdminDashboardPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Header Bar with Refresh */}
+          {/* Header Bar with Refresh & Timestamp */}
           <div className="flex justify-between items-center bg-white dark:bg-[#111928] p-3 sm:p-3.5 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-xs">
-            <div className="flex items-center space-x-2">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-                Tổng quan chỉ số hoạt động
-              </p>
+            <div className="flex items-center space-x-2 text-xs text-slate-600 dark:text-slate-300">
+              <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+              <span>
+                Cập nhật lúc:{' '}
+                <span className="font-bold text-slate-900 dark:text-slate-100 font-mono">
+                  {formatLastUpdated(lastUpdated)}
+                </span>
+              </span>
             </div>
             <button
               onClick={() => fetchStats(true)}
