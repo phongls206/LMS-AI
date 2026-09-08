@@ -264,15 +264,15 @@ export default function StaffCollectFeePage() {
       note: targetPayment
         ? targetPayment.ghiChu || 'Thanh toán học phí khóa học'
         : isCancelled
-        ? 'Hóa đơn đã hủy bỏ theo đơn đăng ký học viên'
-        : paid === 0
-        ? 'Học phí chưa thanh toán'
-        : 'Thanh toán học phí khóa học',
+          ? 'Hóa đơn đã hủy bỏ theo đơn đăng ký học viên'
+          : paid === 0
+            ? 'Học phí chưa thanh toán'
+            : 'Thanh toán học phí khóa học',
       date: targetPayment?.thoiGianThanhToan
         ? new Date(targetPayment.thoiGianThanhToan)
         : inv.ngayLap
-        ? new Date(inv.ngayLap)
-        : new Date(),
+          ? new Date(inv.ngayLap)
+          : new Date(),
       soPhieu: targetPayment?.maGiaoDich || (isCancelled ? `HD-HUY-${inv.maHoaDon}` : `HD-${inv.maHoaDon}`),
     });
   };
@@ -343,11 +343,10 @@ export default function StaffCollectFeePage() {
       <div className="space-y-8">
         {message && (
           <div
-            className={`p-4 rounded-xl text-xs flex items-center space-x-2 shadow-sm ${
-              message.type === 'success'
+            className={`p-4 rounded-xl text-xs flex items-center space-x-2 shadow-sm ${message.type === 'success'
                 ? 'bg-emerald-50 border border-emerald-200 text-emerald-800 font-bold'
                 : 'bg-rose-50 border border-rose-200 text-rose-800 font-bold'
-            }`}
+              }`}
           >
             {message.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" /> : <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />}
             <span>{message.text}</span>
@@ -414,10 +413,10 @@ export default function StaffCollectFeePage() {
                   {submitting
                     ? 'Đang Ghi Danh...'
                     : alreadyEnrolledInvoice
-                    ? 'Đã Ghi Danh Lớp Này'
-                    : previouslyCancelledInvoice
-                    ? 'Tái Kích Hoạt & Ghi Danh Lại'
-                    : 'Ghi Danh & Tạo Hóa Đơn'}
+                      ? 'Đã Ghi Danh Lớp Này'
+                      : previouslyCancelledInvoice
+                        ? 'Tái Kích Hoạt & Ghi Danh Lại'
+                        : 'Ghi Danh & Tạo Hóa Đơn'}
                 </span>
               </button>
             </div>
@@ -465,7 +464,7 @@ export default function StaffCollectFeePage() {
                 2. Quầy Thu Học Phí & Lập Phiếu Thu
               </h3>
             </div>
-            
+
             <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
               <div className="relative flex-1 sm:w-60 min-w-[200px]">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -567,15 +566,14 @@ export default function StaffCollectFeePage() {
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap text-center">
                             <span
-                              className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${
-                                isCancelled
+                              className={`inline-block whitespace-nowrap px-3 py-1 rounded-full text-[11px] font-bold border ${isCancelled
                                   ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-300 dark:border-slate-700'
                                   : inv.trangThai === 'DA_HOAN_THANH'
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                  : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
-                                  ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                  : 'bg-rose-50 text-rose-700 border-rose-200'
-                              }`}
+                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                                    : inv.trangThai === 'THANH_TOAN_MOT_PHAN'
+                                      ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                                }`}
                             >
                               {isCancelled ? 'Đã Hủy Đăng Ký' : formatTrangThaiHoaDon(inv.trangThai)}
                             </span>
@@ -770,7 +768,7 @@ export default function StaffCollectFeePage() {
           const paymentsList: any[] = (receiptData.invoice.thanhToan && receiptData.invoice.thanhToan.length > 0)
             ? receiptData.invoice.thanhToan
             : totalPaid > 0
-            ? [{
+              ? [{
                 id: receiptData.invoice.id,
                 maGiaoDich: `PT-${receiptData.invoice.maHoaDon}`,
                 soTien: totalPaid,
@@ -779,7 +777,7 @@ export default function StaffCollectFeePage() {
                 thoiGianThanhToan: receiptData.date || receiptData.invoice.ngayLap || receiptData.invoice.createdAt,
                 nguoiThu: null,
               }]
-            : [];
+              : [];
 
           const viewingSingleReceipt = !!receiptData.selectedPayment;
 
@@ -946,7 +944,7 @@ export default function StaffCollectFeePage() {
                           <div className="flex justify-between items-center text-[11px] pt-1 border-t border-slate-100 dark:border-slate-800">
                             <span className="text-slate-500 dark:text-slate-400">Nghĩa vụ công nợ hiện tại:</span>
                             <span className="font-bold font-mono text-slate-400 dark:text-slate-500">
-                              0 đ (ĐÃ HỦY NỢ HOÀN TOÀN)
+                              0 đ (ĐÃ HỦY HOÀN TOÀN)
                             </span>
                           </div>
                         </div>
@@ -1180,8 +1178,8 @@ export default function StaffCollectFeePage() {
                           {isUnpaid
                             ? 'In Báo Học Phí'
                             : viewingSingleReceipt
-                            ? 'In Phiếu Thu'
-                            : 'In Bảng Kê Hóa Đơn'}
+                              ? 'In Phiếu Thu'
+                              : 'In Bảng Kê Hóa Đơn'}
                         </span>
                       </button>
                     )}

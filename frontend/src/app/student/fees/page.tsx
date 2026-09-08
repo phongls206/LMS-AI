@@ -49,26 +49,24 @@ export default function StudentFeesPage() {
               return (
                 <div
                   key={inv.id}
-                  className={`p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#111928] border shadow-sm space-y-4 ${
-                    isCancelled
+                  className={`p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#111928] border shadow-sm space-y-4 ${isCancelled
                       ? 'border-slate-300 dark:border-slate-800 opacity-95'
                       : 'border-slate-200/90 dark:border-[#1e2d45]'
-                  }`}
+                    }`}
                 >
                   <div className="flex justify-between items-center flex-wrap gap-2">
                     <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 px-2.5 py-1 rounded-lg">
                       {inv.maHoaDon}
                     </span>
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${
-                        isCancelled
+                      className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 ${isCancelled
                           ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
                           : isFull
-                          ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
-                          : isPartial
-                          ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-                          : 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'
-                      }`}
+                            ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                            : isPartial
+                              ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                              : 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800'
+                        }`}
                     >
                       {isCancelled ? (
                         <span>✕ Lớp Đã Hủy (Bảo Lưu Lịch Sử)</span>
@@ -110,7 +108,7 @@ export default function StudentFeesPage() {
                     <div>
                       <p className="text-slate-500 dark:text-slate-400 font-medium">{isCancelled ? 'Trạng Thái' : 'Còn Nợ'}</p>
                       <p className={`text-sm font-bold mt-1 font-mono ${isCancelled ? 'text-slate-500' : remaining > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-800 dark:text-slate-200'}`}>
-                        {isCancelled ? 'Đã hủy nợ' : `${remaining.toLocaleString('vi-VN')} đ`}
+                        {isCancelled ? 'Đã hủy' : `${remaining.toLocaleString('vi-VN')} đ`}
                       </p>
                     </div>
                   </div>
