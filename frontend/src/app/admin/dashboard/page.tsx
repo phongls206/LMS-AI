@@ -274,10 +274,7 @@ export default function AdminDashboardPage() {
                   <h3 className="font-bold text-slate-900 dark:text-white text-sm sm:text-base">Tình Trạng Sĩ Số Các Lớp Đang Mở</h3>
                   <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Nhấn vào lớp học bất kỳ để xem danh sách học viên ({stats?.siSoCacLop?.length || 0} lớp)</p>
                 </div>
-                <span className="self-start sm:self-auto text-[11px] sm:text-xs font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 px-2.5 py-1 rounded-lg border border-teal-200 dark:border-teal-800 flex items-center gap-1.5 shadow-xs shrink-0">
-                  <Users className="w-3.5 h-3.5" />
-                  <span>Click xem DS học viên</span>
-                </span>
+
               </div>
 
               <div className="space-y-2.5 sm:space-y-3 max-h-[440px] overflow-y-auto pr-1.5 custom-scrollbar flex-1">
@@ -294,7 +291,7 @@ export default function AdminDashboardPage() {
                             code: c.maLopHoc,
                           })
                         }
-                        className="p-3 sm:p-4 rounded-xl bg-slate-50 dark:bg-[#111827] border border-slate-200/80 dark:border-[#1e2d45] hover:border-teal-500 dark:hover:border-teal-500/70 hover:bg-white dark:hover:bg-[#152033] hover:shadow-md hover:shadow-teal-500/10 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group active:scale-[0.99]"
+                        className="mt-2 p-3 sm:p-4 rounded-xl bg-slate-50 dark:bg-[#111827] border border-slate-200/80 dark:border-[#1e2d45] hover:border-teal-500 dark:hover:border-teal-500/70 hover:bg-white dark:hover:bg-[#152033] hover:shadow-md hover:shadow-teal-500/10 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer group active:scale-[0.99]"
                         title={`Bấm để xem danh sách học viên của lớp ${c.tenLopHoc}`}
                       >
                         <div className="flex justify-between items-center mb-2 gap-2">
