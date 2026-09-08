@@ -133,11 +133,7 @@ export default function AdminDashboardPage() {
           {/* Header Bar with Live Pulse & Last Sync Time */}
           <div className="flex justify-between items-center bg-white dark:bg-[#111928] p-3 sm:p-3.5 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-xs">
             <div className="flex items-center gap-3">
-              {/* Chấm xanh nhấp nháy Live Indicator */}
-              <div className="relative flex items-center justify-center w-3 h-3 shrink-0 ml-0.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </div>
+
               <div className="flex flex-col">
                 {/* Dòng 1: Đồng bộ lần cuối */}
                 <div className="flex items-center gap-1 text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
