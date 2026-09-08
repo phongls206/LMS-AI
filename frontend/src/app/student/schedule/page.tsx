@@ -1,11 +1,12 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { AppLayout } from '../../../components/AppLayout';
 import { gradesService } from '../../../services/api';
 import {
   Calendar, Clock, MapPin, ChevronDown, ChevronUp, AlertCircle,
-  CheckCircle2, XCircle, Info, BookOpen, Layers
+  CheckCircle2, XCircle, Info, BookOpen, Layers, Award, ChevronRight
 } from 'lucide-react';
 import { formatTrangThaiDangKy, formatTrangThaiLopHoc } from '../../../utils/formatters';
 
@@ -27,6 +28,29 @@ export default function StudentSchedulePage() {
     };
     fetch();
   }, []);
+
+  // Tự động cuộn và mở chi tiết buổi học khi có anchor #class-{id}
+  useEffect(() => {
+    if (!loading && enrollments.length > 0) {
+      const hash = typeof window !== 'undefined' ? window.location.hash : '';
+      if (hash && hash.startsWith('#class-')) {
+        const classId = parseInt(hash.replace('#class-', ''), 10);
+        if (!isNaN(classId)) {
+          setExpandedClassId(classId);
+          setTimeout(() => {
+            const el = document.getElementById(`class-${classId}`);
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              el.classList.add('ring-2', 'ring-teal-500', 'shadow-lg');
+              setTimeout(() => {
+                el.classList.remove('ring-2', 'ring-teal-500', 'shadow-lg');
+              }, 2500);
+            }
+          }, 250);
+        }
+      }
+    }
+  }, [loading, enrollments]);
 
   const formatTime = (timeStr?: string) => {
     if (!timeStr) return '';
@@ -64,12 +88,13 @@ export default function StudentSchedulePage() {
               return (
                 <div
                   key={enr.id}
-                  className="rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden hover:border-teal-300 transition"
+                  id={`class-${lop?.id}`}
+                  className="rounded-2xl bg-white border border-slate-200/90 shadow-sm overflow-hidden hover:border-teal-300 transition-all duration-300 scroll-mt-6"
                 >
                   {/* Card Header & Summary */}
                   <div className="p-6">
                     <div className="flex flex-wrap justify-between items-start gap-3 mb-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-mono text-xs font-bold text-teal-700 px-2.5 py-1 rounded-lg bg-teal-50 border border-teal-200">
                           {lop?.maLopHoc}
                         </span>
@@ -93,16 +118,28 @@ export default function StudentSchedulePage() {
                         )}
                       </div>
 
-                      <span
-                        className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${enr.trangThai === 'DA_XAC_NHAN' || enr.trangThai === 'HOAN_THANH'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : enr.trangThai === 'CHO_THANH_TOAN' || enr.trangThai === 'CHO_XAC_NHAN'
-                              ? 'bg-amber-50 text-amber-700 border-amber-200'
-                              : 'bg-slate-100 text-slate-600 border-slate-200'
-                          }`}
-                      >
-                        Hồ sơ ghi danh: {formatTrangThaiDangKy(enr.trangThai)}
-                      </span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span
+                          className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${enr.trangThai === 'DA_XAC_NHAN' || enr.trangThai === 'HOAN_THANH'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : enr.trangThai === 'CHO_THANH_TOAN' || enr.trangThai === 'CHO_XAC_NHAN'
+                                ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                : 'bg-slate-100 text-slate-600 border-slate-200'
+                            }`}
+                        >
+                          Hồ sơ ghi danh: {formatTrangThaiDangKy(enr.trangThai)}
+                        </span>
+
+                        <Link
+                          href={`/student/grades#class-${lop?.id}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200/90 hover:border-teal-600 transition-all shadow-2xs group cursor-pointer"
+                          title="Xem bảng điểm & kết quả học tập của lớp này"
+                        >
+                          <Award className="w-3.5 h-3.5 text-amber-500 group-hover:text-white transition-colors" />
+                          <span>Xem Điểm</span>
+                          <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                        </Link>
+                      </div>
                     </div>
 
                     <h3 className="text-xl font-bold text-slate-900 mb-1">{lop?.tenLopHoc}</h3>
@@ -178,8 +215,8 @@ export default function StudentSchedulePage() {
                       )}
                     </div>
 
-                    {/* Toggle nút mở lịch trình buổi học */}
-                    <div className="pt-4 mt-4 border-t border-slate-100 flex justify-between items-center">
+                    {/* Toggle nút mở lịch trình buổi học & Xem bảng điểm */}
+                    <div className="pt-4 mt-4 border-t border-slate-100 flex flex-wrap justify-between items-center gap-3">
                       <button
                         type="button"
                         onClick={() => setExpandedClassId(isExpanded ? null : Number(lop?.id))}
@@ -198,9 +235,19 @@ export default function StudentSchedulePage() {
                         )}
                       </button>
 
-                      <span className="text-[11px] text-slate-400">
-                        {isRecruiting ? 'Lớp chưa khai giảng' : 'Lớp đã vào học chính thức'}
-                      </span>
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <Link
+                          href={`/student/grades#class-${lop?.id}`}
+                          className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1 hover:underline transition"
+                          title="Xem kết quả học tập & bảng điểm lớp này"
+                        >
+                          <Award className="w-3.5 h-3.5 text-amber-500" />
+                          <span>Xem bảng điểm lớp</span>
+                        </Link>
+                        <span className="text-[11px] text-slate-400">
+                          {isRecruiting ? '• Lớp chưa khai giảng' : '• Lớp đã vào học chính thức'}
+                        </span>
+                      </div>
                     </div>
                   </div>
 

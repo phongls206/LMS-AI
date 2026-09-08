@@ -160,9 +160,10 @@ export default function StudentDashboardPage() {
           ) : schedule.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {schedule.map((item) => (
-                <div
+                <Link
                   key={item.id}
-                  className="p-4.5 rounded-xl bg-slate-50 dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800/90 hover:border-teal-400 dark:hover:border-teal-500/60 hover:bg-white dark:hover:bg-[#162032] hover:shadow-lg hover:shadow-teal-500/5 hover:-translate-y-1 transition-all duration-200 group cursor-pointer relative overflow-hidden"
+                  href={`/student/schedule#class-${item.lopHoc?.id || item.lopHocId}`}
+                  className="block p-4.5 rounded-xl bg-slate-50 dark:bg-[#111827] border border-slate-200/90 dark:border-slate-800/90 hover:border-teal-400 dark:hover:border-teal-500/60 hover:bg-white dark:hover:bg-[#162032] hover:shadow-lg hover:shadow-teal-500/5 hover:-translate-y-1 transition-all duration-200 group cursor-pointer relative overflow-hidden"
                 >
                   <div className="flex justify-between items-start mb-2.5">
                     <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-300 px-2.5 py-0.5 rounded-md bg-teal-50 dark:bg-teal-950/60 border border-teal-200/70 dark:border-teal-800 group-hover:bg-teal-600 group-hover:text-white group-hover:border-teal-600 transition-colors">
@@ -197,7 +198,7 @@ export default function StudentDashboardPage() {
                       <ChevronRight className="w-3 h-3" />
                     </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           ) : (
