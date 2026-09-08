@@ -59,12 +59,11 @@ export default function AdminDashboardPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Header Bar with Live Refresh */}
+          {/* Header Bar with Refresh */}
           <div className="flex justify-between items-center bg-white dark:bg-[#111928] p-3 sm:p-3.5 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-xs">
             <div className="flex items-center space-x-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
               <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">
-                Số liệu phân tích & vận hành thời gian thực
+                Tổng quan chỉ số hoạt động
               </p>
             </div>
             <button
@@ -205,7 +204,7 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
 
-              <div className="space-y-3 max-h-[440px] overflow-y-auto pr-1.5 scrollbar-thin">
+              <div className="space-y-3 max-h-[440px] overflow-y-auto pr-1.5 custom-scrollbar">
                 {stats?.siSoCacLop?.length > 0 ? (
                   stats.siSoCacLop.map((c: any) => {
                     const percent = Math.min(100, Math.round((c.siSoHienTai / c.siSoToiDa) * 100));

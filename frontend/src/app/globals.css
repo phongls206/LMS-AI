@@ -30,23 +30,109 @@ body {
   overflow-wrap: break-word;
 }
 
-/* Tùy chỉnh thanh cuộn sáng mượt mà */
+/* Tùy chỉnh thanh cuộn mượt mà, hòa lẫn tinh tế với màu nền (cả Light và Dark mode) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.2) transparent;
+}
+
+html.dark *,
+.dark * {
+  scrollbar-color: rgba(148, 163, 184, 0.15) transparent;
+}
+
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: transparent !important;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: rgba(100, 116, 139, 0.2);
   border-radius: 9999px;
+  transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: rgba(100, 116, 139, 0.4);
+}
+
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent !important;
+}
+
+html.dark ::-webkit-scrollbar-track,
+.dark ::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+html.dark ::-webkit-scrollbar-thumb,
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.15);
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover,
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.35);
+}
+
+/* Class tiện ích thanh cuộn mỏng nhẹ hòa lẫn màu nền */
+.scrollbar-thin,
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100, 116, 139, 0.2) transparent;
+}
+
+html.dark .scrollbar-thin,
+html.dark .custom-scrollbar,
+.dark .scrollbar-thin,
+.dark .custom-scrollbar {
+  scrollbar-color: rgba(148, 163, 184, 0.15) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar,
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track,
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb,
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.2);
+  border-radius: 9999px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover,
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.4);
+}
+
+html.dark .scrollbar-thin::-webkit-scrollbar-thumb,
+html.dark .custom-scrollbar::-webkit-scrollbar-thumb,
+.dark .scrollbar-thin::-webkit-scrollbar-thumb,
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.15);
+}
+
+html.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover,
+html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover,
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover,
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.35);
 }
 
 /* Ẩn thanh cuộn nhưng vẫn cho phép cuộn nội dung mượt mà */
@@ -476,18 +562,6 @@ html.dark .bg-white.border {
   border-color: #1e2d45 !important;
 }
 
-/* ── Scrollbars ───────────────────────────────────────────────────────── */
-html.dark ::-webkit-scrollbar-track {
-  background: #0a0e1a;
-}
-
-html.dark ::-webkit-scrollbar-thumb {
-  background: #1e2d45;
-}
-
-html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
-}
 
 /* ── Print Media Styles for Official Receipts, AI Progress Reports & System Reports ─ */
 @media print {
