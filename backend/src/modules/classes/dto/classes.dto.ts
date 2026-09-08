@@ -80,14 +80,19 @@ export class UpdateClassDto {
   @IsString()
   phongHoc?: string;
 
+  @ApiPropertyOptional({ example: 'https://meet.google.com/abc-xyz' })
+  @IsOptional()
+  @IsString()
+  linkOnline?: string;
+
   @ApiPropertyOptional({ example: '2024-10-01' })
   @IsOptional()
-  @IsDateString()
+  @IsString()
   ngayBatDau?: string;
 
   @ApiPropertyOptional({ example: '2024-12-30' })
   @IsOptional()
-  @IsDateString()
+  @IsString()
   ngayKetThuc?: string;
 }
 

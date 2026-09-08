@@ -159,6 +159,8 @@ export const classesService = {
   updateStatus: async (id: number, trangThai: string) =>
     (await api.put(`/classes/${id}/status`, { trangThai })).data,
   addSchedule: async (id: number, data: any) => (await api.post(`/classes/${id}/schedules`, data)).data,
+  deleteSchedule: async (id: number, scheduleId: number) =>
+    (await api.delete(`/classes/${id}/schedules/${scheduleId}`)).data,
   assignTeacher: async (id: number, data: any) =>
     (await api.post(`/classes/${id}/assign-teacher`, data)).data,
   getTeacherSchedule: async () => (await api.get('/teachers/me/schedule')).data,

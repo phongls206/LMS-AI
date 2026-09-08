@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Param,
   Body,
   Query,
@@ -69,6 +70,19 @@ export class ClassesController {
     @Body() dto: CreateScheduleDto,
   ) {
     return this.classesService.addSchedule(id, dto);
+  }
+
+  /**
+   * DELETE /api/v1/classes/:id/schedules/:scheduleId — UC004 (Chỉ Quản lý)
+   */
+  @Delete('classes/:id/schedules/:scheduleId')
+  @Roles(VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Xóa một buổi lịch học của lớp' })
+  deleteSchedule(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('scheduleId', ParseIntPipe) scheduleId: number,
+  ) {
+    return this.classesService.deleteSchedule(id, scheduleId);
   }
 
   /**

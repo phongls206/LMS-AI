@@ -7,7 +7,8 @@ import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
 import {
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
   Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock, Users,
-  Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, RefreshCw
+  Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, RefreshCw,
+  MapPin, Globe
 } from 'lucide-react';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
@@ -30,13 +31,40 @@ const PRESET_SCHEDULES = [
   { label: 'Cả Tuần', days: [2, 3, 4, 5, 6, 7, 8] },
 ];
 
+const getDayDisplay = (thu: number) => {
+  if (thu === 8) return 'Chủ Nhật';
+  return `Thứ ${thu}`;
+};
+
+const getDayShort = (thu: number) => {
+  if (thu === 8) return 'CN';
+  return `T${thu}`;
+};
+
+const isOnlineLink = (str?: string | null) => {
+  if (!str) return false;
+  const s = str.toLowerCase().trim();
+  return (
+    s.startsWith('http://') ||
+    s.startsWith('https://') ||
+    s.includes('zoom.us') ||
+    s.includes('meet.google.com') ||
+    s.includes('teams.microsoft.com') ||
+    s.includes('meet.') ||
+    s.endsWith('.com') ||
+    s.endsWith('.vn') ||
+    s.includes('alo.com') ||
+    s.includes('zalo') ||
+    s.includes('skype')
+  );
+};
+
 export default function AdminClassesPage() {
   const [classes, setClasses] = useState<LopHoc[]>([]);
   const [courses, setCourses] = useState<KhoaHoc[]>([]);
   const [teachers, setTeachers] = useState<GiaoVien[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [selectedClassForStudents, setSelectedClassForStudents] = useState<{
@@ -50,16 +78,13 @@ export default function AdminClassesPage() {
     const q = search.toLowerCase().trim();
     const teacherName = c.phanCong?.[0]?.giaoVien?.hoTen || '';
     const courseName = c.khoaHoc?.tenKhoaHoc || '';
-    const matchQuery =
+    return (
       !q ||
       c.maLopHoc?.toLowerCase().includes(q) ||
       c.tenLopHoc?.toLowerCase().includes(q) ||
       courseName.toLowerCase().includes(q) ||
-      teacherName.toLowerCase().includes(q);
-
-    const matchStatus = !statusFilter || c.trangThai === statusFilter;
-
-    return matchQuery && matchStatus;
+      teacherName.toLowerCase().includes(q)
+    );
   });
 
   // Sorting
@@ -257,6 +282,30 @@ export default function AdminClassesPage() {
         type: 'error',
         text: `Không thể xếp lịch: ${conflictErrors.join(' | ')}`,
       });
+    }
+  };
+
+  const handleDeleteSchedule = async (classId: number, scheduleId: number, thu: number) => {
+    const dayLabel = getDayDisplay(thu);
+    if (!confirm(`Bạn có chắc muốn xóa lịch học ${dayLabel} của lớp này không?`)) return;
+    try {
+      await classesService.deleteSchedule(classId, scheduleId);
+      setMessage({ type: 'success', text: `Đã xóa lịch học ${dayLabel} thành công!` });
+      setClasses((prev) =>
+        prev.map((c) => {
+          if (Number(c.id) === Number(classId)) {
+            return {
+              ...c,
+              lichHoc: c.lichHoc?.filter((l: any) => Number(l.id) !== Number(scheduleId)),
+            };
+          }
+          return c;
+        })
+      );
+      fetchData();
+      setTimeout(() => setMessage(null), 3000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Không thể xóa lịch học.');
     }
   };
 
@@ -473,10 +522,10 @@ export default function AdminClassesPage() {
       subtitle="Thiết lập phòng học, xếp lịch hàng tuần và phân công giảng viên trực tiếp"
     >
       <div className="space-y-6">
-        {/* Actions Bar: Tìm kiếm, Bộ lọc trạng thái & Thao tác */}
-        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 bg-white dark:bg-[#111928] p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm">
+        {/* Actions Bar: Tìm kiếm, Thống kê số lượng, Làm mới & Thao tác */}
+        <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 bg-white dark:bg-[#111928] p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 flex-1">
-            <div className="relative flex-1 sm:max-w-xs">
+            <div className="relative w-full sm:w-72 md:w-80">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
@@ -490,38 +539,28 @@ export default function AdminClassesPage() {
               />
             </div>
 
-            <select
-              value={statusFilter}
-              onChange={(e) => {
-                setStatusFilter(e.target.value);
-                setPage(1);
-              }}
-              className="h-10 min-h-[40px] w-full sm:w-auto bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 cursor-pointer transition-colors"
-            >
-              <option value="">Tất cả trạng thái</option>
-              <option value="DANG_HOC">Đang Học</option>
-              <option value="DANG_MO_DANG_KY">Đang Mở Tuyển Sinh</option>
-              <option value="SAP_MO">Sắp Mở</option>
-              <option value="DA_KET_THUC">Đã Kết Thúc</option>
-              <option value="DA_HUY">Đã Hủy</option>
-            </select>
+            {/* Cụm Tổng số lớp và nút Làm mới đặt cạnh nhau */}
+            <div className="flex items-center gap-2">
+              <span className="h-10 px-3 rounded-xl bg-slate-100 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-xs font-bold text-slate-700 dark:text-slate-300 inline-flex items-center gap-1.5 whitespace-nowrap">
+                <Layers className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <span>
+                  Tổng số: <strong className="text-teal-700 dark:text-teal-400">{totalClasses}</strong> lớp
+                </span>
+              </span>
 
-            <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider hidden lg:inline-block whitespace-nowrap">
-              Tổng số {totalClasses} lớp
-            </span>
+              <button
+                onClick={() => fetchData(true)}
+                disabled={refreshing}
+                className="h-10 px-3.5 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-50 whitespace-nowrap"
+                title="Làm mới lại danh sách lớp học và sĩ số mới nhất"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
+                <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center space-x-2 shrink-0">
-            <button
-              onClick={() => fetchData(true)}
-              disabled={refreshing}
-              className="h-10 min-h-[40px] flex items-center justify-center space-x-1.5 px-3.5 rounded-xl bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-200 dark:border-[#22324e] hover:border-teal-300 dark:hover:border-teal-700 text-xs font-bold transition cursor-pointer shadow-sm disabled:opacity-50"
-              title="Cập nhật lại danh sách lớp học và sĩ số mới nhất"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
-              <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
-            </button>
-
+          <div className="flex items-center justify-end shrink-0">
             <button
               onClick={() => setShowCreateClass(true)}
               className="w-full sm:w-auto h-10 min-h-[40px] flex items-center justify-center space-x-2 px-4 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold shadow-md shadow-teal-600/20 transition cursor-pointer shrink-0"
@@ -552,12 +591,12 @@ export default function AdminClassesPage() {
         ) : (
           <div className="bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] rounded-2xl overflow-hidden shadow-sm">
             <div className="w-full overflow-x-auto scrollbar-thin">
-              <table className="min-w-[780px] w-full text-left text-xs text-slate-700 dark:text-slate-200">
-                <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+              <table className="min-w-[940px] w-full text-left text-xs text-slate-700 dark:text-slate-200">
+                <thead className="bg-slate-50 dark:bg-[#162032] text-slate-600 dark:text-slate-400 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-[#1e2d45]">
                   <tr>
                     <th
                       onClick={() => toggleSort('maLopHoc')}
-                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="w-[110px] min-w-[100px] px-4 py-3.5 cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-[#1e2d45] hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Mã Lớp"
                     >
                       <div className="flex items-center space-x-1">
@@ -567,7 +606,7 @@ export default function AdminClassesPage() {
                     </th>
                     <th
                       onClick={() => toggleSort('tenLopHoc')}
-                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="min-w-[200px] max-w-[280px] px-4 py-3.5 cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-[#1e2d45] hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Tên Lớp"
                     >
                       <div className="flex items-center space-x-1">
@@ -577,27 +616,27 @@ export default function AdminClassesPage() {
                     </th>
                     <th
                       onClick={() => toggleSort('siSo')}
-                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="w-[90px] min-w-[80px] px-3 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-[#1e2d45] hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Sĩ Số"
                     >
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center justify-center space-x-1">
                         <span>Sĩ Số</span>
                         <SortIndicator sortKey="siSo" activeKey={sortKey} sortOrder={sortOrder} />
                       </div>
                     </th>
                     <th
                       onClick={() => toggleSort('thoiGian')}
-                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="min-w-[200px] max-w-[260px] px-4 py-3.5 cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-[#1e2d45] hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Lịch học"
                     >
                       <div className="flex items-center space-x-1">
-                        <span>Thời Khóa Biểu</span>
+                        <span>Thời Khóa Biểu & Phòng</span>
                         <SortIndicator sortKey="thoiGian" activeKey={sortKey} sortOrder={sortOrder} />
                       </div>
                     </th>
                     <th
                       onClick={() => toggleSort('giaoVien')}
-                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="w-[150px] min-w-[120px] px-4 py-3.5 cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-[#1e2d45] hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Giáo Viên"
                     >
                       <div className="flex items-center space-x-1">
@@ -607,18 +646,18 @@ export default function AdminClassesPage() {
                     </th>
                     <th
                       onClick={() => toggleSort('trangThai')}
-                      className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 hover:text-teal-700 transition group"
+                      className="w-[150px] min-w-[130px] px-4 py-3.5 cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-[#1e2d45] hover:text-teal-700 dark:hover:text-teal-400 transition group"
                       title="Nhấn để sắp xếp theo Trạng Thái"
                     >
                       <div className="flex items-center space-x-1">
-                        <span>Trạng Thái (Đổi Nhanh)</span>
+                        <span>Trạng Thái</span>
                         <SortIndicator sortKey="trangThai" activeKey={sortKey} sortOrder={sortOrder} />
                       </div>
                     </th>
-                    <th className="px-5 py-3.5 text-right">Thao Tác</th>
+                    <th className="w-[180px] min-w-[170px] px-4 py-3.5 text-right">Thao Tác</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-[#1e2d45]">
                   {displayedClasses.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="text-center py-12 text-slate-400 text-xs italic">
@@ -629,13 +668,21 @@ export default function AdminClassesPage() {
                     </tr>
                   ) : (
                     displayedClasses.map((c) => (
-                      <tr key={c.id} className="hover:bg-teal-50/30 transition">
-                        <td className="px-5 py-4 font-mono font-bold text-teal-700">{c.maLopHoc}</td>
-                        <td className="px-5 py-4">
-                          <p className="font-bold text-slate-900">{c.tenLopHoc}</p>
-                          <p className="text-[11px] text-slate-500">{c.khoaHoc?.tenKhoaHoc}</p>
+                      <tr key={c.id} className="hover:bg-teal-50/30 dark:hover:bg-teal-950/20 transition">
+                        <td className="px-4 py-3.5 font-mono font-bold text-teal-700 dark:text-teal-400 whitespace-nowrap">
+                          {c.maLopHoc}
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-4 py-3.5">
+                          <div className="max-w-[280px]">
+                            <p className="font-bold text-slate-900 dark:text-slate-100 line-clamp-2 leading-snug" title={c.tenLopHoc}>
+                              {c.tenLopHoc}
+                            </p>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5" title={c.khoaHoc?.tenKhoaHoc}>
+                              {c.khoaHoc?.tenKhoaHoc}
+                            </p>
+                          </div>
+                        </td>
+                        <td className="px-3 py-3.5 text-center">
                           <button
                             type="button"
                             onClick={() =>
@@ -645,45 +692,78 @@ export default function AdminClassesPage() {
                                 code: c.maLopHoc,
                               })
                             }
-                            className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-teal-50 text-slate-700 hover:text-teal-700 border border-slate-200 hover:border-teal-400 transition-all cursor-pointer group shadow-sm text-xs font-semibold"
+                            className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#162032] hover:bg-teal-50 dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-200 hover:text-teal-700 dark:hover:text-teal-300 border border-slate-200 dark:border-[#22324e] hover:border-teal-400 transition-all cursor-pointer group shadow-xs text-xs font-semibold"
                             title="Nhấn để xem danh sách học viên của lớp này"
                           >
-                            <Users className="w-3.5 h-3.5 text-teal-600 group-hover:scale-110 transition-transform" />
-                            <span className="font-bold text-slate-900 group-hover:text-teal-700">
+                            <Users className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform" />
+                            <span className="font-bold text-slate-900 dark:text-slate-100 group-hover:text-teal-700 dark:group-hover:text-teal-300">
                               {c.siSoHienTai}
                             </span>
                             <span className="text-slate-400">/</span>
-                            <span>{c.siSoToiDa} </span>
+                            <span>{c.siSoToiDa}</span>
                           </button>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-4 py-3.5">
                           {c.lichHoc && c.lichHoc.length > 0 ? (
-                            <div className="space-y-1">
-                              {c.lichHoc.map((l: any) => (
-                                <span
-                                  key={l.id}
-                                  className="inline-block mr-1 px-2 py-0.5 rounded bg-slate-100 text-[11px] text-slate-700 font-mono font-semibold border border-slate-200"
-                                >
-                                  T{l.thuTrongTuan} ({l.phongHoc})
-                                </span>
-                              ))}
+                            <div className="space-y-1.5 max-w-[260px]">
+                              <div className="flex flex-wrap items-center gap-1">
+                                {c.lichHoc.map((l: any) => (
+                                  <span
+                                    key={l.id}
+                                    className="px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 font-mono font-bold text-[10px] border border-teal-200 dark:border-teal-800"
+                                    title={`${getDayDisplay(l.thuTrongTuan)} (${l.gioBatDau?.slice(11, 16) || l.gioBatDau?.slice(0, 5) || l.gioBatDau} - ${l.gioKetThuc?.slice(11, 16) || l.gioKetThuc?.slice(0, 5) || l.gioKetThuc}) [${l.phongHoc}]`}
+                                  >
+                                    {getDayShort(l.thuTrongTuan)}
+                                  </span>
+                                ))}
+                                {c.lichHoc[0]?.gioBatDau && (
+                                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono whitespace-nowrap">
+                                    {c.lichHoc[0]?.gioBatDau?.slice(11, 16) || c.lichHoc[0]?.gioBatDau?.slice(0, 5) || c.lichHoc[0]?.gioBatDau} - {c.lichHoc[0]?.gioKetThuc?.slice(11, 16) || c.lichHoc[0]?.gioKetThuc?.slice(0, 5) || c.lichHoc[0]?.gioKetThuc}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1 text-[11px] text-slate-600 dark:text-slate-400 truncate" title={c.phongHoc || c.lichHoc[0]?.phongHoc || 'Chưa xếp phòng'}>
+                                {isOnlineLink(c.phongHoc || c.lichHoc[0]?.phongHoc) ? (
+                                  <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-semibold truncate">
+                                    <Globe className="w-3 h-3 shrink-0" />
+                                    <span className="truncate">{c.phongHoc || c.lichHoc[0]?.phongHoc}</span>
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 text-slate-600 dark:text-slate-300 truncate">
+                                    <MapPin className="w-3 h-3 shrink-0 text-slate-400" />
+                                    <span className="truncate">{c.phongHoc || c.lichHoc[0]?.phongHoc || 'Chưa xếp phòng'}</span>
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           ) : (
-                            <span className="text-amber-700 text-[11px] font-semibold">Chưa xếp lịch</span>
+                            <div className="space-y-1">
+                              <span className="text-amber-700 dark:text-amber-400 text-[11px] font-semibold flex items-center gap-1">
+                                <AlertCircle className="w-3 h-3 shrink-0" /> Chưa xếp lịch
+                              </span>
+                              {c.phongHoc && (
+                                <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate flex items-center gap-1" title={c.phongHoc}>
+                                  {isOnlineLink(c.phongHoc) ? <Globe className="w-3 h-3 text-blue-500 shrink-0" /> : <MapPin className="w-3 h-3 text-slate-400 shrink-0" />}
+                                  <span className="truncate">{c.phongHoc}</span>
+                                </div>
+                              )}
+                            </div>
                           )}
                         </td>
-                        <td className="px-5 py-4">
-                          {c.phanCong && c.phanCong.length > 0 ? (
-                            <span className="text-teal-700 font-bold">{c.phanCong[0].giaoVien?.hoTen}</span>
-                          ) : (
-                            <span className="text-slate-400 italic">Chưa phân công</span>
-                          )}
+                        <td className="px-4 py-3.5">
+                          <div className="max-w-[150px] truncate" title={c.phanCong?.[0]?.giaoVien?.hoTen || 'Chưa phân công'}>
+                            {c.phanCong && c.phanCong.length > 0 ? (
+                              <span className="text-teal-700 dark:text-teal-400 font-bold truncate block">{c.phanCong[0].giaoVien?.hoTen}</span>
+                            ) : (
+                              <span className="text-slate-400 italic">Chưa phân công</span>
+                            )}
+                          </div>
                         </td>
-                        <td className="px-5 py-4">
+                        <td className="px-4 py-3.5">
                           <select
                             value={c.trangThai}
                             onChange={(e) => handleStatusChange(Number(c.id), e.target.value)}
-                            className={`px-2.5 py-1 rounded-lg text-xs font-bold focus:outline-none border transition cursor-pointer ${c.trangThai === 'DANG_MO_DANG_KY'
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold focus:outline-none border transition cursor-pointer w-full ${c.trangThai === 'DANG_MO_DANG_KY'
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
                               : c.trangThai === 'DANG_HOC'
                                 ? 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100'
@@ -695,14 +775,14 @@ export default function AdminClassesPage() {
                               }`}
                           >
                             <option value="SAP_MO" className="bg-white text-sky-700">🔵 Sắp Mở</option>
-                            <option value="DANG_MO_DANG_KY" className="bg-white text-emerald-700">🟢 Đang Mở Tuyển Sinh</option>
+                            <option value="DANG_MO_DANG_KY" className="bg-white text-emerald-700">🟢 Tuyển Sinh</option>
                             <option value="DANG_HOC" className="bg-white text-teal-700">🟣 Đang Học</option>
-                            <option value="DA_KET_THUC" className="bg-white text-slate-700">⚪ Đã Kết Thúc</option>
+                            <option value="DA_KET_THUC" className="bg-white text-slate-700">⚪ Kết Thúc</option>
                             <option value="DA_HUY" className="bg-white text-rose-700">🔴 Đã Hủy</option>
                           </select>
                         </td>
-                        <td className="px-5 py-4 text-right whitespace-nowrap">
-                          <div className="flex items-center justify-end gap-2">
+                        <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1.5">
                             {c.trangThai === 'DA_HUY' ? (
                               <span className="px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-bold">
                                 Lớp Đã Hủy
@@ -711,7 +791,7 @@ export default function AdminClassesPage() {
                               <>
                                 <button
                                   onClick={() => handleOpenSessions(Number(c.id))}
-                                  className={`inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer ${(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0
+                                  className={`inline-flex items-center gap-1 px-2 py-1.5 rounded-lg border transition text-xs font-bold shadow-xs whitespace-nowrap cursor-pointer ${(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0
                                     ? 'bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white border-amber-300'
                                     : 'bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white border-indigo-200'
                                     }`}
@@ -719,24 +799,26 @@ export default function AdminClassesPage() {
                                 >
                                   <Calendar className="w-3.5 h-3.5" />
                                   <span>
-                                    {(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0 ? '⚠️ 0 Buổi' : `${c._count?.buoiHoc ?? c.buoiHoc?.length} Buổi`}
+                                    {(c._count?.buoiHoc ?? c.buoiHoc?.length ?? 0) === 0 ? '0 Buổi' : `${c._count?.buoiHoc ?? c.buoiHoc?.length}`}
                                   </span>
                                 </button>
                                 <button
                                   onClick={() => handleOpenAddSchedule(c.id)}
-                                  className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
+                                  className="inline-flex items-center px-2 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 transition text-xs font-bold shadow-xs whitespace-nowrap cursor-pointer"
+                                  title="Xếp hoặc quản lý lịch học tuần"
                                 >
-                                  + Lịch Học
+                                  + Lịch
                                 </button>
                                 <button
                                   onClick={() => setShowAssignTeacher(c.id)}
-                                  className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 hover:border-emerald-600 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
+                                  className="inline-flex items-center px-2 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 hover:border-emerald-600 transition text-xs font-bold shadow-xs whitespace-nowrap cursor-pointer"
+                                  title="Phân công giáo viên phụ trách"
                                 >
-                                  + Gán GV
+                                  + GV
                                 </button>
                                 <button
                                   onClick={() => handleOpenEditClass(c)}
-                                  className="inline-flex items-center p-1.5 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 border border-slate-200 hover:border-teal-200 transition text-xs font-bold shadow-sm whitespace-nowrap cursor-pointer"
+                                  className="inline-flex items-center p-1.5 rounded-lg bg-slate-100 hover:bg-teal-50 hover:text-teal-700 text-slate-600 dark:bg-[#162032] dark:text-slate-300 dark:hover:text-teal-300 border border-slate-200 dark:border-[#22324e] hover:border-teal-200 transition text-xs font-bold shadow-xs whitespace-nowrap cursor-pointer"
                                   title="Chỉnh sửa thông tin & phòng học của lớp"
                                 >
                                   <Edit3 className="w-3.5 h-3.5" />
@@ -1007,84 +1089,96 @@ export default function AdminClassesPage() {
         {/* Modal Chỉnh Sửa Thông Tin & Phòng Học Lớp */}
         {editingClass && (
           <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-4 sm:p-6 shadow-2xl text-slate-800 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">Chỉnh Sửa Lớp Học & Phòng Học</h3>
-                  <p className="text-xs text-teal-600 font-mono font-bold mt-0.5">[{editingClass.maLopHoc}] {editingClass.tenLopHoc}</p>
+            <div className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-2xl w-full max-w-xl p-5 sm:p-6 shadow-2xl text-slate-800 dark:text-slate-100 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-start justify-between pb-3 border-b border-slate-100 dark:border-slate-800 mb-4">
+                <div className="pr-3">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">Chỉnh Sửa Lớp Học & Phòng Học</h3>
+                  <p className="text-xs text-teal-600 dark:text-teal-400 font-mono font-bold mt-0.5 break-words">
+                    [{editingClass.maLopHoc}] {editingClass.tenLopHoc}
+                  </p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setEditingClass(null)}
-                  className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                  className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <form onSubmit={handleSaveClass} className="space-y-4 text-xs">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-slate-700 font-bold mb-1">Tên Lớp Học</label>
-                    <input
-                      type="text"
-                      required
-                      value={editClassForm.tenLopHoc}
-                      onChange={(e) => setEditClassForm({ ...editClassForm, tenLopHoc: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 font-medium"
-                    />
+                {/* Tên lớp học full-width để không bị cụt hay co rúm */}
+                <div>
+                  <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Tên Lớp Học</label>
+                  <input
+                    type="text"
+                    required
+                    value={editClassForm.tenLopHoc}
+                    onChange={(e) => setEditClassForm({ ...editClassForm, tenLopHoc: e.target.value })}
+                    className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-teal-500 font-medium"
+                    placeholder="VD: [MAST-C2-01] C2 Academic Mastery & Advanced Debate"
+                  />
+                </div>
+
+                {/* Phòng học hoặc Link Online */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold">
+                      Phòng Học Chính hoặc Link Trực Tuyến
+                    </label>
+                    <span className="text-[11px] text-slate-400">Hỗ trợ phòng trực tiếp hoặc Zoom/Meet</span>
                   </div>
-                  <div>
-                    <label className="block text-slate-700 font-bold mb-1">Phòng Học Chính</label>
-                    <input
-                      type="text"
-                      required
-                      value={editClassForm.phongHoc}
-                      onChange={(e) => setEditClassForm({ ...editClassForm, phongHoc: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500 font-medium"
-                      placeholder="VD: Phòng A101"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={editClassForm.phongHoc}
+                    onChange={(e) => setEditClassForm({ ...editClassForm, phongHoc: e.target.value })}
+                    className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:border-teal-500 font-medium"
+                    placeholder="VD: Phòng VIP A105 hoặc meet.google.com/xyz"
+                  />
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                    💡 Khi đổi phòng học ở đây, hệ thống sẽ tự động đồng bộ phòng học cho toàn bộ các lịch học hiện tại của lớp.
+                  </p>
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Sĩ Số Tối Đa</label>
+                  <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Sĩ Số Tối Đa</label>
                   <input
                     type="number"
                     max={200}
                     min={1}
                     value={editClassForm.siSoToiDa}
                     onChange={(e) => setEditClassForm({ ...editClassForm, siSoToiDa: +e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                    className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-teal-500"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Ngày Bắt Đầu</label>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Ngày Bắt Đầu</label>
                     <input
                       type="date"
                       value={editClassForm.ngayBatDau}
                       onChange={(e) => setEditClassForm({ ...editClassForm, ngayBatDau: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-teal-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Ngày Kết Thúc</label>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Ngày Kết Thúc</label>
                     <input
                       type="date"
                       value={editClassForm.ngayKetThuc}
                       onChange={(e) => setEditClassForm({ ...editClassForm, ngayKetThuc: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
+                      className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-teal-500"
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                <div className="flex justify-end space-x-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                   <button
                     type="button"
                     onClick={() => setEditingClass(null)}
-                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition cursor-pointer"
                   >
                     Hủy
                   </button>
@@ -1101,15 +1195,15 @@ export default function AdminClassesPage() {
           </div>
         )}
 
-        {/* Modal Thêm Lịch Học (Chọn Nhiều Ngày Linh Hoạt) */}
+        {/* Modal Thêm Lịch Học (Chọn Nhiều Ngày Linh Hoạt & Xóa Buổi Cũ) */}
         {showAddSchedule && (
           <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-50 animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-lg p-4 sm:p-6 shadow-2xl text-slate-800 space-y-4 max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-start pb-2 border-b border-slate-100">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">Xếp Lịch Học Tuần</h3>
+            <div className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-2xl w-full max-w-xl p-4 sm:p-6 shadow-2xl text-slate-800 dark:text-slate-100 space-y-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-start pb-2 border-b border-slate-100 dark:border-slate-800">
+                <div className="pr-3">
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">Xếp Lịch Học Tuần</h3>
                   {classes.find((c) => c.id === showAddSchedule) && (
-                    <p className="text-xs text-teal-600 font-bold mt-0.5">
+                    <p className="text-xs text-teal-600 dark:text-teal-400 font-bold mt-0.5 break-words">
                       Lớp: [{classes.find((c) => c.id === showAddSchedule)?.maLopHoc}] {classes.find((c) => c.id === showAddSchedule)?.tenLopHoc}
                     </p>
                   )}
@@ -1117,44 +1211,80 @@ export default function AdminClassesPage() {
                 <button
                   type="button"
                   onClick={() => setShowAddSchedule(null)}
-                  className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
+                  className="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer shrink-0"
                 >
                   ✕
                 </button>
               </div>
 
-              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl p-2.5">
+              <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl p-2.5">
                 ⚠️ Hệ thống tự động kiểm tra và chặn nếu phòng học bị trùng lịch với lớp khác.
               </p>
 
-              {/* Lịch hiện có của lớp này (nếu có) */}
-              {classes.find((c) => c.id === showAddSchedule)?.lichHoc &&
-                (classes.find((c) => c.id === showAddSchedule)?.lichHoc?.length || 0) > 0 && (
-                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
-                    <span className="text-slate-500 font-semibold block mb-1">
-                      Các buổi đã xếp trước đó:
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {classes.find((c) => c.id === showAddSchedule)?.lichHoc?.map((lh: any) => (
-                        <span
-                          key={lh.id}
-                          className="px-2 py-0.5 rounded-md bg-white border border-slate-200 font-mono text-[11px] text-slate-700 font-medium"
-                        >
-                          T{lh.thuTrongTuan} ({lh.gioBatDau?.slice(11, 16) || lh.gioBatDau} - {lh.gioKetThuc?.slice(11, 16) || lh.gioKetThuc}) [{lh.phongHoc}]
-                        </span>
-                      ))}
+              {/* Lịch hiện có của lớp này (Interactive với nút Xóa từng buổi) */}
+              {(() => {
+                const targetCls = classes.find((c) => c.id === showAddSchedule);
+                if (!targetCls?.lichHoc || targetCls.lichHoc.length === 0) return null;
+                return (
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#1e2d45] text-xs space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-700 dark:text-slate-300 font-bold flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                        Các buổi đã xếp trước đó ({targetCls.lichHoc.length} buổi):
+                      </span>
+                      <span className="text-[11px] text-slate-400 hidden sm:inline">Bấm nút xóa để hủy thứ đã xếp</span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+                      {targetCls.lichHoc.map((lh: any) => {
+                        const timeStr = `${lh.gioBatDau?.slice(11, 16) || lh.gioBatDau?.slice(0, 5) || lh.gioBatDau} - ${lh.gioKetThuc?.slice(11, 16) || lh.gioKetThuc?.slice(0, 5) || lh.gioKetThuc}`;
+                        const isOnline = isOnlineLink(lh.phongHoc);
+                        return (
+                          <div
+                            key={lh.id}
+                            className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#22324e] shadow-xs group hover:border-teal-400 transition"
+                          >
+                            <div className="min-w-0 pr-2">
+                              <div className="flex items-center gap-1.5">
+                                <span className="px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-bold font-mono text-[11px] border border-teal-200 dark:border-teal-800">
+                                  {getDayDisplay(lh.thuTrongTuan)}
+                                </span>
+                                <span className="text-slate-600 dark:text-slate-400 font-mono text-[11px]">
+                                  {timeStr}
+                                </span>
+                              </div>
+                              <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-1 flex items-center gap-1" title={lh.phongHoc}>
+                                {isOnline ? (
+                                  <Globe className="w-3 h-3 text-blue-500 shrink-0" />
+                                ) : (
+                                  <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                                )}
+                                <span className="truncate">{lh.phongHoc}</span>
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteSchedule(Number(targetCls.id), Number(lh.id), lh.thuTrongTuan)}
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition shrink-0 cursor-pointer"
+                              title={`Xóa lịch ${getDayDisplay(lh.thuTrongTuan)}`}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                )}
+                );
+              })()}
 
               <form onSubmit={handleAddSchedule} className="space-y-4 text-xs">
                 {/* Chọn ngày trong tuần */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
-                    <label className="block text-slate-700 font-bold uppercase tracking-wider">
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider">
                       Chọn Các Ngày Học Trong Tuần
                     </label>
-                    <span className="text-[11px] font-bold text-teal-600">
+                    <span className="text-[11px] font-bold text-teal-600 dark:text-teal-400">
                       Đã chọn: {selectedDays.length} ngày
                     </span>
                   </div>
@@ -1173,7 +1303,7 @@ export default function AdminClassesPage() {
                           onClick={() => setSelectedDays([...p.days])}
                           className={`px-2 py-1 rounded-lg text-[11px] font-bold border transition cursor-pointer ${isMatch
                             ? 'bg-teal-600 text-white border-teal-600 shadow-sm'
-                            : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-200'
+                            : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
                             }`}
                         >
                           {p.label}
@@ -1184,7 +1314,7 @@ export default function AdminClassesPage() {
                       <button
                         type="button"
                         onClick={() => setSelectedDays([])}
-                        className="px-2 py-1 rounded-lg text-[11px] text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 font-semibold transition cursor-pointer"
+                        className="px-2 py-1 rounded-lg text-[11px] text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-transparent hover:border-rose-200 font-semibold transition cursor-pointer"
                       >
                         Xóa chọn
                       </button>
@@ -1202,7 +1332,7 @@ export default function AdminClassesPage() {
                           onClick={() => toggleDay(day.value)}
                           className={`py-2 px-1 rounded-xl text-xs font-bold border text-center transition flex flex-col items-center justify-center cursor-pointer ${isSelected
                             ? 'bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20'
-                            : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                            : 'bg-slate-50 dark:bg-[#162032] hover:bg-slate-100 dark:hover:bg-[#1e2d45] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-[#22324e]'
                             }`}
                         >
                           <span className="text-sm">{isSelected ? '✓' : day.short}</span>
@@ -1213,11 +1343,11 @@ export default function AdminClassesPage() {
                   </div>
 
                   {selectedDays.length === 0 ? (
-                    <p className="text-amber-600 font-semibold text-[11px] mt-1.5">
+                    <p className="text-amber-600 dark:text-amber-400 font-semibold text-[11px] mt-1.5">
                       ⚠️ Vui lòng nhấp chọn ít nhất một ngày học ở trên.
                     </p>
                   ) : (
-                    <p className="text-teal-700 font-medium text-[11px] mt-1.5">
+                    <p className="text-teal-700 dark:text-teal-400 font-medium text-[11px] mt-1.5">
                       ✓ Lịch sẽ áp dụng cho:{' '}
                       <strong className="font-bold">
                         {selectedDays
@@ -1231,7 +1361,7 @@ export default function AdminClassesPage() {
                 {/* Giờ học */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Giờ Bắt Đầu</label>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Giờ Bắt Đầu</label>
                     <input
                       type="text"
                       required
@@ -1239,12 +1369,12 @@ export default function AdminClassesPage() {
                       onChange={(e) =>
                         setScheduleForm({ ...scheduleForm, gioBatDau: e.target.value })
                       }
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono font-bold focus:outline-none focus:border-teal-500"
+                      className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono font-bold focus:outline-none focus:border-teal-500"
                       placeholder="18:00"
                     />
                   </div>
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Giờ Kết Thúc</label>
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1">Giờ Kết Thúc</label>
                     <input
                       type="text"
                       required
@@ -1252,15 +1382,20 @@ export default function AdminClassesPage() {
                       onChange={(e) =>
                         setScheduleForm({ ...scheduleForm, gioKetThuc: e.target.value })
                       }
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono font-bold focus:outline-none focus:border-teal-500"
+                      className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono font-bold focus:outline-none focus:border-teal-500"
                       placeholder="20:30"
                     />
                   </div>
                 </div>
 
-                {/* Phòng học */}
+                {/* Phòng học hoặc Link Online */}
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Phòng Học</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-slate-700 dark:text-slate-300 font-bold">
+                      Phòng Học hoặc Link Trực Tuyến
+                    </label>
+                    <span className="text-[11px] text-slate-400">VD: Phòng VIP A105 hoặc alo.com</span>
+                  </div>
                   <input
                     type="text"
                     required
@@ -1268,16 +1403,16 @@ export default function AdminClassesPage() {
                     onChange={(e) =>
                       setScheduleForm({ ...scheduleForm, phongHoc: e.target.value })
                     }
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-bold focus:outline-none focus:border-teal-500"
-                    placeholder="Phòng A101"
+                    className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2 text-slate-900 dark:text-white font-bold focus:outline-none focus:border-teal-500"
+                    placeholder="Phòng VIP A105 hoặc meet.google.com/xyz"
                   />
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-3 border-t border-slate-100">
+                <div className="flex justify-end space-x-3 pt-3 border-t border-slate-100 dark:border-slate-800">
                   <button
                     type="button"
                     onClick={() => setShowAddSchedule(null)}
-                    className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition cursor-pointer"
+                    className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold transition cursor-pointer"
                   >
                     Hủy
                   </button>

@@ -288,6 +288,22 @@ export class ClassesService {
   }
 
   /**
+   * UC004 — Xóa một lịch học trong tuần của lớp (cho phép xóa buổi/thứ đã xếp trước đó)
+   */
+  async deleteSchedule(classId: number, scheduleId: number) {
+    const schedule = await this.prisma.lichHoc.findUnique({
+      where: { id: BigInt(scheduleId) },
+    });
+    if (!schedule || Number(schedule.lopHocId) !== classId) {
+      throw new NotFoundException('Không tìm thấy lịch học cần xóa.');
+    }
+    await this.prisma.lichHoc.delete({
+      where: { id: BigInt(scheduleId) },
+    });
+    return { success: true, message: 'Đã xóa lịch học thành công' };
+  }
+
+  /**
    * UC005 — Phân công giáo viên & Kiểm tra CHỐNG TRÙNG GIỜ DẠY
    */
   async assignTeacher(classId: number, dto: AssignTeacherDto) {
@@ -303,6 +319,9 @@ export class ClassesService {
       where: { id: BigInt(dto.giaoVienId) },
     });
     if (!teacher) throw new NotFoundException('Giáo viên không tồn tại.');
+    if (teacher.trangThai === 'DA_NGHI_VIEC') {
+      throw new BadRequestException('Không thể phân công giáo viên đã nghỉ việc.');
+    }
 
     // Kiểm tra lịch học của lớp này có bị trùng với các lớp khác giáo viên đang dạy không
     const classSchedules = await this.prisma.lichHoc.findMany({
@@ -310,12 +329,13 @@ export class ClassesService {
     });
 
     for (const sch of classSchedules) {
-      const conflictingTeaching = await this.prisma.phanCongGiaoVien.findFirst({
+      const conflict = await this.prisma.phanCongGiaoVien.findFirst({
         where: {
           giaoVienId: BigInt(dto.giaoVienId),
-          lopHocId: { not: BigInt(classId) },
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
           lopHoc: {
-            trangThai: { in: [TrangThaiLopHoc.DANG_MO_DANG_KY, TrangThaiLopHoc.DANG_HOC] },
+            id: { not: BigInt(classId) },
+            trangThai: { in: [TrangThaiLopHoc.DANG_HOC, TrangThaiLopHoc.DANG_MO_DANG_KY] },
             lichHoc: {
               some: {
                 thuTrongTuan: sch.thuTrongTuan,
@@ -328,9 +348,9 @@ export class ClassesService {
         include: { lopHoc: { select: { tenLopHoc: true } } },
       });
 
-      if (conflictingTeaching) {
+      if (conflict) {
         throw new ConflictException(
-          `Giáo viên ${teacher.hoTen} đã có lịch dạy trùng vào Thứ ${sch.thuTrongTuan} tại lớp ${conflictingTeaching.lopHoc.tenLopHoc}.`,
+          `Giáo viên ${teacher.hoTen} đã có lịch dạy lớp ${conflict.lopHoc.tenLopHoc} vào Thứ ${sch.thuTrongTuan}.`,
         );
       }
     }
@@ -343,29 +363,15 @@ export class ClassesService {
         await tx.phanCongGiaoVien.updateMany({
           where: {
             lopHocId: BigInt(classId),
-            giaoVienId: { not: BigInt(dto.giaoVienId) },
             vaiTroPhanCong: VaiTroPhanCong.CHINH,
-            trangThai: 'DANG_PHU_TRACH',
+            trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
           },
-          data: {
-            trangThai: 'DA_HUY',
-          },
+          data: { trangThai: TrangThaiPhanCong.DA_HUY },
         });
       }
 
-      return tx.phanCongGiaoVien.upsert({
-        where: {
-          lopHocId_giaoVienId: {
-            lopHocId: BigInt(classId),
-            giaoVienId: BigInt(dto.giaoVienId),
-          },
-        },
-        update: {
-          vaiTroPhanCong: role,
-          trangThai: 'DANG_PHU_TRACH',
-          thoiGianPhanCong: new Date(),
-        },
-        create: {
+      return tx.phanCongGiaoVien.create({
+        data: {
           lopHocId: BigInt(classId),
           giaoVienId: BigInt(dto.giaoVienId),
           vaiTroPhanCong: role,
@@ -444,16 +450,38 @@ export class ClassesService {
     if (!classRecord) throw new NotFoundException('Không tìm thấy lớp học.');
 
     const updateData: any = {};
-    if (dto.tenLopHoc !== undefined) updateData.tenLopHoc = dto.tenLopHoc;
-    if (dto.siSoToiDa !== undefined) updateData.siSoToiDa = dto.siSoToiDa;
-    if (dto.phongHoc !== undefined) updateData.phongHoc = dto.phongHoc;
-    if (dto.ngayBatDau !== undefined) updateData.ngayBatDau = new Date(dto.ngayBatDau);
-    if (dto.ngayKetThuc !== undefined) updateData.ngayKetThuc = new Date(dto.ngayKetThuc);
+    if (dto.tenLopHoc !== undefined && dto.tenLopHoc.trim() !== '') {
+      updateData.tenLopHoc = dto.tenLopHoc.trim();
+    }
+    if (dto.siSoToiDa !== undefined && !isNaN(Number(dto.siSoToiDa))) {
+      updateData.siSoToiDa = Number(dto.siSoToiDa);
+    }
+    if (dto.phongHoc !== undefined) {
+      updateData.phongHoc = dto.phongHoc.trim();
+    }
+    if (dto.linkOnline !== undefined) {
+      updateData.linkOnline = dto.linkOnline.trim();
+    }
+    if (dto.ngayBatDau && dto.ngayBatDau.trim() !== '') {
+      const d = new Date(dto.ngayBatDau);
+      if (!isNaN(d.getTime())) updateData.ngayBatDau = d;
+    }
+    if (dto.ngayKetThuc && dto.ngayKetThuc.trim() !== '') {
+      const d = new Date(dto.ngayKetThuc);
+      if (!isNaN(d.getTime())) updateData.ngayKetThuc = d;
+    }
 
     const updated = await this.prisma.lopHoc.update({
       where: { id: BigInt(id) },
       data: updateData,
     });
+
+    if (dto.phongHoc && dto.phongHoc.trim() !== '') {
+      await this.prisma.lichHoc.updateMany({
+        where: { lopHocId: BigInt(id) },
+        data: { phongHoc: dto.phongHoc.trim() },
+      });
+    }
 
     return this.serializeBigInt(updated);
   }
