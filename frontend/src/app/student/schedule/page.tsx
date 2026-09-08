@@ -121,10 +121,10 @@ export default function StudentSchedulePage() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <span
                           className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${enr.trangThai === 'DA_XAC_NHAN' || enr.trangThai === 'HOAN_THANH'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                              : enr.trangThai === 'CHO_THANH_TOAN' || enr.trangThai === 'CHO_XAC_NHAN'
-                                ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                : 'bg-slate-100 text-slate-600 border-slate-200'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : enr.trangThai === 'CHO_THANH_TOAN' || enr.trangThai === 'CHO_XAC_NHAN'
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-slate-100 text-slate-600 border-slate-200'
                             }`}
                         >
                           Hồ sơ ghi danh: {formatTrangThaiDangKy(enr.trangThai)}
@@ -236,14 +236,6 @@ export default function StudentSchedulePage() {
                       </button>
 
                       <div className="flex items-center gap-3 flex-wrap">
-                        <Link
-                          href={`/student/grades#class-${lop?.id}`}
-                          className="text-xs font-bold text-teal-700 hover:text-teal-800 flex items-center gap-1 hover:underline transition"
-                          title="Xem kết quả học tập & bảng điểm lớp này"
-                        >
-                          <Award className="w-3.5 h-3.5 text-amber-500" />
-                          <span>Xem bảng điểm lớp</span>
-                        </Link>
                         <span className="text-[11px] text-slate-400">
                           {isRecruiting ? '• Lớp chưa khai giảng' : '• Lớp đã vào học chính thức'}
                         </span>
@@ -302,10 +294,10 @@ export default function StudentSchedulePage() {
                                       <td className="py-2.5 px-3 text-center">
                                         <span
                                           className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${isDone
-                                              ? 'bg-slate-100 text-slate-600'
-                                              : s.trangThai === 'DANG_DIEN_RA'
-                                                ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                                                : 'bg-teal-50 text-teal-700 border border-teal-200'
+                                            ? 'bg-slate-100 text-slate-600'
+                                            : s.trangThai === 'DANG_DIEN_RA'
+                                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                                              : 'bg-teal-50 text-teal-700 border border-teal-200'
                                             }`}
                                         >
                                           {isDone ? 'Đã học' : s.trangThai === 'DANG_DIEN_RA' ? 'Đang học' : 'Chưa học'}
