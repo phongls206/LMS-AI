@@ -330,7 +330,7 @@ export default function StudentAiProgressPage() {
               {/* 3 Trụ cột phân tích tinh gọn */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-left">
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5 hover:border-teal-400 transition">
-                  <div className="w-7 h-7 rounded-lg bg-teal-100/80 flex items-center justify-center text-teal-700 font-bold">
+                  <div className="w-7 h-7 rounded-lg bg-teal-50 flex items-center justify-center text-teal-700 font-bold">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
                   <h4 className="font-bold text-slate-900 text-xs">Dữ Liệu Gốc (Ground Truth)</h4>
@@ -340,7 +340,7 @@ export default function StudentAiProgressPage() {
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5 hover:border-teal-400 transition">
-                  <div className="w-7 h-7 rounded-lg bg-cyan-100/80 flex items-center justify-center text-cyan-700 font-bold">
+                  <div className="w-7 h-7 rounded-lg bg-cyan-50 flex items-center justify-center text-cyan-700 font-bold">
                     <BrainCircuit className="w-4 h-4" />
                   </div>
                   <h4 className="font-bold text-slate-900 text-xs">Phân Tích Đa Chiều</h4>
@@ -350,7 +350,7 @@ export default function StudentAiProgressPage() {
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5 hover:border-teal-400 transition">
-                  <div className="w-7 h-7 rounded-lg bg-blue-100/80 flex items-center justify-center text-blue-700 font-bold">
+                  <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-blue-700 font-bold">
                     <Target className="w-4 h-4" />
                   </div>
                   <h4 className="font-bold text-slate-900 text-xs">Lời Khuyên Ôn Tập</h4>
