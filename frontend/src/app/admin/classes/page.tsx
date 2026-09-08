@@ -1506,18 +1506,27 @@ export default function AdminClassesPage() {
                         onChange={(e) => setAssignForm({ giaoVienId: +e.target.value })}
                         className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 font-medium focus:outline-none focus:border-teal-500"
                       >
-                        {teachers.map((t) => (
-                          <option key={t.id} value={t.id}>
-                            [{t.maGiaoVien}] {t.hoTen} — {t.chuyenMon} ({t.trangThai === 'DANG_LAM_VIEC' ? '🟢 Sẵn sàng' : '🟡 Tạm nghỉ'})
-                          </option>
-                        ))}
+                        {teachers.map((t) => {
+                          const activeClasses = t.phanCong?.length || 0;
+                          const workloadText = activeClasses > 0 ? `Đang dạy ${activeClasses} lớp` : 'Chưa có lớp';
+                          const statusText =
+                            t.trangThai === 'DANG_LAM_VIEC'
+                              ? `🟢 ${workloadText}`
+                              : '🟡 Tạm nghỉ';
+                          return (
+                            <option key={t.id} value={t.id}>
+                              [{t.maGiaoVien}] {t.hoTen} — {t.chuyenMon} ({statusText})
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
 
                     <div className="p-3 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 space-y-1 text-[11px] leading-relaxed">
-                      <p className="text-teal-900 font-bold">ℹ️ Quy chế phân công & bảo toàn dữ liệu:</p>
-                      <p>• Hệ thống tự động kiểm tra chống trùng giờ dạy của giáo viên với các lớp khác.</p>
-                      <p>• Toàn bộ lịch sử điểm danh, chuyên cần và bảng điểm do giáo viên cũ đã nhập trước đó vẫn được lưu trữ nguyên vẹn 100%.</p>
+                      <p className="text-teal-900 font-bold">ℹ️ Quy chế phân công &amp; Chống trùng lịch:</p>
+                      <p>• Một giáo viên có thể dạy nhiều lớp khác nhau nếu khác ca/giờ hoặc khác thứ trong tuần.</p>
+                      <p>• Hệ thống tự động kiểm tra và <strong>chặn phân công nếu bị trùng giờ dạy</strong> với lớp khác.</p>
+                      <p>• Lịch sử điểm danh và bảng điểm do giáo viên cũ nhập trước đó được bảo toàn 100%.</p>
                     </div>
 
                     <div className="flex justify-end space-x-3 pt-3 border-t border-slate-100">

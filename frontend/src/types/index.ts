@@ -127,6 +127,16 @@ export interface GiaoVien {
     hoTen?: string;
     dangHoatDong?: boolean;
   };
+  phanCong?: Array<{
+    id: number;
+    lopHocId?: number;
+    trangThai?: string;
+    lopHoc?: {
+      id: number;
+      maLopHoc: string;
+      tenLopHoc: string;
+    };
+  }>;
 }
 
 export interface HoaDon {
