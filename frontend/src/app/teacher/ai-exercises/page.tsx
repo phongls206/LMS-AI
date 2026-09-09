@@ -667,32 +667,32 @@ export default function TeacherAiExercisesPage() {
                           if (revealMode) {
                             if (isAnswerKey) {
                               btnClass =
-                                'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-400 dark:border-emerald-600 text-slate-900 dark:text-slate-100 font-bold ring-1 ring-emerald-300';
+                                'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-400 dark:border-emerald-500 ring-1 ring-emerald-400/40';
                               badgeClass =
                                 'bg-emerald-600 text-white font-bold shadow-xs';
                               textClass =
-                                'text-slate-900 dark:text-slate-100 font-bold';
+                                'text-slate-900 dark:text-white font-bold';
                             } else if (isChosen && !isCorrect && submitted) {
                               btnClass =
-                                'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-600 text-rose-800 dark:text-rose-200 font-bold ring-1 ring-rose-300';
+                                'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-500 ring-1 ring-rose-400/40';
                               badgeClass =
                                 'bg-rose-600 text-white font-bold shadow-xs';
                               textClass =
-                                'text-slate-900 dark:text-slate-100 font-medium';
+                                'text-slate-900 dark:text-white font-bold';
                             } else {
-                              // Các phương án không chọn: rõ nét, dễ đọc, chữ A B C D sáng rõ trong dark mode
+                              // Các phương án không chọn: rõ nét, chữ trắng đậm đồng nhất
                               btnClass =
                                 'bg-slate-50/80 dark:bg-[#151f32] border-slate-200/90 dark:border-[#243550]';
                               badgeClass =
                                 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-bold border border-slate-300 dark:border-slate-500/70 shadow-xs';
                               textClass =
-                                'text-slate-700 dark:text-slate-200 font-medium';
+                                'text-slate-900 dark:text-white font-bold';
                             }
                           } else if (isChosen) {
                             btnClass =
                               'bg-teal-600 border-teal-600 shadow-sm ring-2 ring-teal-600/30';
                             badgeClass = 'bg-white/25 text-white shadow-xs font-bold';
-                            textClass = 'text-white font-semibold';
+                            textClass = 'text-white font-bold';
                           } else {
                             // Đang làm bài và chưa chọn: chữ A B C D sáng rõ trong dark mode
                             btnClass =
@@ -700,7 +700,7 @@ export default function TeacherAiExercisesPage() {
                             badgeClass =
                               'bg-slate-200/90 dark:bg-slate-700 text-slate-900 dark:text-white font-bold border border-slate-300/80 dark:border-slate-500/70 shadow-xs';
                             textClass =
-                              'text-slate-800 dark:text-slate-200 font-medium';
+                              'text-slate-900 dark:text-white font-bold';
                           }
 
                           return (
