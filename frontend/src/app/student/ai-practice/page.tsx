@@ -662,13 +662,13 @@ export default function StudentAiPracticePage() {
                               textClass =
                                 'text-slate-900 dark:text-slate-100 font-medium';
                             } else {
-                              // Các phương án không chọn: rõ nét, dễ đọc, không bị mờ
+                              // Các phương án không chọn: rõ nét, dễ đọc, chữ A B C D sáng rõ trong dark mode
                               btnClass =
-                                'bg-slate-50/80 dark:bg-[#151f32] border-slate-200/90 dark:border-[#22334f]';
+                                'bg-slate-50/80 dark:bg-[#151f32] border-slate-200/90 dark:border-[#243550]';
                               badgeClass =
-                                'bg-slate-200/90 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 font-semibold';
+                                'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-bold border border-slate-300 dark:border-slate-500/70 shadow-xs';
                               textClass =
-                                'text-slate-700 dark:text-slate-300 font-medium';
+                                'text-slate-700 dark:text-slate-200 font-medium';
                             }
                           } else if (isChosen) {
                             // Đang làm bài và học viên chọn:
@@ -677,13 +677,13 @@ export default function StudentAiPracticePage() {
                             badgeClass = 'bg-white/25 text-white shadow-xs font-bold';
                             textClass = 'text-white font-semibold';
                           } else {
-                            // Đang làm bài và chưa chọn:
+                            // Đang làm bài và chưa chọn: chữ A B C D sáng rõ trong dark mode
                             btnClass =
                               'bg-slate-50 dark:bg-[#162238] border-slate-200 dark:border-[#223554] hover:border-teal-400 dark:hover:border-teal-500 hover:bg-teal-50/50 dark:hover:bg-teal-950/40';
                             badgeClass =
-                              'bg-slate-200/90 dark:bg-[#253550] text-slate-800 dark:text-teal-300 border border-transparent dark:border-[#2d4265]';
+                              'bg-slate-200/90 dark:bg-slate-700 text-slate-900 dark:text-white font-bold border border-slate-300/80 dark:border-slate-500/70 shadow-xs';
                             textClass =
-                              'text-slate-800 dark:text-slate-100 font-medium';
+                              'text-slate-800 dark:text-slate-200 font-medium';
                           }
 
                           return (
