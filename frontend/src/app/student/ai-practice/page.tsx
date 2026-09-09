@@ -662,13 +662,13 @@ export default function StudentAiPracticePage() {
                               textClass =
                                 'text-slate-900 dark:text-slate-100 font-medium';
                             } else {
-                              // Các phương án không chọn:
+                              // Các phương án không chọn: rõ nét, dễ đọc, không bị mờ
                               btnClass =
-                                'bg-slate-50/50 dark:bg-[#111927] border-slate-200 dark:border-slate-800 opacity-60';
+                                'bg-slate-50/80 dark:bg-[#151f32] border-slate-200/90 dark:border-[#22334f]';
                               badgeClass =
-                                'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
+                                'bg-slate-200/90 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 font-semibold';
                               textClass =
-                                'text-slate-500 dark:text-slate-400';
+                                'text-slate-700 dark:text-slate-300 font-medium';
                             }
                           } else if (isChosen) {
                             // Đang làm bài và học viên chọn:
