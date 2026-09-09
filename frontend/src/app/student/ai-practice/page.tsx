@@ -339,6 +339,100 @@ export default function StudentAiPracticePage() {
     return String(q.dapAnDung);
   };
 
+  // Helper trích xuất giải thích vì sao đáp án đúng là chính xác
+  const getCorrectExplanation = (q: any) => {
+    if (q.giaiThichChiTiet && typeof q.giaiThichChiTiet === 'object') {
+      const correctKeys = Array.isArray(q.dapAnDung)
+        ? q.dapAnDung
+        : typeof q.dapAnDung === 'string' && q.dapAnDung.includes(',')
+        ? q.dapAnDung.split(',').map((x: string) => x.trim().toUpperCase())
+        : [String(q.dapAnDung).trim().toUpperCase()];
+
+      const parts = correctKeys
+        .map((k: string) => q.giaiThichChiTiet[k])
+        .filter(Boolean);
+
+      if (parts.length > 0) return parts.join(' ');
+    }
+
+    if (q.giaiThich && typeof q.giaiThich === 'string') {
+      if (q.giaiThich.includes('✗') || q.giaiThich.includes('Phân tích các phương án sai')) {
+        const splitPoint = q.giaiThich.search(/✗|Phân tích các phương án sai/i);
+        if (splitPoint > 0) {
+          return q.giaiThich.substring(0, splitPoint).replace(/^[✓\s]*Giải thích đáp án đúng:?/i, '').trim();
+        }
+      }
+      return q.giaiThich.replace(/^[✓\s]*Giải thích đáp án đúng:?/i, '').trim();
+    }
+
+    return 'Đáp án này hoàn toàn chính xác theo quy chuẩn ngữ pháp và ngữ cảnh bài tập.';
+  };
+
+  // Helper trích xuất giải thích vì sao các phương án sai là sai
+  const getWrongOptionsExplanation = (q: any, userChoice: any) => {
+    const typeInfo = getQuestionTypeInfo(q);
+    const options = getRenderOptions(q, typeInfo.isTrueFalse);
+    const correctKeys = Array.isArray(q.dapAnDung)
+      ? q.dapAnDung.map((k: any) => String(k).trim().toUpperCase())
+      : typeof q.dapAnDung === 'string' && q.dapAnDung.includes(',')
+      ? q.dapAnDung.split(',').map((x: string) => x.trim().toUpperCase())
+      : [String(q.dapAnDung).trim().toUpperCase()];
+
+    const wrongOptions = options.filter(([k]) => !correctKeys.includes(k.toUpperCase()));
+    const userChosenKeys = Array.isArray(userChoice)
+      ? userChoice.map((k: any) => String(k).trim().toUpperCase())
+      : userChoice
+      ? [String(userChoice).trim().toUpperCase()]
+      : [];
+
+    // 1. Ưu tiên lấy từ dictionary giaiThichChiTiet
+    if (q.giaiThichChiTiet && typeof q.giaiThichChiTiet === 'object') {
+      return wrongOptions.map(([k, val]) => ({
+        key: k,
+        val: val,
+        reason: q.giaiThichChiTiet[k] || `Phương án ${k} không chính xác trong ngữ cảnh này.`,
+        isUserChoice: userChosenKeys.includes(k.toUpperCase()),
+      }));
+    }
+
+    // 2. Phân tích từ đoạn văn bản giaiThich nếu có ký hiệu phân tách
+    if (q.giaiThich && typeof q.giaiThich === 'string' && (q.giaiThich.includes('✗') || q.giaiThich.includes('Phân tích các phương án sai'))) {
+      const splitPoint = q.giaiThich.search(/✗|Phân tích các phương án sai/i);
+      const wrongText = q.giaiThich.substring(splitPoint).replace(/^.*Phân tích các phương án sai:?/i, '').trim();
+
+      return wrongOptions.map(([k, val]) => {
+        const regex = new RegExp(`(?:^|\\n)[\\-\\s*]*${k}\\s*[:\\(]?(.*?)(?=\\n[\\-\\s*]*[A-D]\\s*[:\\(]?|$)`, 'is');
+        const match = wrongText.match(regex);
+        let reason = match ? match[1].replace(/^\s*[\-\)]\s*/, '').trim() : '';
+        if (!reason) {
+          reason = `Phương án ${k} ('${val}') không phù hợp với cấu trúc hoặc thì của câu.`;
+        }
+        return {
+          key: k,
+          val: val,
+          reason,
+          isUserChoice: userChosenKeys.includes(k.toUpperCase()),
+        };
+      });
+    }
+
+    // 3. Fallback phân tích suy luận cho từng phương án sai
+    return wrongOptions.map(([k, val]) => {
+      let reason = '';
+      if (typeInfo.isTrueFalse) {
+        reason = `Lựa chọn '${val}' trái ngược với dữ kiện và cấu trúc chính xác của mệnh đề trên (Đáp án đúng là ${formatCorrectAnswer(q)}).`;
+      } else {
+        reason = `Lựa chọn '${val}' không phù hợp với cấu trúc ngữ pháp, thì của động từ hoặc ngữ cảnh ngữ nghĩa câu hỏi.`;
+      }
+      return {
+        key: k,
+        val: val,
+        reason,
+        isUserChoice: userChosenKeys.includes(k.toUpperCase()),
+      };
+    });
+  };
+
   const calculateScore = () => {
     if (!result?.data?.cauHoi) return 0;
     let correct = 0;
@@ -638,22 +732,72 @@ export default function StudentAiPracticePage() {
                                 .includes(optKey)
                             : q.dapAnDung === optKey;
 
-                          let btnClass =
-                            'bg-slate-50 dark:bg-[#162238] border-slate-200 dark:border-[#223554] text-slate-800 dark:text-slate-100 hover:border-teal-300 dark:hover:border-teal-500 hover:bg-teal-50/50 dark:hover:bg-teal-950/40';
+                          let btnClass = '';
+                          let badgeClass = '';
+                          let textClass = '';
+                          let statusBadge = null;
 
                           if (submitted) {
                             if (isAnswerKey) {
+                              // Câu có đáp án đúng:
+                              // Nền emerald dịu nhẹ, viền emerald đậm, text chữ màu SLATE ĐẬM (text-slate-900 / dark:text-slate-100)
+                              // đảm bảo không trùng tone nền khi ở light mode và cực kỳ nổi bật
                               btnClass =
-                                'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-300 dark:border-emerald-600 text-emerald-800 dark:text-emerald-200 font-bold ring-1 ring-emerald-300';
+                                'bg-emerald-50/90 dark:bg-emerald-950/70 border-emerald-500 dark:border-emerald-500 ring-2 ring-emerald-500/25 shadow-xs';
+                              badgeClass =
+                                'bg-emerald-600 text-white font-bold shadow-xs';
+                              textClass =
+                                'text-slate-900 dark:text-slate-100 font-bold';
+                              statusBadge = (
+                                <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-600 text-white flex items-center gap-1 shadow-2xs ml-auto">
+                                  <Check className="w-3 h-3 stroke-[3]" />
+                                  <span className="hidden xs:inline">Đáp án đúng</span>
+                                </span>
+                              );
                             } else if (isChosen && !isCorrect) {
+                              // Câu sai do học viên chọn:
                               btnClass =
-                                'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-600 text-rose-800 dark:text-rose-200 font-bold ring-1 ring-rose-300';
+                                'bg-rose-50/90 dark:bg-rose-950/70 border-rose-400 dark:border-rose-500 ring-1 ring-rose-400/30';
+                              badgeClass =
+                                'bg-rose-600 text-white font-bold shadow-xs';
+                              textClass =
+                                'text-slate-900 dark:text-slate-100 font-medium line-through decoration-rose-500 decoration-1.5';
+                              statusBadge = (
+                                <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800 flex items-center gap-1 ml-auto">
+                                  <XCircle className="w-3 h-3 text-rose-600 shrink-0" />
+                                  <span className="hidden xs:inline">Lựa chọn của bạn</span>
+                                </span>
+                              );
                             } else {
-                              btnClass = 'bg-slate-50/50 dark:bg-[#111927] border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 opacity-60';
+                              // Các phương án không chọn:
+                              btnClass =
+                                'bg-slate-50/50 dark:bg-[#111927] border-slate-200 dark:border-slate-800 opacity-60';
+                              badgeClass =
+                                'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
+                              textClass =
+                                'text-slate-600 dark:text-slate-400';
                             }
                           } else if (isChosen) {
+                            // Đang làm bài và học viên chọn:
                             btnClass =
-                              'bg-teal-600 border-teal-600 text-white font-bold shadow-sm ring-2 ring-teal-600/30';
+                              'bg-teal-600 border-teal-600 shadow-sm ring-2 ring-teal-600/30';
+                            badgeClass = 'bg-white/25 text-white shadow-xs font-bold';
+                            textClass = 'text-white font-semibold';
+                            if (typeInfo.isMulti) {
+                              statusBadge = (
+                                <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 ml-auto text-white">
+                                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                                </span>
+                              );
+                            }
+                          } else {
+                            // Đang làm bài và chưa chọn:
+                            btnClass =
+                              'bg-slate-50 dark:bg-[#162238] border-slate-200 dark:border-[#223554] hover:border-teal-400 dark:hover:border-teal-500 hover:bg-teal-50/50 dark:hover:bg-teal-950/40';
+                            badgeClass =
+                              'bg-slate-200/90 dark:bg-[#253550] text-slate-800 dark:text-teal-300 border border-transparent dark:border-[#2d4265]';
+                            textClass =
+                              'text-slate-800 dark:text-slate-100 font-medium';
                           }
 
                           return (
@@ -661,54 +805,116 @@ export default function StudentAiPracticePage() {
                               key={optKey}
                               type="button"
                               onClick={() => handleSelectOption(idx, optKey, typeInfo.isMulti)}
-                              className={`p-3 min-h-[44px] rounded-xl border text-xs text-left transition flex items-center space-x-3 cursor-pointer ${btnClass}`}
+                              className={`p-3 min-h-[44px] rounded-xl border text-xs text-left transition flex items-center space-x-2.5 sm:space-x-3 cursor-pointer w-full ${btnClass}`}
                             >
                               <span
-                                className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${
-                                  isChosen
-                                    ? 'bg-white/25 text-white shadow-xs'
-                                    : 'bg-slate-200/90 dark:bg-[#253550] text-slate-800 dark:text-teal-300 border border-transparent dark:border-[#2d4265]'
-                                }`}
+                                className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${badgeClass}`}
                               >
                                 {optKey}
                               </span>
-                              <span className={`flex-1 min-w-0 leading-snug font-medium ${isChosen ? 'text-white' : 'text-slate-800 dark:text-slate-100'}`}>
+                              <span className={`flex-1 min-w-0 leading-snug break-words ${textClass}`}>
                                 {optVal}
                               </span>
-                              {typeInfo.isMulti && isChosen && (
-                                <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 ml-auto text-white">
-                                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                                </span>
-                              )}
+                              {statusBadge}
                             </button>
                           );
                         })}
                     </div>
 
-                    {/* Giải thích chi tiết sau khi nộp bài */}
+                    {/* Giải thích chi tiết sau khi nộp bài: Giải thích cả câu đúng và câu sai */}
                     {submitted && (
                       <div
-                        className={`ml-0 sm:ml-9 p-3 sm:p-3.5 rounded-xl border text-xs ${
+                        className={`ml-0 sm:ml-9 p-3.5 sm:p-4 rounded-xl border text-xs space-y-3 transition-all ${
                           isCorrect
-                            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/70 text-emerald-800 dark:text-emerald-200'
-                            : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/70 text-rose-800 dark:text-rose-200'
+                            ? 'bg-emerald-50/70 dark:bg-emerald-950/40 border-emerald-300/80 dark:border-emerald-800/80 text-slate-800 dark:text-slate-100'
+                            : 'bg-rose-50/70 dark:bg-rose-950/40 border-rose-300/80 dark:border-rose-800/80 text-slate-800 dark:text-slate-100'
                         }`}
                       >
-                        <div className="flex items-center space-x-1.5 font-bold mb-1">
-                          {isCorrect ? (
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                          ) : (
-                            <XCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                        {/* Header trạng thái câu hỏi */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/70 dark:border-slate-800 pb-2.5">
+                          <div className="flex items-center space-x-2 font-bold flex-wrap">
+                            {isCorrect ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-xs shadow-2xs">
+                                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                                <span>Chính xác!</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-600 text-white text-xs shadow-2xs">
+                                <XCircle className="w-3.5 h-3.5 shrink-0" />
+                                <span>Chưa chính xác</span>
+                              </span>
+                            )}
+                            <span className="text-xs text-slate-800 dark:text-slate-200 font-semibold">
+                              Đáp án đúng:{' '}
+                              <strong className="text-emerald-700 dark:text-emerald-300 font-mono text-xs sm:text-sm">
+                                {formatCorrectAnswer(q)}
+                              </strong>
+                            </span>
+                          </div>
+
+                          {!isCorrect && selected && (
+                            <span className="text-[11px] text-rose-700 dark:text-rose-300 font-medium">
+                              Bạn đã chọn:{' '}
+                              <strong className="font-mono bg-rose-100 dark:bg-rose-900/60 px-1.5 py-0.5 rounded">
+                                {Array.isArray(selected) ? selected.join(', ') : selected}
+                              </strong>
+                            </span>
                           )}
-                          <span>
-                            {isCorrect
-                              ? 'Chính xác!'
-                              : `Chưa chính xác. Đáp án đúng: ${
-                                  Array.isArray(q.dapAnDung) ? q.dapAnDung.join(', ') : q.dapAnDung
-                                }`}
-                          </span>
                         </div>
-                        <p className="text-[11px] leading-relaxed opacity-90">{q.giaiThich}</p>
+
+                        {/* Phần 1: Giải thích vì sao đáp án đúng */}
+                        <div className="p-3 rounded-xl bg-white/90 dark:bg-[#162238] border border-emerald-200 dark:border-emerald-800/60 space-y-1 shadow-2xs">
+                          <div className="flex items-center gap-1.5 font-bold text-emerald-800 dark:text-emerald-300 text-xs">
+                            <span className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-[10px] font-black">
+                              ✓
+                            </span>
+                            <span>Giải thích vì sao đáp án đúng:</span>
+                          </div>
+                          <p className="text-[11.5px] leading-relaxed text-slate-800 dark:text-slate-200 pl-5 font-normal">
+                            {getCorrectExplanation(q)}
+                          </p>
+                        </div>
+
+                        {/* Phần 2: Phân tích vì sao các phương án sai là sai */}
+                        <div className="p-3 rounded-xl bg-white/90 dark:bg-[#162238] border border-slate-200 dark:border-slate-800 space-y-2 shadow-2xs">
+                          <div className="flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200 text-xs">
+                            <span className="w-4 h-4 rounded-full bg-rose-100 dark:bg-rose-900/60 text-rose-700 dark:text-rose-300 flex items-center justify-center text-[10px] font-black">
+                              ✗
+                            </span>
+                            <span>Phân tích vì sao các phương án còn lại là sai:</span>
+                          </div>
+
+                          <div className="space-y-1.5 pl-0 sm:pl-5">
+                            {getWrongOptionsExplanation(q, selected).map((item: any, i: number) => (
+                              <div
+                                key={i}
+                                className={`p-2 rounded-lg text-[11px] leading-relaxed flex items-start gap-2 ${
+                                  item.isUserChoice
+                                    ? 'bg-rose-50/90 dark:bg-rose-950/50 text-slate-900 dark:text-slate-100 border border-rose-300 dark:border-rose-800/80 font-medium'
+                                    : 'bg-slate-50 dark:bg-[#111927] text-slate-700 dark:text-slate-300 border border-slate-150 dark:border-slate-800/60'
+                                }`}
+                              >
+                                <span
+                                  className={`w-4 h-4 rounded text-[10px] font-bold font-mono flex items-center justify-center shrink-0 mt-0.5 ${
+                                    item.isUserChoice
+                                      ? 'bg-rose-600 text-white shadow-2xs'
+                                      : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                                  }`}
+                                >
+                                  {item.key}
+                                </span>
+                                <div className="flex-1 min-w-0">
+                                  {item.isUserChoice && (
+                                    <span className="font-bold text-rose-700 dark:text-rose-300 mr-1.5 inline-flex items-center gap-0.5 text-[10px] uppercase bg-rose-200/80 dark:bg-rose-900/80 px-1.5 py-0.5 rounded">
+                                      Lựa chọn của bạn:
+                                    </span>
+                                  )}
+                                  <span className="text-slate-900 dark:text-slate-200">{item.reason}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
