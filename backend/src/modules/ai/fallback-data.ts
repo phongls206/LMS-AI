@@ -7,7 +7,6 @@ export interface QuestionItem {
   luaChon: Record<string, string>;
   dapAnDung: string | string[];
   giaiThich: string;
-  giaiThichChiTiet?: Record<string, string>;
 }
 
 export interface FallbackExerciseSet {
@@ -23,65 +22,35 @@ export const FALLBACK_QUESTION_BANKS: Record<string, QuestionItem[]> = {
       noiDung: 'She __________ in London for five years, but she plans to move soon.',
       luaChon: { A: 'lived', B: 'has lived', C: 'is living', D: 'lives' },
       dapAnDung: 'B',
-      giaiThich: '✓ Giải thích đáp án đúng: Đáp án B (has lived) diễn tả hành động bắt đầu trong quá khứ và vẫn đang tiếp diễn ở hiện tại kèm khoảng thời gian "for five years".\n✗ Phân tích các phương án sai:\n- A (lived): Quá khứ đơn chỉ dùng cho hành động đã chấm dứt hoàn toàn trong quá khứ.\n- C (is living): Hiện tại tiếp diễn không dùng với "for + khoảng thời gian" để biểu thị tính liên tục từ quá khứ.\n- D (lives): Hiện tại đơn chỉ thói quen/chân lý, không biểu thị quá trình kéo dài 5 năm.',
-      giaiThichChiTiet: {
-        A: 'Sai vì Quá khứ đơn (lived) chỉ hành động đã kết thúc trong quá khứ, không dùng cho hành động đang tiếp tục.',
-        B: 'Đúng vì thì Hiện tại hoàn thành (has lived) diễn tả quá trình bắt đầu từ quá khứ đến hiện tại với "for five years".',
-        C: 'Sai vì Hiện tại tiếp diễn (is living) không dùng với "for five years" để chỉ hành động kéo dài từ quá khứ.',
-        D: 'Sai vì Hiện tại đơn (lives) chỉ chân lý/thói quen lặp lại, không diễn đạt thời lượng 5 năm liên tục.',
-      },
+      giaiThich: 'Diễn tả hành động bắt đầu trong quá khứ kéo dài đến hiện tại (đi kèm "for five years"), dùng Hiện tại hoàn thành.',
     },
     {
       id: 2,
       noiDung: 'Have you ever __________ a famous musician in person?',
       luaChon: { A: 'meet', B: 'met', C: 'meeting', D: 'meets' },
       dapAnDung: 'B',
-      giaiThich: '✓ Giải thích đáp án đúng: Cấu trúc câu hỏi trải nghiệm thì Hiện tại hoàn thành: "Have + S + ever + V3/V-ed?". Dạng V3 của "meet" là "met".\n✗ Phân tích các phương án sai:\n- A (meet): Dạng nguyên thể, sai ngữ pháp sau Have.\n- C (meeting): Dạng V-ing chỉ dùng trong thì tiếp diễn.\n- D (meets): Dạng ngôi thứ 3 số ít hiện tại đơn, không dùng sau Have.',
-      giaiThichChiTiet: {
-        A: 'Sai vì "meet" là động từ nguyên mẫu, sau "Have" phải là V3/V-ed.',
-        B: 'Đúng vì "met" là quá khứ phân từ (V3) của động từ bất quy tắc "meet".',
-        C: 'Sai vì "meeting" là V-ing, chỉ dùng trong các thì tiếp diễn.',
-        D: 'Sai vì "meets" là động từ chia ở Hiện tại đơn, không dùng trong thì Hoàn thành.',
-      },
+      giaiThich: 'Cấu trúc câu hỏi trải nghiệm: "Have + S + ever + V3/V-ed...". Quá khứ phân từ của "meet" là "met".',
     },
     {
       id: 3,
       noiDung: 'I haven\'t finished compiling the monthly financial report __________.',
       luaChon: { A: 'already', B: 'just', C: 'yet', D: 'since' },
       dapAnDung: 'C',
-      giaiThich: '✓ Giải thích đáp án đúng: "Yet" đứng ở cuối câu phủ định trong thì Hiện tại hoàn thành để biểu đạt một sự việc chưa xảy ra tính đến thời điểm hiện tại.\n✗ Phân tích các phương án sai:\n- A (already): Thường dùng trong câu khẳng định, đứng giữa trợ động từ và động từ chính.\n- B (just): Chỉ hành động vừa mới xảy ra, đứng trước V3, không đứng cuối câu phủ định.\n- D (since): Giới từ/liên từ chỉ mốc thời gian, cần có mốc thời gian đi kèm phía sau.',
-      giaiThichChiTiet: {
-        A: 'Sai vì "already" thường dùng trong câu khẳng định mang nghĩa "đã ... rồi", không đặt cuối câu phủ định.',
-        B: 'Sai vì "just" mang nghĩa "vừa mới", đặt sau "have/has" và không dùng cuối câu phủ định.',
-        C: 'Đúng vì "yet" chuyên dùng ở cuối câu phủ định và câu nghi vấn thì Hiện tại hoàn thành mang nghĩa "chưa".',
-        D: 'Sai vì "since" yêu cầu một mốc thời gian cụ thể theo sau (VD: since Monday), không đứng độc lập cuối câu.',
-      },
+      giaiThich: '"Yet" thường đứng ở cuối câu phủ định trong thì Hiện tại hoàn thành, mang nghĩa "chưa".',
     },
     {
       id: 4,
       noiDung: 'Look! Someone __________ the main conference room window.',
       luaChon: { A: 'opened', B: 'has opened', C: 'opens', D: 'was opening' },
       dapAnDung: 'B',
-      giaiThich: '✓ Giải thích đáp án đúng: Dấu hiệu "Look!" cho thấy kết quả trực quan đang hiện hữu ở hiện tại (cửa sổ đang mở), dùng Hiện tại hoàn thành "has opened".\n✗ Phân tích các phương án sai:\n- A (opened): Quá khứ đơn chỉ tập trung vào thời điểm trong quá khứ, không nhấn mạnh kết quả còn lưu lại ở hiện tại.\n- C (opens): Hiện tại đơn chỉ hành động thường xuyên lặp lại.\n- D (was opening): Quá khứ tiếp diễn chỉ hành động đang diễn ra tại một thời điểm quá khứ.',
-      giaiThichChiTiet: {
-        A: 'Sai vì Quá khứ đơn "opened" chỉ hành động đã kết thúc và không liên hệ tới kết quả trực quan ở hiện tại.',
-        B: 'Đúng vì Hiện tại hoàn thành "has opened" diễn tả hành động xảy ra trong quá khứ nhưng để lại kết quả rõ rệt ở hiện tại.',
-        C: 'Sai vì Hiện tại đơn "opens" chỉ sự thật hiển nhiên hoặc thói quen, không diễn tả một biến cố vừa xảy ra.',
-        D: 'Sai vì Quá khứ tiếp diễn "was opening" dùng mô tả bối cảnh đang diễn ra trong quá khứ.',
-      },
+      giaiThich: 'Hành động đã xảy ra trong quá khứ nhưng để lại kết quả trực quan ở hiện tại, dùng Hiện tại hoàn thành.',
     },
     {
       id: 5,
       noiDung: 'Where is the director? — He __________ to the branch office in Da Nang.',
       luaChon: { A: 'has gone', B: 'has been', C: 'went', D: 'goes' },
       dapAnDung: 'A',
-      giaiThich: '✓ Giải thích đáp án đúng: "Has gone to" chỉ người đã đi đến nơi nào đó và hiện tại chưa quay về (người hỏi không thấy giám đốc ở đây).\n✗ Phân tích các phương án sai:\n- B (has been): "Has been to" mang nghĩa đã từng đến đó và hiện đã quay trở về.\n- C (went): Quá khứ đơn cần có thời gian xác định trong quá khứ.\n- D (goes): Hiện tại đơn chỉ thói quen đi lại định kỳ.',
-      giaiThichChiTiet: {
-        A: 'Đúng vì "has gone to" mang nghĩa đã đi đến đó và hiện vẫn chưa về, giải thích lý do vì sao giám đốc không có mặt.',
-        B: 'Sai vì "has been to" nghĩa là đã đi và đã quay về, không giải thích được sự vắng mặt hiện tại.',
-        C: 'Sai vì "went" là quá khứ đơn cần trạng từ thời gian quá khứ và không kết nối kết quả hiện tại.',
-        D: 'Sai vì "goes" chỉ hành động lặp đi lặp lại theo thói quen.',
-      },
+      giaiThich: '"Has gone to" chỉ người đã đi đến nơi nào đó và hiện chưa quay về (phân biệt với "has been to").',
     },
   ],
 

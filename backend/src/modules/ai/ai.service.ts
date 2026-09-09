@@ -499,12 +499,7 @@ RÀNG BUỘC NGHIÊM NGẶT:
 - Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.
 - BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG ${count} CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng "cauHoi" trong JSON phải có đúng ${count} phần tử.
 - Đúng ${count} câu hỏi được đánh số id tuần tự từ 1 đến ${count}.
-- QUY TẮC BẮT BUỘC: Với câu hỏi Đúng/Sai (True/False), "luaChon" CHỈ ĐƯỢC CÓ 2 ĐÁP ÁN A VÀ B (True và False), KHÔNG ĐƯỢC TẠO C, D.
-- BẮT BUỘC GIẢI THÍCH CHI TIẾT CẢ ĐÁP ÁN ĐÚNG LẪN CÁC PHƯƠNG ÁN SAI:
-  + "giaiThich": Trình bày đầy đủ cả 2 phần:
-    (1) Lý do đáp án đúng là đúng (giải thích ngữ pháp, từ vựng, ngữ cảnh).
-    (2) Phân tích vì sao các phương án còn lại là sai (chỉ ra cụ thể lỗi ngữ pháp, sai ngữ nghĩa hoặc sai thì của từng phương án sai).
-  + "giaiThichChiTiet": Object giải thích cụ thể cho từng lựa chọn A, B, C, D (ví dụ: {"A": "...", "B": "...", "C": "...", "D": "..."} hoặc {"A": "...", "B": "..."} cho câu Đúng/Sai).
+- Bắt buộc có đáp án đúng ("dapAnDung") và giải thích ngắn gọn ("giaiThich") bằng tiếng Việt.
 - Trả về JSON hợp lệ:
 {
   "chuDe": "${dto.chuDe}",
@@ -516,11 +511,7 @@ RÀNG BUỘC NGHIÊM NGẶT:
       "loaiCauHoi": "SINGLE" | "TRUE_FALSE" | "MULTIPLE",
       "luaChon": { "A": "...", "B": "..." },
       "dapAnDung": "A" hoặc ["A", "C"],
-      "giaiThich": "✓ Giải thích đáp án đúng: ... ✗ Phân tích các phương án sai: ...",
-      "giaiThichChiTiet": {
-        "A": "Lý do lựa chọn A...",
-        "B": "Lý do lựa chọn B..."
-      }
+      "giaiThich": "..."
     }
   ]
 }
@@ -601,7 +592,6 @@ RÀNG BUỘC NGHIÊM NGẶT:
               luaChon: finalLuaChon,
               dapAnDung: dapAn,
               giaiThich: q.giaiThich || '',
-              giaiThichChiTiet: q.giaiThichChiTiet || null,
             };
           });
 
