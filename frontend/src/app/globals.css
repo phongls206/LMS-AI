@@ -437,7 +437,7 @@ html.dark .bg-teal-50 {
   border-color: rgba(45, 212, 191, 0.35) !important;
   color: #2dd4bf !important;
 }
-html.dark .bg-teal-50 * {
+html.dark .bg-teal-50 *:not(.text-white, .dark\:text-white, [class*="text-white"], [class*="dark:text-white"], .ai-quiz-option-text, .ai-quiz-badge-text) {
   color: #2dd4bf !important;
 }
 
@@ -446,7 +446,7 @@ html.dark .bg-emerald-50 {
   border-color: rgba(52, 211, 153, 0.35) !important;
   color: #34d399 !important;
 }
-html.dark .bg-emerald-50 * {
+html.dark .bg-emerald-50 *:not(.text-white, .dark\:text-white, [class*="text-white"], [class*="dark:text-white"], .ai-quiz-option-text, .ai-quiz-badge-text) {
   color: #34d399 !important;
 }
 
@@ -456,8 +456,8 @@ html.dark .bg-sky-50 {
   border-color: rgba(56, 189, 248, 0.35) !important;
   color: #38bdf8 !important;
 }
-html.dark .bg-cyan-50 *,
-html.dark .bg-sky-50 * {
+html.dark .bg-cyan-50 *:not(.text-white, .dark\:text-white, [class*="text-white"], [class*="dark:text-white"], .ai-quiz-option-text, .ai-quiz-badge-text),
+html.dark .bg-sky-50 *:not(.text-white, .dark\:text-white, [class*="text-white"], [class*="dark:text-white"], .ai-quiz-option-text, .ai-quiz-badge-text) {
   color: #38bdf8 !important;
 }
 
@@ -466,7 +466,7 @@ html.dark .bg-amber-50 {
   border-color: rgba(251, 191, 36, 0.35) !important;
   color: #fbbf24 !important;
 }
-html.dark .bg-amber-50 * {
+html.dark .bg-amber-50 *:not(.text-white, .dark\:text-white, [class*="text-white"], [class*="dark:text-white"], .ai-quiz-option-text, .ai-quiz-badge-text) {
   color: #fbbf24 !important;
 }
 
@@ -475,8 +475,34 @@ html.dark .bg-rose-50 {
   border-color: rgba(251, 113, 133, 0.35) !important;
   color: #fb7185 !important;
 }
-html.dark .bg-rose-50 * {
+html.dark .bg-rose-50 *:not(.text-white, .dark\:text-white, [class*="text-white"], [class*="dark:text-white"], .ai-quiz-option-text, .ai-quiz-badge-text) {
   color: #fb7185 !important;
+}
+
+/* ── Đảm bảo chữ trắng đậm sắc nét tuyệt đối trong Dark Mode ── */
+.text-white,
+html.dark .text-white,
+html.dark .dark\:text-white,
+html.dark [class*="dark:text-white"],
+html.dark [class*="text-white"] {
+  color: #ffffff !important;
+}
+
+/* ── Class chuyên biệt cho bài trắc nghiệm AI (Không bị bất kỳ class nào can thiệp) ── */
+.ai-quiz-option-text {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}
+html.dark .ai-quiz-option-text {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.ai-quiz-badge-text {
+  font-weight: 700 !important;
+}
+html.dark .ai-quiz-badge-text {
+  color: #ffffff !important;
 }
 
 html.dark .bg-slate-50 {
