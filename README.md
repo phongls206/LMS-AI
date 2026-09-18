@@ -1,233 +1,345 @@
-# 🌟 ETC ENGLISH CENTER — HỆ THỐNG QUẢN LÝ TRUNG TÂM NGOẠI NGỮ TÍCH HỢP AI (LMS + GENAI)
+# 🌟 ETC English Center — AI-Powered LMS & Academic Management Platform
 
-> **Hệ thống Quản lý Đào tạo & Vận hành Trung tâm Ngoại ngữ ETC** — Tích hợp Trí tuệ Nhân tạo thế hệ mới (Gemini GenAI), hỗ trợ toàn diện 4 nhóm đối tượng: **Quản Trị Viên (Admin)**, **Nhân Viên Tư Vấn (Staff)**, **Giáo Viên (Teacher)** và **Học Viên (Student)**.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Next.js](https://img.shields.io/badge/Next.js-16.3-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-blue?logo=react)](https://react.dev/)
+[![NestJS](https://img.shields.io/badge/NestJS-12.0-red?logo=nestjs)](https://nestjs.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x%20%2F%206.x-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-6.4-2D3748?logo=prisma)](https://www.prisma.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon%20Serverless-336791?logo=postgresql)](https://neon.tech/)
+[![Google Gemini](https://img.shields.io/badge/Google%20Gemini-Flash%20%2F%20Pro-8E75B2?logo=google)](https://ai.google.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-v4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+
+> **ETC English Center** is a modern, enterprise-grade Learning Management System (LMS) and Education Enterprise Resource Planning (ERP) platform integrated with Next-Gen Artificial Intelligence (Google Gemini GenAI). Tailored for foreign language centers, it provides end-to-end automation across four primary roles: **Administrator**, **Academic Counselor (Staff)**, **Teacher**, and **Student**.
 
 🌐 **Live Demo:** [etcedu.vercel.app](https://etcedu.vercel.app/)  
-📚 **Swagger API Docs:** `http://localhost:8000/api/docs` (sau khi khởi chạy backend)
+📚 **Swagger API Docs:** `http://localhost:8000/api/docs` (available upon starting the backend server)
 
 ---
 
-## 📌 MỤC LỤC
-1. [Giới Thiệu Tổng Quan](#-1-giới-thiệu-tổng-quan)
-2. [Công Nghệ Sử Dụng (Tech Stack)](#-2-công-nghệ-sử-dụng-tech-stack)
-3. [Cấu Trúc Thư Mục Dự Án](#-3-cấu-trúc-thư-mục-dự-án)
-4. [Hướng Dẫn Cài Đặt & Chạy Hệ Thống](#-4-hướng-dẫn-cài-đặt--chạy-hệ-thống)
-5. [Danh Sách Tài Khoản Mẫu (Demo Credentials)](#-5-danh-sách-tài-khoản-mẫu-demo-credentials)
-6. [Các Phân Hệ Chức Năng Chính](#-6-các-phân-hệ-chức-năng-chính)
-7. [Tài Liệu API Swagger](#-7-tài-liệu-api-swagger)
+## 📌 Table of Contents
+
+1. [System Overview](#-1-system-overview)
+2. [Key Capabilities & Highlights](#-2-key-capabilities--highlights)
+3. [Technology Stack](#-3-technology-stack)
+4. [System Architecture](#-4-system-architecture)
+5. [Directory Structure](#-5-directory-structure)
+6. [Getting Started & Local Installation](#-6-getting-started--local-installation)
+7. [Demo Credentials](#-7-demo-credentials)
+8. [Role-Based Functional Modules](#-8-role-based-functional-modules)
+9. [Interactive API Documentation (Swagger)](#-9-interactive-api-documentation-swagger)
+10. [Testing & Quality Assurance](#-10-testing--quality-assurance)
+11. [Contact & Support](#-11-contact--support)
 
 ---
 
-## 📖 1. Giới Thiệu Tổng Quan
+## 📖 1. System Overview
 
-Hệ thống **ETC English Center** được thiết kế và xây dựng chuẩn hóa theo mô hình kiến trúc phân tầng (Multi-tier Architecture), tuân thủ nguyên tắc toàn vẹn dữ liệu **ACID Transactions**, phân quyền truy cập nghiêm ngặt dựa trên vai trò (**RBAC - Role-Based Access Control**), và cơ chế phòng vệ 3 lớp (**3-Tier Defense**) khi tích hợp các mô hình ngôn ngữ lớn (LLM/GenAI).
+The **ETC English Center Management Platform** is engineered following standard multi-tier architectural patterns, strict **ACID transactional consistency**, fine-grained **Role-Based Access Control (RBAC)**, and a **3-Tier Defense Mechanism** for Large Language Model (LLM) integrations.
 
-### 🎯 Điểm nổi bật:
-* **Quản lý Đào tạo & Vận hành:** Khóa học, Lớp học, Xếp thời khóa biểu chống trùng lịch, Tiếp nhận học viên, Phân công giảng viên.
-* **Tài chính & Học phí:** Tự động sinh hóa đơn khi đăng ký lớp, theo dõi công nợ, quản lý phiếu thu nhiều đợt.
-* **Điểm danh & Kết quả:** Điểm danh 4 trạng thái, Ma trận chuyên cần toàn khóa (Attendance Matrix), Nhập điểm & Tính điểm tự động theo tỷ lệ: `20% Chuyên cần + 30% Giữa kỳ + 50% Cuối kỳ`.
-* **Trí tuệ Nhân tạo (GenAI Features):**
-  * 🤖 **AI Tư Vấn Lớp Học:** Phân tích hồ sơ, mục tiêu và lịch rảnh học viên để đề xuất lớp học tối ưu.
-  * 📝 **AI Sinh Bài Tập Trắc Nghiệm:** Tự động sinh đề luyện tập 4 kỹ năng chuẩn CEFR (A1..C2) kèm đáp án và giải thích chi tiết.
-  * 📊 **AI Tóm Tắt Báo Cáo Tiến Độ:** Phân tích chuyên cần, điểm số và đưa ra lộ trình cải thiện cá nhân hóa.
+The platform eliminates manual administrative overhead by streamlining course catalog design, schedule conflict detection, automated multi-tranche tuition invoicing, 4-state session attendance, weighted grade calculations, and AI-driven personalized learning pathways.
 
 ---
 
-## 🛠️ 2. Công Nghệ Sử Dụng (Tech Stack)
+## 🎯 2. Key Capabilities & Highlights
 
-### Backend (RESTful API Server)
-* **Framework:** [NestJS](https://nestjs.com/) (Node.js & TypeScript)
-* **ORM & Database:** [Prisma ORM](https://www.prisma.io/) + PostgreSQL ([Neon Cloud Serverless](https://neon.tech/))
-* **Bảo mật & Xác thực:** Argon2 Password Hashing, Passport JWT, Role Guards
-* **API Documentation:** Swagger / OpenAPI 3.0
-* **AI SDK:** `@google/genai` (Google Gemini 2.5 Flash)
+* **Academic & Operational Administration:**
+  * Comprehensive Course & Class lifecycle management (IELTS, TOEIC, Communicative English, CEFR A1–C2).
+  * Automated timetable scheduling with automated room and teacher collision detection.
+  * Student enrollment processing, capacity constraints, and teacher load balancing.
+
+* **Finance, Invoicing & Tuition:**
+  * Automatic invoice creation upon course/class enrollment.
+  * Real-time outstanding debt tracking, split-payment receipts, and printable A4 payment receipts.
+
+* **Attendance Matrix & Weighted Grading:**
+  * 4-state session attendance: *Present*, *Late*, *Excused Absence*, and *Unexcused Absence*.
+  * Course-wide interactive Attendance Matrix and per-student attendance auditing.
+  * Weighted grade computation:
+    $$\text{Final Grade} = (20\% \times \text{Attendance}) + (30\% \times \text{Midterm}) + (50\% \times \text{Final Exam})$$
+  * Automatic pass/fail determinations with academic transcripts.
+
+* **Google Gemini Generative AI Suite:**
+  * 🤖 **AI Course & Class Consultation:** Evaluates the student's entry CEFR level, target score, and weekly schedule availability to recommend the optimal learning roadmap and open classes.
+  * 📝 **AI Practice Generator:** Automatically creates 4-skill CEFR-graded multiple-choice quizzes with instant grading, correct answer validation, and detailed explanations.
+  * 📊 **AI Progress Summarization:** Synthesizes historical attendance and exam records into diagnostic reports highlighting strengths, weaknesses, and actionable study roadmaps.
+
+---
+
+## 🛠️ 3. Technology Stack
+
+### Backend (RESTful API Service)
+* **Core Framework:** [NestJS](https://nestjs.com/) (Node.js runtime with modern TypeScript)
+* **Database & ORM:** [Prisma ORM 6](https://www.prisma.io/) with PostgreSQL hosted on [Neon Serverless](https://neon.tech/) (14 relational tables in 3NF)
+* **Authentication & Security:** Argon2 password hashing, Passport.js JWT strategies, Role Guards, and OWASP-hardened validation pipes
+* **API Documentation:** Swagger / OpenAPI 3.0 specification
+* **AI Integration:** Official `@google/genai` SDK running Google Gemini 2.5 / 3.8 Flash with structured JSON schema outputs
 
 ### Frontend (Client Web Application)
-* **Framework:** [Next.js](https://nextjs.org/) (App Router & Turbopack)
-* **Ngôn ngữ:** TypeScript, React 19
-* **Styling:** Tailwind CSS (Dark Theme Dashboard System)
-* **Icons & Animation:** Lucide Icons
+* **Framework:** [Next.js](https://nextjs.org/) (App Router architecture with Turbopack bundler)
+* **Libraries:** React 19, TypeScript
+* **Design & Styling:** Tailwind CSS v4, Modern Dark Theme Dashboard System
+* **Icons & Visualization:** Lucide React icons, lightweight dynamic charts
+* **Networking & Utilities:** Axios HTTP client with interceptors, SheetJS (`xlsx`) for tabular data reporting
 
 ---
 
-## 📂 3. Cấu Trúc Thư Mục Dự Án
+## 🏗️ 4. System Architecture
+
+```text
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Next.js Frontend Client                         │
+│     (App Router, React 19, Dark Theme Dashboard, RBAC Route Guards)    │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ HTTPS / RESTful API (Bearer JWT)
+┌───────────────────────────────────▼────────────────────────────────────┐
+│                          NestJS API Gateway                            │
+│  ┌───────────────────────┬──────────────────────┬───────────────────┐  │
+│  │  Argon2 / JWT Guards  │ Validation Pipes DTO │  Swagger OpenAPI  │  │
+│  └───────────────────────┴──────────────────────┴───────────────────┘  │
+│  ┌──────────────────────────────────────────────────────────────────┐  │
+│  │                         Business Services                        │  │
+│  │  Auth • Users • Courses • Classes • Enrollments • Fees • AI Hub  │  │
+│  └──────────────────┬─────────────────────────────┬─────────────────┘  │
+└─────────────────────┼─────────────────────────────┼────────────────────┘
+                      │                             │
+                      ▼                             ▼
+       ┌────────────────────────────┐  ┌────────────────────────────┐
+       │     PostgreSQL (Neon)      │  │      Google Gemini AI      │
+       │    Prisma ORM (14 3NF)     │  │   Zero-Trust Structured    │
+       │  ACID Database Transaction │  │  JSON Schema Output Engine │
+       └────────────────────────────┘  └────────────────────────────┘
+```
+
+### GenAI 3-Tier Defense Mechanism
+1. **Zero-Trust System Prompting:** Strict prompt boundaries preventing hallucinations and prompt injection.
+2. **Schema Validation:** Enforces exact JSON Schema contracts (`responseMimeType: "application/json"`) on all model responses.
+3. **Graceful Fallback & Audit Logging:** Persistent logging of prompt tokens, latency, and automated fallback caching in the event of API rate limits.
+
+---
+
+## 📂 5. Directory Structure
 
 ```text
 LMS-AI/
-├── .agents/                       # Cấu hình AI Agents & Automation Skills
+├── .agents/                       # Sub-agents configuration & automated skills
 ├── backend/                       # NestJS API Server
 │   ├── prisma/
-│   │   ├── schema.prisma          # Cấu trúc CSDL 14 bảng chuẩn 3NF
-│   │   └── seed.ts                # Kịch bản nạp dữ liệu mẫu toàn diện
+│   │   ├── schema.prisma          # 14-table 3NF relational database schema
+│   │   └── seed.ts                # Comprehensive database seeder script
 │   ├── src/
-│   │   ├── modules/               # Các Module nghiệp vụ (auth, users, courses,
+│   │   ├── modules/               # Core business modules (auth, users, courses,
 │   │   │                          # classes, enrollments, attendances, grades, ai...)
-│   │   ├── common/                # Guards, Interceptors, DTOs, Filters
-│   │   ├── config/                # Cấu hình môi trường & AI
-│   │   └── main.ts                # Điểm khởi chạy Backend (Port 8000)
+│   │   ├── common/                # Shared guards, interceptors, filters, DTOs
+│   │   ├── config/                # Environment configurations & AI credentials
+│   │   └── main.ts                # Backend bootstrap entrypoint (Port 8000)
+│   ├── test/                      # Vitest unit & E2E test suites
 │   └── package.json
 │
-├── frontend/                      # Next.js Web Client
+├── frontend/                      # Next.js App Router Web Client
 │   ├── src/
-│   │   ├── app/                   # App Router Pages
-│   │   │   ├── admin/             # Phân hệ Quản trị viên (Dashboard, Classes, Courses, Students...)
-│   │   │   ├── staff/             # Phân hệ Tư vấn viên (Thu học phí, Tiếp nhận HV...)
-│   │   │   ├── teacher/           # Phân hệ Giáo viên (Điểm danh, Nhập điểm, Sinh bài tập AI...)
-│   │   │   ├── student/           # Phân hệ Học viên (Lịch học, Điểm số, Đăng ký lớp, AI Tư vấn...)
-│   │   │   └── login/             # Màn hình Đăng nhập
-│   │   ├── components/            # UI Components (AppLayout, Navbar, Modals...)
-│   │   └── services/api.ts        # Axios Client kết nối Backend API
+│   │   ├── app/                   # Role-based route hierarchy
+│   │   │   ├── admin/             # Administrator dashboard & management views
+│   │   │   ├── staff/             # Academic staff & tuition cash desk views
+│   │   │   ├── teacher/           # Teacher portal (attendance, grading, AI quiz)
+│   │   │   ├── student/           # Student portal (schedule, grades, AI advice)
+│   │   │   └── login/             # Authentication & role redirection
+│   │   ├── components/            # Reusable UI component library
+│   │   └── services/api.ts        # Axios API client & token interceptors
 │   └── package.json
 │
-├── docs/                          # Tài liệu thiết kế & Báo cáo kỹ thuật
+├── docs/                          # Technical specifications & project reports
 │   └── design/
-│       └── EnglishCenterTOP.docx  # Tài liệu Baseline của dự án
-├── scripts/                       # Deployment & Migration scripts
-├── docker-compose.yml             # Cấu hình Docker services
-└── README.md                      # Hướng dẫn chạy dự án
+│       └── EnglishCenterTOP.docx  # Baseline architectural & requirements specification
+├── scripts/                       # Deployment, migration, and automation scripts
+├── docker-compose.yml             # Docker services orchestration
+└── README.md                      # Project documentation
 ```
 
 ---
 
-## 🚀 4. Hướng Dẫn Cài Đặt & Chạy Hệ Thống
+## 🚀 6. Getting Started & Local Installation
 
-### 📋 Yêu Cầu Môi Trường
-* **Node.js:** Phiên bản `>= 18.x` (Khuyến nghị Node.js 20 hoặc 22 LTS)
-* **NPM:** Phiên bản `>= 9.x`
-* **Git**
-
----
-
-### Bước 1: Cấu hình Môi Trường Backend
-
-Tạo hoặc kiểm tra file `backend/.env`:
-
-```env
-# Database (PostgreSQL) - Thay bằng connection string Neon thực tế của bạn
-DATABASE_URL="postgresql://username:password@ep-sample-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-
-# JWT Authentication
-JWT_SECRET=your-super-secret-jwt-key
-JWT_EXPIRES_IN=24h
-
-# Server Port
-PORT=8000
-NODE_ENV=development
-
-# Google Gemini AI API
-GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
-GEMINI_FLASH_MODEL=gemini-3.8-flash
-GEMINI_PRO_MODEL=gemini-3.1-pro
-GEMINI_TIMEOUT_MS=30000
-```
+### 📋 Prerequisites
+* **Node.js:** Version `>= 18.x` (Recommended: Node.js 20 or 22 LTS)
+* **Package Manager:** `npm` (`>= 9.x`) or `pnpm`
+* **Git:** Latest stable version
 
 ---
 
-### Bước 2: Cài Đặt & Khởi Chạy Backend
-
-Mở Terminal tại thư mục gốc của dự án:
+### Step 1: Clone the Repository
 
 ```bash
-# 1. Di chuyển vào thư mục backend
-cd backend
-
-# 2. Cài đặt các thư viện phụ thuộc
-npm install
-
-# 3. Sinh Prisma Client và đồng bộ CSDL
-npx prisma generate
-npx prisma db push
-
-# 4. (Tùy chọn) Nạp dữ liệu mẫu ban đầu nếu CSDL mới tinh
-npx prisma db seed
-
-# 5. Khởi chạy Backend Server
-npm run start:dev
+git clone https://github.com/phongls206/LMS-AI.git
+cd LMS-AI
 ```
-
-> 🎯 **Backend API sẽ chạy tại:** `http://localhost:8000`  
-> 📚 **Tài liệu Swagger OpenAPI:** `http://localhost:8000/api/docs`
 
 ---
 
-### Bước 3: Cài Đặt & Khởi Chạy Frontend
+### Step 2: Configure & Start the Backend
 
-Mở một cửa sổ Terminal mới:
+1. Navigate to the `backend` directory:
+   ```bash
+   cd backend
+   ```
 
-```bash
-# 1. Di chuyển vào thư mục frontend
-cd frontend
+2. Create a `.env` file based on the template below:
+   ```env
+   # PostgreSQL Connection (replace with your Neon or local PostgreSQL instance)
+   DATABASE_URL="postgresql://username:password@ep-sample-pooler.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
-# 2. Cài đặt các thư viện phụ thuộc
-npm install
+   # JWT Configuration
+   JWT_SECRET="your-super-secret-jwt-key"
+   JWT_EXPIRES_IN="24h"
 
-# 3. Tạo file .env.local cấu hình API URL (nếu cần đổi URL Backend)
-echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+   # Server Settings
+   PORT=8000
+   NODE_ENV="development"
 
-# 4. Khởi chạy máy chủ phát triển (Next.js Dev Server)
-npm run dev
-```
+   # Google Gemini AI API Configuration
+   GEMINI_API_KEY="YOUR_GEMINI_API_KEY_HERE"
+   GEMINI_FLASH_MODEL="gemini-3.8-flash"
+   GEMINI_PRO_MODEL="gemini-3.1-pro"
+   GEMINI_TIMEOUT_MS=30000
+   ```
 
-> 🌐 **Giao diện Web Client sẽ chạy tại:** `http://localhost:3000`
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+4. Synchronize Prisma schema and seed sample data:
+   ```bash
+   # Generate Prisma client bindings
+   npx prisma generate
+
+   # Push the database schema to your PostgreSQL database
+   npx prisma db push
+
+   # Seed the database with comprehensive demo data
+   npx prisma db seed
+   ```
+
+5. Launch the backend development server:
+   ```bash
+   npm run start:dev
+   ```
+
+* 🎯 **Backend API Root:** `http://localhost:8000`  
+* 📚 **Interactive Swagger UI:** `http://localhost:8000/api/docs`
 
 ---
 
-## 🔑 5. Danh Sách Tài Khoản Mẫu (Demo Credentials)
+### Step 3: Configure & Start the Frontend
 
-> 💡 **Mật khẩu chung cho TẤT CẢ tài khoản mẫu là:** `123456`
+1. Open a new terminal window and navigate to `frontend`:
+   ```bash
+   cd frontend
+   ```
 
-| Vai trò | Tên đăng nhập (Username) | Mật khẩu | Chức năng chính |
+2. Configure the API endpoint in `.env.local`:
+   ```bash
+   echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
+   ```
+
+3. Install frontend dependencies:
+   ```bash
+   npm install
+   ```
+
+4. Launch the Next.js development server:
+   ```bash
+   npm run dev
+   ```
+
+* 🌐 **Web Client Application:** `http://localhost:3000`
+
+---
+
+## 🔑 7. Demo Credentials
+
+> 💡 **Default Password for ALL demo accounts:** `123456`
+
+| Role | Username | Password | Core Responsibilities |
 | :--- | :--- | :--- | :--- |
-| **Quản Trị Viên (Admin)** | `admin01` | `123456` | Toàn quyền quản trị Dashboard, Khóa học, Lớp học, Giáo viên, Học viên, Báo cáo Doanh thu & AI |
-| **Tư Vấn Viên (Staff)** | `staff01`, `staff02` | `123456` | Tiếp nhận học viên mới, Xếp lớp, Thu học phí và Xuất phiếu thu |
-| **Giáo Viên (Teacher)** | `teacher01` → `teacher10` | `123456` | Xem TKB, Điểm danh buổi học, Ma trận chuyên cần, Nhập điểm & Đánh giá kết quả, Sinh bài tập AI |
-| **Học Viên (Student)** | `student01` → `student54` | `123456` | Xem TKB cá nhân, Tra cứu bảng điểm, Đăng ký lớp học, Luyện bài tập AI, AI Tư vấn & Tóm tắt tiến độ |
-| **Học Viên Mới** | `phongls206` | `123456` | Tài khoản học viên kiểm thử đăng ký lớp & hóa đơn |
+| **Administrator** | `admin01` | `123456` | Complete system control: KPIs, Courses, Classes, Teachers, Students, Financial Auditing, System Settings |
+| **Academic Staff** | `staff01`, `staff02` | `123456` | Student admissions, class placement, fee collection, debt follow-up, receipt printing |
+| **Teacher** | `teacher01` → `teacher10` | `123456` | Weekly schedule, session attendance, course attendance matrix, grade entry, AI quiz generation |
+| **Student** | `student01` → `student54` | `123456` | Personal schedule, academic transcripts, class enrollment, tuition bills, AI consulting & practice |
+| **New Student (Test)** | `phongls206` | `123456` | Clean test account for testing self-enrollment and automated invoice generation |
 
 ---
 
-## 🖥️ 6. Các Phân Hệ Chức Năng Chính
+## 🖥️ 8. Role-Based Functional Modules
 
-### 1. Phân Hệ Quản Trị Viên (`/admin`)
-* **Dashboard Tổng Quan (`/admin/dashboard`):** Biểu đồ KPI doanh thu, số lượng học viên, lớp học và phân bố CEFR.
-* **Quản Lý Khóa Học (`/admin/courses`):** Danh mục khóa học IELTS, TOEIC, Giao tiếp, Chuẩn đầu vào CEFR, Học phí.
-* **Quản Lý Lớp Học & TKB (`/admin/classes`):** Tạo lớp, Xếp phòng học, Phân công giảng viên, Kiểm tra chống trùng lịch.
-* **Hồ Sơ Học Viên (`/admin/students`):** Quản lý chi tiết học viên, xem lớp & khóa đang học, công nợ học phí, mở popup Hồ sơ toàn diện.
-* **Hồ Sơ Giảng Viên (`/admin/teachers`):** Quản lý danh sách giảng viên, chuyên môn, phân công giảng dạy.
-* **Quản Lý Học Phí & Hóa Đơn (`/admin/fees`):** Quản lý toàn bộ hóa đơn học phí, ghi nhận thanh toán tại quầy.
-* **Báo Cáo & Thống Kê (`/admin/reports`):** Thống kê doanh thu theo tháng, tỷ lệ hoàn thành khóa học.
+### 1. Administrator Portal (`/admin`)
+* **Executive Dashboard (`/admin/dashboard`):** Real-time analytics on revenue, active student count, class utilization, and CEFR level distribution.
+* **Course Catalog (`/admin/courses`):** Manage IELTS, TOEIC, and Communicative curriculum, prerequisites, duration, and tuition fee schedules.
+* **Class & Schedule Management (`/admin/classes`):** Class provisioning, classroom allocation, instructor assignment, and automated collision detection.
+* **Student Registry (`/admin/students`):** Complete student database, enrollment history, outstanding balance overview, and detailed 360° modal profiles.
+* **Faculty Directory (`/admin/teachers`):** Faculty profiles, academic specializations, and teaching assignment metrics.
+* **Finance & Accounting (`/admin/fees`):** Center-wide tuition invoice auditing, payment recording, and cashier logs.
+* **Reports & Analytics (`/admin/reports`):** Monthly revenue reports, course completion rates, and enrollment trends.
 
-### 2. Phân Hệ Giáo Viên (`/teacher`)
-* **Lớp Phụ Trách & TKB (`/teacher/classes`):** Danh sách các lớp được phân công giảng dạy và lịch học trong tuần.
-* **Điểm Danh Buổi Học (`/teacher/attendance`):** Điểm danh theo từng buổi học (Có mặt, Đi muộn, Có phép, Vắng) kèm tính năng **Ma Trận Điểm Danh Toàn Khóa** và xem Lịch sử chuyên cần từng học viên.
-* **Nhập Điểm & Kết Quả (`/teacher/grades`):** Nhập điểm chuyên cần, giữa kỳ, cuối kỳ; Hệ thống tự động tính điểm tổng kết và xếp loại Đạt/Không Đạt.
-* **Sinh Bài Tập AI (`/teacher/ai-exercises`):** Giáo viên nhập chủ đề và kỹ năng → Gemini AI sinh trắc nghiệm tự động.
+### 2. Teacher Portal (`/teacher`)
+* **Assigned Classes & Schedule (`/teacher/classes`):** Assigned class rosters, curriculum progress, and interactive weekly timetables.
+* **Session Attendance (`/teacher/attendance`):** 4-state session check-ins with an integrated **Full-Course Attendance Matrix** and absence history tracking.
+* **Grading & Academic Transcripts (`/teacher/grades`):** Continuous assessment scoring (Attendance 20%, Midterm 30%, Final 50%) with automatic classification (Pass/Fail).
+* **AI Quiz Generator (`/teacher/ai-exercises`):** Specify skill focus (Reading/Listening/Grammar/Vocabulary) and target CEFR level to automatically produce formatted test items with answers.
 
-### 3. Phân Hệ Học Viên (`/student`)
-* **Bàn Làm Việc & TKB (`/student/dashboard`, `/student/schedule`):** Xem lịch học hôm nay, phòng học và giảng viên phụ trách.
-* **Bảng Điểm & Kết Quả (`/student/grades`):** Tra cứu điểm số chi tiết từng môn và trạng thái tốt nghiệp.
-* **Đăng Ký Khóa Học (`/student/enroll`):** Tự chọn và ghi danh vào các lớp học phù hợp với trình độ CEFR; Hệ thống tự động sinh hóa đơn học phí.
-* **Học Phí & Hóa Đơn (`/student/fees`):** Tra cứu mã hóa đơn, số tiền đã đóng, còn nợ và hạn thanh toán.
-* **AI Tư Vấn Lớp Học (`/student/ai-consult`):** Nhập mục tiêu cá nhân → AI gợi ý lộ trình và lớp học tối ưu.
-* **AI Luyện Trắc Nghiệm (`/student/ai-practice`):** Làm bài trắc nghiệm tương tác do AI sinh trực tiếp, chấm điểm và xem giải thích tức thì.
-* **AI Tóm Tắt Tiến Độ (`/student/ai-progress`):** AI phân tích điểm mạnh, điểm yếu và đưa ra lời khuyên học tập.
+### 3. Student Portal (`/student`)
+* **Student Workspace & Timetable (`/student/dashboard`, `/student/schedule`):** Today's sessions, assigned rooms, and instructor details.
+* **Transcripts & Progress (`/student/grades`):** Term-by-term score breakdowns, GPA computation, and graduation eligibility status.
+* **Class Registration (`/student/enroll`):** Self-service registration into eligible classes matching entrance level, triggering real-time automated invoice creation.
+* **Tuition & Payment History (`/student/fees`):** Instant access to invoice balances, payment history, and payment deadlines.
+* **AI Study Advisor (`/student/ai-consult`):** Interactive AI counselor assessing target scores and availability to prescribe tailored course tracks.
+* **AI Interactive Practice (`/student/ai-practice`):** On-demand practice test generation with instant AI scoring and explanatory feedback.
+* **AI Learning Summary (`/student/ai-progress`):** Generative academic diagnostics highlighting areas for reinforcement and revision strategies.
 
 ---
 
-## 📚 7. Tài Liệu API Swagger
+## 📚 9. Interactive API Documentation (Swagger)
 
-Sau khi khởi chạy Backend, truy cập:  
+The backend provides complete OpenAPI documentation accessible at:  
 👉 **`http://localhost:8000/api/docs`**
 
-Hệ thống tài liệu Swagger OpenAPI bao gồm đầy đủ:
-* Mô tả chi tiết tất cả **14 Use Cases**.
-* Cấu trúc DTO Request / Response của từng Endpoint.
-* Nút **Authorize** tích hợp sẵn Bearer JWT Token để kiểm thử API trực tiếp trên trình duyệt.
+Key highlights:
+* Covers all **14 Core Use Cases** specified in the design baseline.
+* Full DTO schemas with parameter constraints and response types.
+* Integrated **Authorize** button with Bearer JWT support for immediate API execution within the browser.
 
 ---
 
-## 👥 Nhóm Tác Giả & Bản Quyền
-* **Dự án:** Hệ Thống Quản Lý Trung Tâm Ngoại Ngữ Tích Hợp AI (ETC English)
-* **Phiên bản:** `1.0.0`
-* **Nhóm Thực Hiện:** 42 - Lê Hồng Phong,Lưu Thanh Nguyên
-* **Năm thực hiện:** 2026
+## 🧪 10. Testing & Quality Assurance
+
+The codebase includes automated test suites and linting utilities:
+
+```bash
+# Run unit tests via Vitest
+npm run test
+
+# Run end-to-end (E2E) tests
+npm run test:e2e
+
+# Run test coverage report
+npm run test:cov
+
+# Run code linter
+npm run lint
+```
+
+To explore the database schema visually:
+```bash
+npx prisma studio
+```
+
+---
+
+## 📬 11. Contact & Support
+
+For inquiries, academic collaboration, or architectural discussions:
+* **Lead Developer:** Le Hong Phong
+* **Email:** [lehongphong2108@outlook.com](mailto:lehongphong2108@outlook.com)
+* **Project Repository:** [github.com/phongls206/LMS-AI](https://github.com/phongls206/LMS-AI)
+
+---
