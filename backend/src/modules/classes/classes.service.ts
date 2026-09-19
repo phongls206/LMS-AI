@@ -5,7 +5,13 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { CreateClassDto, CreateScheduleDto, AssignTeacherDto, UpdateClassDto } from './dto/classes.dto';
+import {
+  CreateClassDto,
+  CreateScheduleDto,
+  UpdateClassScheduleDto,
+  AssignTeacherDto,
+  UpdateClassDto,
+} from './dto/classes.dto';
 import { TrangThaiLopHoc, TrangThaiKhoaHoc, VaiTroPhanCong, TrangThaiPhanCong } from '@prisma/client';
 
 @Injectable()
@@ -66,7 +72,35 @@ export class ClassesService {
   }
 
   private parseTimeString(timeStr: string): Date {
-    return new Date(`1970-01-01T${timeStr}:00`);
+    if (!timeStr) {
+      throw new BadRequestException('Giờ học không được để trống.');
+    }
+    const parts = timeStr.trim().split(':');
+    if (parts.length < 2) {
+      throw new BadRequestException(`Định dạng giờ học không hợp lệ: "${timeStr}". Vui lòng nhập định dạng HH:mm (ví dụ 08:00 hoặc 8:00).`);
+    }
+    const hh = parts[0].padStart(2, '0');
+    const mm = (parts[1] || '00').padStart(2, '0');
+    const ss = (parts[2] || '00').padStart(2, '0');
+    const d = new Date(`1970-01-01T${hh}:${mm}:${ss}Z`);
+    if (isNaN(d.getTime())) {
+      throw new BadRequestException(`Thời gian không hợp lệ: "${timeStr}". Vui lòng nhập định dạng HH:mm.`);
+    }
+    return d;
+  }
+
+  private getDayLabel(thu: number): string {
+    if (thu === 8) return 'Chủ Nhật';
+    return `Thứ ${thu}`;
+  }
+
+  private formatTimeDisplay(d: Date | string): string {
+    if (!d) return '';
+    if (typeof d === 'string') {
+      if (d.includes('T')) return d.substring(11, 16);
+      return d.substring(0, 5);
+    }
+    return d.toISOString().substring(11, 16);
   }
 
   /**
@@ -81,7 +115,12 @@ export class ClassesService {
       where,
       include: {
         khoaHoc: { select: { tenKhoaHoc: true, hocPhi: true, trinhDoYeuCau: true } },
-        lichHoc: true,
+        lichHoc: {
+          orderBy: [
+            { thuTrongTuan: 'asc' },
+            { gioBatDau: 'asc' },
+          ],
+        },
         buoiHoc: { select: { id: true, soThuTu: true, ngayHoc: true, chuDe: true, trangThai: true, phongHoc: true } },
         _count: { select: { buoiHoc: true, dangKyHoc: true } },
         dangKyHoc: {
@@ -109,7 +148,12 @@ export class ClassesService {
       where: { id: BigInt(id) },
       include: {
         khoaHoc: true,
-        lichHoc: true,
+        lichHoc: {
+          orderBy: [
+            { thuTrongTuan: 'asc' },
+            { gioBatDau: 'asc' },
+          ],
+        },
         buoiHoc: { orderBy: { soThuTu: 'asc' } },
         phanCong: {
           where: { trangThai: 'DANG_PHU_TRACH' },
@@ -255,11 +299,38 @@ export class ClassesService {
       throw new BadRequestException('Giờ kết thúc phải sau giờ bắt đầu.');
     }
 
-    // Business Rule: Kiểm tra trùng phòng học
+    const cleanRoom = dto.phongHoc.trim();
+    const displayRoom = cleanRoom.toLowerCase().startsWith('phòng') ? cleanRoom : `Phòng ${cleanRoom}`;
+
+    // 1. Business Rule: Kiểm tra trùng giờ trong chính lớp học này (Same Class Overlap)
+    const conflictInClass = await this.prisma.lichHoc.findFirst({
+      where: {
+        lopHocId: BigInt(classId),
+        thuTrongTuan: dto.thuTrongTuan,
+        AND: [
+          { gioBatDau: { lt: gioKetThuc } },
+          { gioKetThuc: { gt: gioBatDau } },
+        ],
+      },
+    });
+
+    if (conflictInClass) {
+      const bdStr = this.formatTimeDisplay(conflictInClass.gioBatDau);
+      const ktStr = this.formatTimeDisplay(conflictInClass.gioKetThuc);
+      throw new ConflictException(
+        `Lớp học này đã có ca học vào ${this.getDayLabel(dto.thuTrongTuan)} trong khung giờ ${bdStr} - ${ktStr} (${conflictInClass.phongHoc}). Không thể xếp 2 ca học đè lên nhau trong cùng một lớp!`,
+      );
+    }
+
+    // 2. Business Rule: Kiểm tra trùng phòng học với lớp khác (Room Conflict)
     const conflictingRoom = await this.prisma.lichHoc.findFirst({
       where: {
         thuTrongTuan: dto.thuTrongTuan,
-        phongHoc: dto.phongHoc,
+        phongHoc: { equals: cleanRoom, mode: 'insensitive' },
+        lopHocId: { not: BigInt(classId) },
+        lopHoc: {
+          trangThai: { not: TrangThaiLopHoc.DA_HUY },
+        },
         AND: [
           { gioBatDau: { lt: gioKetThuc } },
           { gioKetThuc: { gt: gioBatDau } },
@@ -269,9 +340,64 @@ export class ClassesService {
     });
 
     if (conflictingRoom) {
+      const bdStr = this.formatTimeDisplay(conflictingRoom.gioBatDau);
+      const ktStr = this.formatTimeDisplay(conflictingRoom.gioKetThuc);
       throw new ConflictException(
-        `Phòng ${dto.phongHoc} đã bị trùng vào Thứ ${dto.thuTrongTuan} (${dto.gioBatDau}-${dto.gioKetThuc}) với lớp ${conflictingRoom.lopHoc.tenLopHoc}.`,
+        `${displayRoom} đã được xếp cho lớp "${conflictingRoom.lopHoc.tenLopHoc}" (${conflictingRoom.lopHoc.maLopHoc}) vào ${this.getDayLabel(dto.thuTrongTuan)} (${bdStr} - ${ktStr}).`,
       );
+    }
+
+    // 3. Business Rule: Kiểm tra trùng lịch giảng dạy của giáo viên phụ trách lớp này (Teacher Conflict)
+    const assignedTeachers = await this.prisma.phanCongGiaoVien.findMany({
+      where: {
+        lopHocId: BigInt(classId),
+        trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+      },
+      include: { giaoVien: true },
+    });
+
+    for (const asg of assignedTeachers) {
+      const teacherConflict = await this.prisma.phanCongGiaoVien.findFirst({
+        where: {
+          giaoVienId: asg.giaoVienId,
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+          lopHocId: { not: BigInt(classId) },
+          lopHoc: {
+            trangThai: { in: [TrangThaiLopHoc.DANG_HOC, TrangThaiLopHoc.DANG_MO_DANG_KY] },
+            lichHoc: {
+              some: {
+                thuTrongTuan: dto.thuTrongTuan,
+                gioBatDau: { lt: gioKetThuc },
+                gioKetThuc: { gt: gioBatDau },
+              },
+            },
+          },
+        },
+        include: {
+          lopHoc: {
+            select: {
+              maLopHoc: true,
+              tenLopHoc: true,
+              lichHoc: {
+                where: {
+                  thuTrongTuan: dto.thuTrongTuan,
+                  gioBatDau: { lt: gioKetThuc },
+                  gioKetThuc: { gt: gioBatDau },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (teacherConflict) {
+        const match = teacherConflict.lopHoc.lichHoc[0];
+        const bd = match ? this.formatTimeDisplay(match.gioBatDau) : '';
+        const kt = match ? this.formatTimeDisplay(match.gioKetThuc) : '';
+        throw new ConflictException(
+          `Giáo viên ${asg.giaoVien.hoTen} phụ trách lớp này đã có lịch dạy lớp "${teacherConflict.lopHoc.tenLopHoc}" (${teacherConflict.lopHoc.maLopHoc}) vào ${this.getDayLabel(dto.thuTrongTuan)} (${bd} - ${kt}). Không thể xếp lịch trùng giờ cho giáo viên!`,
+        );
+      }
     }
 
     const schedule = await this.prisma.lichHoc.create({
@@ -280,11 +406,179 @@ export class ClassesService {
         thuTrongTuan: dto.thuTrongTuan,
         gioBatDau,
         gioKetThuc,
-        phongHoc: dto.phongHoc,
+        phongHoc: cleanRoom,
       },
     });
 
     return this.serializeBigInt(schedule);
+  }
+
+  /**
+   * UC004 — Cập nhật / Thay thế thời khóa biểu cho lớp học
+   * - Hỗ trợ xếp lịch nhiều ngày một lúc không bị cộng dồn
+   * - Mặc định replaceExisting: true (xóa lịch cũ, thay bằng lịch mới)
+   * - Kiểm tra chống trùng phòng với lớp khác và trùng lịch giáo viên
+   */
+  async updateClassSchedule(classId: number, dto: UpdateClassScheduleDto) {
+    const classRecord = await this.findById(classId);
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_HUY) {
+      throw new BadRequestException('Không thể xếp lịch cho lớp học đã bị hủy.');
+    }
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_KET_THUC) {
+      throw new BadRequestException('Không thể xếp lịch cho lớp học đã kết thúc.');
+    }
+
+    if (!dto.thuTrongTuan || dto.thuTrongTuan.length === 0) {
+      throw new BadRequestException('Vui lòng chọn ít nhất một ngày học trong tuần.');
+    }
+
+    const gioBatDau = this.parseTimeString(dto.gioBatDau);
+    const gioKetThuc = this.parseTimeString(dto.gioKetThuc);
+
+    if (gioKetThuc <= gioBatDau) {
+      throw new BadRequestException('Giờ kết thúc phải sau giờ bắt đầu.');
+    }
+
+    const cleanRoom = dto.phongHoc.trim();
+    const displayRoom = cleanRoom.toLowerCase().startsWith('phòng') ? cleanRoom : `Phòng ${cleanRoom}`;
+    const replaceExisting = dto.replaceExisting !== false;
+
+    // 1. Kiểm tra xung đột với phòng học của các lớp khác & chính lớp (nếu không replace)
+    for (const thu of dto.thuTrongTuan) {
+      const dayLabel = this.getDayLabel(thu);
+
+      // Nếu không replace: kiểm tra trùng trong chính lớp
+      if (!replaceExisting) {
+        const conflictInClass = await this.prisma.lichHoc.findFirst({
+          where: {
+            lopHocId: BigInt(classId),
+            thuTrongTuan: thu,
+            AND: [
+              { gioBatDau: { lt: gioKetThuc } },
+              { gioKetThuc: { gt: gioBatDau } },
+            ],
+          },
+        });
+        if (conflictInClass) {
+          const bdStr = this.formatTimeDisplay(conflictInClass.gioBatDau);
+          const ktStr = this.formatTimeDisplay(conflictInClass.gioKetThuc);
+          throw new ConflictException(
+            `Lớp học này đã có ca học vào ${dayLabel} (${bdStr} - ${ktStr}). Không thể thêm ca học trùng giờ!`,
+          );
+        }
+      }
+
+      // Kiểm tra trùng phòng học với lớp khác
+      const conflictingRoom = await this.prisma.lichHoc.findFirst({
+        where: {
+          thuTrongTuan: thu,
+          phongHoc: { equals: cleanRoom, mode: 'insensitive' },
+          lopHocId: { not: BigInt(classId) },
+          lopHoc: {
+            trangThai: { not: TrangThaiLopHoc.DA_HUY },
+          },
+          AND: [
+            { gioBatDau: { lt: gioKetThuc } },
+            { gioKetThuc: { gt: gioBatDau } },
+          ],
+        },
+        include: { lopHoc: { select: { maLopHoc: true, tenLopHoc: true } } },
+      });
+
+      if (conflictingRoom) {
+        const bdStr = this.formatTimeDisplay(conflictingRoom.gioBatDau);
+        const ktStr = this.formatTimeDisplay(conflictingRoom.gioKetThuc);
+        throw new ConflictException(
+          `${displayRoom} đã được xếp cho lớp "${conflictingRoom.lopHoc.tenLopHoc}" (${conflictingRoom.lopHoc.maLopHoc}) vào ${dayLabel} (${bdStr} - ${ktStr}).`,
+        );
+      }
+
+      // Kiểm tra trùng lịch giảng dạy của giáo viên phụ trách lớp này với các lớp khác
+      const assignedTeachers = await this.prisma.phanCongGiaoVien.findMany({
+        where: {
+          lopHocId: BigInt(classId),
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+        },
+        include: { giaoVien: true },
+      });
+
+      for (const asg of assignedTeachers) {
+        const teacherConflict = await this.prisma.phanCongGiaoVien.findFirst({
+          where: {
+            giaoVienId: asg.giaoVienId,
+            trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+            lopHocId: { not: BigInt(classId) },
+            lopHoc: {
+              trangThai: { in: [TrangThaiLopHoc.DANG_HOC, TrangThaiLopHoc.DANG_MO_DANG_KY] },
+              lichHoc: {
+                some: {
+                  thuTrongTuan: thu,
+                  gioBatDau: { lt: gioKetThuc },
+                  gioKetThuc: { gt: gioBatDau },
+                },
+              },
+            },
+          },
+          include: {
+            lopHoc: {
+              select: {
+                maLopHoc: true,
+                tenLopHoc: true,
+                lichHoc: {
+                  where: {
+                    thuTrongTuan: thu,
+                    gioBatDau: { lt: gioKetThuc },
+                    gioKetThuc: { gt: gioBatDau },
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        if (teacherConflict) {
+          const match = teacherConflict.lopHoc.lichHoc[0];
+          const bd = match ? this.formatTimeDisplay(match.gioBatDau) : '';
+          const kt = match ? this.formatTimeDisplay(match.gioKetThuc) : '';
+          throw new ConflictException(
+            `Giáo viên ${asg.giaoVien.hoTen} phụ trách lớp này đã có lịch dạy lớp "${teacherConflict.lopHoc.tenLopHoc}" (${teacherConflict.lopHoc.maLopHoc}) vào ${dayLabel} (${bd} - ${kt}).`,
+          );
+        }
+      }
+    }
+
+    // Thực hiện lưu trong Transaction
+    await this.prisma.$transaction(async (tx) => {
+      if (replaceExisting) {
+        await tx.lichHoc.deleteMany({
+          where: { lopHocId: BigInt(classId) },
+        });
+      }
+
+      for (const thu of dto.thuTrongTuan) {
+        await tx.lichHoc.create({
+          data: {
+            lopHocId: BigInt(classId),
+            thuTrongTuan: thu,
+            gioBatDau,
+            gioKetThuc,
+            phongHoc: cleanRoom,
+          },
+        });
+      }
+
+      await tx.lopHoc.update({
+        where: { id: BigInt(classId) },
+        data: { phongHoc: cleanRoom },
+      });
+    });
+
+    const updated = await this.prisma.lichHoc.findMany({
+      where: { lopHocId: BigInt(classId) },
+      orderBy: [{ thuTrongTuan: 'asc' }, { gioBatDau: 'asc' }],
+    });
+
+    return this.serializeBigInt(updated);
   }
 
   /**
@@ -301,6 +595,17 @@ export class ClassesService {
       where: { id: BigInt(scheduleId) },
     });
     return { success: true, message: 'Đã xóa lịch học thành công' };
+  }
+
+  /**
+   * UC004 — Xóa toàn bộ lịch học của lớp
+   */
+  async clearAllSchedules(classId: number) {
+    await this.findById(classId);
+    await this.prisma.lichHoc.deleteMany({
+      where: { lopHocId: BigInt(classId) },
+    });
+    return { success: true, message: 'Đã xóa toàn bộ lịch học của lớp thành công.' };
   }
 
   /**
@@ -406,7 +711,12 @@ export class ClassesService {
         lopHoc: {
           include: {
             khoaHoc: { select: { tenKhoaHoc: true, maKhoaHoc: true, trinhDoYeuCau: true } },
-            lichHoc: true,
+            lichHoc: {
+              orderBy: [
+                { thuTrongTuan: 'asc' },
+                { gioBatDau: 'asc' },
+              ],
+            },
             buoiHoc: {
               orderBy: { soThuTu: 'asc' },
               include: {

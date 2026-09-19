@@ -56,12 +56,28 @@ export default function LoginPage() {
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (!username.trim()) {
+      setError('Vui lòng nhập tên đăng nhập.');
+      return;
+    }
+    if (!/^[a-zA-Z0-9]+$/.test(username.trim())) {
+      setError('Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.');
+      return;
+    }
+    if (!password) {
+      setError('Vui lòng nhập mật khẩu.');
+      return;
+    }
+    if (/\s/.test(password)) {
+      setError('Mật khẩu không được chứa khoảng trắng.');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      const res = await authService.login(username, password);
+      const res = await authService.login(username.trim().toLowerCase(), password);
       const role = res.user.vaiTro;
 
       switch (role) {
@@ -166,7 +182,7 @@ export default function LoginPage() {
                   <input
                     type="text"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-zA-Z0-9]/g, ''))}
                     required
                     className="w-full bg-slate-50/80 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] hover:border-teal-400 dark:hover:border-teal-500/70 hover:bg-white dark:hover:bg-[#131d33] hover:shadow-md hover:shadow-teal-500/5 focus:border-teal-500 dark:focus:border-teal-400 focus:bg-white dark:focus:bg-[#0f172a] rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-teal-500/15 transition-all duration-200"
                     placeholder="Nhập tên đăng nhập của bạn..."
@@ -184,7 +200,7 @@ export default function LoginPage() {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value.replace(/\s/g, ''))}
                     required
                     className="w-full bg-slate-50/80 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] hover:border-teal-400 dark:hover:border-teal-500/70 hover:bg-white dark:hover:bg-[#131d33] hover:shadow-md hover:shadow-teal-500/5 focus:border-teal-500 dark:focus:border-teal-400 focus:bg-white dark:focus:bg-[#0f172a] rounded-xl px-4 py-2.5 pl-10 pr-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-teal-500/15 transition-all duration-200"
                     placeholder="Mật khẩu của bạn"

@@ -4,15 +4,16 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService, classesService, enrollmentsService } from '../../../services/api';
 import { HocVien, LopHoc, HoaDon } from '../../../types';
-import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck, Calendar, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Printer, X, FileText, Eye, XCircle, AlertTriangle, RefreshCw, ArrowLeft, History } from 'lucide-react';
+import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck, Calendar, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Printer, X, FileText, Eye, XCircle, AlertTriangle, RefreshCw, ArrowLeft, History, Sparkles } from 'lucide-react';
 import { formatTrangThaiHoaDon, formatTrangThaiLopHoc, docSoThanhChu, formatReceiptDate, formatCSVDate } from '../../../utils/formatters';
 
 export default function StaffCollectFeePage() {
   const [students, setStudents] = useState<HocVien[]>([]);
   const [classes, setClasses] = useState<LopHoc[]>([]);
   const [invoices, setInvoices] = useState<HoaDon[]>([]);
-  const [selectedStudentId, setSelectedStudentId] = useState<number>(1);
-  const [selectedClassId, setSelectedClassId] = useState<number>(1);
+  const [selectedStudentId, setSelectedStudentId] = useState<number>(0);
+  const [selectedClassId, setSelectedClassId] = useState<number>(0);
+  const [aiSuggestedClass, setAiSuggestedClass] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submittingPayment, setSubmittingPayment] = useState(false);
@@ -80,9 +81,55 @@ export default function StaffCollectFeePage() {
           c.khoaHoc?.trangThai !== 'NGUNG_HOAT_DONG'
       );
       setClasses(enrollableClasses);
-      if (stuRes.data && stuRes.data.length > 0 && !selectedStudentId) setSelectedStudentId(stuRes.data[0].id);
-      if (enrollableClasses.length > 0 && !selectedClassId) setSelectedClassId(enrollableClasses[0].id);
-      else if (!selectedClassId) setSelectedClassId(0);
+
+      let initialStudentId = 0;
+      let initialClassId = 0;
+      let suggestedClassName = '';
+
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const qStudentId = params.get('studentId');
+        const qClassId = params.get('classId');
+        const qMaLopHoc = params.get('maLopHoc');
+
+        if (qStudentId && stuRes.data) {
+          const found = stuRes.data.find((s: HocVien) => s.id === Number(qStudentId));
+          if (found) initialStudentId = found.id;
+        }
+
+        if (qClassId) {
+          const found = enrollableClasses.find((c: LopHoc) => c.id === Number(qClassId));
+          if (found) {
+            initialClassId = found.id;
+            suggestedClassName = `[${found.maLopHoc}] ${found.tenLopHoc}`;
+          }
+        }
+        if (!initialClassId && qMaLopHoc) {
+          const found = enrollableClasses.find((c: LopHoc) => c.maLopHoc === qMaLopHoc);
+          if (found) {
+            initialClassId = found.id;
+            suggestedClassName = `[${found.maLopHoc}] ${found.tenLopHoc}`;
+          }
+        }
+      }
+
+      if (suggestedClassName) {
+        setAiSuggestedClass(suggestedClassName);
+      }
+
+      if (initialStudentId) {
+        setSelectedStudentId(initialStudentId);
+      } else if (stuRes.data && stuRes.data.length > 0 && !selectedStudentId) {
+        setSelectedStudentId(stuRes.data[0].id);
+      }
+
+      if (initialClassId) {
+        setSelectedClassId(initialClassId);
+      } else if (enrollableClasses.length > 0 && !selectedClassId) {
+        setSelectedClassId(enrollableClasses[0].id);
+      } else if (!selectedClassId) {
+        setSelectedClassId(0);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -290,6 +337,26 @@ export default function StaffCollectFeePage() {
           >
             {message.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0 text-emerald-600" /> : <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />}
             <span>{message.text}</span>
+          </div>
+        )}
+
+        {/* Banner thông báo tự động chọn lớp từ phiên tư vấn AI */}
+        {aiSuggestedClass && (
+          <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-900 dark:text-teal-200 text-xs flex items-center justify-between shadow-xs animate-fadeIn">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-teal-600 shrink-0" />
+              <span>
+                Hệ thống đã tự động chọn lớp <strong>{aiSuggestedClass}</strong> từ kết quả tư vấn AI. Vui lòng chọn học viên cần ghi danh và bấm <strong>Ghi Danh & Tạo Hóa Đơn</strong>.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setAiSuggestedClass(null)}
+              className="text-teal-600 hover:text-teal-800 dark:text-teal-400 p-1 cursor-pointer shrink-0 ml-2"
+              title="Đóng thông báo"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         )}
 

@@ -4,10 +4,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
 import { TrinhDoCEFR } from '../../../types';
-import { UserPlus, CheckCircle, ArrowRight, RefreshCw, AlertTriangle, AlertCircle, ExternalLink } from 'lucide-react';
+import { UserPlus, CheckCircle, ArrowRight, RefreshCw, AlertTriangle, AlertCircle, ExternalLink, Sparkles, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function StaffNewStudentPage() {
+  const [targetClass, setTargetClass] = useState<string>('');
   const [formData, setFormData] = useState({
     tenDangNhap: '',
     matKhau: '123456',
@@ -24,6 +25,15 @@ export default function StaffNewStudentPage() {
   const [loading, setLoading] = useState(false);
   const [fetchingCode, setFetchingCode] = useState(false);
   const [createdStudent, setCreatedStudent] = useState<any>(null);
+
+  // Nhận diện lớp dự kiến nếu được điều hướng từ AI Consult
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const tc = params.get('targetClass');
+      if (tc) setTargetClass(tc);
+    }
+  }, []);
 
   // Duplicate check states
   const [duplicateErrors, setDuplicateErrors] = useState<Record<string, string>>({});
@@ -177,16 +187,36 @@ export default function StaffNewStudentPage() {
                 <span>Tiếp Nhận Học Viên Khác</span>
               </button>
               <Link
-                href="/staff/collect-fee"
+                href={targetClass ? `/staff/collect-fee?studentId=${createdStudent.id}&maLopHoc=${encodeURIComponent(targetClass)}` : `/staff/collect-fee?studentId=${createdStudent.id}`}
                 className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1 shadow-sm transition"
               >
-                <span>Đi Đến Ghi Danh & Thu Học Phí</span>
+                <span>{targetClass ? `Ghi Danh Vào Lớp ${targetClass}` : 'Đi Đến Ghi Danh & Thu Học Phí'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
         ) : (
           <div className="p-8 rounded-2xl bg-white border border-slate-200/90 shadow-sm space-y-5">
+            {/* Banner gợi ý lớp học nếu đến từ phiên tư vấn AI */}
+            {targetClass && (
+              <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-900 dark:text-teal-200 text-xs flex items-center justify-between shadow-xs animate-fadeIn">
+                <div className="flex items-center space-x-2">
+                  <Sparkles className="w-4 h-4 text-teal-600 shrink-0" />
+                  <span>
+                    Đang tiếp nhận học viên mới dự kiến ghi danh vào lớp <strong>{targetClass}</strong> (được đề xuất từ phiên tư vấn AI).
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setTargetClass('')}
+                  className="text-teal-600 hover:text-teal-800 dark:text-teal-400 p-1 cursor-pointer shrink-0 ml-2"
+                  title="Đóng thông báo"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
             {/* Banner cảnh báo nếu phát hiện học viên đã có tài khoản */}
             {existingStudent && (
               <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start space-x-3 animate-fadeIn">
@@ -274,7 +304,7 @@ export default function StaffNewStudentPage() {
                     type="text"
                     required
                     value={formData.tenDangNhap}
-                    onChange={(e) => setFormData({ ...formData, tenDangNhap: e.target.value.toLowerCase() })}
+                    onChange={(e) => setFormData({ ...formData, tenDangNhap: e.target.value.toLowerCase().replace(/[^a-zA-Z0-9]/g, '') })}
                     className={`w-full bg-slate-50 border rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none ${
                       duplicateErrors.tenDangNhap
                         ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
@@ -298,7 +328,7 @@ export default function StaffNewStudentPage() {
                     type="password"
                     required
                     value={formData.matKhau}
-                    onChange={(e) => setFormData({ ...formData, matKhau: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, matKhau: e.target.value.replace(/\s/g, '') })}
                     className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-teal-500"
                     placeholder="Mặc định: 123456"
                   />

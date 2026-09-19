@@ -203,7 +203,12 @@ export class GradesService {
         lopHoc: {
           include: {
             khoaHoc: { select: { tenKhoaHoc: true, maKhoaHoc: true, trinhDoYeuCau: true, thoiLuongGio: true } },
-            lichHoc: true,
+            lichHoc: {
+              orderBy: [
+                { thuTrongTuan: 'asc' },
+                { gioBatDau: 'asc' },
+              ],
+            },
             buoiHoc: {
               orderBy: { soThuTu: 'asc' },
               include: {

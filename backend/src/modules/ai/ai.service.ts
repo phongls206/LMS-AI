@@ -297,7 +297,12 @@ export class AiService {
       },
       include: {
         khoaHoc: { select: { tenKhoaHoc: true, trinhDoYeuCau: true, hocPhi: true } },
-        lichHoc: true,
+        lichHoc: {
+          orderBy: [
+            { thuTrongTuan: 'asc' },
+            { gioBatDau: 'asc' },
+          ],
+        },
       },
     });
 
@@ -402,6 +407,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
             const rawClass = validClassMap.get(item.maLopHoc);
             return {
               ...item,
+              id: rawClass?.id,
               hocPhi: rawClass ? Number(rawClass.khoaHoc.hocPhi) : 0,
               lichHocText: rawClass ? rawClass.lichHoc.map((l) => `Thứ ${l.thuTrongTuan}`).join(', ') : '',
               conTrong: rawClass ? rawClass.siSoToiDa - rawClass.siSoHienTai : 0,
@@ -422,6 +428,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
         .filter((c) => c.khoaHoc.trinhDoYeuCau === dto.cefr)
         .slice(0, 3)
         .map((c) => ({
+          id: c.id,
           maLopHoc: c.maLopHoc,
           tenLopHoc: c.tenLopHoc,
           doTuongThich: 85,
@@ -434,6 +441,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
         }));
 
       validatedRecommendations = fallbackList.length > 0 ? fallbackList : availableClasses.slice(0, 3).map((c) => ({
+        id: c.id,
         maLopHoc: c.maLopHoc,
         tenLopHoc: c.tenLopHoc,
         doTuongThich: 75,

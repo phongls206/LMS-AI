@@ -7,6 +7,9 @@ import {
   IsDateString,
   Min,
   Max,
+  IsArray,
+  IsBoolean,
+  Matches,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { TrangThaiLopHoc, VaiTroPhanCong } from '@prisma/client';
@@ -105,18 +108,48 @@ export class CreateScheduleDto {
 
   @ApiProperty({ example: '18:00', description: 'Giờ bắt đầu (HH:mm)' })
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Giờ bắt đầu không được để trống.' })
+  @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, { message: 'Định dạng giờ bắt đầu phải là HH:mm (ví dụ 08:00 hoặc 8:00)' })
   gioBatDau: string;
 
   @ApiProperty({ example: '20:30', description: 'Giờ kết thúc (HH:mm)' })
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Giờ kết thúc không được để trống.' })
+  @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, { message: 'Định dạng giờ kết thúc phải là HH:mm (ví dụ 20:30 hoặc 10:30)' })
   gioKetThuc: string;
 
   @ApiProperty({ example: 'Phòng A101', description: 'Phòng học' })
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Phòng học không được để trống.' })
   phongHoc: string;
+}
+
+export class UpdateClassScheduleDto {
+  @ApiProperty({ example: [2, 4, 6], description: 'Danh sách các thứ trong tuần (2=Thứ Hai ... 8=Chủ Nhật)' })
+  @IsArray({ message: 'Danh sách ngày học phải là một mảng.' })
+  thuTrongTuan: number[];
+
+  @ApiProperty({ example: '18:00', description: 'Giờ bắt đầu (HH:mm)' })
+  @IsString()
+  @IsNotEmpty({ message: 'Giờ bắt đầu không được để trống.' })
+  @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, { message: 'Định dạng giờ bắt đầu phải là HH:mm (ví dụ 08:00 hoặc 8:00)' })
+  gioBatDau: string;
+
+  @ApiProperty({ example: '20:30', description: 'Giờ kết thúc (HH:mm)' })
+  @IsString()
+  @IsNotEmpty({ message: 'Giờ kết thúc không được để trống.' })
+  @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, { message: 'Định dạng giờ kết thúc phải là HH:mm (ví dụ 20:30 hoặc 10:30)' })
+  gioKetThuc: string;
+
+  @ApiProperty({ example: 'Phòng A101', description: 'Phòng học' })
+  @IsString()
+  @IsNotEmpty({ message: 'Phòng học không được để trống.' })
+  phongHoc: string;
+
+  @ApiPropertyOptional({ example: true, description: 'True = thay thế toàn bộ lịch cũ của lớp bằng lịch mới này' })
+  @IsOptional()
+  @IsBoolean()
+  replaceExisting?: boolean;
 }
 
 export class AssignTeacherDto {

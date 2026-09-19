@@ -770,7 +770,7 @@ export default function AdminTeachersPage() {
                       type="text"
                       required
                       value={createFormData.tenDangNhap}
-                      onChange={(e) => setCreateFormData({ ...createFormData, tenDangNhap: e.target.value.toLowerCase() })}
+                      onChange={(e) => setCreateFormData({ ...createFormData, tenDangNhap: e.target.value.toLowerCase().replace(/[^a-zA-Z0-9]/g, '') })}
                       className={`w-full bg-slate-50 border rounded-xl px-3 py-2 text-slate-900 focus:outline-none ${createDuplicateErrors.tenDangNhap
                         ? 'border-rose-400 bg-rose-50/40 focus:border-rose-500'
                         : 'border-slate-200 focus:border-teal-500'
@@ -790,7 +790,7 @@ export default function AdminTeachersPage() {
                       type="password"
                       required
                       value={createFormData.matKhau}
-                      onChange={(e) => setCreateFormData({ ...createFormData, matKhau: e.target.value })}
+                      onChange={(e) => setCreateFormData({ ...createFormData, matKhau: e.target.value.replace(/\s/g, '') })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:border-teal-500"
                       placeholder="Mặc định: 123456"
                     />

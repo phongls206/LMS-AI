@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsOptional, IsEnum, IsDateString, IsEmail, Matches } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsEnum, IsDateString, IsEmail, Matches, MinLength, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { TrinhDoCEFR, TrangThaiHocVien, TrangThaiGiaoVien } from '@prisma/client';
 
@@ -6,11 +6,17 @@ export class CreateStudentDto {
   @ApiPropertyOptional({ example: 'student03', description: 'Tên đăng nhập (để trống hệ thống tự tạo duy nhất)' })
   @IsOptional()
   @IsString()
+  @MinLength(3, { message: 'Tên đăng nhập phải có ít nhất 3 ký tự.' })
+  @MaxLength(50, { message: 'Tên đăng nhập không được vượt quá 50 ký tự.' })
+  @Matches(/^\S+$/, { message: 'Tên đăng nhập không được chứa khoảng trắng.' })
+  @Matches(/^[a-zA-Z0-9]+$/, { message: 'Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.' })
   tenDangNhap?: string;
 
-  @ApiProperty({ example: '123456', description: 'Mật khẩu khởi tạo' })
+  @ApiProperty({ example: '123456', description: 'Mật khẩu khởi tạo (tối thiểu 6 ký tự, không chứa khoảng trắng)' })
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Mật khẩu không được để trống.' })
+  @MinLength(6, { message: 'Mật khẩu khởi tạo phải có ít nhất 6 ký tự.' })
+  @Matches(/^\S+$/, { message: 'Mật khẩu không được chứa khoảng trắng.' })
   matKhau: string;
 
   @ApiProperty({ example: 'student03@gmail.com', description: 'Email' })
@@ -106,9 +112,11 @@ export class UpdateStudentDto {
   @IsEnum(TrangThaiHocVien)
   trangThai?: TrangThaiHocVien;
 
-  @ApiPropertyOptional({ description: 'Mật khẩu mới nếu muốn reset' })
+  @ApiPropertyOptional({ description: 'Mật khẩu mới nếu muốn reset (tối thiểu 6 ký tự, không chứa khoảng trắng)' })
   @IsOptional()
   @IsString()
+  @MinLength(6, { message: 'Mật khẩu mới phải có ít nhất 6 ký tự.' })
+  @Matches(/^\S+$/, { message: 'Mật khẩu mới không được chứa khoảng trắng.' })
   matKhauMoi?: string;
 }
 
@@ -116,11 +124,17 @@ export class CreateTeacherDto {
   @ApiPropertyOptional({ example: 'teacher04', description: 'Tên đăng nhập (để trống hệ thống tự tạo duy nhất)' })
   @IsOptional()
   @IsString()
+  @MinLength(3, { message: 'Tên đăng nhập phải có ít nhất 3 ký tự.' })
+  @MaxLength(50, { message: 'Tên đăng nhập không được vượt quá 50 ký tự.' })
+  @Matches(/^\S+$/, { message: 'Tên đăng nhập không được chứa khoảng trắng.' })
+  @Matches(/^[a-zA-Z0-9]+$/, { message: 'Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.' })
   tenDangNhap?: string;
 
-  @ApiProperty({ example: '123456', description: 'Mật khẩu' })
+  @ApiProperty({ example: '123456', description: 'Mật khẩu (tối thiểu 6 ký tự, không chứa khoảng trắng)' })
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Mật khẩu không được để trống.' })
+  @MinLength(6, { message: 'Mật khẩu phải có ít nhất 6 ký tự.' })
+  @Matches(/^\S+$/, { message: 'Mật khẩu không được chứa khoảng trắng.' })
   matKhau: string;
 
   @ApiProperty({ example: 'teacher04@etc-english.vn', description: 'Email' })
@@ -179,9 +193,11 @@ export class UpdateTeacherDto {
   @IsEnum(TrangThaiGiaoVien)
   trangThai?: TrangThaiGiaoVien;
 
-  @ApiPropertyOptional({ description: 'Mật khẩu mới nếu muốn reset' })
+  @ApiPropertyOptional({ description: 'Mật khẩu mới nếu muốn reset (tối thiểu 6 ký tự, không chứa khoảng trắng)' })
   @IsOptional()
   @IsString()
+  @MinLength(6, { message: 'Mật khẩu mới phải có ít nhất 6 ký tự.' })
+  @Matches(/^\S+$/, { message: 'Mật khẩu mới không được chứa khoảng trắng.' })
   matKhauMoi?: string;
 }
 

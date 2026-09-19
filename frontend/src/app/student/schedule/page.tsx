@@ -191,7 +191,14 @@ export default function StudentSchedulePage() {
                       </h4>
                       {lop?.lichHoc && lop.lichHoc.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                          {lop.lichHoc.map((l: any) => (
+                          {[...(lop.lichHoc || [])]
+                            .sort((a: any, b: any) => {
+                              const dayA = Number(a.thuTrongTuan);
+                              const dayB = Number(b.thuTrongTuan);
+                              if (dayA !== dayB) return dayA - dayB;
+                              return (a.gioBatDau || '').localeCompare(b.gioBatDau || '');
+                            })
+                            .map((l: any) => (
                             <div
                               key={l.id}
                               className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between"

@@ -45,7 +45,12 @@ export class EnrollmentsService {
       where: { id: BigInt(dto.lopHocId) },
       include: {
         khoaHoc: true,
-        lichHoc: true,
+        lichHoc: {
+          orderBy: [
+            { thuTrongTuan: 'asc' },
+            { gioBatDau: 'asc' },
+          ],
+        },
       },
     });
 

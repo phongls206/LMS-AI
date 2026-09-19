@@ -59,6 +59,74 @@ const isOnlineLink = (str?: string | null) => {
   );
 };
 
+const sortSchedules = (schedules?: any[]) => {
+  if (!schedules || schedules.length === 0) return [];
+  return [...schedules].sort((a, b) => {
+    const dayA = Number(a.thuTrongTuan);
+    const dayB = Number(b.thuTrongTuan);
+    if (dayA !== dayB) return dayA - dayB;
+    return String(a.gioBatDau || '').localeCompare(String(b.gioBatDau || ''));
+  });
+};
+
+interface GroupedScheduleDay {
+  thuTrongTuan: number;
+  dayLabel: string;
+  dayShort: string;
+  sessions: {
+    id: number;
+    gioBatDau: string;
+    gioKetThuc: string;
+    timeStr: string;
+    phongHoc: string;
+    isOnline: boolean;
+  }[];
+}
+
+const groupSchedulesByDay = (schedules?: any[]): GroupedScheduleDay[] => {
+  if (!schedules || schedules.length === 0) return [];
+  const sorted = sortSchedules(schedules);
+  const dayMap = new Map<number, GroupedScheduleDay>();
+
+  for (const s of sorted) {
+    const thu = Number(s.thuTrongTuan);
+    const start = s.gioBatDau?.slice(11, 16) || s.gioBatDau?.slice(0, 5) || s.gioBatDau || '';
+    const end = s.gioKetThuc?.slice(11, 16) || s.gioKetThuc?.slice(0, 5) || s.gioKetThuc || '';
+    const timeStr = `${start} - ${end}`;
+    const isOnline = isOnlineLink(s.phongHoc);
+
+    if (!dayMap.has(thu)) {
+      dayMap.set(thu, {
+        thuTrongTuan: thu,
+        dayLabel: getDayDisplay(thu),
+        dayShort: getDayShort(thu),
+        sessions: [],
+      });
+    }
+
+    dayMap.get(thu)!.sessions.push({
+      id: Number(s.id),
+      gioBatDau: start,
+      gioKetThuc: end,
+      timeStr,
+      phongHoc: s.phongHoc || '',
+      isOnline,
+    });
+  }
+
+  return Array.from(dayMap.values()).sort((a, b) => a.thuTrongTuan - b.thuTrongTuan);
+};
+
+const isUniformSchedule = (grouped: GroupedScheduleDay[]): boolean => {
+  if (grouped.length === 0) return false;
+  const firstTime = grouped[0]?.sessions[0]?.timeStr;
+  for (const g of grouped) {
+    if (g.sessions.length !== 1) return false;
+    if (g.sessions[0].timeStr !== firstTime) return false;
+  }
+  return true;
+};
+
 export default function AdminClassesPage() {
   const [classes, setClasses] = useState<LopHoc[]>([]);
   const [courses, setCourses] = useState<KhoaHoc[]>([]);
@@ -168,6 +236,11 @@ export default function AdminClassesPage() {
 
   const [selectedDays, setSelectedDays] = useState<number[]>([2, 4, 6]);
   const [submittingSchedule, setSubmittingSchedule] = useState(false);
+  const [scheduleModalError, setScheduleModalError] = useState<string | null>(null);
+  const [scheduleModalSuccess, setScheduleModalSuccess] = useState<string | null>(null);
+  const [replaceExistingSchedule, setReplaceExistingSchedule] = useState(true);
+  const [deletingScheduleId, setDeletingScheduleId] = useState<number | null>(null);
+  const [clearingAllSchedules, setClearingAllSchedules] = useState(false);
 
   const [assignForm, setAssignForm] = useState({
     giaoVienId: 1,
@@ -185,7 +258,31 @@ export default function AdminClassesPage() {
 
   const handleOpenAddSchedule = (classId: number) => {
     setShowAddSchedule(classId);
-    setSelectedDays([2, 4, 6]);
+    setScheduleModalError(null);
+    setScheduleModalSuccess(null);
+    setReplaceExistingSchedule(true);
+
+    const targetCls = classes.find((c) => c.id === classId);
+    if (targetCls) {
+      if (targetCls.phongHoc) {
+        setScheduleForm((prev) => ({ ...prev, phongHoc: targetCls.phongHoc || 'Phòng A101' }));
+      }
+      if (targetCls.lichHoc && targetCls.lichHoc.length > 0) {
+        const sorted = sortSchedules(targetCls.lichHoc);
+        const existingDays = Array.from(new Set(sorted.map((l: any) => Number(l.thuTrongTuan))));
+        setSelectedDays(existingDays);
+        const first = sorted[0];
+        const start = first.gioBatDau?.slice(11, 16) || first.gioBatDau?.slice(0, 5) || first.gioBatDau || '18:00';
+        const end = first.gioKetThuc?.slice(11, 16) || first.gioKetThuc?.slice(0, 5) || first.gioKetThuc || '20:30';
+        setScheduleForm({
+          gioBatDau: start,
+          gioKetThuc: end,
+          phongHoc: first.phongHoc || targetCls.phongHoc || 'Phòng A101',
+        });
+      } else {
+        setSelectedDays([2, 4, 6]);
+      }
+    }
   };
 
   const [refreshing, setRefreshing] = useState(false);
@@ -238,59 +335,57 @@ export default function AdminClassesPage() {
 
   const handleAddSchedule = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!showAddSchedule || selectedDays.length === 0) return;
-
-    setSubmittingSchedule(true);
-    const addedDays: string[] = [];
-    const conflictErrors: string[] = [];
-
-    for (const thu of selectedDays) {
-      const dayLabel = DAYS_OF_WEEK.find((d) => d.value === thu)?.label || `Thứ ${thu}`;
-      try {
-        await classesService.addSchedule(showAddSchedule, {
-          thuTrongTuan: thu,
-          gioBatDau: scheduleForm.gioBatDau,
-          gioKetThuc: scheduleForm.gioKetThuc,
-          phongHoc: scheduleForm.phongHoc,
-        });
-        addedDays.push(dayLabel);
-      } catch (err: any) {
-        conflictErrors.push(
-          `${dayLabel}: ${err.response?.data?.message || 'Bị trùng phòng học'}`
-        );
-      }
+    if (!showAddSchedule) return;
+    if (selectedDays.length === 0) {
+      setScheduleModalError('Vui lòng chọn ít nhất một ngày học trong tuần.');
+      return;
     }
 
-    setSubmittingSchedule(false);
+    setSubmittingSchedule(true);
+    setScheduleModalError(null);
+    setScheduleModalSuccess(null);
 
-    if (addedDays.length > 0 && conflictErrors.length === 0) {
-      setMessage({
-        type: 'success',
-        text: `Đã xếp thành công ${addedDays.length} buổi học (${addedDays.join(', ')}) cho lớp vào khung giờ ${scheduleForm.gioBatDau}-${scheduleForm.gioKetThuc} (${scheduleForm.phongHoc})!`,
+    try {
+      await classesService.updateClassSchedule(showAddSchedule, {
+        thuTrongTuan: selectedDays,
+        gioBatDau: scheduleForm.gioBatDau.trim(),
+        gioKetThuc: scheduleForm.gioKetThuc.trim(),
+        phongHoc: scheduleForm.phongHoc.trim(),
+        replaceExisting: replaceExistingSchedule,
       });
-      setShowAddSchedule(null);
-      fetchData();
-    } else if (addedDays.length > 0 && conflictErrors.length > 0) {
-      setMessage({
-        type: 'success',
-        text: `Đã xếp ${addedDays.length} buổi (${addedDays.join(', ')}). Bị trùng lịch: ${conflictErrors.join(' | ')}`,
-      });
-      setShowAddSchedule(null);
-      fetchData();
-    } else {
-      setMessage({
-        type: 'error',
-        text: `Không thể xếp lịch: ${conflictErrors.join(' | ')}`,
-      });
+
+      const dayNames = selectedDays.map((d) => DAYS_OF_WEEK.find((x) => x.value === d)?.label || `Thứ ${d}`).join(', ');
+      const successMsg = replaceExistingSchedule
+        ? `Đã cập nhật thay thế lịch học thành công (${dayNames}) vào khung giờ ${scheduleForm.gioBatDau} - ${scheduleForm.gioKetThuc}!`
+        : `Đã xếp bổ sung lịch học thành công (${dayNames}) vào khung giờ ${scheduleForm.gioBatDau} - ${scheduleForm.gioKetThuc}!`;
+
+      setScheduleModalSuccess(successMsg);
+      setMessage({ type: 'success', text: successMsg });
+
+      // Refresh data
+      await fetchData();
+
+      // Đóng modal sau khi hiện thông báo thành công
+      setTimeout(() => {
+        setShowAddSchedule(null);
+        setScheduleModalSuccess(null);
+        setSubmittingSchedule(false);
+      }, 700);
+    } catch (err: any) {
+      const errorMsg =
+        err.response?.data?.message ||
+        'Có lỗi xảy ra khi xếp lịch học. Vui lòng kiểm tra lại phòng học hoặc giờ dạy của giáo viên.';
+      setScheduleModalError(errorMsg);
+      setSubmittingSchedule(false);
     }
   };
 
   const handleDeleteSchedule = async (classId: number, scheduleId: number, thu: number) => {
     const dayLabel = getDayDisplay(thu);
-    if (!confirm(`Bạn có chắc muốn xóa lịch học ${dayLabel} của lớp này không?`)) return;
+    setDeletingScheduleId(scheduleId);
+    setScheduleModalError(null);
     try {
       await classesService.deleteSchedule(classId, scheduleId);
-      setMessage({ type: 'success', text: `Đã xóa lịch học ${dayLabel} thành công!` });
       setClasses((prev) =>
         prev.map((c) => {
           if (Number(c.id) === Number(classId)) {
@@ -302,10 +397,39 @@ export default function AdminClassesPage() {
           return c;
         })
       );
+      setScheduleModalSuccess(`Đã xóa ca học ${dayLabel}.`);
       fetchData();
-      setTimeout(() => setMessage(null), 3000);
+      setTimeout(() => setScheduleModalSuccess(null), 2500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Không thể xóa lịch học.');
+      setScheduleModalError(err.response?.data?.message || 'Không thể xóa lịch học này.');
+    } finally {
+      setDeletingScheduleId(null);
+    }
+  };
+
+  const handleClearAllSchedules = async (classId: number) => {
+    setClearingAllSchedules(true);
+    setScheduleModalError(null);
+    try {
+      await classesService.clearAllSchedules(classId);
+      setClasses((prev) =>
+        prev.map((c) => {
+          if (Number(c.id) === Number(classId)) {
+            return {
+              ...c,
+              lichHoc: [],
+            };
+          }
+          return c;
+        })
+      );
+      setScheduleModalSuccess('Đã xóa toàn bộ lịch học của lớp này.');
+      fetchData();
+      setTimeout(() => setScheduleModalSuccess(null), 2500);
+    } catch (err: any) {
+      setScheduleModalError(err.response?.data?.message || 'Không thể xóa lịch học.');
+    } finally {
+      setClearingAllSchedules(false);
     }
   };
 
@@ -706,23 +830,52 @@ export default function AdminClassesPage() {
                         </td>
                         <td className="px-3 py-3">
                           {c.lichHoc && c.lichHoc.length > 0 ? (
-                            <div className="space-y-1 max-w-[200px]">
-                              <div className="flex flex-wrap items-center gap-1">
-                                {c.lichHoc.map((l: any) => (
-                                  <span
-                                    key={l.id}
-                                    className="px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 font-mono font-bold text-[10px] border border-teal-200 dark:border-teal-800"
-                                    title={`${getDayDisplay(l.thuTrongTuan)} (${l.gioBatDau?.slice(11, 16) || l.gioBatDau?.slice(0, 5) || l.gioBatDau} - ${l.gioKetThuc?.slice(11, 16) || l.gioKetThuc?.slice(0, 5) || l.gioKetThuc}) [${l.phongHoc}]`}
-                                  >
-                                    {getDayShort(l.thuTrongTuan)}
-                                  </span>
-                                ))}
-                                {c.lichHoc[0]?.gioBatDau && (
-                                  <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-mono whitespace-nowrap">
-                                    {c.lichHoc[0]?.gioBatDau?.slice(11, 16) || c.lichHoc[0]?.gioBatDau?.slice(0, 5) || c.lichHoc[0]?.gioBatDau} - {c.lichHoc[0]?.gioKetThuc?.slice(11, 16) || c.lichHoc[0]?.gioKetThuc?.slice(0, 5) || c.lichHoc[0]?.gioKetThuc}
-                                  </span>
-                                )}
-                              </div>
+                            <div className="space-y-1.5 min-w-[160px] max-w-[260px]">
+                              {(() => {
+                                const grouped = groupSchedulesByDay(c.lichHoc);
+                                const isUniform = isUniformSchedule(grouped);
+                                if (isUniform) {
+                                  return (
+                                    <div className="flex flex-wrap items-center gap-1">
+                                      {grouped.map((g) => (
+                                        <span
+                                          key={g.thuTrongTuan}
+                                          className="px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 font-mono font-bold text-[10px] border border-teal-200 dark:border-teal-800"
+                                          title={g.dayLabel}
+                                        >
+                                          {g.dayShort}
+                                        </span>
+                                      ))}
+                                      <span className="text-[10.5px] text-slate-500 dark:text-slate-400 font-mono whitespace-nowrap">
+                                        {grouped[0]?.sessions[0]?.timeStr}
+                                      </span>
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  <div className="space-y-1">
+                                    {grouped.map((g) => (
+                                      <div key={g.thuTrongTuan} className="flex items-start gap-1.5">
+                                        <span className="px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 font-mono font-bold text-[10px] border border-teal-200 dark:border-teal-800 shrink-0 mt-0.5">
+                                          {g.dayShort}
+                                        </span>
+                                        <div className="min-w-0 flex-1 text-[11px] font-mono text-slate-600 dark:text-slate-300">
+                                          {g.sessions.map((sess, idx) => (
+                                            <div key={sess.id || idx} className="whitespace-nowrap flex items-center gap-1">
+                                              <span>{sess.timeStr}</span>
+                                              {sess.phongHoc && sess.phongHoc !== c.phongHoc && (
+                                                <span className="text-[10px] text-slate-400 font-sans truncate" title={sess.phongHoc}>
+                                                  ({sess.phongHoc})
+                                                </span>
+                                              )}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                );
+                              })()}
                               <div className="flex items-center gap-1 text-[11px] text-slate-600 dark:text-slate-400 truncate" title={c.phongHoc || c.lichHoc[0]?.phongHoc || 'Chưa xếp phòng'}>
                                 {isOnlineLink(c.phongHoc || c.lichHoc[0]?.phongHoc) ? (
                                   <span className="inline-flex items-center gap-1 text-blue-600 dark:text-blue-400 font-semibold truncate">
@@ -942,26 +1095,49 @@ export default function AdminClassesPage() {
                     {/* Lịch học & Giáo viên */}
                     <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-100 dark:border-[#1e2d45] space-y-2 text-xs">
                       <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                          <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                        <div className="flex items-start gap-1.5 flex-wrap min-w-0 flex-1">
+                          <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
                           {c.lichHoc && c.lichHoc.length > 0 ? (
-                            <>
-                              <div className="flex flex-wrap items-center gap-1">
-                                {c.lichHoc.map((l: any) => (
-                                  <span
-                                    key={l.id}
-                                    className="px-1.5 py-0.2 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 font-mono font-bold text-[10px] border border-teal-200 dark:border-teal-800"
-                                  >
-                                    {getDayShort(l.thuTrongTuan)}
-                                  </span>
-                                ))}
-                              </div>
-                              {c.lichHoc[0]?.gioBatDau && (
-                                <span className="font-mono text-slate-600 dark:text-slate-300 text-[11px] whitespace-nowrap">
-                                  {c.lichHoc[0]?.gioBatDau?.slice(11, 16) || c.lichHoc[0]?.gioBatDau?.slice(0, 5) || c.lichHoc[0]?.gioBatDau} - {c.lichHoc[0]?.gioKetThuc?.slice(11, 16) || c.lichHoc[0]?.gioKetThuc?.slice(0, 5) || c.lichHoc[0]?.gioKetThuc}
-                                </span>
-                              )}
-                            </>
+                            (() => {
+                              const grouped = groupSchedulesByDay(c.lichHoc);
+                              const isUniform = isUniformSchedule(grouped);
+                              if (isUniform) {
+                                return (
+                                  <div className="flex flex-wrap items-center gap-1">
+                                    {grouped.map((g) => (
+                                      <span
+                                        key={g.thuTrongTuan}
+                                        className="px-1.5 py-0.2 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 font-mono font-bold text-[10px] border border-teal-200 dark:border-teal-800"
+                                        title={g.dayLabel}
+                                      >
+                                        {g.dayShort}
+                                      </span>
+                                    ))}
+                                    <span className="font-mono text-slate-600 dark:text-slate-300 text-[11px] whitespace-nowrap">
+                                      {grouped[0]?.sessions[0]?.timeStr}
+                                    </span>
+                                  </div>
+                                );
+                              }
+                              return (
+                                <div className="space-y-1 w-full">
+                                  {grouped.map((g) => (
+                                    <div key={g.thuTrongTuan} className="flex items-start gap-1">
+                                      <span className="px-1.5 py-0.2 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 font-mono font-bold text-[10px] border border-teal-200 dark:border-teal-800 shrink-0 mt-0.5">
+                                        {g.dayShort}
+                                      </span>
+                                      <div className="min-w-0 flex-1 text-[11px] font-mono text-slate-600 dark:text-slate-300">
+                                        {g.sessions.map((sess, idx) => (
+                                          <span key={sess.id || idx} className="mr-1.5 whitespace-nowrap inline-block">
+                                            {sess.timeStr}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              );
+                            })()
                           ) : (
                             <span className="text-amber-600 dark:text-amber-400 font-medium text-[11px]">
                               Chưa xếp lịch
@@ -1429,7 +1605,7 @@ export default function AdminClassesPage() {
           </div>
         )}
 
-        {/* Modal Thêm Lịch Học (Chọn Nhiều Ngày Linh Hoạt & Xóa Buổi Cũ) */}
+        {/* Modal Thêm / Cập Nhật Lịch Học (Chọn Nhiều Ngày Linh Hoạt, Tự Nhận Diện Thay Thế, Tránh Cộng Dồn) */}
         {showAddSchedule && (
           <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 z-50 animate-fadeIn">
             <div className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-2xl w-full max-w-xl p-4 sm:p-6 shadow-2xl text-slate-800 dark:text-slate-100 space-y-4 max-h-[92vh] overflow-y-auto">
@@ -1451,67 +1627,139 @@ export default function AdminClassesPage() {
                 </button>
               </div>
 
+              {/* Thông báo lỗi trực tiếp ngay trong modal */}
+              {scheduleModalError && (
+                <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-semibold flex items-start gap-2 animate-fadeIn">
+                  <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  <div className="flex-1 break-words leading-relaxed">
+                    <strong className="block font-bold mb-0.5">Không thể xếp lịch:</strong>
+                    <span>{scheduleModalError}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setScheduleModalError(null)}
+                    className="text-rose-400 hover:text-rose-600 p-0.5 rounded cursor-pointer shrink-0"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+
+              {/* Thông báo thành công trực tiếp ngay trong modal */}
+              {scheduleModalSuccess && (
+                <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-start gap-2 animate-fadeIn">
+                  <span className="text-emerald-600 text-base shrink-0 leading-none">✓</span>
+                  <div className="flex-1 break-words">
+                    <strong className="block font-bold">Cập nhật thành công!</strong>
+                    <span>{scheduleModalSuccess}</span>
+                  </div>
+                </div>
+              )}
+
               <p className="text-xs text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl p-2.5">
-                ⚠️ Hệ thống tự động kiểm tra và chặn nếu phòng học bị trùng lịch với lớp khác.
+                ⚠️ Hệ thống tự động kiểm tra và chặn nếu phòng học bị trùng lịch với lớp khác hoặc trùng giờ dạy của giáo viên.
               </p>
 
-              {/* Lịch hiện có của lớp này (Interactive với nút Xóa từng buổi) */}
+              {/* Lịch hiện có của lớp này (Gom nhóm theo ngày, xóa nhanh không popup) */}
               {(() => {
                 const targetCls = classes.find((c) => c.id === showAddSchedule);
                 if (!targetCls?.lichHoc || targetCls.lichHoc.length === 0) return null;
+                const groupedDays = groupSchedulesByDay(targetCls.lichHoc);
                 return (
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#1e2d45] text-xs space-y-2">
+                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#1e2d45] text-xs space-y-2.5">
                     <div className="flex items-center justify-between">
                       <span className="text-slate-700 dark:text-slate-300 font-bold flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                        Các buổi đã xếp trước đó ({targetCls.lichHoc.length} buổi):
+                        Các buổi đã xếp trước đó ({targetCls.lichHoc.length} ca học trong {groupedDays.length} ngày):
                       </span>
-                      <span className="text-[11px] text-slate-400 hidden sm:inline">Bấm nút xóa để hủy thứ đã xếp</span>
+                      <button
+                        type="button"
+                        onClick={() => handleClearAllSchedules(Number(targetCls.id))}
+                        disabled={clearingAllSchedules}
+                        className="text-[11px] text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 font-semibold cursor-pointer flex items-center gap-1 hover:underline"
+                        title="Xóa toàn bộ lịch đã xếp để xếp lại từ đầu"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        {clearingAllSchedules ? 'Đang xóa...' : 'Xóa toàn bộ'}
+                      </button>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
-                      {targetCls.lichHoc.map((lh: any) => {
-                        const timeStr = `${lh.gioBatDau?.slice(11, 16) || lh.gioBatDau?.slice(0, 5) || lh.gioBatDau} - ${lh.gioKetThuc?.slice(11, 16) || lh.gioKetThuc?.slice(0, 5) || lh.gioKetThuc}`;
-                        const isOnline = isOnlineLink(lh.phongHoc);
-                        return (
-                          <div
-                            key={lh.id}
-                            className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#22324e] shadow-xs group hover:border-teal-400 transition"
-                          >
-                            <div className="min-w-0 pr-2">
-                              <div className="flex items-center gap-1.5">
-                                <span className="px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-bold font-mono text-[11px] border border-teal-200 dark:border-teal-800">
-                                  {getDayDisplay(lh.thuTrongTuan)}
-                                </span>
-                                <span className="text-slate-600 dark:text-slate-400 font-mono text-[11px]">
-                                  {timeStr}
-                                </span>
-                              </div>
-                              <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-1 flex items-center gap-1" title={lh.phongHoc}>
-                                {isOnline ? (
-                                  <Globe className="w-3 h-3 text-blue-500 shrink-0" />
-                                ) : (
-                                  <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-                                )}
-                                <span className="truncate">{lh.phongHoc}</span>
-                              </div>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteSchedule(Number(targetCls.id), Number(lh.id), lh.thuTrongTuan)}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition shrink-0 cursor-pointer"
-                              title={`Xóa lịch ${getDayDisplay(lh.thuTrongTuan)}`}
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-1">
+                      {groupedDays.map((group) => (
+                        <div
+                          key={group.thuTrongTuan}
+                          className="p-2.5 rounded-lg bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#22324e] shadow-xs space-y-2"
+                        >
+                          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-1.5">
+                            <span className="px-2 py-0.5 rounded bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-bold text-xs border border-teal-200 dark:border-teal-800">
+                              {group.dayLabel}
+                            </span>
+                            <span className="text-[11px] text-slate-400 font-medium">
+                              {group.sessions.length} ca học
+                            </span>
                           </div>
-                        );
-                      })}
+
+                          <div className="space-y-1.5">
+                            {group.sessions.map((sess) => (
+                              <div
+                                key={sess.id}
+                                className="flex items-center justify-between p-1.5 rounded-md bg-slate-50 dark:bg-[#141d2f] border border-slate-100 dark:border-[#1d2b42] text-[11px]"
+                              >
+                                <div className="min-w-0 pr-1.5">
+                                  <div className="font-mono font-bold text-slate-700 dark:text-slate-200">
+                                    🕒 {sess.timeStr}
+                                  </div>
+                                  <div className="text-slate-500 dark:text-slate-400 truncate flex items-center gap-1 mt-0.5">
+                                    {sess.isOnline ? (
+                                      <Globe className="w-3 h-3 text-blue-500 shrink-0" />
+                                    ) : (
+                                      <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                                    )}
+                                    <span className="truncate">{sess.phongHoc}</span>
+                                  </div>
+                                </div>
+                                <button
+                                  type="button"
+                                  disabled={deletingScheduleId === sess.id}
+                                  onClick={() => handleDeleteSchedule(Number(targetCls.id), sess.id, group.thuTrongTuan)}
+                                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition shrink-0 cursor-pointer disabled:opacity-50"
+                                  title={`Xóa ca học ${sess.timeStr}`}
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 );
               })()}
 
               <form onSubmit={handleAddSchedule} className="space-y-4 text-xs">
+                {/* Tùy chọn Thay Thế / Cộng Dồn */}
+                <div className="p-3 rounded-xl bg-teal-50/60 dark:bg-teal-950/30 border border-teal-200/80 dark:border-teal-800/80 text-xs">
+                  <label className="flex items-start gap-2.5 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={replaceExistingSchedule}
+                      onChange={(e) => setReplaceExistingSchedule(e.target.checked)}
+                      className="w-4 h-4 rounded text-teal-600 focus:ring-teal-500 border-slate-300 dark:border-slate-600 mt-0.5 cursor-pointer shrink-0"
+                    />
+                    <div>
+                      <span className="font-bold text-teal-900 dark:text-teal-200">
+                        Tự động thay thế toàn bộ lịch cũ bằng các ngày đã chọn (Khuyên dùng)
+                      </span>
+                      <p className="text-[11px] text-teal-700 dark:text-teal-400 mt-0.5 leading-normal">
+                        {replaceExistingSchedule
+                          ? 'Khi ấn Xác Nhận, hệ thống tự động thay thế toàn bộ lịch trước đó của lớp bằng lịch mới này (không bị cộng dồn).'
+                          : 'Đang tắt: Hệ thống sẽ giữ nguyên lịch cũ và xếp bổ sung thêm các buổi mới này.'}
+                      </p>
+                    </div>
+                  </label>
+                </div>
+
                 {/* Chọn ngày trong tuần */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
@@ -1657,8 +1905,10 @@ export default function AdminClassesPage() {
                   >
                     <span>
                       {submittingSchedule
-                        ? 'Đang Xếp Lịch...'
-                        : `Xác Nhận Xếp Lịch (${selectedDays.length} Buổi)`}
+                        ? 'Đang Cập Nhật...'
+                        : replaceExistingSchedule
+                        ? `Cập Nhật Thời Khóa Biểu (${selectedDays.length} Ngày)`
+                        : `Thêm Bổ Sung Lịch (${selectedDays.length} Ngày)`}
                     </span>
                   </button>
                 </div>

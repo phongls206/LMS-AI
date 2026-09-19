@@ -25,9 +25,22 @@ export class AuthService {
    * UC001 — Đăng nhập và cấp JWT Token
    */
   async login(dto: LoginDto) {
+    const cleanUsername = dto.tenDangNhap?.trim().toLowerCase();
+    if (!cleanUsername) {
+      throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không đúng.');
+    }
+
+    if (!/^[a-zA-Z0-9]+$/.test(cleanUsername)) {
+      throw new BadRequestException('Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.');
+    }
+
+    if (/\s/.test(dto.matKhau)) {
+      throw new BadRequestException('Mật khẩu không được chứa khoảng trắng.');
+    }
+
     // 1. Tìm người dùng theo tên đăng nhập
-    const user = await this.prisma.nguoiDung.findUnique({
-      where: { tenDangNhap: dto.tenDangNhap },
+    const user = await this.prisma.nguoiDung.findFirst({
+      where: { tenDangNhap: { equals: cleanUsername, mode: 'insensitive' } },
     });
 
     if (!user) {
@@ -191,6 +204,16 @@ export class AuthService {
     const isOldPasswordValid = await argon2.verify(user.matKhauMaHoa, dto.matKhauCu);
     if (!isOldPasswordValid) {
       throw new BadRequestException('Mật khẩu hiện tại không đúng.');
+    }
+
+    if (dto.matKhauMoi.length < 8) {
+      throw new BadRequestException('Mật khẩu mới phải có tối thiểu 8 ký tự.');
+    }
+    if (/\s/.test(dto.matKhauMoi)) {
+      throw new BadRequestException('Mật khẩu mới không được chứa khoảng trắng.');
+    }
+    if (dto.matKhauCu === dto.matKhauMoi) {
+      throw new BadRequestException('Mật khẩu mới không được trùng với mật khẩu hiện tại.');
     }
 
     // Băm mật khẩu mới

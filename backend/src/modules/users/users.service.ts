@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import {
@@ -204,12 +205,25 @@ export class UsersService {
     const errors: Record<string, string> = {};
     let existingStudent: any = null;
 
-    if (query.tenDangNhap?.trim()) {
-      const u = await this.prisma.nguoiDung.findFirst({
-        where: { tenDangNhap: { equals: query.tenDangNhap.trim(), mode: 'insensitive' } },
-      });
-      if (u) {
-        errors.tenDangNhap = `Tên đăng nhập "${query.tenDangNhap.trim()}" đã được sử dụng. Vui lòng chọn tên khác.`;
+    if (query.tenDangNhap !== undefined && query.tenDangNhap !== null) {
+      const rawUser = query.tenDangNhap;
+      if (rawUser.length > 0) {
+        if (/\s/.test(rawUser)) {
+          errors.tenDangNhap = 'Tên đăng nhập không được chứa khoảng trắng.';
+        } else if (!/^[a-zA-Z0-9]+$/.test(rawUser)) {
+          errors.tenDangNhap = 'Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.';
+        } else if (rawUser.length < 3) {
+          errors.tenDangNhap = 'Tên đăng nhập phải có ít nhất 3 ký tự.';
+        } else if (rawUser.length > 50) {
+          errors.tenDangNhap = 'Tên đăng nhập không được vượt quá 50 ký tự.';
+        } else {
+          const u = await this.prisma.nguoiDung.findFirst({
+            where: { tenDangNhap: { equals: rawUser.toLowerCase(), mode: 'insensitive' } },
+          });
+          if (u) {
+            errors.tenDangNhap = `Tên đăng nhập "${rawUser}" đã được sử dụng. Vui lòng chọn tên khác.`;
+          }
+        }
       }
     }
 
@@ -277,7 +291,24 @@ export class UsersService {
   async createStudent(dto: CreateStudentDto) {
     // 1. Tự động sinh mã và tên đăng nhập nếu để trống
     let maHocVien = dto.maHocVien?.trim().toUpperCase();
-    let tenDangNhap = dto.tenDangNhap?.trim().toLowerCase();
+    let tenDangNhap: string | undefined = undefined;
+
+    if (dto.tenDangNhap !== undefined && dto.tenDangNhap !== null && dto.tenDangNhap.trim() !== '') {
+      const rawUser = dto.tenDangNhap;
+      if (/\s/.test(rawUser)) {
+        throw new BadRequestException('Tên đăng nhập không được chứa khoảng trắng.');
+      }
+      if (!/^[a-zA-Z0-9]+$/.test(rawUser.trim())) {
+        throw new BadRequestException('Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.');
+      }
+      if (rawUser.trim().length < 3) {
+        throw new BadRequestException('Tên đăng nhập phải có ít nhất 3 ký tự.');
+      }
+      if (rawUser.trim().length > 50) {
+        throw new BadRequestException('Tên đăng nhập không được vượt quá 50 ký tự.');
+      }
+      tenDangNhap = rawUser.trim().toLowerCase();
+    }
 
     if (!maHocVien || !tenDangNhap) {
       const nextInfo = await this.getNextStudentCode();
@@ -288,6 +319,14 @@ export class UsersService {
     const email = dto.email.trim().toLowerCase();
     const soDienThoai = dto.soDienThoai?.trim() || null;
     const matKhau = dto.matKhau?.trim() || '123456';
+
+    if (!matKhau || matKhau.length < 6) {
+      throw new BadRequestException('Mật khẩu khởi tạo phải có tối thiểu 6 ký tự.');
+    }
+    if (/\s/.test(matKhau)) {
+      throw new BadRequestException('Mật khẩu không được chứa khoảng trắng.');
+    }
+
     const ngaySinh = dto.ngaySinh ? new Date(dto.ngaySinh) : null;
     const diaChi = dto.diaChi?.trim() || null;
     const gioiTinh = dto.gioiTinh?.trim() || null;
@@ -381,8 +420,15 @@ export class UsersService {
     const updated = await this.prisma.$transaction(async (tx) => {
       const userUpdateData: any = {};
       if (dto.soDienThoai !== undefined) userUpdateData.soDienThoai = dto.soDienThoai?.trim() || null;
-      if (dto.hoTen !== undefined) userUpdateData.hoTen = dto.hoTen?.trim();
-      if (dto.matKhauMoi) userUpdateData.matKhauMaHoa = await argon2.hash(dto.matKhauMoi);
+      if (dto.matKhauMoi) {
+        if (dto.matKhauMoi.length < 6) {
+          throw new BadRequestException('Mật khẩu mới phải có ít nhất 6 ký tự.');
+        }
+        if (/\s/.test(dto.matKhauMoi)) {
+          throw new BadRequestException('Mật khẩu mới không được chứa khoảng trắng.');
+        }
+        userUpdateData.matKhauMaHoa = await argon2.hash(dto.matKhauMoi);
+      }
 
       if (Object.keys(userUpdateData).length > 0 && student.nguoiDungId) {
         await tx.nguoiDung.update({
@@ -550,12 +596,25 @@ export class UsersService {
   }) {
     const errors: Record<string, string> = {};
 
-    if (query.tenDangNhap?.trim()) {
-      const u = await this.prisma.nguoiDung.findFirst({
-        where: { tenDangNhap: { equals: query.tenDangNhap.trim(), mode: 'insensitive' } },
-      });
-      if (u) {
-        errors.tenDangNhap = `Tên đăng nhập "${query.tenDangNhap.trim()}" đã được sử dụng. Vui lòng chọn tên khác.`;
+    if (query.tenDangNhap !== undefined && query.tenDangNhap !== null) {
+      const rawUser = query.tenDangNhap;
+      if (rawUser.length > 0) {
+        if (/\s/.test(rawUser)) {
+          errors.tenDangNhap = 'Tên đăng nhập không được chứa khoảng trắng.';
+        } else if (!/^[a-zA-Z0-9]+$/.test(rawUser)) {
+          errors.tenDangNhap = 'Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.';
+        } else if (rawUser.length < 3) {
+          errors.tenDangNhap = 'Tên đăng nhập phải có ít nhất 3 ký tự.';
+        } else if (rawUser.length > 50) {
+          errors.tenDangNhap = 'Tên đăng nhập không được vượt quá 50 ký tự.';
+        } else {
+          const u = await this.prisma.nguoiDung.findFirst({
+            where: { tenDangNhap: { equals: rawUser.toLowerCase(), mode: 'insensitive' } },
+          });
+          if (u) {
+            errors.tenDangNhap = `Tên đăng nhập "${rawUser}" đã được sử dụng. Vui lòng chọn tên khác.`;
+          }
+        }
       }
     }
 
@@ -590,7 +649,24 @@ export class UsersService {
    */
   async createTeacher(dto: CreateTeacherDto) {
     let maGiaoVien = dto.maGiaoVien?.trim().toUpperCase();
-    let tenDangNhap = dto.tenDangNhap?.trim().toLowerCase();
+    let tenDangNhap: string | undefined = undefined;
+
+    if (dto.tenDangNhap !== undefined && dto.tenDangNhap !== null && dto.tenDangNhap.trim() !== '') {
+      const rawUser = dto.tenDangNhap;
+      if (/\s/.test(rawUser)) {
+        throw new BadRequestException('Tên đăng nhập không được chứa khoảng trắng.');
+      }
+      if (!/^[a-zA-Z0-9]+$/.test(rawUser.trim())) {
+        throw new BadRequestException('Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.');
+      }
+      if (rawUser.trim().length < 3) {
+        throw new BadRequestException('Tên đăng nhập phải có ít nhất 3 ký tự.');
+      }
+      if (rawUser.trim().length > 50) {
+        throw new BadRequestException('Tên đăng nhập không được vượt quá 50 ký tự.');
+      }
+      tenDangNhap = rawUser.trim().toLowerCase();
+    }
 
     if (!maGiaoVien || !tenDangNhap) {
       const nextInfo = await this.getNextTeacherCode();
@@ -601,6 +677,13 @@ export class UsersService {
     const email = dto.email.trim().toLowerCase();
     const soDienThoai = dto.soDienThoai?.trim() || null;
     const matKhau = dto.matKhau?.trim() || '123456';
+
+    if (!matKhau || matKhau.length < 6) {
+      throw new BadRequestException('Mật khẩu khởi tạo phải có tối thiểu 6 ký tự.');
+    }
+    if (/\s/.test(matKhau)) {
+      throw new BadRequestException('Mật khẩu không được chứa khoảng trắng.');
+    }
 
     const existingUser = await this.prisma.nguoiDung.findFirst({
       where: { tenDangNhap: { equals: tenDangNhap, mode: 'insensitive' } },
@@ -687,7 +770,15 @@ export class UsersService {
       const userUpdateData: any = {};
       if (dto.soDienThoai !== undefined) userUpdateData.soDienThoai = dto.soDienThoai?.trim() || null;
       if (dto.hoTen !== undefined) userUpdateData.hoTen = dto.hoTen?.trim();
-      if (dto.matKhauMoi) userUpdateData.matKhauMaHoa = await argon2.hash(dto.matKhauMoi);
+      if (dto.matKhauMoi) {
+        if (dto.matKhauMoi.length < 6) {
+          throw new BadRequestException('Mật khẩu mới phải có ít nhất 6 ký tự.');
+        }
+        if (/\s/.test(dto.matKhauMoi)) {
+          throw new BadRequestException('Mật khẩu mới không được chứa khoảng trắng.');
+        }
+        userUpdateData.matKhauMaHoa = await argon2.hash(dto.matKhauMoi);
+      }
 
       if (Object.keys(userUpdateData).length > 0 && teacher.nguoiDungId) {
         await tx.nguoiDung.update({

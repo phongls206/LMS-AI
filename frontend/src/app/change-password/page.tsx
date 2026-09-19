@@ -14,12 +14,16 @@ export default function ChangePasswordPage() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (/\s/.test(oldPassword) || /\s/.test(newPassword) || /\s/.test(confirmPassword)) {
+      setMessage({ type: 'error', text: 'Mật khẩu không được chứa khoảng trắng.' });
+      return;
+    }
     if (newPassword !== confirmPassword) {
       setMessage({ type: 'error', text: 'Mật khẩu xác nhận không khớp.' });
       return;
     }
-    if (newPassword.length < 6) {
-      setMessage({ type: 'error', text: 'Mật khẩu mới phải có tối thiểu 6 ký tự.' });
+    if (newPassword.length < 8) {
+      setMessage({ type: 'error', text: 'Mật khẩu mới phải có tối thiểu 8 ký tự.' });
       return;
     }
 
@@ -69,7 +73,7 @@ export default function ChangePasswordPage() {
                   type="password"
                   required
                   value={oldPassword}
-                  onChange={(e) => setOldPassword(e.target.value)}
+                  onChange={(e) => setOldPassword(e.target.value.replace(/\s/g, ''))}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pl-10 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
                   placeholder="Nhập mật khẩu cũ"
                 />
@@ -86,9 +90,9 @@ export default function ChangePasswordPage() {
                   type="password"
                   required
                   value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  onChange={(e) => setNewPassword(e.target.value.replace(/\s/g, ''))}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pl-10 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
-                  placeholder="Tối thiểu 6 ký tự"
+                  placeholder="Tối thiểu 8 ký tự (không có khoảng trắng)"
                 />
               </div>
             </div>
@@ -103,7 +107,7 @@ export default function ChangePasswordPage() {
                   type="password"
                   required
                   value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  onChange={(e) => setConfirmPassword(e.target.value.replace(/\s/g, ''))}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 pl-10 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
                   placeholder="Nhập lại mật khẩu mới"
                 />

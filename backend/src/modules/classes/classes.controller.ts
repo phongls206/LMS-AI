@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { ClassesService } from './classes.service';
-import { CreateClassDto, CreateScheduleDto, AssignTeacherDto, UpdateClassStatusDto, UpdateClassDto } from './dto/classes.dto';
+import { CreateClassDto, CreateScheduleDto, UpdateClassScheduleDto, AssignTeacherDto, UpdateClassStatusDto, UpdateClassDto } from './dto/classes.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -73,6 +73,20 @@ export class ClassesController {
   }
 
   /**
+   * PUT /api/v1/classes/:id/schedules — UC004 (Chỉ Quản lý)
+   * Cập nhật / thay thế lịch học hàng loạt cho lớp
+   */
+  @Put('classes/:id/schedules')
+  @Roles(VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Cập nhật hoặc thay thế toàn bộ lịch học cho lớp' })
+  updateClassSchedule(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateClassScheduleDto,
+  ) {
+    return this.classesService.updateClassSchedule(id, dto);
+  }
+
+  /**
    * DELETE /api/v1/classes/:id/schedules/:scheduleId — UC004 (Chỉ Quản lý)
    */
   @Delete('classes/:id/schedules/:scheduleId')
@@ -83,6 +97,19 @@ export class ClassesController {
     @Param('scheduleId', ParseIntPipe) scheduleId: number,
   ) {
     return this.classesService.deleteSchedule(id, scheduleId);
+  }
+
+  /**
+   * DELETE /api/v1/classes/:id/schedules — UC004 (Chỉ Quản lý)
+   * Xóa toàn bộ lịch học của lớp
+   */
+  @Delete('classes/:id/schedules')
+  @Roles(VaiTro.QUAN_LY)
+  @ApiOperation({ summary: 'Xóa toàn bộ lịch học của lớp' })
+  clearAllSchedules(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.classesService.clearAllSchedules(id);
   }
 
   /**

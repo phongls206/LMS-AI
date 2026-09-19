@@ -25,6 +25,14 @@ export default function TeacherDashboardPage() {
     fetch();
   }, []);
 
+  const formatTime = (timeStr?: string) => {
+    if (!timeStr) return '';
+    if (timeStr.includes('T')) {
+      return new Date(timeStr).toISOString().substring(11, 16);
+    }
+    return timeStr.substring(0, 5);
+  };
+
   return (
     <AppLayout
       allowedRoles={['GIAO_VIEN']}
@@ -147,16 +155,24 @@ export default function TeacherDashboardPage() {
                   </p>
 
                   <div className="space-y-1.5 text-xs text-slate-700 dark:text-slate-300 border-t border-slate-200/80 dark:border-slate-800/80 pt-3">
-                    {item.lopHoc?.lichHoc?.map((l: any) => (
-                      <div key={l.id} className="flex items-center justify-between">
-                        <span className="flex items-center text-slate-600 dark:text-slate-400 font-medium">
-                          <Clock className="w-3.5 h-3.5 mr-1 text-teal-600 dark:text-teal-400" /> Thứ {l.thuTrongTuan}
-                        </span>
-                        <span className="flex items-center font-mono font-bold text-teal-800 dark:text-teal-300">
-                          <MapPin className="w-3.5 h-3.5 mr-1 text-slate-400" /> {l.phongHoc}
-                        </span>
-                      </div>
-                    ))}
+                    {[...(item.lopHoc?.lichHoc || [])]
+                      .sort((a: any, b: any) => {
+                        const dayA = Number(a.thuTrongTuan);
+                        const dayB = Number(b.thuTrongTuan);
+                        if (dayA !== dayB) return dayA - dayB;
+                        return (a.gioBatDau || '').localeCompare(b.gioBatDau || '');
+                      })
+                      .map((l: any) => (
+                        <div key={l.id} className="flex items-center justify-between">
+                          <span className="flex items-center text-slate-600 dark:text-slate-400 font-medium">
+                            <Clock className="w-3.5 h-3.5 mr-1 text-teal-600 dark:text-teal-400" />
+                            Thứ {l.thuTrongTuan === 8 ? 'Chủ Nhật' : l.thuTrongTuan} {formatTime(l.gioBatDau) && formatTime(l.gioKetThuc) ? `(${formatTime(l.gioBatDau)} - ${formatTime(l.gioKetThuc)})` : ''}
+                          </span>
+                          <span className="flex items-center font-mono font-bold text-teal-800 dark:text-teal-300">
+                            <MapPin className="w-3.5 h-3.5 mr-1 text-slate-400" /> {l.phongHoc}
+                          </span>
+                        </div>
+                      ))}
                   </div>
 
                   {/* Lối tắt tác vụ nhanh của giảng viên */}

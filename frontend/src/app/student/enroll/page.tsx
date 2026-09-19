@@ -76,6 +76,19 @@ const formatFullScheduleItem = (l: any) => {
   return day;
 };
 
+const formatSortedScheduleList = (schedules?: any[], defaultText = 'Chưa xếp lịch') => {
+  if (!schedules || schedules.length === 0) return defaultText;
+  return [...schedules]
+    .sort((a, b) => {
+      const dayA = Number(a.thuTrongTuan);
+      const dayB = Number(b.thuTrongTuan);
+      if (dayA !== dayB) return dayA - dayB;
+      return String(a.gioBatDau || '').localeCompare(String(b.gioBatDau || ''));
+    })
+    .map((l: any) => formatFullScheduleItem(l))
+    .join(', ');
+};
+
 export default function StudentEnrollPage() {
   const [classes, setClasses] = useState<LopHoc[]>([]);
   const [user, setUser] = useState<any>(null);
@@ -116,6 +129,13 @@ export default function StudentEnrollPage() {
 
   useEffect(() => {
     fetchData();
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const qCode = params.get('maLopHoc');
+      if (qCode) {
+        setSearch(qCode);
+      }
+    }
   }, []);
 
   const handleEnroll = async (classId: number) => {
@@ -345,7 +365,7 @@ export default function StudentEnrollPage() {
 
   return (
     <AppLayout
-      allowedRoles={['HOC_VIEN', 'TU_VAN_VIEN']}
+      allowedRoles={['HOC_VIEN']}
       title="Đăng Ký & Quản Lý Lớp Học"
       subtitle="Hệ thống tự động đối soát 4 tiêu chí: Chuẩn CEFR, Sĩ số chỗ trống, Chưa đăng ký và Trùng lịch học"
     >
@@ -609,9 +629,7 @@ export default function StudentEnrollPage() {
                         <div className="flex justify-between items-center">
                           <span className="text-slate-500 dark:text-slate-400">Lịch học:</span>
                           <span className="font-medium text-slate-800 dark:text-slate-200 text-right">
-                            {c.lichHoc && c.lichHoc.length > 0
-                              ? c.lichHoc.map((l: any) => formatFullScheduleItem(l)).join(', ')
-                              : 'Chưa xếp lịch'}
+                            {formatSortedScheduleList(c.lichHoc)}
                           </span>
                         </div>
                       </div>
@@ -858,9 +876,7 @@ export default function StudentEnrollPage() {
                         <div className="flex justify-between items-center">
                           <span className="text-slate-500 dark:text-slate-400">Lịch học:</span>
                           <span className="font-medium text-slate-800 dark:text-slate-200 text-right">
-                            {c.lichHoc && c.lichHoc.length > 0
-                              ? c.lichHoc.map((l: any) => formatFullScheduleItem(l)).join(', ')
-                              : 'Chưa xếp lịch'}
+                            {formatSortedScheduleList(c.lichHoc)}
                           </span>
                         </div>
 
@@ -1042,9 +1058,7 @@ export default function StudentEnrollPage() {
                 <div className="flex justify-between items-center">
                   <span className="text-slate-500 dark:text-slate-400">Lịch học:</span>
                   <span className="font-medium text-slate-800 dark:text-slate-200">
-                    {confirmEnrollClass.lichHoc && confirmEnrollClass.lichHoc.length > 0
-                      ? confirmEnrollClass.lichHoc.map((l: any) => formatFullScheduleItem(l)).join(', ')
-                      : 'Chưa xếp lịch cụ thể'}
+                    {formatSortedScheduleList(confirmEnrollClass.lichHoc, 'Chưa xếp lịch cụ thể')}
                   </span>
                 </div>
 
