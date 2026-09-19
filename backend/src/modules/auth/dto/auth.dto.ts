@@ -2,11 +2,13 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength, Matches } from 'c
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
-  @ApiProperty({ example: 'admin01', description: 'Tên đăng nhập' })
+  @ApiProperty({ example: 'admin01', description: 'Tên đăng nhập hoặc Email' })
   @IsString()
-  @IsNotEmpty({ message: 'Tên đăng nhập không được để trống.' })
-  @Matches(/^\S+$/, { message: 'Tên đăng nhập không được chứa khoảng trắng.' })
-  @Matches(/^[a-zA-Z0-9]+$/, { message: 'Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.' })
+  @IsNotEmpty({ message: 'Tên đăng nhập hoặc Email không được để trống.' })
+  @Matches(/^\S+$/, { message: 'Tên đăng nhập hoặc Email không được chứa khoảng trắng.' })
+  @Matches(/^([a-zA-Z0-9]+|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/, {
+    message: 'Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt (hoặc nhập địa chỉ Email hợp lệ).',
+  })
   tenDangNhap: string;
 
   @ApiProperty({ example: '123456', description: 'Mật khẩu' })

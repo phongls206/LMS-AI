@@ -56,11 +56,14 @@ export default function LoginPage() {
   }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
-    if (!username.trim()) {
-      setError('Vui lòng nhập tên đăng nhập.');
+    e.preventDefault();
+    const cleanUser = username.trim();
+    if (!cleanUser) {
+      setError('Vui lòng nhập tên đăng nhập hoặc email.');
       return;
     }
-    if (!/^[a-zA-Z0-9]+$/.test(username.trim())) {
+    const isEmail = cleanUser.includes('@');
+    if (!isEmail && !/^[a-zA-Z0-9]+$/.test(cleanUser)) {
       setError('Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.');
       return;
     }
@@ -77,7 +80,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const res = await authService.login(username.trim().toLowerCase(), password);
+      const res = await authService.login(cleanUser.toLowerCase(), password);
       const role = res.user.vaiTro;
 
       switch (role) {
@@ -182,10 +185,10 @@ export default function LoginPage() {
                   <input
                     type="text"
                     value={username}
-                    onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-zA-Z0-9]/g, ''))}
+                    onChange={(e) => setUsername(e.target.value.replace(/\s/g, ''))}
                     required
                     className="w-full bg-slate-50/80 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] hover:border-teal-400 dark:hover:border-teal-500/70 hover:bg-white dark:hover:bg-[#131d33] hover:shadow-md hover:shadow-teal-500/5 focus:border-teal-500 dark:focus:border-teal-400 focus:bg-white dark:focus:bg-[#0f172a] rounded-xl px-4 py-2.5 pl-10 text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-4 focus:ring-teal-500/15 transition-all duration-200"
-                    placeholder="Nhập tên đăng nhập của bạn..."
+                    placeholder="Nhập tên đăng nhập hoặc email của bạn..."
                   />
                 </div>
               </div>

@@ -30,17 +30,22 @@ export class AuthService {
       throw new UnauthorizedException('Tên đăng nhập hoặc mật khẩu không đúng.');
     }
 
-    if (!/^[a-zA-Z0-9]+$/.test(cleanUsername)) {
-      throw new BadRequestException('Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.');
+    const isEmail = cleanUsername.includes('@');
+    if (!isEmail) {
+      if (!/^[a-zA-Z0-9]+$/.test(cleanUsername)) {
+        throw new BadRequestException('Tên đăng nhập chỉ được chứa chữ cái và số, không được chứa dấu gạch dưới (_) hay ký tự đặc biệt.');
+      }
     }
 
     if (/\s/.test(dto.matKhau)) {
       throw new BadRequestException('Mật khẩu không được chứa khoảng trắng.');
     }
 
-    // 1. Tìm người dùng theo tên đăng nhập
+    // 1. Tìm người dùng theo tên đăng nhập hoặc email
     const user = await this.prisma.nguoiDung.findFirst({
-      where: { tenDangNhap: { equals: cleanUsername, mode: 'insensitive' } },
+      where: isEmail
+        ? { email: { equals: cleanUsername, mode: 'insensitive' } }
+        : { tenDangNhap: { equals: cleanUsername, mode: 'insensitive' } },
     });
 
     if (!user) {
