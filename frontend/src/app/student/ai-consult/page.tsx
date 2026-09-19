@@ -140,7 +140,7 @@ export default function StudentAiConsultPage() {
             mode: m,
           }),
         );
-      } catch (e) {}
+      } catch (e) { }
     } catch (err: any) {
       alert(err.response?.data?.message || 'Có lỗi khi gọi AI tư vấn.');
     } finally {
@@ -225,11 +225,10 @@ export default function StudentAiConsultPage() {
                         key={day}
                         type="button"
                         onClick={() => handleToggleDay(day)}
-                        className={`px-3 py-2 min-h-[38px] rounded-xl font-bold text-xs transition cursor-pointer flex items-center justify-center ${
-                          isSelected
+                        className={`px-3 py-2 min-h-[38px] rounded-xl font-bold text-xs transition cursor-pointer flex items-center justify-center ${isSelected
                             ? 'bg-teal-600 text-white shadow-sm'
                             : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-                        }`}
+                          }`}
                       >
                         {day === 8 ? 'Chủ Nhật' : `Thứ ${day}`}
                       </button>
@@ -303,11 +302,10 @@ export default function StudentAiConsultPage() {
               </div>
               <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
                 <span
-                  className={`inline-flex items-center h-8 text-[11px] font-bold px-3 rounded-lg border whitespace-nowrap ${
-                    mode === 'AI_GEMINI' || mode === 'GEMINI_AI'
+                  className={`inline-flex items-center h-8 text-[11px] font-bold px-3 rounded-lg border whitespace-nowrap ${mode === 'AI_GEMINI' || mode === 'GEMINI_AI'
                       ? 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800'
                       : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
-                  }`}
+                    }`}
                 >
                   {mode === 'AI_GEMINI' || mode === 'GEMINI_AI' ? '✨ Trí Tuệ Nhân Tạo (AI)' : '📋 Hệ Thống Quy Tắc (Rule-Based)'}
                 </span>
@@ -421,11 +419,8 @@ export default function StudentAiConsultPage() {
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <div className="flex items-center space-x-2">
                     <h4 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                      So Sánh Đối Chiếu Giữa Các Lớp Đề Xuất
-                    </h4>
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
                       Góc nhìn tổng quan
-                    </span>
+                    </h4>
                   </div>
                   <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-line">
                     {soSanhLopHoc}
