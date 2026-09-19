@@ -39,7 +39,17 @@ export class EnrollmentsService {
   /**
    * UC006 — Đăng ký lớp học (Kiểm tra 4 điều kiện nghiệp vụ + ACID Transaction)
    */
-  async createEnrollment(dto: CreateEnrollmentDto) {
+  async createEnrollment(dto: CreateEnrollmentDto, currentUser?: any) {
+    // 0. Kiểm tra quyền sở hữu đối với học viên tự đăng ký (Chống IDOR)
+    if (currentUser?.vaiTro === 'HOC_VIEN') {
+      const currentStudent = await this.prisma.hoSoHocVien.findUnique({
+        where: { nguoiDungId: BigInt(currentUser.id) },
+      });
+      if (!currentStudent || Number(currentStudent.id) !== Number(dto.hocVienId)) {
+        throw new BadRequestException('Học viên chỉ có thể đăng ký khóa học cho chính mình.');
+      }
+    }
+
     // 1. Kiểm tra Lớp học tồn tại & Sĩ số
     const classRecord = await this.prisma.lopHoc.findUnique({
       where: { id: BigInt(dto.lopHocId) },
@@ -162,6 +172,12 @@ export class EnrollmentsService {
           data: { siSoHienTai: { increment: 1 } },
         });
 
+        const now = new Date();
+        const classStart = new Date(classRecord.ngayBatDau);
+        const hanThanhToan = classStart > now 
+          ? classStart 
+          : new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+
         let invoice;
         if (existingEnrollment.hoaDon) {
           const paid = Number(existingEnrollment.hoaDon.soTienDaTra || 0);
@@ -179,7 +195,7 @@ export class EnrollmentsService {
             data: {
               soTienPhaiTra: classRecord.khoaHoc.hocPhi,
               soTienDaTra: existingEnrollment.hoaDon.soTienDaTra,
-              hanThanhToan: classRecord.ngayBatDau,
+              hanThanhToan,
               trangThai: invStatus,
             },
           });
@@ -199,7 +215,7 @@ export class EnrollmentsService {
               hocVienId: BigInt(dto.hocVienId),
               soTienPhaiTra: classRecord.khoaHoc.hocPhi,
               soTienDaTra: 0,
-              hanThanhToan: classRecord.ngayBatDau,
+              hanThanhToan,
               trangThai: TrangThaiHoaDon.CHUA_THANH_TOAN,
             },
           });
@@ -254,6 +270,11 @@ export class EnrollmentsService {
 
     // 5. ACID Transaction: Tạo Đăng Ký + Tăng Sĩ Số + Tự Động Tạo Hóa Đơn
     const maHoaDon = `HD-${Date.now().toString().slice(-6)}-${dto.hocVienId}`;
+    const now = new Date();
+    const classStart = new Date(classRecord.ngayBatDau);
+    const hanThanhToan = classStart > now 
+      ? classStart 
+      : new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
 
     const result = await this.prisma.$transaction(async (tx) => {
       const enrollment = await tx.dangKyHoc.create({
@@ -276,7 +297,7 @@ export class EnrollmentsService {
           hocVienId: BigInt(dto.hocVienId),
           soTienPhaiTra: classRecord.khoaHoc.hocPhi,
           soTienDaTra: 0,
-          hanThanhToan: classRecord.ngayBatDau,
+          hanThanhToan,
           trangThai: TrangThaiHoaDon.CHUA_THANH_TOAN,
         },
       });
@@ -543,6 +564,59 @@ export class EnrollmentsService {
           ngayLap: invoice.dangKyHoc?.ngayDangKy || null,
         },
       };
+    });
+
+    return this.serializeBigInt(result);
+  }
+
+  /**
+   * UC006 — Cập nhật trạng thái đăng ký học (Dành cho Quản lý / Tư vấn viên)
+   */
+  async updateEnrollmentStatus(id: number, trangThai: TrangThaiDangKy) {
+    const enrollment = await this.prisma.dangKyHoc.findUnique({
+      where: { id: BigInt(id) },
+      include: { hoaDon: true, lopHoc: true },
+    });
+    if (!enrollment) {
+      throw new NotFoundException('Không tìm thấy thông tin đăng ký học.');
+    }
+
+    if (enrollment.trangThai === trangThai) {
+      return this.serializeBigInt(enrollment);
+    }
+
+    const result = await this.prisma.$transaction(async (tx) => {
+      // 1. Cập nhật trạng thái đăng ký
+      const updated = await tx.dangKyHoc.update({
+        where: { id: BigInt(id) },
+        data: { trangThai },
+      });
+
+      // 2. Nếu chuyển sang DA_HUY: giải phóng sĩ số lớp và hủy hóa đơn chưa thanh toán
+      if (trangThai === TrangThaiDangKy.DA_HUY) {
+        if (enrollment.lopHoc && enrollment.lopHoc.siSoHienTai > 0) {
+          await tx.lopHoc.update({
+            where: { id: enrollment.lopHocId },
+            data: { siSoHienTai: { decrement: 1 } },
+          });
+        }
+        if (enrollment.hoaDon && enrollment.hoaDon.trangThai === TrangThaiHoaDon.CHUA_THANH_TOAN) {
+          await tx.hoaDon.update({
+            where: { id: enrollment.hoaDon.id },
+            data: { trangThai: TrangThaiHoaDon.DA_HUY },
+          });
+        }
+      }
+
+      // 3. Nếu chuyển từ DA_HUY sang trạng thái khác (Reactivate): tăng sĩ số lớp
+      if (enrollment.trangThai === TrangThaiDangKy.DA_HUY && trangThai !== TrangThaiDangKy.DA_HUY) {
+        await tx.lopHoc.update({
+          where: { id: enrollment.lopHocId },
+          data: { siSoHienTai: { increment: 1 } },
+        });
+      }
+
+      return updated;
     });
 
     return this.serializeBigInt(result);

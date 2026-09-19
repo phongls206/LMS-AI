@@ -7,8 +7,9 @@ import { gradesService } from '../../../services/api';
 import {
   Calendar, Clock, MapPin, ChevronDown, ChevronUp, AlertCircle,
   CheckCircle2, XCircle, Info, BookOpen, Award, ChevronRight,
-  CalendarCheck, RefreshCw, Search, Filter, Globe, Sparkles,
-  Receipt, TrendingUp, Check, ExternalLink, ArrowRight, User
+  CalendarCheck, RefreshCw, Globe, Sparkles,
+  Receipt, TrendingUp, Check, ExternalLink, ArrowRight, User,
+  Plus, X
 } from 'lucide-react';
 import { formatTrangThaiDangKy, formatTrangThaiLopHoc } from '../../../utils/formatters';
 
@@ -53,9 +54,6 @@ export default function StudentSchedulePage() {
   const [expandedClassId, setExpandedClassId] = useState<number | null>(null);
   const [highlightedClassId, setHighlightedClassId] = useState<number | null>(null);
 
-  // Search & Filter state
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'DANG_HOC' | 'DANG_MO_DANG_KY'>('ALL');
   const [selectedDayFilter, setSelectedDayFilter] = useState<number | 'ALL'>('ALL');
 
   // Mobile tab switcher: 'timetable' | 'classes'
@@ -211,33 +209,15 @@ export default function StudentSchedulePage() {
     return allWeeklySessions.filter((s) => s.thuTrongTuan === selectedDayFilter);
   }, [allWeeklySessions, selectedDayFilter]);
 
-  // Lọc danh sách lớp học ở cột bên phải
-  const filteredEnrollments = useMemo(() => {
+  // Lọc danh sách lớp học theo ngày được chọn trên TKB (nếu có)
+  const displayEnrollments = useMemo(() => {
+    if (selectedDayFilter === 'ALL') return enrollments;
     return enrollments.filter((enr) => {
       const lop = enr.lopHoc;
       if (!lop) return false;
-
-      const q = search.toLowerCase().trim();
-      const matchSearch =
-        !q ||
-        lop.maLopHoc?.toLowerCase().includes(q) ||
-        lop.tenLopHoc?.toLowerCase().includes(q) ||
-        lop.khoaHoc?.tenKhoaHoc?.toLowerCase().includes(q) ||
-        lop.phanCong?.[0]?.giaoVien?.hoTen?.toLowerCase().includes(q);
-
-      const matchStatus =
-        statusFilter === 'ALL' ||
-        (statusFilter === 'DANG_HOC' && lop.trangThai === 'DANG_HOC') ||
-        (statusFilter === 'DANG_MO_DANG_KY' && (lop.trangThai === 'DANG_MO_DANG_KY' || lop.trangThai === 'SAP_MO'));
-
-      // Nếu đang chọn lọc theo 1 ngày cụ thể trên TKB, ưu tiên hiển thị lớp có lịch ngày đó
-      const matchDay =
-        selectedDayFilter === 'ALL' ||
-        lop.lichHoc?.some((lh: any) => Number(lh.thuTrongTuan) === selectedDayFilter);
-
-      return matchSearch && matchStatus && matchDay;
+      return lop.lichHoc?.some((lh: any) => Number(lh.thuTrongTuan) === selectedDayFilter);
     });
-  }, [enrollments, search, statusFilter, selectedDayFilter]);
+  }, [enrollments, selectedDayFilter]);
 
   // Cuộn mượt tới thẻ lớp học khi bấm vào ca học trên TKB
   const handleScrollToClass = (classId: number) => {
@@ -373,8 +353,7 @@ export default function StudentSchedulePage() {
 
                 <div className="flex items-center justify-between relative z-10">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-teal-100 bg-teal-900/40 px-2 py-0.5 rounded-full border border-teal-400/30">
+                    <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-teal-100 bg-teal-900/50 px-2.5 py-1 rounded-full border border-teal-400/30">
                       HÔM NAY • {todayFormattedDate.split(',')[0].toUpperCase()}
                     </span>
                   </div>
@@ -608,60 +587,48 @@ export default function StudentSchedulePage() {
                 mobileTab === 'classes' ? 'block' : 'hidden lg:block'
               }`}
             >
-              {/* Toolbar Tìm Kiếm & Lọc */}
-              <div className="bg-white dark:bg-[#111928] p-3.5 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="relative w-full sm:w-72">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
-                  <input
-                    type="text"
-                    placeholder="Tìm theo tên lớp, mã lớp, giáo viên..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#1e2d45] text-xs text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-teal-500"
-                  />
+              {/* Header Cột Phải: Thông Tin Lớp Học Của Tôi */}
+              <div className="bg-white dark:bg-[#111928] px-4 py-3 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-600 dark:text-teal-400 shrink-0">
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-white text-sm">
+                      Lớp Học Của Tôi
+                    </h3>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      {enrollments.length} lớp học bạn đã ghi danh
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto">
-                  <button
-                    type="button"
-                    onClick={() => setStatusFilter('ALL')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
-                      statusFilter === 'ALL'
-                        ? 'bg-teal-600 text-white shadow-xs'
-                        : 'bg-slate-100 dark:bg-[#162032] text-slate-600 dark:text-slate-400 hover:text-slate-900'
-                    }`}
+                <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                  {selectedDayFilter !== 'ALL' && (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDayFilter('ALL')}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs font-semibold hover:bg-teal-100 dark:hover:bg-teal-900/50 transition cursor-pointer"
+                    >
+                      <span>Lọc: {selectedDayFilter === 8 ? 'Chủ Nhật' : `Thứ ${selectedDayFilter}`}</span>
+                      <X className="w-3 h-3 ml-0.5" />
+                    </button>
+                  )}
+
+                  <Link
+                    href="/student/enroll"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition shadow-xs cursor-pointer shrink-0"
                   >
-                    Tất cả ({enrollments.length})
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStatusFilter('DANG_HOC')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
-                      statusFilter === 'DANG_HOC'
-                        ? 'bg-teal-600 text-white shadow-xs'
-                        : 'bg-slate-100 dark:bg-[#162032] text-slate-600 dark:text-slate-400 hover:text-slate-900'
-                    }`}
-                  >
-                    Đang Học
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setStatusFilter('DANG_MO_DANG_KY')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer whitespace-nowrap ${
-                      statusFilter === 'DANG_MO_DANG_KY'
-                        ? 'bg-teal-600 text-white shadow-xs'
-                        : 'bg-slate-100 dark:bg-[#162032] text-slate-600 dark:text-slate-400 hover:text-slate-900'
-                    }`}
-                  >
-                    Tuyển Sinh
-                  </button>
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Đăng Ký Khóa Mới</span>
+                  </Link>
                 </div>
               </div>
 
               {/* Danh sách thẻ lớp học */}
               <div className="space-y-4">
-                {filteredEnrollments.length > 0 ? (
-                  filteredEnrollments.map((enr) => {
+                {displayEnrollments.length > 0 ? (
+                  displayEnrollments.map((enr) => {
                     const lop = enr.lopHoc;
                     const isExpanded = expandedClassId === Number(lop?.id);
                     const isHighlighted = highlightedClassId === Number(lop?.id);
@@ -693,7 +660,7 @@ export default function StudentSchedulePage() {
 
                               {isRecruiting ? (
                                 <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 flex items-center gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                   Đang Tuyển Sinh
                                 </span>
                               ) : isOngoing ? (
@@ -973,14 +940,18 @@ export default function StudentSchedulePage() {
                     );
                   })
                 ) : (
-                  <div className="p-12 rounded-2xl bg-white dark:bg-[#111928] border border-slate-200 dark:border-[#1e2d45] text-center space-y-2">
-                    <Search className="w-8 h-8 text-slate-400 mx-auto" />
+                  <div className="p-8 rounded-2xl bg-white dark:bg-[#111928] border border-slate-200 dark:border-[#1e2d45] text-center space-y-2.5">
+                    <Clock className="w-8 h-8 text-slate-300 dark:text-slate-600 mx-auto" />
                     <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm">
-                      Không tìm thấy lớp học phù hợp
+                      Không có lớp học nào có lịch vào {selectedDayFilter === 8 ? 'Chủ Nhật' : `Thứ ${selectedDayFilter}`}
                     </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
-                      Thử thay đổi từ khóa tìm kiếm hoặc chọn bộ lọc trạng thái khác.
-                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDayFilter('ALL')}
+                      className="text-xs text-teal-600 dark:text-teal-400 font-bold hover:underline cursor-pointer"
+                    >
+                      Bấm vào đây để xem tất cả {enrollments.length} lớp học
+                    </button>
                   </div>
                 )}
               </div>

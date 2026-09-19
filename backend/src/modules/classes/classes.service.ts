@@ -12,7 +12,14 @@ import {
   AssignTeacherDto,
   UpdateClassDto,
 } from './dto/classes.dto';
-import { TrangThaiLopHoc, TrangThaiKhoaHoc, VaiTroPhanCong, TrangThaiPhanCong } from '@prisma/client';
+import {
+  TrangThaiLopHoc,
+  TrangThaiKhoaHoc,
+  VaiTroPhanCong,
+  TrangThaiPhanCong,
+  TrangThaiDangKy,
+  TrangThaiHoaDon,
+} from '@prisma/client';
 
 @Injectable()
 export class ClassesService {
@@ -739,12 +746,68 @@ export class ClassesService {
   async updateClassStatus(id: number, trangThai: TrangThaiLopHoc) {
     const classRecord = await this.prisma.lopHoc.findUnique({
       where: { id: BigInt(id) },
+      include: {
+        dangKyHoc: {
+          include: { hoaDon: true },
+        },
+      },
     });
     if (!classRecord) throw new NotFoundException('Không tìm thấy lớp học.');
 
-    const updated = await this.prisma.lopHoc.update({
-      where: { id: BigInt(id) },
-      data: { trangThai },
+    const updated = await this.prisma.$transaction(async (tx) => {
+      // 1. Cập nhật trạng thái lớp học
+      const res = await tx.lopHoc.update({
+        where: { id: BigInt(id) },
+        data: {
+          trangThai,
+          ...(trangThai === TrangThaiLopHoc.DA_HUY ? { siSoHienTai: 0 } : {}),
+        },
+      });
+
+      // 2. Nếu lớp học bị HỦY (DA_HUY):
+      // - Chuyển các đăng ký đang chờ thanh toán sang DA_HUY
+      // - Chuyển các hóa đơn chưa thanh toán của lớp đó sang DA_HUY
+      if (trangThai === TrangThaiLopHoc.DA_HUY) {
+        await tx.dangKyHoc.updateMany({
+          where: {
+            lopHocId: BigInt(id),
+            trangThai: TrangThaiDangKy.CHO_THANH_TOAN,
+          },
+          data: { trangThai: TrangThaiDangKy.DA_HUY },
+        });
+
+        const pendingEnrollmentIds = classRecord.dangKyHoc
+          .filter(
+            (e) =>
+              e.trangThai === TrangThaiDangKy.CHO_THANH_TOAN &&
+              e.hoaDon?.trangThai === TrangThaiHoaDon.CHUA_THANH_TOAN,
+          )
+          .map((e) => e.id);
+
+        if (pendingEnrollmentIds.length > 0) {
+          await tx.hoaDon.updateMany({
+            where: {
+              dangKyHocId: { in: pendingEnrollmentIds },
+              trangThai: TrangThaiHoaDon.CHUA_THANH_TOAN,
+            },
+            data: { trangThai: TrangThaiHoaDon.DA_HUY },
+          });
+        }
+      }
+
+      // 3. Nếu lớp học KẾT THÚC (DA_KET_THUC):
+      // - Chuyển các học viên đã xác nhận (DA_XAC_NHAN) sang trạng thái HOAN_THANH
+      if (trangThai === TrangThaiLopHoc.DA_KET_THUC) {
+        await tx.dangKyHoc.updateMany({
+          where: {
+            lopHocId: BigInt(id),
+            trangThai: TrangThaiDangKy.DA_XAC_NHAN,
+          },
+          data: { trangThai: TrangThaiDangKy.HOAN_THANH },
+        });
+      }
+
+      return res;
     });
 
     return this.serializeBigInt(updated);

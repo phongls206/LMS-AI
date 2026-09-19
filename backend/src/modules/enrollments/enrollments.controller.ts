@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Param,
   Body,
   Query,
@@ -15,7 +16,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { VaiTro, TrangThaiHoaDon } from '@prisma/client';
+import { VaiTro, TrangThaiHoaDon, TrangThaiDangKy } from '@prisma/client';
 
 @ApiTags('Enrollments & Invoices')
 @Controller()
@@ -32,8 +33,24 @@ export class EnrollmentsController {
   @ApiOperation({
     summary: 'Đăng ký lớp học (Kiểm tra 4 điều kiện: sĩ số, trùng lặp, CEFR, lịch học + tự tạo hóa đơn)',
   })
-  createEnrollment(@Body() dto: CreateEnrollmentDto) {
-    return this.enrollmentsService.createEnrollment(dto);
+  createEnrollment(
+    @Body() dto: CreateEnrollmentDto,
+    @CurrentUser() user: any,
+  ) {
+    return this.enrollmentsService.createEnrollment(dto, user);
+  }
+
+  /**
+   * PUT /api/v1/enrollments/:id/status — UC006 (Quản lý, Tư vấn viên)
+   */
+  @Put('enrollments/:id/status')
+  @Roles(VaiTro.QUAN_LY, VaiTro.TU_VAN_VIEN)
+  @ApiOperation({ summary: 'Cập nhật trạng thái đăng ký học (xác nhận, hủy, hoàn thành)' })
+  updateEnrollmentStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('trangThai') trangThai: TrangThaiDangKy,
+  ) {
+    return this.enrollmentsService.updateEnrollmentStatus(id, trangThai);
   }
 
   /**

@@ -47,9 +47,10 @@ export default function AdminCoursesPage() {
     thoiLuongGio: 60,
     hocPhi: 3500000,
     moTa: '',
-    trangThai: 'DANG_MO',
+    trangThai: 'HOAT_DONG',
   });
   const [savingEdit, setSavingEdit] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const fetchCourses = async () => {
     try {
@@ -74,8 +75,9 @@ export default function AdminCoursesPage() {
       setSelectedCourseDetail(detail);
     } catch (err) {
       console.error(err);
-      alert('Không thể tải thông tin chi tiết khóa học.');
+      setErrorMessage('Không thể tải thông tin chi tiết khóa học.');
       setShowDetailModal(false);
+      setTimeout(() => setErrorMessage(null), 4000);
     } finally {
       setLoadingDetail(false);
     }
@@ -112,7 +114,8 @@ export default function AdminCoursesPage() {
       fetchCourses();
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi tạo khóa học.');
+      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi tạo khóa học.');
+      setTimeout(() => setErrorMessage(null), 4000);
     } finally {
       setSubmitting(false);
     }
@@ -134,7 +137,8 @@ export default function AdminCoursesPage() {
       }
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật khóa học.');
+      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật khóa học.');
+      setTimeout(() => setErrorMessage(null), 4000);
     } finally {
       setSavingEdit(false);
     }
@@ -198,9 +202,26 @@ export default function AdminCoursesPage() {
         </div>
 
         {message && (
-          <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center space-x-2 shadow-sm animate-fadeIn">
-            <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>{message}</span>
+          <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between shadow-sm animate-fadeIn">
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>{message}</span>
+            </div>
+            <button onClick={() => setMessage(null)} className="text-emerald-600 hover:text-emerald-800 p-0.5 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        {errorMessage && (
+          <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 text-sm flex items-center justify-between shadow-sm animate-fadeIn">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+            <button onClick={() => setErrorMessage(null)} className="text-rose-600 hover:text-rose-800 p-0.5 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
           </div>
         )}
 
