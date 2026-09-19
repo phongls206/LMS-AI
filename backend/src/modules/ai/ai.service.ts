@@ -248,7 +248,7 @@ export class AiService {
           loaiChucNang: functionType,
           promptInput: prompt,
           rawOutput: rawOutput || '',
-          validatedOutputJson: validatedJson,
+          validatedOutputJson: validatedJson ? this.serializeBigInt(validatedJson) : null,
           trangThai: status,
           thoiGianXuLyMs: Math.max(0, processingTimeMs),
         },
@@ -407,7 +407,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
             const rawClass = validClassMap.get(item.maLopHoc);
             return {
               ...item,
-              id: rawClass?.id,
+              id: rawClass ? Number(rawClass.id) : undefined,
               hocPhi: rawClass ? Number(rawClass.khoaHoc.hocPhi) : 0,
               lichHocText: rawClass ? rawClass.lichHoc.map((l) => `Thứ ${l.thuTrongTuan}`).join(', ') : '',
               conTrong: rawClass ? rawClass.siSoToiDa - rawClass.siSoHienTai : 0,
@@ -428,7 +428,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
         .filter((c) => c.khoaHoc.trinhDoYeuCau === dto.cefr)
         .slice(0, 3)
         .map((c) => ({
-          id: c.id,
+          id: Number(c.id),
           maLopHoc: c.maLopHoc,
           tenLopHoc: c.tenLopHoc,
           doTuongThich: 85,
@@ -441,7 +441,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
         }));
 
       validatedRecommendations = fallbackList.length > 0 ? fallbackList : availableClasses.slice(0, 3).map((c) => ({
-        id: c.id,
+        id: Number(c.id),
         maLopHoc: c.maLopHoc,
         tenLopHoc: c.tenLopHoc,
         doTuongThich: 75,
@@ -465,13 +465,13 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
       duration,
     );
 
-    return {
+    return this.serializeBigInt({
       success: true,
       mode: status === TrangThaiYeuCauAI.THANH_CONG ? 'AI_GEMINI' : 'RULE_BASED_FALLBACK',
       data: validatedRecommendations,
       soSanhLopHoc,
       insights: { soSanhLopHoc },
-    };
+    });
   }
 
   /**
