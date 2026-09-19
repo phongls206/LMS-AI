@@ -1,0 +1,1763 @@
+[
+  {
+    "id": 182,
+    "nguoiDungId": 5,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "\nBạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.\nDữ liệu học viên:\n- Trình độ CEFR: A2\n- Lịch rảnh: {\"thu\":[2,4,6],\"gio\":\"18:00-21:00\"}\n- Mục tiêu / Nguyện vọng cá nhân của học viên: \"Em muốn học cấp tốc trong 2-3 tháng để đạt chuẩn đầu ra đại học / chứng chỉ quốc tế, chú trọng tăng phản xạ Nói và củng cố Ngữ pháp.\"\n\nDanh sách lớp học thực tế đang mở tuyển sinh:\n[{\"maLopHoc\":\"ENG-A1-01\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":15,\"lichHoc\":[\"Thứ 3 (09:30 - 11:30)\",\"Thứ 5 (09:30 - 11:30)\"]},{\"maLopHoc\":\"IELTS-B1-02\",\"tenLopHoc\":\"IELTS B1 Cuối Tuần (Thứ 7 - CN)\",\"khoaHoc\":\"IELTS Preparation B1 → B2\",\"trinhDoYeuCau\":\"B1\",\"hocPhi\":3500000,\"conTrong\":22,\"lichHoc\":[\"Thứ 7 (00:30 - 03:30)\",\"Thứ 8 (00:30 - 03:30)\",\"Thứ 3 (10:00 - 12:30)\"]},{\"maLopHoc\":\"MAST-C2-01\",\"tenLopHoc\":\"C2 Academic Mastery & Advanced Debate (Thứ 7 - CN)\",\"khoaHoc\":\"Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)\",\"trinhDoYeuCau\":\"C2\",\"hocPhi\":6800000,\"conTrong\":12,\"lichHoc\":[\"Thứ 7 (10:00 - 12:30)\",\"Thứ 8 (10:00 - 12:30)\"]},{\"maLopHoc\":\"IELTS-C1-02\",\"tenLopHoc\":\"IELTS Chuyên Sâu 7.5 - 8.5+ Cấp Tốc (Tối Thứ 3-5-7)\",\"khoaHoc\":\"IELTS Expert 7.5 - 8.5+ (C1 → C2)\",\"trinhDoYeuCau\":\"C1\",\"hocPhi\":6200000,\"conTrong\":15,\"lichHoc\":[\"Thứ 3 (10:00 - 12:30)\",\"Thứ 5 (10:00 - 12:30)\",\"Thứ 7 (10:00 - 12:30)\"]},{\"maLopHoc\":\"ENG-A1-02\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cuối Tuần (Thứ 7 - CN)\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":16,\"lichHoc\":[\"Thứ 7 (06:00 - 09:00)\",\"Thứ 8 (06:00 - 09:00)\"]}]\n\nYÊU CẦU PHÂN TÍCH TỪ AI:\n1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.\n2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.\n3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.\n4. So sánh đối chiếu (soSanhLopHoc): Phân tích ngắn gọn ưu và nhược điểm đối chiếu giữa các lớp được đề xuất (về lịch học, đối tượng, trọng tâm kỹ năng), gợi ý lớp học phù hợp nhất với mục tiêu của học viên.\n5. Trả về đúng định dạng JSON:\n{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"...\",\n      \"tenLopHoc\": \"...\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"...\",\n      \"diemNoiBat\": \"...\",\n      \"loTrinhKhuyenNghi\": \"...\"\n    }\n  ],\n  \"soSanhLopHoc\": \"...\"\n}\n",
+    "rawOutput": "{\n  \"danhSachLop\": [],\n  \"soSanhLopHoc\": \"Hiện tại, trung tâm ETC English chưa có lớp học nào thực sự phù hợp với trình độ A2 và lịch rảnh buổi tối (Thứ 2, 4, 6 từ 18:00-21:00) của học viên. Các lớp hiện đang mở tuyển sinh hoặc yêu cầu trình độ quá cao (B1, C1, C2) hoặc có lịch học hoàn toàn không trùng khớp (buổi sáng hoặc cuối tuần). Do đó, chúng tôi khuyến nghị học viên liên hệ trực tiếp với trung tâm để được sắp xếp một lớp học riêng hoặc chờ các khóa học cấp tốc sát với trình độ A2 mở trong thời gian tới.\"\n}",
+    "validatedOutputJson": {
+      "soSanhLopHoc": "Đối chiếu giữa các lớp đề xuất: Các lớp học đều được tuyển chọn sát với trình độ CEFR A2 và khung lịch rảnh của bạn. Lớp có độ tương thích cao nhất tối ưu thời gian biểu và đảm bảo khả năng tiếp thu cân bằng giữa Ngữ pháp và Phản xạ thực chiến. Bạn nên ưu tiên lớp có lịch học cố định phù hợp nhất với quỹ thời gian tuần của mình.",
+      "recommendations": [
+        {
+          "hocPhi": 2200000,
+          "conTrong": 15,
+          "maLopHoc": "ENG-A1-01",
+          "tenLopHoc": "Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu",
+          "diemNoiBat": "Khóa học Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)",
+          "lyDoPhuHop": "Lớp học mở gần nhất, còn 15 chỗ trống. (Gợi ý tự động)",
+          "lichHocText": "Thứ 3, Thứ 5",
+          "doTuongThich": 75,
+          "loTrinhKhuyenNghi": "Tham gia lớp để đánh giá và xếp trình độ phù hợp"
+        },
+        {
+          "hocPhi": 3500000,
+          "conTrong": 22,
+          "maLopHoc": "IELTS-B1-02",
+          "tenLopHoc": "IELTS B1 Cuối Tuần (Thứ 7 - CN)",
+          "diemNoiBat": "Khóa học IELTS Preparation B1 → B2",
+          "lyDoPhuHop": "Lớp học mở gần nhất, còn 22 chỗ trống. (Gợi ý tự động)",
+          "lichHocText": "Thứ 7, Thứ 8, Thứ 3",
+          "doTuongThich": 75,
+          "loTrinhKhuyenNghi": "Tham gia lớp để đánh giá và xếp trình độ phù hợp"
+        },
+        {
+          "hocPhi": 6800000,
+          "conTrong": 12,
+          "maLopHoc": "MAST-C2-01",
+          "tenLopHoc": "C2 Academic Mastery & Advanced Debate (Thứ 7 - CN)",
+          "diemNoiBat": "Khóa học Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)",
+          "lyDoPhuHop": "Lớp học mở gần nhất, còn 12 chỗ trống. (Gợi ý tự động)",
+          "lichHocText": "Thứ 7, Thứ 8",
+          "doTuongThich": 75,
+          "loTrinhKhuyenNghi": "Tham gia lớp để đánh giá và xếp trình độ phù hợp"
+        }
+      ]
+    },
+    "trangThai": "FALLBACK_APPLIED",
+    "thoiGianXuLyMs": 1497,
+    "thoiGianGoi": "2026-09-07T00:25:25.955Z"
+  },
+  {
+    "id": 186,
+    "nguoiDungId": 1,
+    "loaiChucNang": "TOM_TAT_TIEN_DO",
+    "promptInput": "\nBạn là Trợ lý AI Phân tích Học tập của Trung tâm Anh ngữ ETC.\nDữ liệu học tập thực tế (Ground Truth) của học viên:\n- Họ và tên: Phạm Văn Hùng (Mã HV: HV002, Trình độ: A2)\n- Lớp học: IELTS B1 Cuối Tuần (Thứ 7 - CN) (IELTS-B1-02) - Khóa học: IELTS Preparation B1 → B2\n- Giai đoạn học tập hiện tại: Đang học giai đoạn đầu (Chưa có điểm kiểm tra)\n- Chuyên cần: 0/0 buổi tham gia (100%), Vắng: 0 buổi, Đi muộn: 0 buổi, Có phép: 0 buổi.\n- Điểm chuyên cần (20%): Chưa có\n- Điểm giữa kỳ (30%): Chưa thi\n- Điểm cuối kỳ (50%): Chưa thi\n- Điểm tổng kết: Chưa tổng kết (Khóa đang diễn ra)\n- Trạng thái hoàn thành: CHUA_XEP_LOAI\n- Nhận xét của giáo viên phụ trách: Chưa có nhận xét riêng\n\nYÊU CẦU ĐẶC BIỆT (PHÂN TÍCH SƯ PHẠM CHUYÊN SÂU & ĐỊNH HƯỚNG CẢI THIỆN BẢN THÂN):\n1. Nhận diện chính xác giai đoạn học tập (Đang học giai đoạn đầu (Chưa có điểm kiểm tra)):\n   - Nếu đang học giữa kỳ: Đánh giá chi tiết cơ hội, tính toán mục tiêu điểm bài thi cuối kỳ (chiếm 50% tổng điểm) cần đạt để bứt phá.\n   - Nếu đã hoàn thành khóa học: Đánh giá toàn diện nguyên nhân Đạt hoặc Không Đạt (do chuyên cần thấp <80% hay điểm bài thi dưới chuẩn), rút ra bài học kinh nghiệm sâu sắc.\n   - Nếu mới bắt đầu: Khích lệ và nhấn mạnh tầm quan trọng của kỷ luật chuyên cần ngay từ đầu.\n2. Nội dung phân tích cần chi tiết, thấu đáo, mang tính hành động cao (Actionable Guidance) để người học cải thiện bản thân:\n   - Phân tích rõ nguyên nhân gốc rễ (Root Cause) của điểm số và chuyên cần.\n   - Trình bày dạng các gạch đầu dòng (•) rõ ràng, dễ đọc, mạch lạc.\n   - Đưa ra lộ trình hành động cụ thể: thời lượng tự học mỗi ngày, các chủ điểm ngữ pháp/từ vựng cốt lõi cần củng cố và cách tận dụng bài tập AI để lấy lại nền tảng.\n3. Tuyệt đối trung thực với dữ liệu số CSDL, không bịa đặt điểm số chưa thi.\n\nTrả về đúng định dạng JSON hợp lệ:\n{\n  \"diemManh\": \"• Thái độ & Kỷ luật: [Nhận xét cụ thể về chuyên cần hoặc tinh thần học tập]\n• Năng lực & Bài thi: [Nhận xét chi tiết về bài kiểm tra đã hoàn thành]\n• Điểm sáng nỗ lực: [Ghi nhận sự cố gắng vượt bậc hoặc tiềm năng của học viên]\",\n  \"canKhacPhuc\": \"• Nguyên nhân gốc rễ: [Phân tích tác động của các buổi vắng/đi muộn hoặc thiếu hụt kiến thức cơ bản]\n• Điểm nghẽn kỹ năng: [Chỉ rõ phần bài thi/kỹ năng cần gia cố gấp]\n• Rủi ro cần phòng tránh: [Hậu quả nếu không khắc phục sớm ở các khóa học tiếp theo]\",\n  \"loiKhuyen\": \"• Bước 1 - Củng cố nền tảng: [Chủ điểm ngữ pháp và từ vựng cốt lõi cần ôn lại ngay theo chuẩn CEFR A2]\n• Bước 2 - Kỷ luật rèn luyện: [Kế hoạch phân bổ 30-45 phút tự học mỗi ngày và cách luyện đề trắc nghiệm AI]\n• Bước 3 - Mục tiêu bứt phá: [Chiến lược cụ thể cho kỳ thi cuối kỳ hoặc kế hoạch học tập tiếp theo]\",\n  \"tomTatChung\": \"[Đoạn nhận định sư phạm tổng thể 2-3 câu ngắn gọn, khách quan, mang tính xây dựng và tiếp thêm động lực cho học viên phấn đấu.]\"\n}\n",
+    "rawOutput": "{\n  \"diemManh\": \"• Thái độ & Kỷ luật: Học viên Phạm Văn Hùng hiện duy trì tốt sự chuyên cần ở giai đoạn đầu của khóa học IELTS B1 Cuối Tuần (100% chuyên cần, chưa ghi nhận vắng hay đi muộn).\\n• Năng lực & Bài thi: Khóa học đang ở giai đoạn khởi động, chưa phát sinh điểm số kiểm tra giữa kỳ và cuối kỳ theo đúng dữ liệu thực tế.\\n• Điểm sáng nỗ lực: Sự chuẩn bị tinh thần và việc tham gia lớp học đầy đủ từ những buổi đầu là tiền đề rất thuận lợi để tiếp thu kiến thức.\",\n  \"canKhacPhuc\": \"• Nguyên nhân gốc rễ: Do khóa học mới bắt đầu và chưa có bài kiểm tra, hiện chưa có dữ liệu điểm số để phân tích điểm nghẽn cụ thể.\\n• Điểm nghẽn kỹ năng: Học viên đang ở trình độ A2 và chuẩn bị bước lên lộ trình B1-B2, đòi hỏi khối lượng từ vựng và cấu trúc câu phức tạp hơn đáng kể so với hiện tại.\\n• Rủi ro cần phòng tránh: Chủ quan trong giai đoạn đầu có thể dẫn đến việc hổng kiến thức nền tảng khi giảng viên đẩy nhanh tốc độ ở các buổi học tiếp theo.\",\n  \"loiKhuyen\": \"• Bước 1 - Củng cố nền tảng: Ôn tập vững các thì cơ bản, cấu trúc câu đơn/ghép và bộ từ vựng chủ điểm thông dụng theo chuẩn CEFR A2.\\n• Bước 2 - Kỷ luật rèn luyện: Xây dựng thói quen tự học từ 30-45 phút mỗi ngày, tận dụng hệ thống bài tập AI của trung tâm để luyện tập từ vựng và phản xạ ngữ pháp.\\n• Bước 3 - Mục tiêu bứt phá: Duy trì kỷ luật chuyên cần tuyệt đối, chủ động tương tác với giáo viên và đặt mục tiêu chinh phục điểm số cao ở kỳ thi giữa kỳ sắp tới.\",\n  \"tomTatChung\": \"Học viên Phạm Văn Hùng đang khởi đầu khóa học IELTS B1 Cuối Tuần với thái độ kỷ luật rất tốt và chuyên cần tuyệt đối. Việc duy trì sự tập trung, chủ động tự học và tận dụng hiệu quả các công cụ hỗ trợ từ trung tâm ngay từ giai đoạn đầu này sẽ là chìa khóa quan trọng giúp bạn bứt phá thành công trong các bài kiểm tra sắp tới.\"\n}",
+    "validatedOutputJson": {
+      "duLieuGoc": {
+        "vang": 0,
+        "coMat": 0,
+        "coPhep": 0,
+        "diMuon": 0,
+        "xepLoai": "CHUA_XEP_LOAI",
+        "giaiDoan": "DANG_HOC_DAU_KHOA",
+        "diemCuoiKy": null,
+        "diemGiuaKy": null,
+        "diemTongKet": null,
+        "tongBuoiHoc": 0,
+        "giaiDoanText": "Đang học giai đoạn đầu (Chưa có điểm kiểm tra)",
+        "diemChuyenCan": null,
+        "tyLeChuyenCan": "100%",
+        "nhanXetGiaoVien": null
+      },
+      "aiInsights": {
+        "diemManh": "• Thái độ & Kỷ luật: Học viên Phạm Văn Hùng hiện duy trì tốt sự chuyên cần ở giai đoạn đầu của khóa học IELTS B1 Cuối Tuần (100% chuyên cần, chưa ghi nhận vắng hay đi muộn).\n• Năng lực & Bài thi: Khóa học đang ở giai đoạn khởi động, chưa phát sinh điểm số kiểm tra giữa kỳ và cuối kỳ theo đúng dữ liệu thực tế.\n• Điểm sáng nỗ lực: Sự chuẩn bị tinh thần và việc tham gia lớp học đầy đủ từ những buổi đầu là tiền đề rất thuận lợi để tiếp thu kiến thức.",
+        "loiKhuyen": "• Bước 1 - Củng cố nền tảng: Ôn tập vững các thì cơ bản, cấu trúc câu đơn/ghép và bộ từ vựng chủ điểm thông dụng theo chuẩn CEFR A2.\n• Bước 2 - Kỷ luật rèn luyện: Xây dựng thói quen tự học từ 30-45 phút mỗi ngày, tận dụng hệ thống bài tập AI của trung tâm để luyện tập từ vựng và phản xạ ngữ pháp.\n• Bước 3 - Mục tiêu bứt phá: Duy trì kỷ luật chuyên cần tuyệt đối, chủ động tương tác với giáo viên và đặt mục tiêu chinh phục điểm số cao ở kỳ thi giữa kỳ sắp tới.",
+        "canKhacPhuc": "• Nguyên nhân gốc rễ: Do khóa học mới bắt đầu và chưa có bài kiểm tra, hiện chưa có dữ liệu điểm số để phân tích điểm nghẽn cụ thể.\n• Điểm nghẽn kỹ năng: Học viên đang ở trình độ A2 và chuẩn bị bước lên lộ trình B1-B2, đòi hỏi khối lượng từ vựng và cấu trúc câu phức tạp hơn đáng kể so với hiện tại.\n• Rủi ro cần phòng tránh: Chủ quan trong giai đoạn đầu có thể dẫn đến việc hổng kiến thức nền tảng khi giảng viên đẩy nhanh tốc độ ở các buổi học tiếp theo.",
+        "tomTatChung": "Học viên Phạm Văn Hùng đang khởi đầu khóa học IELTS B1 Cuối Tuần với thái độ kỷ luật rất tốt và chuyên cần tuyệt đối. Việc duy trì sự tập trung, chủ động tự học và tận dụng hiệu quả các công cụ hỗ trợ từ trung tâm ngay từ giai đoạn đầu này sẽ là chìa khóa quan trọng giúp bạn bứt phá thành công trong các bài kiểm tra sắp tới."
+      }
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2721,
+    "thoiGianGoi": "2026-09-07T05:05:39.095Z"
+  },
+  {
+    "id": 176,
+    "nguoiDungId": 5,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "Tư vấn lớp học cho học viên trình độ B1, lịch rảnh Thứ 2-4-6 tối, mục tiêu thi IELTS 6.5 trong 3 tháng",
+    "rawOutput": "[{\"maLopHoc\": \"IELTS-B1-01\", \"tenLopHoc\": \"IELTS B1 Buổi tối (Thứ 2-4-6)\", \"doTuongThich\": 96, \"lyDoPhuHop\": \"Trình độ B1 và lịch rảnh trùng khớp 100%.\"}]",
+    "validatedOutputJson": [
+      {
+        "maLopHoc": "IELTS-B1-01",
+        "tenLopHoc": "IELTS B1 Buổi tối (Thứ 2-4-6)",
+        "doTuongThich": 96
+      }
+    ],
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 1250,
+    "thoiGianGoi": "2026-09-06T18:18:57.872Z"
+  },
+  {
+    "id": 177,
+    "nguoiDungId": 2,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "Sinh 5 câu trắc nghiệm chủ đề Thì Hiện Tại Hoàn Thành chuẩn CEFR B1",
+    "rawOutput": "{\"chuDe\": \"Present Perfect\", \"trinhDo\": \"B1\", \"cauHoi\": [...]}",
+    "validatedOutputJson": {
+      "chuDe": "Present Perfect",
+      "cauHoi": [],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2400,
+    "thoiGianGoi": "2026-09-06T18:18:57.872Z"
+  },
+  {
+    "id": 178,
+    "nguoiDungId": 5,
+    "loaiChucNang": "TOM_TAT_TIEN_DO",
+    "promptInput": "Tóm tắt tiến độ học tập cho học viên Lê Thị Hoa lớp IELTS-B1-01",
+    "rawOutput": "Học viên có tỷ lệ chuyên cần cao (95%), điểm tổng kết đạt 87.75. Điểm mạnh: Ngữ pháp chắc chắn, phát âm chuẩn. Cần khắc phục: Nâng cao tốc độ làm bài Reading.",
+    "validatedOutputJson": {
+      "tongKet": 87.75,
+      "chuyenCan": 95
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 1800,
+    "thoiGianGoi": "2026-09-06T18:18:57.872Z"
+  },
+  {
+    "id": 179,
+    "nguoiDungId": 716,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "Tư vấn lớp TOEIC cấp tốc mục tiêu 750+ cho người đi làm tối 2-4-6",
+    "rawOutput": "[{\"maLopHoc\": \"TOEIC-B1-01\", \"tenLopHoc\": \"TOEIC Đột Phá 650+ Tối T2-4-6\", \"doTuongThich\": 98}]",
+    "validatedOutputJson": [
+      {
+        "maLopHoc": "TOEIC-B1-01",
+        "tenLopHoc": "TOEIC Đột Phá 650+ Tối T2-4-6",
+        "doTuongThich": 98
+      }
+    ],
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 1320,
+    "thoiGianGoi": "2026-09-06T18:18:57.872Z"
+  },
+  {
+    "id": 180,
+    "nguoiDungId": 79,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "Sinh 10 câu trắc nghiệm từ vựng kinh tế văn phòng TOEIC Part 5 chuẩn CEFR B1",
+    "rawOutput": "{\"chuDe\": \"Business Vocabulary\", \"trinhDo\": \"B1\", \"cauHoi\": [...]}",
+    "validatedOutputJson": {
+      "chuDe": "Business Vocabulary",
+      "cauHoi": [],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2150,
+    "thoiGianGoi": "2026-09-06T18:18:57.872Z"
+  },
+  {
+    "id": 183,
+    "nguoiDungId": 5,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788740738897_9055.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- QUY TẮC BẮT BUỘC: Với câu hỏi Đúng/Sai (True/False), \"luaChon\" CHỈ ĐƯỢC CÓ 2 ĐÁP ÁN A VÀ B (True và False), KHÔNG ĐƯỢC TẠO C, D.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct sentence using the Present Perfect tense to describe an experience in your life up to now.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"I have never tasted authentic Japanese ramen before.\",\n        \"B\": \"I never taste authentic Japanese ramen yesterday.\",\n        \"C\": \"I am never tasting authentic Japanese ramen.\",\n        \"D\": \"I had never tasted authentic Japanese ramen by 2010.\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Thì hiện tại hoàn thành dùng 'have never + V3/ed' để diễn tả trải nghiệm tính đến thời điểm hiện tại.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"In the sentence 'She has already finished her science project,' the action has completed recently with a result visible in the present.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đúng, 'already' trong thì hiện tại hoàn thành nhấn mạnh một hành động đã hoàn thành sớm hơn dự kiến và có liên quan đến hiện tại.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Which of the following signal words are commonly used with the Present Perfect tense? (Select all that apply)\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"Since\",\n        \"B\": \"Yesterday\",\n        \"C\": \"Yet\",\n        \"D\": \"At this moment\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"C\"\n      ],\n      \"giaiThich\": \"'Since' và 'Yet' là các dấu hiệu nhận biết phổ biến của thì hiện tại hoàn thành. 'Yesterday' dùng cho quá khứ đơn, 'At this moment' dùng cho hiện tại tiếp diễn.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Complete the dialogue: '___ you ever ___ to the new art gallery downtown?' - 'No, I haven't.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"Did / go\",\n        \"B\": \"Have / been\",\n        \"C\": \"Has / gone\",\n        \"D\": \"Were / being\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Câu hỏi kinh nghiệm dùng 'Have you ever been to...?' (đã từng đến đâu và đã trở về).\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"The phrase 'for three years' in the sentence 'We have lived in this coastal town for three years' indicates a finished period of time in the past.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Sai, 'for three years' chỉ khoảng thời gian kéo dài từ quá khứ và vẫn tiếp tục đến hiện tại, không phải là một khoảng thời gian đã kết thúc.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "I have never tasted authentic Japanese ramen before.",
+            "B": "I never taste authentic Japanese ramen yesterday.",
+            "C": "I am never tasting authentic Japanese ramen.",
+            "D": "I had never tasted authentic Japanese ramen by 2010."
+          },
+          "noiDung": "Choose the correct sentence using the Present Perfect tense to describe an experience in your life up to now.",
+          "dapAnDung": "A",
+          "giaiThich": "Thì hiện tại hoàn thành dùng 'have never + V3/ed' để diễn tả trải nghiệm tính đến thời điểm hiện tại.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "In the sentence 'She has already finished her science project,' the action has completed recently with a result visible in the present.",
+          "dapAnDung": "A",
+          "giaiThich": "Đúng, 'already' trong thì hiện tại hoàn thành nhấn mạnh một hành động đã hoàn thành sớm hơn dự kiến và có liên quan đến hiện tại.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "Since",
+            "B": "Yesterday",
+            "C": "Yet",
+            "D": "At this moment"
+          },
+          "noiDung": "Which of the following signal words are commonly used with the Present Perfect tense? (Select all that apply)",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "'Since' và 'Yet' là các dấu hiệu nhận biết phổ biến của thì hiện tại hoàn thành. 'Yesterday' dùng cho quá khứ đơn, 'At this moment' dùng cho hiện tại tiếp diễn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "Did / go",
+            "B": "Have / been",
+            "C": "Has / gone",
+            "D": "Were / being"
+          },
+          "noiDung": "Complete the dialogue: '___ you ever ___ to the new art gallery downtown?' - 'No, I haven't.'",
+          "dapAnDung": "B",
+          "giaiThich": "Câu hỏi kinh nghiệm dùng 'Have you ever been to...?' (đã từng đến đâu và đã trở về).",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "The phrase 'for three years' in the sentence 'We have lived in this coastal town for three years' indicates a finished period of time in the past.",
+          "dapAnDung": "B",
+          "giaiThich": "Sai, 'for three years' chỉ khoảng thời gian kéo dài từ quá khứ và vẫn tiếp tục đến hiện tại, không phải là một khoảng thời gian đã kết thúc.",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2772,
+    "thoiGianGoi": "2026-09-07T00:25:41.671Z"
+  },
+  {
+    "id": 187,
+    "nguoiDungId": 5,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 15 câu về chủ đề \"Quá khứ đơn\", độ khó chuẩn CEFR \"A1\".\nMã phiên sinh đề ngẫu nhiên: #1788944428639_4473.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 15 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 15 phần tử.\n- Đúng 15 câu hỏi được đánh số id tuần tự từ 1 đến 15.\n- QUY TẮC BẮT BUỘC: Với câu hỏi Đúng/Sai (True/False), \"luaChon\" CHỈ ĐƯỢC CÓ 2 ĐÁP ÁN A VÀ B (True và False), KHÔNG ĐƯỢC TẠO C, D.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Quá khứ đơn\",\n  \"trinhDo\": \"A1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Quá khứ đơn\",\n  \"trinhDo\": \"A1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct past form of the verb 'go'.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"goed\",\n        \"B\": \"went\",\n        \"C\": \"gone\",\n        \"D\": \"goes\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Động từ 'go' ở dạng quá khứ đơn là động từ bất quy tắc 'went'.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"Sentence: 'She was tired yesterday.' Is this sentence in the Past Simple tense using 'to be'?\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"'Was' là dạng quá khứ của động từ 'to be' cho chủ ngữ số ít 'She', diễn tả trạng thái trong quá khứ.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Which of these words are time markers commonly used in the Past Simple tense?\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"yesterday\",\n        \"B\": \"tomorrow\",\n        \"C\": \"last night\",\n        \"D\": \"every day\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"C\"\n      ],\n      \"giaiThich\": \"'Yesterday' và 'last night' là các trạng ngữ chỉ thời gian trong quá khứ.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Complete the sentence: 'They _______ football in the park last Sunday.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"play\",\n        \"B\": \"plays\",\n        \"C\": \"played\",\n        \"D\": \"playing\"\n      },\n      \"dapAnDung\": \"C\",\n      \"giaiThich\": \"Có trạng ngữ 'last Sunday' nên động từ phải chia ở thì quá khứ đơn, 'play' là động từ có quy tắc nên thêm '-ed'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"Sentence: 'He didn't ate breakfast this morning.' Is this sentence grammatically correct?\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Sau trợ động từ phủ định 'didn't', động từ chính phải giữ nguyên thể ('eat'), không dùng 'ate'.\"\n    },\n    {\n      \"id\": 6,\n      \"noiDung\": \"Select the regular past tense verbs from the list below.\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"walked\",\n        \"B\": \"saw\",\n        \"C\": \"talked\",\n        \"D\": \"ran\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"C\"\n      ],\n      \"giaiThich\": \"'Walked' và 'talked' là hai động từ có quy tắc thêm '-ed', trong khi 'saw' và 'ran' là bất quy tắc.\"\n    },\n    {\n      \"id\": 7,\n      \"noiDung\": \"What is the correct negative form of: 'I liked the movie.'?\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"I not liked the movie.\",\n        \"B\": \"I didn't like the movie.\",\n        \"C\": \"I wasn't like the movie.\",\n        \"D\": \"I don't like the movie.\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Thì quá khứ đơn phủ định dùng cấu trúc: Subject + didn't + động từ nguyên thể.\"\n    },\n    {\n      \"id\": 8,\n      \"noiDung\": \"Sentence: 'Did you visited your grandma last weekend?' Is this question correct?\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Khi đã có trợ động từ 'Did' ở đầu câu hỏi, động từ chính 'visited' phải chuyển về nguyên thể là 'visit'.\"\n    },\n    {\n      \"id\": 9,\n      \"noiDung\": \"Choose the correct past forms for 'have', 'do', and 'make'.\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"had\",\n        \"B\": \"did\",\n        \"C\": \"maked\",\n        \"D\": \"made\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"B\",\n        \"D\"\n      ],\n      \"giaiThich\": \"Quá khứ của 'have' là 'had', của 'do' là 'did', và của 'make' là 'made'. 'Maked' là sai.\"\n    },\n    {\n      \"id\": 10,\n      \"noiDung\": \"Complete the sentence: 'Where _______ you born?'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"are\",\n        \"B\": \"were\",\n        \"C\": \"did\",\n        \"D\": \"was\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Chủ ngữ là 'you', trong cấu trúc bị động/trạng thái quá khứ với 'to be', ta dùng 'were'.\"\n    },\n    {\n      \"id\": 11,\n      \"noiDung\": \"Sentence: 'The children were happy at the party.' Does this use the past tense of 'to be' correctly?\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"'The children' là danh từ số nhiều, đi với 'were' trong quá khứ là hoàn toàn chính xác.\"\n    },\n    {\n      \"id\": 12,\n      \"noiDung\": \"Which sentences correctly use the Past Simple tense?\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"She bought a new hat yesterday.\",\n        \"B\": \"I drink milk every morning.\",\n        \"C\": \"They arrived home late last night.\",\n        \"D\": \"He will travel to Japan next month.\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"C\"\n      ],\n      \"giaiThich\": \"Câu A dùng 'bought' và câu C dùng 'arrived' đều thuộc thì quá khứ đơn.\"\n    },\n    {\n      \"id\": 13,\n      \"noiDung\": \"Choose the correct answer for the question: 'What did you eat for lunch?' -> 'I _______ a sandwich.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"eat\",\n        \"B\": \"ate\",\n        \"C\": \"eaten\",\n        \"D\": \"eating\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Trả lời cho câu hỏi quá khứ đơn cần dùng động từ ở dạng quá khứ, 'ate' là dạng quá khứ của 'eat'.\"\n    },\n    {\n      \"id\": 14,\n      \"noiDung\": \"Sentence: 'My brother study English two hours ago.' Is this sentence correct?\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Động từ 'study' phải chia ở quá khứ thành 'studied' vì có trạng ngữ 'two hours ago'.\"\n    },\n    {\n      \"id\": 15,\n      \"noiDung\": \"Choose the correct irregular past tense forms.\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"write -> wrote\",\n        \"B\": \"read -> read\",\n        \"C\": \"clean -> cleaned\",\n        \"D\": \"speak -> spoke\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"B\",\n        \"D\"\n      ],\n      \"giaiThich\": \"'Wrote', 'read' (phát âm khác nhưng viết giống), và 'spoke' là các dạng quá khứ bất quy tắc đúng. 'Cleaned' là có quy tắc.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Quá khứ đơn",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "goed",
+            "B": "went",
+            "C": "gone",
+            "D": "goes"
+          },
+          "noiDung": "Choose the correct past form of the verb 'go'.",
+          "dapAnDung": "B",
+          "giaiThich": "Động từ 'go' ở dạng quá khứ đơn là động từ bất quy tắc 'went'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Sentence: 'She was tired yesterday.' Is this sentence in the Past Simple tense using 'to be'?",
+          "dapAnDung": "A",
+          "giaiThich": "'Was' là dạng quá khứ của động từ 'to be' cho chủ ngữ số ít 'She', diễn tả trạng thái trong quá khứ.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "yesterday",
+            "B": "tomorrow",
+            "C": "last night",
+            "D": "every day"
+          },
+          "noiDung": "Which of these words are time markers commonly used in the Past Simple tense?",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "'Yesterday' và 'last night' là các trạng ngữ chỉ thời gian trong quá khứ.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "play",
+            "B": "plays",
+            "C": "played",
+            "D": "playing"
+          },
+          "noiDung": "Complete the sentence: 'They _______ football in the park last Sunday.'",
+          "dapAnDung": "C",
+          "giaiThich": "Có trạng ngữ 'last Sunday' nên động từ phải chia ở thì quá khứ đơn, 'play' là động từ có quy tắc nên thêm '-ed'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Sentence: 'He didn't ate breakfast this morning.' Is this sentence grammatically correct?",
+          "dapAnDung": "B",
+          "giaiThich": "Sau trợ động từ phủ định 'didn't', động từ chính phải giữ nguyên thể ('eat'), không dùng 'ate'.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 6,
+          "luaChon": {
+            "A": "walked",
+            "B": "saw",
+            "C": "talked",
+            "D": "ran"
+          },
+          "noiDung": "Select the regular past tense verbs from the list below.",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "'Walked' và 'talked' là hai động từ có quy tắc thêm '-ed', trong khi 'saw' và 'ran' là bất quy tắc.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 7,
+          "luaChon": {
+            "A": "I not liked the movie.",
+            "B": "I didn't like the movie.",
+            "C": "I wasn't like the movie.",
+            "D": "I don't like the movie."
+          },
+          "noiDung": "What is the correct negative form of: 'I liked the movie.'?",
+          "dapAnDung": "B",
+          "giaiThich": "Thì quá khứ đơn phủ định dùng cấu trúc: Subject + didn't + động từ nguyên thể.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 8,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Sentence: 'Did you visited your grandma last weekend?' Is this question correct?",
+          "dapAnDung": "B",
+          "giaiThich": "Khi đã có trợ động từ 'Did' ở đầu câu hỏi, động từ chính 'visited' phải chuyển về nguyên thể là 'visit'.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 9,
+          "luaChon": {
+            "A": "had",
+            "B": "did",
+            "C": "maked",
+            "D": "made"
+          },
+          "noiDung": "Choose the correct past forms for 'have', 'do', and 'make'.",
+          "dapAnDung": [
+            "A",
+            "B",
+            "D"
+          ],
+          "giaiThich": "Quá khứ của 'have' là 'had', của 'do' là 'did', và của 'make' là 'made'. 'Maked' là sai.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 10,
+          "luaChon": {
+            "A": "are",
+            "B": "were",
+            "C": "did",
+            "D": "was"
+          },
+          "noiDung": "Complete the sentence: 'Where _______ you born?'",
+          "dapAnDung": "B",
+          "giaiThich": "Chủ ngữ là 'you', trong cấu trúc bị động/trạng thái quá khứ với 'to be', ta dùng 'were'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 11,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Sentence: 'The children were happy at the party.' Does this use the past tense of 'to be' correctly?",
+          "dapAnDung": "A",
+          "giaiThich": "'The children' là danh từ số nhiều, đi với 'were' trong quá khứ là hoàn toàn chính xác.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 12,
+          "luaChon": {
+            "A": "She bought a new hat yesterday.",
+            "B": "I drink milk every morning.",
+            "C": "They arrived home late last night.",
+            "D": "He will travel to Japan next month."
+          },
+          "noiDung": "Which sentences correctly use the Past Simple tense?",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "Câu A dùng 'bought' và câu C dùng 'arrived' đều thuộc thì quá khứ đơn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 13,
+          "luaChon": {
+            "A": "eat",
+            "B": "ate",
+            "C": "eaten",
+            "D": "eating"
+          },
+          "noiDung": "Choose the correct answer for the question: 'What did you eat for lunch?' -> 'I _______ a sandwich.'",
+          "dapAnDung": "B",
+          "giaiThich": "Trả lời cho câu hỏi quá khứ đơn cần dùng động từ ở dạng quá khứ, 'ate' là dạng quá khứ của 'eat'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 14,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Sentence: 'My brother study English two hours ago.' Is this sentence correct?",
+          "dapAnDung": "B",
+          "giaiThich": "Động từ 'study' phải chia ở quá khứ thành 'studied' vì có trạng ngữ 'two hours ago'.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 15,
+          "luaChon": {
+            "A": "write -> wrote",
+            "B": "read -> read",
+            "C": "clean -> cleaned",
+            "D": "speak -> spoke"
+          },
+          "noiDung": "Choose the correct irregular past tense forms.",
+          "dapAnDung": [
+            "A",
+            "B",
+            "D"
+          ],
+          "giaiThich": "'Wrote', 'read' (phát âm khác nhưng viết giống), và 'spoke' là các dạng quá khứ bất quy tắc đúng. 'Cleaned' là có quy tắc.",
+          "loaiCauHoi": "MULTIPLE"
+        }
+      ],
+      "trinhDo": "A1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 6225,
+    "thoiGianGoi": "2026-09-09T09:00:34.868Z"
+  },
+  {
+    "id": 181,
+    "nguoiDungId": 733,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "\nBạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.\nDữ liệu học viên:\n- Trình độ CEFR: C2\n- Lịch rảnh: {\"thu\":[2,4,6],\"gio\":\"18:00-21:00\"}\n- Mục tiêu / Nguyện vọng cá nhân của học viên: \"Mong muốn nâng cao trình độ và tìm lớp học phù hợp nhất với quỹ thời gian\"\n\nDanh sách lớp học thực tế đang mở tuyển sinh:\n[{\"maLopHoc\":\"ENG-A1-01\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":15,\"lichHoc\":[\"Thứ 3 (09:30 - 11:30)\",\"Thứ 5 (09:30 - 11:30)\"]},{\"maLopHoc\":\"IELTS-B1-02\",\"tenLopHoc\":\"IELTS B1 Cuối Tuần (Thứ 7 - CN)\",\"khoaHoc\":\"IELTS Preparation B1 → B2\",\"trinhDoYeuCau\":\"B1\",\"hocPhi\":3500000,\"conTrong\":22,\"lichHoc\":[\"Thứ 7 (00:30 - 03:30)\",\"Thứ 8 (00:30 - 03:30)\",\"Thứ 3 (10:00 - 12:30)\"]},{\"maLopHoc\":\"ENG-A1-02\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cuối Tuần (Thứ 7 - CN)\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":16,\"lichHoc\":[\"Thứ 7 (06:00 - 09:00)\",\"Thứ 8 (06:00 - 09:00)\"]},{\"maLopHoc\":\"MAST-C2-01\",\"tenLopHoc\":\"C2 Academic Mastery & Advanced Debate (Thứ 7 - CN)\",\"khoaHoc\":\"Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)\",\"trinhDoYeuCau\":\"C2\",\"hocPhi\":6800000,\"conTrong\":12,\"lichHoc\":[\"Thứ 7 (10:00 - 12:30)\",\"Thứ 8 (10:00 - 12:30)\"]},{\"maLopHoc\":\"IELTS-C1-02\",\"tenLopHoc\":\"IELTS Chuyên Sâu 7.5 - 8.5+ Cấp Tốc (Tối Thứ 3-5-7)\",\"khoaHoc\":\"IELTS Expert 7.5 - 8.5+ (C1 → C2)\",\"trinhDoYeuCau\":\"C1\",\"hocPhi\":6200000,\"conTrong\":15,\"lichHoc\":[\"Thứ 3 (10:00 - 12:30)\",\"Thứ 5 (10:00 - 12:30)\",\"Thứ 7 (10:00 - 12:30)\"]}]\n\nYÊU CẦU PHÂN TÍCH TỪ AI:\n1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.\n2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.\n3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.\n4. So sánh đối chiếu (soSanhLopHoc): Phân tích ngắn gọn ưu và nhược điểm đối chiếu giữa các lớp được đề xuất (về lịch học, đối tượng, trọng tâm kỹ năng), gợi ý lớp học phù hợp nhất với mục tiêu của học viên.\n5. Trả về đúng định dạng JSON:\n{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"...\",\n      \"tenLopHoc\": \"...\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"...\",\n      \"diemNoiBat\": \"...\",\n      \"loTrinhKhuyenNghi\": \"...\"\n    }\n  ],\n  \"soSanhLopHoc\": \"...\"\n}\n",
+    "rawOutput": "{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"MAST-C2-01\",\n      \"tenLopHoc\": \"C2 Academic Mastery & Advanced Debate (Thứ 7 - CN)\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"Học viên sở hữu trình độ C2, lớp học này đáp ứng chính xác cấp độ hiện tại giúp học viên tiếp tục duy trì và nâng cao năng lực ngoại ngữ học thuật cũng như kỹ năng diễn thuyết chuyên sâu.\",\n      \"diemNoiBat\": \"Chương trình chuyên sâu dành riêng cho cấp độ C2, tập trung vào học thuật tinh hoa và tranh biện nâng cao.\",\n      \"loTrinhKhuyenNghi\": \"Hoàn thành khóa học C2 Mastery để đạt độ lưu loát và tư duy phản biện đỉnh cao tương đương người bản xứ học thức cao.\"\n    },\n    {\n      \"maLopHoc\": \"IELTS-C1-02\",\n      \"tenLopHoc\": \"IELTS Chuyên Sâu 7.5 - 8.5+ Cấp Tốc (Tối Thứ 3-5-7)\",\n      \"doTuongThich\": 80,\n      \"lyDoPhuHop\": \"Dù học viên đạt chuẩn C2, lớp IELTS 7.5 - 8.5+ này phù hợp nếu học viên có nhu cầu sở hữu chứng chỉ quốc tế điểm số cao để làm đẹp hồ sơ du học hoặc định cư.\",\n      \"diemNoiBat\": \"Trọng tâm luyện thi cấp tốc đạt band điểm tối đa 8.5+ với sự hướng dẫn của chuyên gia đầu ngành.\",\n      \"loTrinhKhuyenNghi\": \"Tham gia lớp để chuẩn hóa các tiêu chí chấm thi IELTS học thuật ở mức điểm gần như tuyệt đối.\"\n    }\n  ],\n  \"soSanhLopHoc\": \"Lớp MAST-C2-01 hoàn toàn tương thích về mặt trình độ (C2) giúp học viên phát triển toàn diện tư duy tranh biện và tiếng Anh học thuật đỉnh cao, tuy nhiên lịch học rơi vào cuối tuần (Thứ 7 - CN) chưa khớp hoàn toàn với lịch rảnh buổi tối Thứ 2-4-6 của học viên. Trong khi đó, lớp IELTS-C1-02 có buổi học vào tối Thứ 3 trùng với một phần lịch rảnh của học viên nhưng yêu cầu đầu vào thấp hơn một chút (C1) và hướng mạnh về luyện thi chứng chỉ. Xét trên mục tiêu nâng cao trình độ tối đa của học viên C2, lớp MAST-C2-01 là sự lựa chọn ưu tiên hàng đầu, học viên có thể sắp xếp lại thời gian biểu cá nhân để tham gia.\"\n}",
+    "validatedOutputJson": {
+      "soSanhLopHoc": "Lớp MAST-C2-01 hoàn toàn tương thích về mặt trình độ (C2) giúp học viên phát triển toàn diện tư duy tranh biện và tiếng Anh học thuật đỉnh cao, tuy nhiên lịch học rơi vào cuối tuần (Thứ 7 - CN) chưa khớp hoàn toàn với lịch rảnh buổi tối Thứ 2-4-6 của học viên. Trong khi đó, lớp IELTS-C1-02 có buổi học vào tối Thứ 3 trùng với một phần lịch rảnh của học viên nhưng yêu cầu đầu vào thấp hơn một chút (C1) và hướng mạnh về luyện thi chứng chỉ. Xét trên mục tiêu nâng cao trình độ tối đa của học viên C2, lớp MAST-C2-01 là sự lựa chọn ưu tiên hàng đầu, học viên có thể sắp xếp lại thời gian biểu cá nhân để tham gia.",
+      "recommendations": [
+        {
+          "hocPhi": 6800000,
+          "conTrong": 12,
+          "maLopHoc": "MAST-C2-01",
+          "tenLopHoc": "C2 Academic Mastery & Advanced Debate (Thứ 7 - CN)",
+          "diemNoiBat": "Chương trình chuyên sâu dành riêng cho cấp độ C2, tập trung vào học thuật tinh hoa và tranh biện nâng cao.",
+          "lyDoPhuHop": "Học viên sở hữu trình độ C2, lớp học này đáp ứng chính xác cấp độ hiện tại giúp học viên tiếp tục duy trì và nâng cao năng lực ngoại ngữ học thuật cũng như kỹ năng diễn thuyết chuyên sâu.",
+          "lichHocText": "Thứ 7, Thứ 8",
+          "doTuongThich": 95,
+          "loTrinhKhuyenNghi": "Hoàn thành khóa học C2 Mastery để đạt độ lưu loát và tư duy phản biện đỉnh cao tương đương người bản xứ học thức cao."
+        },
+        {
+          "hocPhi": 6200000,
+          "conTrong": 15,
+          "maLopHoc": "IELTS-C1-02",
+          "tenLopHoc": "IELTS Chuyên Sâu 7.5 - 8.5+ Cấp Tốc (Tối Thứ 3-5-7)",
+          "diemNoiBat": "Trọng tâm luyện thi cấp tốc đạt band điểm tối đa 8.5+ với sự hướng dẫn của chuyên gia đầu ngành.",
+          "lyDoPhuHop": "Dù học viên đạt chuẩn C2, lớp IELTS 7.5 - 8.5+ này phù hợp nếu học viên có nhu cầu sở hữu chứng chỉ quốc tế điểm số cao để làm đẹp hồ sơ du học hoặc định cư.",
+          "lichHocText": "Thứ 3, Thứ 5, Thứ 7",
+          "doTuongThich": 80,
+          "loTrinhKhuyenNghi": "Tham gia lớp để chuẩn hóa các tiêu chí chấm thi IELTS học thuật ở mức điểm gần như tuyệt đối."
+        }
+      ]
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2603,
+    "thoiGianGoi": "2026-09-06T18:34:12.542Z"
+  },
+  {
+    "id": 184,
+    "nguoiDungId": 5,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788752498497_5926.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- QUY TẮC BẮT BUỘC: Với câu hỏi Đúng/Sai (True/False), \"luaChon\" CHỈ ĐƯỢC CÓ 2 ĐÁP ÁN A VÀ B (True và False), KHÔNG ĐƯỢC TẠO C, D.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct sentence that uses the Present Perfect tense to describe an experience in life without a specific time.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"She has visited Tokyo three times in her life.\",\n        \"B\": \"She visited Tokyo three times last year.\",\n        \"C\": \"She visits Tokyo three times every month.\",\n        \"D\": \"She is visiting Tokyo at the moment.\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Thì hiện tại hoàn thành dùng để diễn tả trải nghiệm tính đến thời điểm hiện tại (có 'in her life'), trong khi last year dùng quá khứ đơn, every month dùng hiện tại đơn.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"Determine whether the following statement is True or False: 'Since' is used with a point of time in the past, whereas 'for' is used with a period of time.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"'Since' đứng trước mốc thời gian (ví dụ: 2010, Monday) và 'for' đứng trước khoảng thời gian (ví dụ: 3 years, 2 weeks) trong thì hiện tại hoàn thành.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Which of the following signal words are commonly used with the Present Perfect tense? (Select all that apply)\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"Already\",\n        \"B\": \"Yesterday\",\n        \"C\": \"Yet\",\n        \"D\": \"At this moment\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"C\"\n      ],\n      \"giaiThich\": \"'Already' và 'yet' là các trạng từ phổ biến trong thì hiện tại hoàn thành. 'Yesterday' dùng cho quá khứ đơn và 'at this moment' dùng cho hiện tại tiếp diễn.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Fill in the blank: 'Mark _________ his smartphone, so he cannot log into his social media account now.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"lose\",\n        \"B\": \"has lost\",\n        \"C\": \"lost\",\n        \"D\": \"is losing\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Hành động mất điện thoại xảy ra trong quá khứ nhưng kết quả ảnh hưởng đến hiện tại ('so he cannot log in'), phù hợp dùng thì hiện tại hoàn thành 'has lost'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"Determine whether the following statement is True or False: The sentence 'We have already finish our project.' is grammatically correct.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Câu này sai ngữ pháp ở dạng động từ chính. Sau trợ động từ 'have', động từ 'finish' phải ở dạng phân từ hai là 'finished' ('We have already finished...').\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "She has visited Tokyo three times in her life.",
+            "B": "She visited Tokyo three times last year.",
+            "C": "She visits Tokyo three times every month.",
+            "D": "She is visiting Tokyo at the moment."
+          },
+          "noiDung": "Choose the correct sentence that uses the Present Perfect tense to describe an experience in life without a specific time.",
+          "dapAnDung": "A",
+          "giaiThich": "Thì hiện tại hoàn thành dùng để diễn tả trải nghiệm tính đến thời điểm hiện tại (có 'in her life'), trong khi last year dùng quá khứ đơn, every month dùng hiện tại đơn.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine whether the following statement is True or False: 'Since' is used with a point of time in the past, whereas 'for' is used with a period of time.",
+          "dapAnDung": "A",
+          "giaiThich": "'Since' đứng trước mốc thời gian (ví dụ: 2010, Monday) và 'for' đứng trước khoảng thời gian (ví dụ: 3 years, 2 weeks) trong thì hiện tại hoàn thành.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "Already",
+            "B": "Yesterday",
+            "C": "Yet",
+            "D": "At this moment"
+          },
+          "noiDung": "Which of the following signal words are commonly used with the Present Perfect tense? (Select all that apply)",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "'Already' và 'yet' là các trạng từ phổ biến trong thì hiện tại hoàn thành. 'Yesterday' dùng cho quá khứ đơn và 'at this moment' dùng cho hiện tại tiếp diễn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "lose",
+            "B": "has lost",
+            "C": "lost",
+            "D": "is losing"
+          },
+          "noiDung": "Fill in the blank: 'Mark _________ his smartphone, so he cannot log into his social media account now.'",
+          "dapAnDung": "B",
+          "giaiThich": "Hành động mất điện thoại xảy ra trong quá khứ nhưng kết quả ảnh hưởng đến hiện tại ('so he cannot log in'), phù hợp dùng thì hiện tại hoàn thành 'has lost'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine whether the following statement is True or False: The sentence 'We have already finish our project.' is grammatically correct.",
+          "dapAnDung": "B",
+          "giaiThich": "Câu này sai ngữ pháp ở dạng động từ chính. Sau trợ động từ 'have', động từ 'finish' phải ở dạng phân từ hai là 'finished' ('We have already finished...').",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2974,
+    "thoiGianGoi": "2026-09-07T03:41:41.473Z"
+  },
+  {
+    "id": 188,
+    "nguoiDungId": 51,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 10 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788944975703_7838.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 10 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 10 phần tử.\n- Đúng 10 câu hỏi được đánh số id tuần tự từ 1 đến 10.\n- QUY TẮC BẮT BUỘC: Với câu hỏi Đúng/Sai (True/False), \"luaChon\" CHỈ ĐƯỢC CÓ 2 ĐÁP ÁN A VÀ B (True và False), KHÔNG ĐƯỢC TẠO C, D.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"My younger brother _______ three international design competitions since he turned eighteen.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"has won\",\n        \"B\": \"won\",\n        \"C\": \"wins\",\n        \"D\": \"is winning\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Hành động đã xảy ra và lặp lại nhiều lần trong khoảng thời gian kéo dài từ quá khứ đến hiện tại ('since he turned eighteen'), dùng thì Hiện tại hoàn thành.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"Look at the dusty shelves! We haven't cleaned the living room yet, have we?\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Câu sử dụng 'haven't cleaned' ở thì Hiện tại hoàn thành kết hợp với trạng từ 'yet' ở cuối câu để chỉ một việc chưa được thực hiện, hoàn toàn chính xác về ngữ pháp và ngữ cảnh.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Which of the following sentences correctly use the Present Perfect tense to talk about experiences?\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"I have ever tasted such a delicious traditional soup before.\",\n        \"B\": \"She has never traveled outside of her home country.\",\n        \"C\": \"They visited Tokyo three times in 2021.\",\n        \"D\": \"Have you ever climbed a high mountain?\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"B\",\n        \"D\"\n      ],\n      \"giaiThich\": \"Các câu A, B, D dùng thì Hiện tại hoàn thành để nói về trải nghiệm sống. Câu C dùng 'in 2021' là thời gian cụ thể trong quá khứ nên phải dùng Quá khứ đơn.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"How long _______ you _______ this innovative smartphone app?\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"do / use\",\n        \"B\": \"have / used\",\n        \"C\": \"are / using\",\n        \"D\": \"did / use\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Cấu trúc câu hỏi với 'How long' để hỏi về khoảng thời gian kéo dài đến hiện tại đòi hỏi sử dụng thì Hiện tại hoàn thành: 'Have + chủ ngữ + V3/ed'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"The manager has already signed the contract, so we can proceed with the project.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Trạng từ 'already' được đặt đúng vị trí giữa trợ động từ 'has' và động từ chính 'signed' ở thể khẳng định của thì Hiện tại hoàn thành.\"\n    },\n    {\n      \"id\": 6,\n      \"noiDung\": \"Select the correct forms of verbs to complete this statement: 'Our team _______ several challenges, but we _______ never given up.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"has faced / have\",\n        \"B\": \"have faced / have\",\n        \"C\": \"faced / had\",\n        \"D\": \"have face / has\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Chủ ngữ 'Our team' (xem như danh từ tập hợp chỉ các thành viên trong văn cảnh này) thường đi với 'have' trong tiếng Anh Anh hoặc số ít 'has', tuy nhiên 'have faced' và 'have never given up' đảm bảo sự đồng nhất về thì Hiện tại hoàn thành.\"\n    },\n    {\n      \"id\": 7,\n      \"noiDung\": \"Which words or phrases are typically used as signal words with the Present Perfect tense?\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"Just\",\n        \"B\": \"Yesterday\",\n        \"C\": \"Already\",\n        \"D\": \"Since\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"C\",\n        \"D\"\n      ],\n      \"giaiThich\": \"'Just', 'Already', và 'Since' là các dấu hiệu nhận biết phổ biến của thì Hiện tại hoàn thành. 'Yesterday' là dấu hiệu của thì Quá khứ đơn.\"\n    },\n    {\n      \"id\": 8,\n      \"noiDung\": \"Professor Evans _______ renewable energy for over twenty years and is still passionate about it.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"researched\",\n        \"B\": \"is researching\",\n        \"C\": \"has researched\",\n        \"D\": \"researches\"\n      },\n      \"dapAnDung\": \"C\",\n      \"giaiThich\": \"Cụm từ 'for over twenty years' kết hợp với ngữ cảnh hành động bắt đầu trong quá khứ và vẫn tiếp tục đến hiện tại đòi hỏi dùng thì Hiện tại hoàn thành.\"\n    },\n    {\n      \"id\": 9,\n      \"noiDung\": \"By the time we arrived at the gallery, the modern art exhibition has already finished.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Mệnh đề trạng ngữ chỉ thời gian 'By the time we arrived' ở thì Quá khứ đơn, hành động xảy ra trước đó phải dùng Quá khứ hoàn thành ('had finished'), không dùng Hiện tại hoàn thành.\"\n    },\n    {\n      \"id\": 10,\n      \"noiDung\": \"Identify the sentences that contain a grammatical error regarding the Present Perfect tense.\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"I have known my best friend since we were in kindergarten.\",\n        \"B\": \"She has went to the supermarket to buy some fresh organic vegetables.\",\n        \"C\": \"Have you ever ate sushi with chopsticks?\",\n        \"D\": \"We have successfully completed our quarterly report.\"\n      },\n      \"dapAnDung\": [\n        \"B\",\n        \"C\"\n      ],\n      \"giaiThich\": \"Câu B sai vì phân từ hai của 'go' phải là 'gone', không phải 'went'. Câu C sai vì phân từ hai của 'eat' phải là 'eaten', không phải 'ate'.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "has won",
+            "B": "won",
+            "C": "wins",
+            "D": "is winning"
+          },
+          "noiDung": "My younger brother _______ three international design competitions since he turned eighteen.",
+          "dapAnDung": "A",
+          "giaiThich": "Hành động đã xảy ra và lặp lại nhiều lần trong khoảng thời gian kéo dài từ quá khứ đến hiện tại ('since he turned eighteen'), dùng thì Hiện tại hoàn thành.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Look at the dusty shelves! We haven't cleaned the living room yet, have we?",
+          "dapAnDung": "A",
+          "giaiThich": "Câu sử dụng 'haven't cleaned' ở thì Hiện tại hoàn thành kết hợp với trạng từ 'yet' ở cuối câu để chỉ một việc chưa được thực hiện, hoàn toàn chính xác về ngữ pháp và ngữ cảnh.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "I have ever tasted such a delicious traditional soup before.",
+            "B": "She has never traveled outside of her home country.",
+            "C": "They visited Tokyo three times in 2021.",
+            "D": "Have you ever climbed a high mountain?"
+          },
+          "noiDung": "Which of the following sentences correctly use the Present Perfect tense to talk about experiences?",
+          "dapAnDung": [
+            "A",
+            "B",
+            "D"
+          ],
+          "giaiThich": "Các câu A, B, D dùng thì Hiện tại hoàn thành để nói về trải nghiệm sống. Câu C dùng 'in 2021' là thời gian cụ thể trong quá khứ nên phải dùng Quá khứ đơn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "do / use",
+            "B": "have / used",
+            "C": "are / using",
+            "D": "did / use"
+          },
+          "noiDung": "How long _______ you _______ this innovative smartphone app?",
+          "dapAnDung": "B",
+          "giaiThich": "Cấu trúc câu hỏi với 'How long' để hỏi về khoảng thời gian kéo dài đến hiện tại đòi hỏi sử dụng thì Hiện tại hoàn thành: 'Have + chủ ngữ + V3/ed'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "The manager has already signed the contract, so we can proceed with the project.",
+          "dapAnDung": "A",
+          "giaiThich": "Trạng từ 'already' được đặt đúng vị trí giữa trợ động từ 'has' và động từ chính 'signed' ở thể khẳng định của thì Hiện tại hoàn thành.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 6,
+          "luaChon": {
+            "A": "has faced / have",
+            "B": "have faced / have",
+            "C": "faced / had",
+            "D": "have face / has"
+          },
+          "noiDung": "Select the correct forms of verbs to complete this statement: 'Our team _______ several challenges, but we _______ never given up.'",
+          "dapAnDung": "B",
+          "giaiThich": "Chủ ngữ 'Our team' (xem như danh từ tập hợp chỉ các thành viên trong văn cảnh này) thường đi với 'have' trong tiếng Anh Anh hoặc số ít 'has', tuy nhiên 'have faced' và 'have never given up' đảm bảo sự đồng nhất về thì Hiện tại hoàn thành.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 7,
+          "luaChon": {
+            "A": "Just",
+            "B": "Yesterday",
+            "C": "Already",
+            "D": "Since"
+          },
+          "noiDung": "Which words or phrases are typically used as signal words with the Present Perfect tense?",
+          "dapAnDung": [
+            "A",
+            "C",
+            "D"
+          ],
+          "giaiThich": "'Just', 'Already', và 'Since' là các dấu hiệu nhận biết phổ biến của thì Hiện tại hoàn thành. 'Yesterday' là dấu hiệu của thì Quá khứ đơn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 8,
+          "luaChon": {
+            "A": "researched",
+            "B": "is researching",
+            "C": "has researched",
+            "D": "researches"
+          },
+          "noiDung": "Professor Evans _______ renewable energy for over twenty years and is still passionate about it.",
+          "dapAnDung": "C",
+          "giaiThich": "Cụm từ 'for over twenty years' kết hợp với ngữ cảnh hành động bắt đầu trong quá khứ và vẫn tiếp tục đến hiện tại đòi hỏi dùng thì Hiện tại hoàn thành.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 9,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "By the time we arrived at the gallery, the modern art exhibition has already finished.",
+          "dapAnDung": "B",
+          "giaiThich": "Mệnh đề trạng ngữ chỉ thời gian 'By the time we arrived' ở thì Quá khứ đơn, hành động xảy ra trước đó phải dùng Quá khứ hoàn thành ('had finished'), không dùng Hiện tại hoàn thành.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 10,
+          "luaChon": {
+            "A": "I have known my best friend since we were in kindergarten.",
+            "B": "She has went to the supermarket to buy some fresh organic vegetables.",
+            "C": "Have you ever ate sushi with chopsticks?",
+            "D": "We have successfully completed our quarterly report."
+          },
+          "noiDung": "Identify the sentences that contain a grammatical error regarding the Present Perfect tense.",
+          "dapAnDung": [
+            "B",
+            "C"
+          ],
+          "giaiThich": "Câu B sai vì phân từ hai của 'go' phải là 'gone', không phải 'went'. Câu C sai vì phân từ hai của 'eat' phải là 'eaten', không phải 'ate'.",
+          "loaiCauHoi": "MULTIPLE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 5252,
+    "thoiGianGoi": "2026-09-09T09:09:40.956Z"
+  },
+  {
+    "id": 185,
+    "nguoiDungId": 5,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788752676883_9270.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- QUY TẮC BẮT BUỘC: Với câu hỏi Đúng/Sai (True/False), \"luaChon\" CHỈ ĐƯỢC CÓ 2 ĐÁP ÁN A VÀ B (True và False), KHÔNG ĐƯỢC TẠO C, D.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct sentence that uses the Present Perfect tense to describe a life experience up to now.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"She has never tasted authentic Japanese ramen before.\",\n        \"B\": \"She never tastes authentic Japanese ramen.\",\n        \"C\": \"She is never tasting authentic Japanese ramen.\",\n        \"D\": \"She never tasted authentic Japanese ramen yesterday.\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Thì hiện tại hoàn thành được dùng để diễn tả trải nghiệm sống tính đến thời điểm hiện tại, thường đi với trạng từ 'never' và 'before'.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"Determine if the following statement is True or False: 'We use 'since' with a period of time (e.g., three years) in the Present Perfect tense.'\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Sai. 'Since' được dùng với mốc thời gian cụ thể (ví dụ: 2010), trong khi 'for' mới đi với khoảng thời gian (ví dụ: three years).\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Select ALL sentences that correctly use the Present Perfect tense with 'yet' or 'already'.\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"Have you finished your presentation yet?\",\n        \"B\": \"I have already booked the flight tickets for our vacation.\",\n        \"C\": \"They didn't arrive yet.\",\n        \"D\": \"He has already went to the supermarket.\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"B\"\n      ],\n      \"giaiThich\": \"Đáp án A đúng ('yet' dùng trong câu hỏi). Đáp án B đúng ('already' dùng trong câu khẳng định). C sai vì 'yet' thường đi với hiện tại hoàn thành chứ không phải quá khứ đơn trong văn cảnh này. D sai vì phân từ hai của 'go' phải là 'gone'.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Fill in the blank: 'Mark ________ three successful startup companies since he graduated from university.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"founded\",\n        \"B\": \"has founded\",\n        \"C\": \"has been founding\",\n        \"D\": \"is founding\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Hành động thành lập công ty bắt đầu từ quá khứ và kết quả kéo dài đến hiện tại, nhấn mạnh thành quả qua từ 'since', nên dùng 'has founded'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"Determine if the following statement is True or False: 'The Present Perfect tense can be used to talk about a finished action with a visible result in the present.'\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đúng. Thì hiện tại hoàn thành thường diễn tả một hành động vừa mới xảy ra và để lại kết quả hoặc dấu hiệu ở hiện tại.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "She has never tasted authentic Japanese ramen before.",
+            "B": "She never tastes authentic Japanese ramen.",
+            "C": "She is never tasting authentic Japanese ramen.",
+            "D": "She never tasted authentic Japanese ramen yesterday."
+          },
+          "noiDung": "Choose the correct sentence that uses the Present Perfect tense to describe a life experience up to now.",
+          "dapAnDung": "A",
+          "giaiThich": "Thì hiện tại hoàn thành được dùng để diễn tả trải nghiệm sống tính đến thời điểm hiện tại, thường đi với trạng từ 'never' và 'before'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is True or False: 'We use 'since' with a period of time (e.g., three years) in the Present Perfect tense.'",
+          "dapAnDung": "B",
+          "giaiThich": "Sai. 'Since' được dùng với mốc thời gian cụ thể (ví dụ: 2010), trong khi 'for' mới đi với khoảng thời gian (ví dụ: three years).",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "Have you finished your presentation yet?",
+            "B": "I have already booked the flight tickets for our vacation.",
+            "C": "They didn't arrive yet.",
+            "D": "He has already went to the supermarket."
+          },
+          "noiDung": "Select ALL sentences that correctly use the Present Perfect tense with 'yet' or 'already'.",
+          "dapAnDung": [
+            "A",
+            "B"
+          ],
+          "giaiThich": "Đáp án A đúng ('yet' dùng trong câu hỏi). Đáp án B đúng ('already' dùng trong câu khẳng định). C sai vì 'yet' thường đi với hiện tại hoàn thành chứ không phải quá khứ đơn trong văn cảnh này. D sai vì phân từ hai của 'go' phải là 'gone'.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "founded",
+            "B": "has founded",
+            "C": "has been founding",
+            "D": "is founding"
+          },
+          "noiDung": "Fill in the blank: 'Mark ________ three successful startup companies since he graduated from university.'",
+          "dapAnDung": "B",
+          "giaiThich": "Hành động thành lập công ty bắt đầu từ quá khứ và kết quả kéo dài đến hiện tại, nhấn mạnh thành quả qua từ 'since', nên dùng 'has founded'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is True or False: 'The Present Perfect tense can be used to talk about a finished action with a visible result in the present.'",
+          "dapAnDung": "A",
+          "giaiThich": "Đúng. Thì hiện tại hoàn thành thường diễn tả một hành động vừa mới xảy ra và để lại kết quả hoặc dấu hiệu ở hiện tại.",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2864,
+    "thoiGianGoi": "2026-09-07T03:44:39.749Z"
+  },
+  {
+    "id": 189,
+    "nguoiDungId": 51,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788945881420_8883.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- QUY TẮC BẮT BUỘC: Với câu hỏi Đúng/Sai (True/False), \"luaChon\" CHỈ ĐƯỢC CÓ 2 ĐÁP ÁN A VÀ B (True và False), KHÔNG ĐƯỢC TẠO C, D.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct sentence that uses the Present Perfect tense to describe an experience in life.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"She has already visited Tokyo three times in her life.\",\n        \"B\": \"She visited Tokyo three times last year.\",\n        \"C\": \"She is visiting Tokyo right now.\",\n        \"D\": \"She visits Tokyo every summer.\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Thì hiện tại hoàn thành được dùng để diễn tả trải nghiệm tính đến thời điểm hiện tại. 'Last year' là dấu hiệu quá khứ đơn, 'right now' và 'every summer' diễn tả hiện tại tiếp diễn và hiện tại đơn.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"Determine whether the statement is True or False: We use 'since' with a period of time (like 'two years', 'three months') in the Present Perfect tense.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Sai. Chúng ta dùng 'for' với khoảng thời gian (period of time) và dùng 'since' với mốc thời gian cụ thể (point in time) như '2010', 'last Monday'.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Select ALL sentences that are grammatically correct and use the Present Perfect tense properly.\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"I have known my best friend since we were children.\",\n        \"B\": \"They have just finished their complicated science project.\",\n        \"C\": \"He has lost his keys yesterday afternoon.\",\n        \"D\": \"Have you ever eaten traditional Thai food?\"\n      },\n      \"dapAnDung\": [\"A\", \"B\", \"D\"],\n      \"giaiThich\": \"Các câu A, B, D dùng thì hiện tại hoàn thành chính xác. Câu C sai vì có trạng ngữ chỉ thời gian cụ thể trong quá khứ ('yesterday afternoon'), phải dùng thì quá khứ đơn.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Fill in the blank with the correct form: '____ you ever ____ to a music festival in an open field?'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"Did / go\",\n        \"B\": \"Have / been\",\n        \"C\": \"Has / gone\",\n        \"D\": \"Were / going\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Chủ ngữ là 'you' nên trợ động từ là 'Have'. Để hỏi về trải nghiệm từng đến đâu và đã quay về, ta dùng phân từ hai 'been'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"Determine whether the statement is True or False: The adverb 'yet' is typically used in negative sentences and questions in the Present Perfect tense, and it usually comes at the end of the clause.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đúng. 'Yet' thường đứng ở cuối câu phủ định và câu hỏi trong thì hiện tại hoàn thành để chỉ một việc gì đó chưa xảy ra nhưng được mong đợi sẽ xảy ra.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "She has already visited Tokyo three times in her life.",
+            "B": "She visited Tokyo three times last year.",
+            "C": "She is visiting Tokyo right now.",
+            "D": "She visits Tokyo every summer."
+          },
+          "noiDung": "Choose the correct sentence that uses the Present Perfect tense to describe an experience in life.",
+          "dapAnDung": "A",
+          "giaiThich": "Thì hiện tại hoàn thành được dùng để diễn tả trải nghiệm tính đến thời điểm hiện tại. 'Last year' là dấu hiệu quá khứ đơn, 'right now' và 'every summer' diễn tả hiện tại tiếp diễn và hiện tại đơn.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine whether the statement is True or False: We use 'since' with a period of time (like 'two years', 'three months') in the Present Perfect tense.",
+          "dapAnDung": "B",
+          "giaiThich": "Sai. Chúng ta dùng 'for' với khoảng thời gian (period of time) và dùng 'since' với mốc thời gian cụ thể (point in time) như '2010', 'last Monday'.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "I have known my best friend since we were children.",
+            "B": "They have just finished their complicated science project.",
+            "C": "He has lost his keys yesterday afternoon.",
+            "D": "Have you ever eaten traditional Thai food?"
+          },
+          "noiDung": "Select ALL sentences that are grammatically correct and use the Present Perfect tense properly.",
+          "dapAnDung": [
+            "A",
+            "B",
+            "D"
+          ],
+          "giaiThich": "Các câu A, B, D dùng thì hiện tại hoàn thành chính xác. Câu C sai vì có trạng ngữ chỉ thời gian cụ thể trong quá khứ ('yesterday afternoon'), phải dùng thì quá khứ đơn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "Did / go",
+            "B": "Have / been",
+            "C": "Has / gone",
+            "D": "Were / going"
+          },
+          "noiDung": "Fill in the blank with the correct form: '____ you ever ____ to a music festival in an open field?'",
+          "dapAnDung": "B",
+          "giaiThich": "Chủ ngữ là 'you' nên trợ động từ là 'Have'. Để hỏi về trải nghiệm từng đến đâu và đã quay về, ta dùng phân từ hai 'been'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine whether the statement is True or False: The adverb 'yet' is typically used in negative sentences and questions in the Present Perfect tense, and it usually comes at the end of the clause.",
+          "dapAnDung": "A",
+          "giaiThich": "Đúng. 'Yet' thường đứng ở cuối câu phủ định và câu hỏi trong thì hiện tại hoàn thành để chỉ một việc gì đó chưa xảy ra nhưng được mong đợi sẽ xảy ra.",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 3117,
+    "thoiGianGoi": "2026-09-09T09:24:44.539Z"
+  },
+  {
+    "id": 190,
+    "nguoiDungId": 51,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788946606344_4563.\n\nYÊU CẦU DẠNG CÂU HỎI:\nTất cả các câu hỏi ở dạng TRẮC NGHIỆM 1 ĐÁP ÁN ĐÚNG: trường \"luaChon\" gồm 4 lựa chọn {A, B, C, D}, \"dapAnDung\" là 1 ký tự (\"A\"|\"B\"|\"C\"|\"D\"), \"loaiCauHoi\": \"SINGLE\".\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Look at the kitchen! Sarah _______ just _______ baking a huge chocolate cake for the party.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"has / baked\",\n        \"B\": \"have / baked\",\n        \"C\": \"has / baking\",\n        \"D\": \"is / baked\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Chủ ngữ 'Sarah' là ngôi thứ ba số ít nên đi với trợ động từ 'has', theo sau là động từ phân từ hai 'baked' để diễn tả hành động vừa mới xảy ra.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"How many countries _______ you _______ to in your life so far?\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"has / be\",\n        \"B\": \"have / been\",\n        \"C\": \"did / go\",\n        \"D\": \"were / you\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Câu hỏi về trải nghiệm tính đến hiện tại dùng thì Hiện tại hoàn thành với chủ ngữ 'you' đi kèm trợ động từ 'have' và phân từ hai của be là 'been'.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"My younger brother _______ his smartphone since he woke up this morning; he is totally addicted.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"played\",\n        \"B\": \"is playing\",\n        \"C\": \"has played\",\n        \"D\": \"plays\"\n      },\n      \"dapAnDung\": \"C\",\n      \"giaiThich\": \"Mệnh đề chứa từ 'since' kết hợp với mốc thời gian trong quá khứ ('he woke up this morning') thường đi kèm với thì Hiện tại hoàn thành ở mệnh đề chính để chỉ hành động bắt đầu từ quá khứ và kéo dài đến hiện tại.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"We _______ our best friend Mark for nearly five years. He moved to Canada last month.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"haven't seen\",\n        \"B\": \"didn't see\",\n        \"C\": \"hasn't seen\",\n        \"D\": \"weren't seeing\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Chủ ngữ 'We' đi với trợ động từ phủ định 'haven't' và phân từ hai 'seen', kết hợp với cụm từ chỉ khoảng thời gian 'for nearly five years'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"_______ you ever _______ an unusual pet like an iguana or a tarantula?\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"Did / saw\",\n        \"B\": \"Have / seen\",\n        \"C\": \"Has / saw\",\n        \"D\": \"Do / see\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Cấu trúc câu hỏi trải nghiệm với 'ever' ở thì Hiện tại hoàn thành: 'Have + chủ ngữ + ever + V3/ed?'. Với chủ ngữ 'you', ta dùng 'Have' và dạng phân từ hai 'seen'.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "has / baked",
+            "B": "have / baked",
+            "C": "has / baking",
+            "D": "is / baked"
+          },
+          "noiDung": "Look at the kitchen! Sarah _______ just _______ baking a huge chocolate cake for the party.",
+          "dapAnDung": "A",
+          "giaiThich": "Chủ ngữ 'Sarah' là ngôi thứ ba số ít nên đi với trợ động từ 'has', theo sau là động từ phân từ hai 'baked' để diễn tả hành động vừa mới xảy ra.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "has / be",
+            "B": "have / been",
+            "C": "did / go",
+            "D": "were / you"
+          },
+          "noiDung": "How many countries _______ you _______ to in your life so far?",
+          "dapAnDung": "B",
+          "giaiThich": "Câu hỏi về trải nghiệm tính đến hiện tại dùng thì Hiện tại hoàn thành với chủ ngữ 'you' đi kèm trợ động từ 'have' và phân từ hai của be là 'been'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "played",
+            "B": "is playing",
+            "C": "has played",
+            "D": "plays"
+          },
+          "noiDung": "My younger brother _______ his smartphone since he woke up this morning; he is totally addicted.",
+          "dapAnDung": "C",
+          "giaiThich": "Mệnh đề chứa từ 'since' kết hợp với mốc thời gian trong quá khứ ('he woke up this morning') thường đi kèm với thì Hiện tại hoàn thành ở mệnh đề chính để chỉ hành động bắt đầu từ quá khứ và kéo dài đến hiện tại.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "haven't seen",
+            "B": "didn't see",
+            "C": "hasn't seen",
+            "D": "weren't seeing"
+          },
+          "noiDung": "We _______ our best friend Mark for nearly five years. He moved to Canada last month.",
+          "dapAnDung": "A",
+          "giaiThich": "Chủ ngữ 'We' đi với trợ động từ phủ định 'haven't' và phân từ hai 'seen', kết hợp với cụm từ chỉ khoảng thời gian 'for nearly five years'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "Did / saw",
+            "B": "Have / seen",
+            "C": "Has / saw",
+            "D": "Do / see"
+          },
+          "noiDung": "_______ you ever _______ an unusual pet like an iguana or a tarantula?",
+          "dapAnDung": "B",
+          "giaiThich": "Cấu trúc câu hỏi trải nghiệm với 'ever' ở thì Hiện tại hoàn thành: 'Have + chủ ngữ + ever + V3/ed?'. Với chủ ngữ 'you', ta dùng 'Have' và dạng phân từ hai 'seen'.",
+          "loaiCauHoi": "SINGLE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 3625,
+    "thoiGianGoi": "2026-09-09T09:36:49.972Z"
+  },
+  {
+    "id": 191,
+    "nguoiDungId": 5,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788946701471_8067.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Select the correct sentence using the Present Perfect tense to describe an unfinished time period up to now.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"I have visited three different countries this year.\",\n        \"B\": \"I visited three different countries yesterday.\",\n        \"C\": \"I was visiting three different countries last year.\",\n        \"D\": \"I visit three different countries every year.\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Dùng thì hiện tại hoàn thành với 'this year' vì khoảng thời gian này chưa kết thúc và hành động có thể lặp lại.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"Determine if the following statement is True or False: 'We use the Present Perfect tense with 'since' to indicate a specific point in time when an action started.'\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"'Since' được dùng với mốc thời gian cụ thể (ví dụ: 2010, last Monday) để chỉ thời điểm bắt đầu hành động trong thì hiện tại hoàn thành.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Which of the following adverbs are commonly used with the Present Perfect tense in negative sentences and questions? (Choose all correct answers)\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"yet\",\n        \"B\": \"already\",\n        \"C\": \"just\",\n        \"D\": \"ever\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"D\"\n      ],\n      \"giaiThich\": \"'Yet' thường dùng trong câu phủ định và nghi vấn ở cuối câu; 'Ever' thường dùng trong câu hỏi về trải nghiệm. 'Already' và 'just' phổ biến hơn trong câu khẳng định.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Choose the correct form to complete the dialogue:\\n- A: '____ you ever ____ a famous celebrity?'\\n- B: 'Yes, I met a famous actor last summer.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"Did / met\",\n        \"B\": \"Have / met\",\n        \"C\": \"Have / meet\",\n        \"D\": \"Were / meeting\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Câu hỏi về trải nghiệm dùng 'Have you ever + V3/ED'. 'Met' là phân từ II của 'meet'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"Determine if the following statement is True or False: 'The sentence \\\"She has went to the supermarket; she will be back soon.\\\" is grammatically correct.'\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Sai ngữ pháp vì phân từ II của 'go' phải là 'gone', không dùng 'went'. Câu đúng phải là 'She has gone to the supermarket'.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "I have visited three different countries this year.",
+            "B": "I visited three different countries yesterday.",
+            "C": "I was visiting three different countries last year.",
+            "D": "I visit three different countries every year."
+          },
+          "noiDung": "Select the correct sentence using the Present Perfect tense to describe an unfinished time period up to now.",
+          "dapAnDung": "A",
+          "giaiThich": "Dùng thì hiện tại hoàn thành với 'this year' vì khoảng thời gian này chưa kết thúc và hành động có thể lặp lại.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is True or False: 'We use the Present Perfect tense with 'since' to indicate a specific point in time when an action started.'",
+          "dapAnDung": "A",
+          "giaiThich": "'Since' được dùng với mốc thời gian cụ thể (ví dụ: 2010, last Monday) để chỉ thời điểm bắt đầu hành động trong thì hiện tại hoàn thành.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "yet",
+            "B": "already",
+            "C": "just",
+            "D": "ever"
+          },
+          "noiDung": "Which of the following adverbs are commonly used with the Present Perfect tense in negative sentences and questions? (Choose all correct answers)",
+          "dapAnDung": [
+            "A",
+            "D"
+          ],
+          "giaiThich": "'Yet' thường dùng trong câu phủ định và nghi vấn ở cuối câu; 'Ever' thường dùng trong câu hỏi về trải nghiệm. 'Already' và 'just' phổ biến hơn trong câu khẳng định.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "Did / met",
+            "B": "Have / met",
+            "C": "Have / meet",
+            "D": "Were / meeting"
+          },
+          "noiDung": "Choose the correct form to complete the dialogue:\n- A: '____ you ever ____ a famous celebrity?'\n- B: 'Yes, I met a famous actor last summer.'",
+          "dapAnDung": "B",
+          "giaiThich": "Câu hỏi về trải nghiệm dùng 'Have you ever + V3/ED'. 'Met' là phân từ II của 'meet'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is True or False: 'The sentence \"She has went to the supermarket; she will be back soon.\" is grammatically correct.'",
+          "dapAnDung": "B",
+          "giaiThich": "Sai ngữ pháp vì phân từ II của 'go' phải là 'gone', không dùng 'went'. Câu đúng phải là 'She has gone to the supermarket'.",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2951,
+    "thoiGianGoi": "2026-09-09T09:38:24.424Z"
+  },
+  {
+    "id": 192,
+    "nguoiDungId": 51,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788948939971_5979.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct sentence that uses the Present Perfect tense to describe a life experience up to now.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"She has never tasted authentic Japanese ramen before.\",\n        \"B\": \"She never tastes authentic Japanese ramen yesterday.\",\n        \"C\": \"She is never tasting authentic Japanese ramen.\",\n        \"D\": \"She never tasted authentic Japanese ramen yet.\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đáp án A dùng 'has never tasted' diễn tả trải nghiệm sống tính đến thời điểm hiện tại, phù hợp với thì Hiện Tại Hoàn Thành.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"Determine if the following statement is True or False: We use 'since' with a specific point in time and 'for' with a period of time in the Present Perfect tense.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đúng, 'since' đi với mốc thời gian (ví dụ: 2010) và 'for' đi với khoảng thời gian (ví dụ: 5 years) trong thì Hiện Tại Hoàn Thành.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Select ALL sentences that are grammatically correct in the Present Perfect tense.\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"Have you ever explored the Amazon rainforest?\",\n        \"B\": \"They has completed their science project successfully.\",\n        \"C\": \"Mark has already visited three different continents this year.\",\n        \"D\": \"I didn't see my best friend since last month.\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"C\"\n      ],\n      \"giaiThich\": \"Câu A và C đúng cấu trúc Hiện Tại Hoàn Thành. Câu B sai trợ động từ ('They have'), câu D sai vì vế chỉ mốc thời gian với 'since' phải dùng Hiện Tại Hoàn Thành.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Fill in the blank: 'How long _________ you _________ your current smartphone?'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"did / have\",\n        \"B\": \"have / had\",\n        \"C\": \"do / have\",\n        \"D\": \"are / having\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Với câu hỏi 'How long' về hành động kéo dài từ quá khứ đến hiện tại, ta dùng 'Have you had' (trợ động từ have + chủ ngữ + phân từ II của have là had).\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"Determine if the following statement is True or False: The adverb 'yet' is commonly used in affirmative sentences with the Present Perfect tense.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Sai, 'yet' thường được dùng trong câu phủ định và câu hỏi ở cuối câu, chứ không dùng trong câu khẳng định.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "She has never tasted authentic Japanese ramen before.",
+            "B": "She never tastes authentic Japanese ramen yesterday.",
+            "C": "She is never tasting authentic Japanese ramen.",
+            "D": "She never tasted authentic Japanese ramen yet."
+          },
+          "noiDung": "Choose the correct sentence that uses the Present Perfect tense to describe a life experience up to now.",
+          "dapAnDung": "A",
+          "giaiThich": "Đáp án A dùng 'has never tasted' diễn tả trải nghiệm sống tính đến thời điểm hiện tại, phù hợp với thì Hiện Tại Hoàn Thành.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is True or False: We use 'since' with a specific point in time and 'for' with a period of time in the Present Perfect tense.",
+          "dapAnDung": "A",
+          "giaiThich": "Đúng, 'since' đi với mốc thời gian (ví dụ: 2010) và 'for' đi với khoảng thời gian (ví dụ: 5 years) trong thì Hiện Tại Hoàn Thành.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "Have you ever explored the Amazon rainforest?",
+            "B": "They has completed their science project successfully.",
+            "C": "Mark has already visited three different continents this year.",
+            "D": "I didn't see my best friend since last month."
+          },
+          "noiDung": "Select ALL sentences that are grammatically correct in the Present Perfect tense.",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "Câu A và C đúng cấu trúc Hiện Tại Hoàn Thành. Câu B sai trợ động từ ('They have'), câu D sai vì vế chỉ mốc thời gian với 'since' phải dùng Hiện Tại Hoàn Thành.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "did / have",
+            "B": "have / had",
+            "C": "do / have",
+            "D": "are / having"
+          },
+          "noiDung": "Fill in the blank: 'How long _________ you _________ your current smartphone?'",
+          "dapAnDung": "B",
+          "giaiThich": "Với câu hỏi 'How long' về hành động kéo dài từ quá khứ đến hiện tại, ta dùng 'Have you had' (trợ động từ have + chủ ngữ + phân từ II của have là had).",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is True or False: The adverb 'yet' is commonly used in affirmative sentences with the Present Perfect tense.",
+          "dapAnDung": "B",
+          "giaiThich": "Sai, 'yet' thường được dùng trong câu phủ định và câu hỏi ở cuối câu, chứ không dùng trong câu khẳng định.",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 3125,
+    "thoiGianGoi": "2026-09-09T10:15:43.098Z"
+  },
+  {
+    "id": 193,
+    "nguoiDungId": 2,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788949052898_5944.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct sentence that uses the Present Perfect tense to describe a life experience related to traveling.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"I have visited Tokyo twice in my life.\",\n        \"B\": \"I visited Tokyo twice last year.\",\n        \"C\": \"I am visiting Tokyo twice right now.\",\n        \"D\": \"I visit Tokyo twice every year.\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Thì hiện tại hoàn thành được dùng để diễn tả trải nghiệm sống tính đến thời điểm hiện tại. 'Twice in my life' là dấu hiệu nhận biết phù hợp.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"In the sentence 'She has already finished her science project', the word 'already' indicates that the action happened earlier than expected.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"'Already' thường được dùng trong câu khẳng định của thì hiện tại hoàn thành để diễn tả một hành động đã xảy ra sớm hơn dự kiến.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Which of the following signal words are commonly used with the Present Perfect tense to talk about an unfinished time period or duration? (Select all that apply)\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"Since\",\n        \"B\": \"Yesterday\",\n        \"C\": \"For\",\n        \"D\": \"Last week\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"C\"\n      ],\n      \"giaiThich\": \"'Since' và 'For' đi kèm với thì hiện tại hoàn thành để chỉ mốc thời gian bắt đầu và khoảng thời gian kéo dài. 'Yesterday' và 'Last week' dùng cho thì quá khứ đơn.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Fill in the blank: 'We ________ never ________ such a breathtaking sunset before.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"did / see\",\n        \"B\": \"have / seen\",\n        \"C\": \"has / saw\",\n        \"D\": \"were / seeing\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Chủ ngữ 'We' đi với trợ động từ 'have' và động từ phân từ hai 'seen' để tạo thành thì hiện tại hoàn thành với trạng từ 'never'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"The sentence 'Have you ever tasted authentic Thai street food?' is correctly structured to ask about someone's general experience.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Cấu trúc câu hỏi 'Have + chủ ngữ + ever + V3/ed?' được dùng chính xác để hỏi về trải nghiệm từ trước đến nay.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "I have visited Tokyo twice in my life.",
+            "B": "I visited Tokyo twice last year.",
+            "C": "I am visiting Tokyo twice right now.",
+            "D": "I visit Tokyo twice every year."
+          },
+          "noiDung": "Choose the correct sentence that uses the Present Perfect tense to describe a life experience related to traveling.",
+          "dapAnDung": "A",
+          "giaiThich": "Thì hiện tại hoàn thành được dùng để diễn tả trải nghiệm sống tính đến thời điểm hiện tại. 'Twice in my life' là dấu hiệu nhận biết phù hợp.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "In the sentence 'She has already finished her science project', the word 'already' indicates that the action happened earlier than expected.",
+          "dapAnDung": "A",
+          "giaiThich": "'Already' thường được dùng trong câu khẳng định của thì hiện tại hoàn thành để diễn tả một hành động đã xảy ra sớm hơn dự kiến.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "Since",
+            "B": "Yesterday",
+            "C": "For",
+            "D": "Last week"
+          },
+          "noiDung": "Which of the following signal words are commonly used with the Present Perfect tense to talk about an unfinished time period or duration? (Select all that apply)",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "'Since' và 'For' đi kèm với thì hiện tại hoàn thành để chỉ mốc thời gian bắt đầu và khoảng thời gian kéo dài. 'Yesterday' và 'Last week' dùng cho thì quá khứ đơn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "did / see",
+            "B": "have / seen",
+            "C": "has / saw",
+            "D": "were / seeing"
+          },
+          "noiDung": "Fill in the blank: 'We ________ never ________ such a breathtaking sunset before.'",
+          "dapAnDung": "B",
+          "giaiThich": "Chủ ngữ 'We' đi với trợ động từ 'have' và động từ phân từ hai 'seen' để tạo thành thì hiện tại hoàn thành với trạng từ 'never'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "The sentence 'Have you ever tasted authentic Thai street food?' is correctly structured to ask about someone's general experience.",
+          "dapAnDung": "A",
+          "giaiThich": "Cấu trúc câu hỏi 'Have + chủ ngữ + ever + V3/ed?' được dùng chính xác để hỏi về trải nghiệm từ trước đến nay.",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2877,
+    "thoiGianGoi": "2026-09-09T10:17:35.777Z"
+  },
+  {
+    "id": 194,
+    "nguoiDungId": 2,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788949076584_3898.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct sentence that uses the Present Perfect tense to describe an experience in life without a specific time.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"She has visited Tokyo three times in her life.\",\n        \"B\": \"She visited Tokyo three times last year.\",\n        \"C\": \"She is visiting Tokyo at the moment.\",\n        \"D\": \"She visits Tokyo every summer.\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đáp án A dùng thì Hiện tại hoàn thành (has visited) để diễn tả trải nghiệm sống, không đề cập thời gian cụ thể. Các đáp án khác dùng thì Quá khứ đơn, Hiện tại tiếp diễn và Hiện tại đơn.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"Determine if the following statement is True or False: 'We use the Present Perfect tense with 'since' to indicate a specific point in time when an action started.'\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đúng. 'Since' được dùng với mốc thời gian cụ thể (ví dụ: since 2010, since Monday) trong thì Hiện tại hoàn thành.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Which of the following signal words are commonly used with the Present Perfect tense? (Choose all that apply)\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"Already\",\n        \"B\": \"Yesterday\",\n        \"C\": \"Yet\",\n        \"D\": \"At this moment\"\n      },\n      \"dapAnDung\": [\"A\", \"C\"],\n      \"giaiThich\": \"'Already' và 'Yet' là các trạng từ kinh điển đi với thì Hiện tại hoàn thành. 'Yesterday' đi với Quá khứ đơn, còn 'At this moment' đi với Hiện tại tiếp diễn.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Fill in the blank with the correct form: 'My younger brother ____ (not finish) his science project yet.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"didn't finish\",\n        \"B\": \"hasn't finished\",\n        \"C\": \"haven't finished\",\n        \"D\": \"wasn't finishing\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Chủ ngữ 'My younger brother' là số ít (ngôi thứ 3), kết hợp với 'yet' trong câu phủ định của thì Hiện tại hoàn thành ta dùng 'hasn't finished'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"Determine if the following statement is True or False: 'The sentence 'I have lost my keys, so I cannot get inside the house' shows a past action with a result that matters in the present.'\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đúng. Đây là một trong những chức năng cốt lõi của thì Hiện tại hoàn thành: diễn tả hành động trong quá khứ nhưng để lại kết quả hoặc ảnh hưởng ở hiện tại.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "She has visited Tokyo three times in her life.",
+            "B": "She visited Tokyo three times last year.",
+            "C": "She is visiting Tokyo at the moment.",
+            "D": "She visits Tokyo every summer."
+          },
+          "noiDung": "Choose the correct sentence that uses the Present Perfect tense to describe an experience in life without a specific time.",
+          "dapAnDung": "A",
+          "giaiThich": "Đáp án A dùng thì Hiện tại hoàn thành (has visited) để diễn tả trải nghiệm sống, không đề cập thời gian cụ thể. Các đáp án khác dùng thì Quá khứ đơn, Hiện tại tiếp diễn và Hiện tại đơn.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is True or False: 'We use the Present Perfect tense with 'since' to indicate a specific point in time when an action started.'",
+          "dapAnDung": "A",
+          "giaiThich": "Đúng. 'Since' được dùng với mốc thời gian cụ thể (ví dụ: since 2010, since Monday) trong thì Hiện tại hoàn thành.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "Already",
+            "B": "Yesterday",
+            "C": "Yet",
+            "D": "At this moment"
+          },
+          "noiDung": "Which of the following signal words are commonly used with the Present Perfect tense? (Choose all that apply)",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "'Already' và 'Yet' là các trạng từ kinh điển đi với thì Hiện tại hoàn thành. 'Yesterday' đi với Quá khứ đơn, còn 'At this moment' đi với Hiện tại tiếp diễn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "didn't finish",
+            "B": "hasn't finished",
+            "C": "haven't finished",
+            "D": "wasn't finishing"
+          },
+          "noiDung": "Fill in the blank with the correct form: 'My younger brother ____ (not finish) his science project yet.'",
+          "dapAnDung": "B",
+          "giaiThich": "Chủ ngữ 'My younger brother' là số ít (ngôi thứ 3), kết hợp với 'yet' trong câu phủ định của thì Hiện tại hoàn thành ta dùng 'hasn't finished'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is True or False: 'The sentence 'I have lost my keys, so I cannot get inside the house' shows a past action with a result that matters in the present.'",
+          "dapAnDung": "A",
+          "giaiThich": "Đúng. Đây là một trong những chức năng cốt lõi của thì Hiện tại hoàn thành: diễn tả hành động trong quá khứ nhưng để lại kết quả hoặc ảnh hưởng ở hiện tại.",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 3931,
+    "thoiGianGoi": "2026-09-09T10:18:00.516Z"
+  },
+  {
+    "id": 195,
+    "nguoiDungId": 2,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"B1\".\nMã phiên sinh đề ngẫu nhiên: #1788949568536_6714.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"B1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct sentence that describes an unfinished action continuing from the past up to now.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"I have lived in this coastal town since I was ten years old.\",\n        \"B\": \"I lived in this coastal town when I was a child.\",\n        \"C\": \"I was living in this coastal town for ten years.\",\n        \"D\": \"I had lived in this coastal town before I moved to London.\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Thì hiện tại hoàn thành dùng 'since' với mốc thời gian trong quá khứ để diễn tả hành động bắt đầu trong quá khứ và vẫn tiếp tục đến hiện tại.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"Determine if the following statement is grammatically correct: 'She has already finished her science project before the deadline.'\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Sai vì có từ 'before the deadline' chỉ một thời điểm cụ thể trong quá khứ, nên ta phải dùng thì Quá khứ đơn (finished) thay vì Hiện tại hoàn thành.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Which of the following adverbs are commonly used with the Present Perfect Tense to talk about experiences or unfinished periods? (Choose all correct options)\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"ever\",\n        \"B\": \"yesterday\",\n        \"C\": \"yet\",\n        \"D\": \"two hours ago\"\n      },\n      \"dapAnDung\": [\"A\", \"C\"],\n      \"giaiThich\": \"'Ever' và 'yet' thường đi kèm với thì hiện tại hoàn thành (dùng trong câu hỏi/phủ định), trong khi 'yesterday' và 'two hours ago' đi với quá khứ đơn.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Complete the dialogue: '___ you ever ___ a traditional Japanese tea ceremony?' - 'Yes, I experienced it last year.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"Did / attend\",\n        \"B\": \"Have / attended\",\n        \"C\": \"Has / attend\",\n        \"D\": \"Are / attending\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Cấu trúc hỏi trải nghiệm dùng 'Have + chủ ngữ + ever + V3/ed?'. Do chủ ngữ là 'you', ta dùng trợ động từ 'Have' và động từ chính dạng phân từ 'attended'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"Determine if the following statement is grammatically correct: 'We haven't received any feedback from the manager yet.'\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đúng, câu phủ định với 'yet' ở cuối câu kết hợp với thì hiện tại hoàn thành ('haven't received') hoàn toàn chính xác về mặt ngữ pháp.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "I have lived in this coastal town since I was ten years old.",
+            "B": "I lived in this coastal town when I was a child.",
+            "C": "I was living in this coastal town for ten years.",
+            "D": "I had lived in this coastal town before I moved to London."
+          },
+          "noiDung": "Choose the correct sentence that describes an unfinished action continuing from the past up to now.",
+          "dapAnDung": "A",
+          "giaiThich": "Thì hiện tại hoàn thành dùng 'since' với mốc thời gian trong quá khứ để diễn tả hành động bắt đầu trong quá khứ và vẫn tiếp tục đến hiện tại.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is grammatically correct: 'She has already finished her science project before the deadline.'",
+          "dapAnDung": "B",
+          "giaiThich": "Sai vì có từ 'before the deadline' chỉ một thời điểm cụ thể trong quá khứ, nên ta phải dùng thì Quá khứ đơn (finished) thay vì Hiện tại hoàn thành.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "ever",
+            "B": "yesterday",
+            "C": "yet",
+            "D": "two hours ago"
+          },
+          "noiDung": "Which of the following adverbs are commonly used with the Present Perfect Tense to talk about experiences or unfinished periods? (Choose all correct options)",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "'Ever' và 'yet' thường đi kèm với thì hiện tại hoàn thành (dùng trong câu hỏi/phủ định), trong khi 'yesterday' và 'two hours ago' đi với quá khứ đơn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "Did / attend",
+            "B": "Have / attended",
+            "C": "Has / attend",
+            "D": "Are / attending"
+          },
+          "noiDung": "Complete the dialogue: '___ you ever ___ a traditional Japanese tea ceremony?' - 'Yes, I experienced it last year.'",
+          "dapAnDung": "B",
+          "giaiThich": "Cấu trúc hỏi trải nghiệm dùng 'Have + chủ ngữ + ever + V3/ed?'. Do chủ ngữ là 'you', ta dùng trợ động từ 'Have' và động từ chính dạng phân từ 'attended'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "Determine if the following statement is grammatically correct: 'We haven't received any feedback from the manager yet.'",
+          "dapAnDung": "A",
+          "giaiThich": "Đúng, câu phủ định với 'yet' ở cuối câu kết hợp với thì hiện tại hoàn thành ('haven't received') hoàn toàn chính xác về mặt ngữ pháp.",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "B1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 3070,
+    "thoiGianGoi": "2026-09-09T10:26:11.607Z"
+  },
+  {
+    "id": 196,
+    "nguoiDungId": 5,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "\nBạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.\nDữ liệu học viên:\n- Trình độ CEFR: A1\n- Lịch rảnh: {\"thu\":[2,4,6,3,5],\"gio\":\"18:00-21:00\"}\n- Mục tiêu / Nguyện vọng cá nhân của học viên: \"tôi muốn học hẳn C1 có được ko\"\n\nDanh sách lớp học thực tế đang mở tuyển sinh:\n[{\"maLopHoc\":\"MAST-C2-01\",\"tenLopHoc\":\"C2 Academic Mastery & Advanced Debate\",\"khoaHoc\":\"Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)\",\"trinhDoYeuCau\":\"C2\",\"hocPhi\":6800000,\"conTrong\":12,\"lichHoc\":[\"Thứ 7 (10:00 - 12:30)\",\"Thứ 8 (10:00 - 12:30)\",\"Thứ 3 (18:00 - 20:30)\",\"Thứ 5 (18:00 - 20:30)\"]},{\"maLopHoc\":\"ENG-A1-02\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cuối Tuần\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":11,\"lichHoc\":[\"Thứ 7 (06:00 - 09:00)\",\"Thứ 8 (06:00 - 09:00)\"]},{\"maLopHoc\":\"IELTS-B1-02\",\"tenLopHoc\":\"IELTS B1\",\"khoaHoc\":\"IELTS Preparation B1 → B2\",\"trinhDoYeuCau\":\"B1\",\"hocPhi\":3500000,\"conTrong\":21,\"lichHoc\":[\"Thứ 7 (00:30 - 03:30)\",\"Thứ 8 (00:30 - 03:30)\",\"Thứ 3 (10:00 - 12:30)\"]},{\"maLopHoc\":\"ENG-A1-01\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":14,\"lichHoc\":[\"Thứ 3 (09:30 - 11:30)\",\"Thứ 5 (09:30 - 11:30)\"]}]\n\nYÊU CẦU PHÂN TÍCH TỪ AI:\n1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.\n2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.\n3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.\n4. So sánh đối chiếu (soSanhLopHoc): Phân tích ngắn gọn ưu và nhược điểm đối chiếu giữa các lớp được đề xuất (về lịch học, đối tượng, trọng tâm kỹ năng), gợi ý lớp học phù hợp nhất với mục tiêu của học viên.\n5. Trả về đúng định dạng JSON:\n{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"...\",\n      \"tenLopHoc\": \"...\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"...\",\n      \"diemNoiBat\": \"...\",\n      \"loTrinhKhuyenNghi\": \"...\"\n    }\n  ],\n  \"soSanhLopHoc\": \"...\"\n}\n",
+    "rawOutput": "{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"ENG-A1-01\",\n      \"tenLopHoc\": \"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"Học viên hiện ở trình độ A1 và mong muốn đạt C1, đây là mục tiêu dài hạn. Do đó, việc bắt đầu xây dựng lại nền tảng từ gốc là bước đi bắt buộc trước khi hướng tới các bậc cao hơn.\",\n      \"diemNoiBat\": \"Phù hợp với người mới bắt đầu, củng cố ngữ pháp và phát âm chuẩn từ đầu, tạo đà vững chắc cho các chặng tiếp theo.\",\n      \"loTrinhKhuyenNghi\": \"Lộ trình 4 giai đoạn từ A1 lên B1, sau đó tiếp tục lên B2 và C1 trong các khóa chuyên sâu tiếp theo của ETC English.\"\n    },\n    {\n      \"maLopHoc\": \"MAST-C2-01\",\n      \"tenLopHoc\": \"C2 Academic Mastery & Advanced Debate\",\n      \"doTuongThich\": 75,\n      \"lyDoPhuHop\": \"Lớp học đáp ứng trực tiếp mong muốn đạt trình độ cao (C2/C1) của học viên, tuy nhiên trình độ hiện tại của học viên mới là A1 nên sẽ gặp khó khăn rất lớn.\",\n      \"diemNoiBat\": \"Chương trình tinh hoa, luyện kỹ năng học thuật và diễn thuyết ở cấp độ cao nhất.\",\n      \"loTrinhKhuyenNghi\": \"Chỉ nên tham gia sau khi đã hoàn thành các khóa nền tảng và đạt trình độ B2/C1.\"\n    }\n  ],\n  \"soSanhLopHoc\": \"Lớp ENG-A1-01 tập trung hoàn toàn vào việc xây dựng nền tảng cơ bản cho người mới bắt đầu (A1), phù hợp với trình độ hiện tại của học viên để tiến từng bước chắc chắn đến mục tiêu C1. Trong khi đó, lớp MAST-C2-01 đáp ứng ngay mong muốn học lên cao nhưng lại yêu cầu đầu vào C2, vượt quá xa năng lực hiện tại của học viên và không phù hợp với khung thời gian rảnh buổi tối. Do đó, lớp ENG-A1-01 là sự lựa chọn khởi đầu hợp lý nhất.\"\n}",
+    "validatedOutputJson": {
+      "soSanhLopHoc": "Lớp ENG-A1-01 tập trung hoàn toàn vào việc xây dựng nền tảng cơ bản cho người mới bắt đầu (A1), phù hợp với trình độ hiện tại của học viên để tiến từng bước chắc chắn đến mục tiêu C1. Trong khi đó, lớp MAST-C2-01 đáp ứng ngay mong muốn học lên cao nhưng lại yêu cầu đầu vào C2, vượt quá xa năng lực hiện tại của học viên và không phù hợp với khung thời gian rảnh buổi tối. Do đó, lớp ENG-A1-01 là sự lựa chọn khởi đầu hợp lý nhất.",
+      "recommendations": [
+        {
+          "hocPhi": 2200000,
+          "conTrong": 14,
+          "maLopHoc": "ENG-A1-01",
+          "tenLopHoc": "Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu",
+          "diemNoiBat": "Phù hợp với người mới bắt đầu, củng cố ngữ pháp và phát âm chuẩn từ đầu, tạo đà vững chắc cho các chặng tiếp theo.",
+          "lyDoPhuHop": "Học viên hiện ở trình độ A1 và mong muốn đạt C1, đây là mục tiêu dài hạn. Do đó, việc bắt đầu xây dựng lại nền tảng từ gốc là bước đi bắt buộc trước khi hướng tới các bậc cao hơn.",
+          "lichHocText": "Thứ 3, Thứ 5",
+          "doTuongThich": 95,
+          "loTrinhKhuyenNghi": "Lộ trình 4 giai đoạn từ A1 lên B1, sau đó tiếp tục lên B2 và C1 trong các khóa chuyên sâu tiếp theo của ETC English."
+        },
+        {
+          "hocPhi": 6800000,
+          "conTrong": 12,
+          "maLopHoc": "MAST-C2-01",
+          "tenLopHoc": "C2 Academic Mastery & Advanced Debate",
+          "diemNoiBat": "Chương trình tinh hoa, luyện kỹ năng học thuật và diễn thuyết ở cấp độ cao nhất.",
+          "lyDoPhuHop": "Lớp học đáp ứng trực tiếp mong muốn đạt trình độ cao (C2/C1) của học viên, tuy nhiên trình độ hiện tại của học viên mới là A1 nên sẽ gặp khó khăn rất lớn.",
+          "lichHocText": "Thứ 7, Thứ 8, Thứ 3, Thứ 5",
+          "doTuongThich": 75,
+          "loTrinhKhuyenNghi": "Chỉ nên tham gia sau khi đã hoàn thành các khóa nền tảng và đạt trình độ B2/C1."
+        }
+      ]
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2521,
+    "thoiGianGoi": "2026-09-17T09:20:36.065Z"
+  },
+  {
+    "id": 198,
+    "nguoiDungId": 723,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "\nBạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.\nDữ liệu học viên:\n- Trình độ CEFR: A2\n- Lịch rảnh: {\"thu\":[6],\"gio\":\"18:00-21:00\"}\n- Mục tiêu / Nguyện vọng cá nhân của học viên: \"Với trình độ hiện tại của tôi việc cải thiện lên B1  mất bao lâu và có lớp nào riêng thứ 6 không\"\n\nDanh sách lớp học thực tế đang mở tuyển sinh:\n[{\"maLopHoc\":\"MAST-C2-01\",\"tenLopHoc\":\"C2 Academic Mastery & Advanced Debate\",\"khoaHoc\":\"Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)\",\"trinhDoYeuCau\":\"C2\",\"hocPhi\":6800000,\"conTrong\":12,\"lichHoc\":[\"Thứ 7 (10:00 - 12:30)\",\"Thứ 8 (10:00 - 12:30)\",\"Thứ 3 (18:00 - 20:30)\",\"Thứ 5 (18:00 - 20:30)\"]},{\"maLopHoc\":\"ENG-A1-02\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cuối Tuần\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":11,\"lichHoc\":[\"Thứ 7 (06:00 - 09:00)\",\"Thứ 8 (06:00 - 09:00)\"]},{\"maLopHoc\":\"IELTS-B1-02\",\"tenLopHoc\":\"IELTS B1\",\"khoaHoc\":\"IELTS Preparation B1 → B2\",\"trinhDoYeuCau\":\"B1\",\"hocPhi\":3500000,\"conTrong\":21,\"lichHoc\":[\"Thứ 7 (00:30 - 03:30)\",\"Thứ 8 (00:30 - 03:30)\",\"Thứ 3 (10:00 - 12:30)\"]},{\"maLopHoc\":\"ENG-A1-01\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":14,\"lichHoc\":[\"Thứ 3 (09:30 - 11:30)\",\"Thứ 5 (09:30 - 11:30)\"]}]\n\nYÊU CẦU PHÂN TÍCH TỪ AI:\n1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.\n2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.\n3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.\n4. So sánh đối chiếu (soSanhLopHoc): Phân tích ngắn gọn ưu và nhược điểm đối chiếu giữa các lớp được đề xuất (về lịch học, đối tượng, trọng tâm kỹ năng), gợi ý lớp học phù hợp nhất với mục tiêu của học viên.\n5. Trả về đúng định dạng JSON:\n{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"...\",\n      \"tenLopHoc\": \"...\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"...\",\n      \"diemNoiBat\": \"...\",\n      \"loTrinhKhuyenNghi\": \"...\"\n    }\n  ],\n  \"soSanhLopHoc\": \"...\"\n}\n",
+    "rawOutput": "{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"IELTS-B1-02\",\n      \"tenLopHoc\": \"IELTS B1\",\n      \"doTuongThich\": 80,\n      \"lyDoPhuHop\": \"Học viên đang ở trình độ A2 và muốn cải thiện lên B1, khóa học này tập trung chuẩn bị cho mục tiêu B1 giúp nâng cao các kỹ năng nền tảng.\",\n      \"diemNoiBat\": \"Cung cấp lộ trình luyện thi chuẩn quốc tế giúp chuẩn hóa 4 kỹ năng Nghe - Nói - Đọc - Viết để đạt chuẩn B1.\",\n      \"loTrinhKhuyenNghi\": \"Tham gia khóa học để củng cố kiến thức từ A2 lên B1, sau đó tiếp tục học lên các khóa chuyên sâu B2 nếu có nhu cầu.\"\n    }\n  ],\n  \"soSanhLopHoc\": \"Hiện tại trung tâm chưa có lớp mở riêng vào khung giờ tối Thứ 6 (18:00 - 21:00) đúng theo lịch rảnh hoàn toàn của học viên. Trong danh sách các lớp đang mở tuyển sinh, lớp IELTS-B1-02 là lớp phù hợp nhất với mục tiêu cải thiện từ A2 lên B1 của học viên về mặt nội dung, tuy nhiên lịch học của lớp này không trùng với thời gian rảnh Thứ 6 của học viên. Học viên có thể cần cân nhắc sắp xếp lại thời gian hoặc liên hệ trung tâm để đăng ký lớp học riêng/chờ lớp phù hợp hơn với lịch rảnh Thứ 6.\"\n}",
+    "validatedOutputJson": {
+      "soSanhLopHoc": "Hiện tại trung tâm chưa có lớp mở riêng vào khung giờ tối Thứ 6 (18:00 - 21:00) đúng theo lịch rảnh hoàn toàn của học viên. Trong danh sách các lớp đang mở tuyển sinh, lớp IELTS-B1-02 là lớp phù hợp nhất với mục tiêu cải thiện từ A2 lên B1 của học viên về mặt nội dung, tuy nhiên lịch học của lớp này không trùng với thời gian rảnh Thứ 6 của học viên. Học viên có thể cần cân nhắc sắp xếp lại thời gian hoặc liên hệ trung tâm để đăng ký lớp học riêng/chờ lớp phù hợp hơn với lịch rảnh Thứ 6.",
+      "recommendations": [
+        {
+          "hocPhi": 3500000,
+          "conTrong": 21,
+          "maLopHoc": "IELTS-B1-02",
+          "tenLopHoc": "IELTS B1",
+          "diemNoiBat": "Cung cấp lộ trình luyện thi chuẩn quốc tế giúp chuẩn hóa 4 kỹ năng Nghe - Nói - Đọc - Viết để đạt chuẩn B1.",
+          "lyDoPhuHop": "Học viên đang ở trình độ A2 và muốn cải thiện lên B1, khóa học này tập trung chuẩn bị cho mục tiêu B1 giúp nâng cao các kỹ năng nền tảng.",
+          "lichHocText": "Thứ 7, Thứ 8, Thứ 3",
+          "doTuongThich": 80,
+          "loTrinhKhuyenNghi": "Tham gia khóa học để củng cố kiến thức từ A2 lên B1, sau đó tiếp tục học lên các khóa chuyên sâu B2 nếu có nhu cầu."
+        }
+      ]
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2604,
+    "thoiGianGoi": "2026-09-19T06:21:10.095Z"
+  },
+  {
+    "id": 199,
+    "nguoiDungId": 723,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "\nBạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.\nDữ liệu học viên:\n- Trình độ CEFR: A2\n- Lịch rảnh: {\"thu\":[6,2,3],\"gio\":\"18:00-21:00\"}\n- Mục tiêu / Nguyện vọng cá nhân của học viên: \"Các lớp A1 HIỆN TẠI\"\n\nDanh sách lớp học thực tế đang mở tuyển sinh:\n[{\"maLopHoc\":\"MAST-C2-01\",\"tenLopHoc\":\"C2 Academic Mastery & Advanced Debate\",\"khoaHoc\":\"Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)\",\"trinhDoYeuCau\":\"C2\",\"hocPhi\":6800000,\"conTrong\":12,\"lichHoc\":[\"Thứ 7 (10:00 - 12:30)\",\"Thứ 8 (10:00 - 12:30)\",\"Thứ 3 (18:00 - 20:30)\",\"Thứ 5 (18:00 - 20:30)\"]},{\"maLopHoc\":\"ENG-A1-02\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cuối Tuần\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":11,\"lichHoc\":[\"Thứ 7 (06:00 - 09:00)\",\"Thứ 8 (06:00 - 09:00)\"]},{\"maLopHoc\":\"IELTS-B1-02\",\"tenLopHoc\":\"IELTS B1\",\"khoaHoc\":\"IELTS Preparation B1 → B2\",\"trinhDoYeuCau\":\"B1\",\"hocPhi\":3500000,\"conTrong\":21,\"lichHoc\":[\"Thứ 7 (00:30 - 03:30)\",\"Thứ 8 (00:30 - 03:30)\",\"Thứ 3 (10:00 - 12:30)\"]},{\"maLopHoc\":\"ENG-A1-01\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":14,\"lichHoc\":[\"Thứ 3 (09:30 - 11:30)\",\"Thứ 5 (09:30 - 11:30)\"]}]\n\nYÊU CẦU PHÂN TÍCH TỪ AI:\n1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.\n2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.\n3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.\n4. So sánh đối chiếu (soSanhLopHoc): Phân tích ngắn gọn ưu và nhược điểm đối chiếu giữa các lớp được đề xuất (về lịch học, đối tượng, trọng tâm kỹ năng), gợi ý lớp học phù hợp nhất với mục tiêu của học viên.\n5. Trả về đúng định dạng JSON:\n{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"...\",\n      \"tenLopHoc\": \"...\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"...\",\n      \"diemNoiBat\": \"...\",\n      \"loTrinhKhuyenNghi\": \"...\"\n    }\n  ],\n  \"soSanhLopHoc\": \"...\"\n}\n",
+    "rawOutput": "{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"ENG-A1-01\",\n      \"tenLopHoc\": \"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\n      \"doTuongThich\": 80,\n      \"lyDoPhuHop\": \"Học viên có nguyện vọng tìm các lớp A1 hiện tại, tuy nhiên trình độ hiện tại của học viên là A2. Lớp này phù hợp nếu học viên muốn ôn tập lại kiến thức nền tảng từ đầu.\",\n      \"diemNoiBat\": \"Củng cố lại hệ thống ngữ pháp và từ vựng gốc, xây dựng phản xạ cơ bản.\",\n      \"loTrinhKhuyenNghi\": \"Sau khi hoàn thành A1, học viên cần nâng cấp lên các lớp luyện thi B1 hoặc tiếng Anh giao tiếp trung cấp.\"\n    },\n    {\n      \"maLopHoc\": \"ENG-A1-02\",\n      \"tenLopHoc\": \"Tiếng Anh Căn Bản Cuối Tuần\",\n      \"doTuongThich\": 78,\n      \"lyDoPhuHop\": \"Đáp ứng đúng mong muốn tìm kiếm lớp A1 của học viên, giúp hệ thống lại kiến thức nền tảng.\",\n      \"diemNoiBat\": \"Thời gian học vào cuối tuần thuận tiện cho người bận rộn.\",\n      \"loTrinhKhuyenNghi\": \"Tiếp tục tham gia các khóa học chuyên sâu hơn ở trình độ A2 và B1 sau khi kết thúc lớp A1.\"\n    },\n    {\n      \"maLopHoc\": \"IELTS-B1-02\",\n      \"tenLopHoc\": \"IELTS B1\",\n      \"doTuongThich\": 85,\n      \"lyDoPhuHop\": \"Học viên hiện đã ở trình độ A2, việc tham gia lớp A1 có thể gây nhàm chán. Lớp IELTS B1 là bước tiến phù hợp tiếp theo với lộ trình phát triển năng lực chuẩn hóa.\",\n      \"diemNoiBat\": \"Phát triển toàn diện 4 kỹ năng Nghe - Nói - Đọc - Viết theo chuẩn quốc tế.\",\n      \"loTrinhKhuyenNghi\": \"Tiếp tục tiến lên các lớp luyện thi IELTS B2 hoặc các khóa học nâng cao sau khi đạt chuẩn B1.\"\n    }\n  ],\n  \"soSanhLopHoc\": \"Về mặt nguyện vọng trực tiếp, các lớp ENG-A1-01 và ENG-A1-02 đáp ứng đúng yêu cầu tìm lớp A1 của học viên, tuy nhiên trình độ hiện tại của học viên là A2 nên học các lớp này có phần hơi thấp so với năng lực thực tế. Trong khi đó, lớp IELTS-B1-02 phù hợp hơn với trình độ A2 hiện tại để học viên bứt phá lên mức cao hơn. Gợi ý tốt nhất là học viên nên cân nhắc tham gia lớp IELTS-B1-02 để tối ưu hóa thời gian và năng lực thay vì lùi về học lại A1.\"\n}",
+    "validatedOutputJson": {
+      "soSanhLopHoc": "Về mặt nguyện vọng trực tiếp, các lớp ENG-A1-01 và ENG-A1-02 đáp ứng đúng yêu cầu tìm lớp A1 của học viên, tuy nhiên trình độ hiện tại của học viên là A2 nên học các lớp này có phần hơi thấp so với năng lực thực tế. Trong khi đó, lớp IELTS-B1-02 phù hợp hơn với trình độ A2 hiện tại để học viên bứt phá lên mức cao hơn. Gợi ý tốt nhất là học viên nên cân nhắc tham gia lớp IELTS-B1-02 để tối ưu hóa thời gian và năng lực thay vì lùi về học lại A1.",
+      "recommendations": [
+        {
+          "hocPhi": 2200000,
+          "conTrong": 14,
+          "maLopHoc": "ENG-A1-01",
+          "tenLopHoc": "Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu",
+          "diemNoiBat": "Củng cố lại hệ thống ngữ pháp và từ vựng gốc, xây dựng phản xạ cơ bản.",
+          "lyDoPhuHop": "Học viên có nguyện vọng tìm các lớp A1 hiện tại, tuy nhiên trình độ hiện tại của học viên là A2. Lớp này phù hợp nếu học viên muốn ôn tập lại kiến thức nền tảng từ đầu.",
+          "lichHocText": "Thứ 3, Thứ 5",
+          "doTuongThich": 80,
+          "loTrinhKhuyenNghi": "Sau khi hoàn thành A1, học viên cần nâng cấp lên các lớp luyện thi B1 hoặc tiếng Anh giao tiếp trung cấp."
+        },
+        {
+          "hocPhi": 2200000,
+          "conTrong": 11,
+          "maLopHoc": "ENG-A1-02",
+          "tenLopHoc": "Tiếng Anh Căn Bản Cuối Tuần",
+          "diemNoiBat": "Thời gian học vào cuối tuần thuận tiện cho người bận rộn.",
+          "lyDoPhuHop": "Đáp ứng đúng mong muốn tìm kiếm lớp A1 của học viên, giúp hệ thống lại kiến thức nền tảng.",
+          "lichHocText": "Thứ 7, Thứ 8",
+          "doTuongThich": 78,
+          "loTrinhKhuyenNghi": "Tiếp tục tham gia các khóa học chuyên sâu hơn ở trình độ A2 và B1 sau khi kết thúc lớp A1."
+        },
+        {
+          "hocPhi": 3500000,
+          "conTrong": 21,
+          "maLopHoc": "IELTS-B1-02",
+          "tenLopHoc": "IELTS B1",
+          "diemNoiBat": "Phát triển toàn diện 4 kỹ năng Nghe - Nói - Đọc - Viết theo chuẩn quốc tế.",
+          "lyDoPhuHop": "Học viên hiện đã ở trình độ A2, việc tham gia lớp A1 có thể gây nhàm chán. Lớp IELTS B1 là bước tiến phù hợp tiếp theo với lộ trình phát triển năng lực chuẩn hóa.",
+          "lichHocText": "Thứ 7, Thứ 8, Thứ 3",
+          "doTuongThich": 85,
+          "loTrinhKhuyenNghi": "Tiếp tục tiến lên các lớp luyện thi IELTS B2 hoặc các khóa học nâng cao sau khi đạt chuẩn B1."
+        }
+      ]
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 3102,
+    "thoiGianGoi": "2026-09-19T06:29:17.230Z"
+  },
+  {
+    "id": 200,
+    "nguoiDungId": 1,
+    "loaiChucNang": "TOM_TAT_TIEN_DO",
+    "promptInput": "\nBạn là Trợ lý AI Phân tích Học tập của Trung tâm Anh ngữ ETC.\nDữ liệu học tập thực tế (Ground Truth) của học viên:\n- Họ và tên: Phạm Văn Hùng (Mã HV: HV002, Trình độ: A2)\n- Lớp học: IELTS B1 (IELTS-B1-02) - Khóa học: IELTS Preparation B1 → B2\n- Giai đoạn học tập hiện tại: Mới đăng ký (Chưa diễn ra buổi học nào)\n- Chuyên cần: Lớp học chưa bắt đầu / Chưa có buổi học nào được ghi nhận điểm danh.\n- Điểm chuyên cần (20%): Chưa có\n- Điểm giữa kỳ (30%): Chưa thi\n- Điểm cuối kỳ (50%): Chưa thi\n- Điểm tổng kết: Chưa tổng kết (Khóa đang diễn ra)\n- Trạng thái hoàn thành: CHUA_XEP_LOAI\n- Nhận xét của giáo viên phụ trách: Chưa có nhận xét riêng\n\nYÊU CẦU ĐẶC BIỆT (PHÂN TÍCH SƯ PHẠM CHUYÊN SÂU & ĐỊNH HƯỚNG CẢI THIỆN BẢN THÂN):\n1. Nhận diện chính xác giai đoạn học tập (Mới đăng ký (Chưa diễn ra buổi học nào)):\n   - Nếu đang học giữa kỳ: Đánh giá chi tiết cơ hội, tính toán mục tiêu điểm bài thi cuối kỳ (chiếm 50% tổng điểm) cần đạt để bứt phá.\n   - Nếu đã hoàn thành khóa học: Đánh giá toàn diện nguyên nhân Đạt hoặc Không Đạt (do chuyên cần thấp <80% hay điểm bài thi dưới chuẩn), rút ra bài học kinh nghiệm sâu sắc.\n   - Nếu mới bắt đầu: Khích lệ và nhấn mạnh tầm quan trọng của kỷ luật chuyên cần ngay từ đầu.\n2. Nội dung phân tích cần chi tiết, thấu đáo, mang tính hành động cao (Actionable Guidance) để người học cải thiện bản thân:\n   - Phân tích rõ nguyên nhân gốc rễ (Root Cause) của điểm số và chuyên cần.\n   - Trình bày dạng các gạch đầu dòng (•) rõ ràng, dễ đọc, mạch lạc.\n   - Đưa ra lộ trình hành động cụ thể: thời lượng tự học mỗi ngày, các chủ điểm ngữ pháp/từ vựng cốt lõi cần củng cố và cách tận dụng bài tập AI để lấy lại nền tảng.\n3. Tuyệt đối trung thực với dữ liệu số CSDL, không bịa đặt điểm số chưa thi.\n\nTrả về đúng định dạng JSON hợp lệ:\n{\n  \"diemManh\": \"• Thái độ & Kỷ luật: [Nhận xét cụ thể về chuyên cần hoặc tinh thần học tập]\n• Năng lực & Bài thi: [Nhận xét chi tiết về bài kiểm tra đã hoàn thành]\n• Điểm sáng nỗ lực: [Ghi nhận sự cố gắng vượt bậc hoặc tiềm năng của học viên]\",\n  \"canKhacPhuc\": \"• Nguyên nhân gốc rễ: [Phân tích tác động của các buổi vắng/đi muộn hoặc thiếu hụt kiến thức cơ bản]\n• Điểm nghẽn kỹ năng: [Chỉ rõ phần bài thi/kỹ năng cần gia cố gấp]\n• Rủi ro cần phòng tránh: [Hậu quả nếu không khắc phục sớm ở các khóa học tiếp theo]\",\n  \"loiKhuyen\": \"• Bước 1 - Củng cố nền tảng: [Chủ điểm ngữ pháp và từ vựng cốt lõi cần ôn lại ngay theo chuẩn CEFR A2]\n• Bước 2 - Kỷ luật rèn luyện: [Kế hoạch phân bổ 30-45 phút tự học mỗi ngày và cách luyện đề trắc nghiệm AI]\n• Bước 3 - Mục tiêu bứt phá: [Chiến lược cụ thể cho kỳ thi cuối kỳ hoặc kế hoạch học tập tiếp theo]\",\n  \"tomTatChung\": \"[Đoạn nhận định sư phạm tổng thể 2-3 câu ngắn gọn, khách quan, mang tính xây dựng và tiếp thêm động lực cho học viên phấn đấu.]\"\n}\n",
+    "rawOutput": "{\n  \"diemManh\": \"• Thái độ & Kỷ luật: Học viên Phạm Văn Hùng đã hoàn tất thủ tục đăng ký và sẵn sàng bước vào hành trình chinh phục khóa học IELTS B1 tại ETC.\\n• Năng lực & Bài thi: Khóa học mới bắt đầu, học viên đang sở hữu xuất phát điểm ở trình độ A2, tạo nền tảng cơ bản để tiếp thu kiến thức IELTS.\\n• Điểm sáng nỗ lực: Tinh thần chủ động đăng ký khóa học thể hiện rõ định hướng phát triển ngoại ngữ rõ ràng.\",\n  \"canKhacPhuc\": \"• Nguyên nhân gốc rễ: Do lớp học chưa diễn ra buổi học nào, học viên chưa có dữ liệu chuyên cần hay điểm số để đánh giá sự thiếu hụt kiến thức.\\n• Điểm nghẽn kỹ năng: Học viên ở trình độ A2 thường gặp khó khăn với cấu trúc câu phức tạp và từ vựng học thuật khi tiếp cận IELTS.\\n• Rủi ro cần phòng tránh: Thiếu sự chuẩn bị tâm thế và thói quen tự học ngay từ đầu có thể dẫn đến việc bị ngợp khi nhịp độ lớp học tăng dần.\",\n  \"loiKhuyen\": \"• Bước 1 - Củng cố nền tảng: Ôn tập các chủ điểm ngữ pháp cốt lõi ở trình độ A2 (các thì cơ bản, câu bị động, mệnh đề quan hệ) và mở rộng vốn từ vựng theo các chủ đề quen thuộc.\\n• Bước 2 - Kỷ luật rèn luyện: Thiết lập thói quen tự học từ 30-45 phút mỗi ngày, tận dụng hệ thống bài tập AI của trung tâm để làm quen với các dạng bài tập tương tác.\\n• Bước 3 - Mục tiêu bứt phá: Duy trì kỷ luật chuyên cần tuyệt đối, tham gia đầy đủ 100% các buổi học và chủ động tương tác với giáo viên để xây dựng lộ trình bứt phá hiệu quả.\",\n  \"tomTatChung\": \"Học viên Phạm Văn Hùng đang ở giai đoạn khởi đầu rất quan trọng của khóa học IELTS B1. Việc duy trì kỷ luật chuyên cần ngay từ những buổi đầu tiên kết hợp với kế hoạch tự học khoa học sẽ là chìa khóa quyết định giúp học viên nhanh chóng thu hẹp khoảng cách từ trình độ A2 lên B2.\"\n}",
+    "validatedOutputJson": {
+      "duLieuGoc": {
+        "vang": 0,
+        "coMat": 0,
+        "coPhep": 0,
+        "diMuon": 0,
+        "xepLoai": "CHUA_XEP_LOAI",
+        "giaiDoan": "DANG_HOC_DAU_KHOA",
+        "diemCuoiKy": null,
+        "diemGiuaKy": null,
+        "diemTongKet": null,
+        "tongBuoiHoc": 0,
+        "giaiDoanText": "Mới đăng ký (Chưa diễn ra buổi học nào)",
+        "diemChuyenCan": null,
+        "tyLeChuyenCan": "Chưa học",
+        "nhanXetGiaoVien": null
+      },
+      "aiInsights": {
+        "diemManh": "• Thái độ & Kỷ luật: Học viên Phạm Văn Hùng đã hoàn tất thủ tục đăng ký và sẵn sàng bước vào hành trình chinh phục khóa học IELTS B1 tại ETC.\n• Năng lực & Bài thi: Khóa học mới bắt đầu, học viên đang sở hữu xuất phát điểm ở trình độ A2, tạo nền tảng cơ bản để tiếp thu kiến thức IELTS.\n• Điểm sáng nỗ lực: Tinh thần chủ động đăng ký khóa học thể hiện rõ định hướng phát triển ngoại ngữ rõ ràng.",
+        "loiKhuyen": "• Bước 1 - Củng cố nền tảng: Ôn tập các chủ điểm ngữ pháp cốt lõi ở trình độ A2 (các thì cơ bản, câu bị động, mệnh đề quan hệ) và mở rộng vốn từ vựng theo các chủ đề quen thuộc.\n• Bước 2 - Kỷ luật rèn luyện: Thiết lập thói quen tự học từ 30-45 phút mỗi ngày, tận dụng hệ thống bài tập AI của trung tâm để làm quen với các dạng bài tập tương tác.\n• Bước 3 - Mục tiêu bứt phá: Duy trì kỷ luật chuyên cần tuyệt đối, tham gia đầy đủ 100% các buổi học và chủ động tương tác với giáo viên để xây dựng lộ trình bứt phá hiệu quả.",
+        "canKhacPhuc": "• Nguyên nhân gốc rễ: Do lớp học chưa diễn ra buổi học nào, học viên chưa có dữ liệu chuyên cần hay điểm số để đánh giá sự thiếu hụt kiến thức.\n• Điểm nghẽn kỹ năng: Học viên ở trình độ A2 thường gặp khó khăn với cấu trúc câu phức tạp và từ vựng học thuật khi tiếp cận IELTS.\n• Rủi ro cần phòng tránh: Thiếu sự chuẩn bị tâm thế và thói quen tự học ngay từ đầu có thể dẫn đến việc bị ngợp khi nhịp độ lớp học tăng dần.",
+        "tomTatChung": "Học viên Phạm Văn Hùng đang ở giai đoạn khởi đầu rất quan trọng của khóa học IELTS B1. Việc duy trì kỷ luật chuyên cần ngay từ những buổi đầu tiên kết hợp với kế hoạch tự học khoa học sẽ là chìa khóa quyết định giúp học viên nhanh chóng thu hẹp khoảng cách từ trình độ A2 lên B2."
+      }
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2394,
+    "thoiGianGoi": "2026-09-19T07:19:59.422Z"
+  },
+  {
+    "id": 197,
+    "nguoiDungId": 5,
+    "loaiChucNang": "TOM_TAT_TIEN_DO",
+    "promptInput": "\nBạn là Trợ lý AI Phân tích Học tập của Trung tâm Anh ngữ ETC.\nDữ liệu học tập thực tế (Ground Truth) của học viên:\n- Họ và tên: Lê Thị Hoa (Mã HV: HV001, Trình độ: B1)\n- Lớp học: IELTS B1 K2 (IELTS-B1-01) - Khóa học: IELTS Preparation B1 → B2\n- Giai đoạn học tập hiện tại: Đã hoàn thành và tổng kết khóa học\n- Chuyên cần: 8/8 buổi tham gia (100.0%), Vắng: 0 buổi, Đi muộn: 0 buổi, Có phép: 0 buổi.\n- Điểm chuyên cần (20%): 95\n- Điểm giữa kỳ (30%): 82.5\n- Điểm cuối kỳ (50%): 88\n- Điểm tổng kết: 87.75\n- Trạng thái hoàn thành: DAT\n- Nhận xét của giáo viên phụ trách: Ngữ pháp tốt, phát âm chuẩn. Cần luyện thêm từ vựng Writing.\n\nYÊU CẦU ĐẶC BIỆT (PHÂN TÍCH SƯ PHẠM CHUYÊN SÂU & ĐỊNH HƯỚNG CẢI THIỆN BẢN THÂN):\n1. Nhận diện chính xác giai đoạn học tập (Đã hoàn thành và tổng kết khóa học):\n   - Nếu đang học giữa kỳ: Đánh giá chi tiết cơ hội, tính toán mục tiêu điểm bài thi cuối kỳ (chiếm 50% tổng điểm) cần đạt để bứt phá.\n   - Nếu đã hoàn thành khóa học: Đánh giá toàn diện nguyên nhân Đạt hoặc Không Đạt (do chuyên cần thấp <80% hay điểm bài thi dưới chuẩn), rút ra bài học kinh nghiệm sâu sắc.\n   - Nếu mới bắt đầu: Khích lệ và nhấn mạnh tầm quan trọng của kỷ luật chuyên cần ngay từ đầu.\n2. Nội dung phân tích cần chi tiết, thấu đáo, mang tính hành động cao (Actionable Guidance) để người học cải thiện bản thân:\n   - Phân tích rõ nguyên nhân gốc rễ (Root Cause) của điểm số và chuyên cần.\n   - Trình bày dạng các gạch đầu dòng (•) rõ ràng, dễ đọc, mạch lạc.\n   - Đưa ra lộ trình hành động cụ thể: thời lượng tự học mỗi ngày, các chủ điểm ngữ pháp/từ vựng cốt lõi cần củng cố và cách tận dụng bài tập AI để lấy lại nền tảng.\n3. Tuyệt đối trung thực với dữ liệu số CSDL, không bịa đặt điểm số chưa thi.\n\nTrả về đúng định dạng JSON hợp lệ:\n{\n  \"diemManh\": \"• Thái độ & Kỷ luật: [Nhận xét cụ thể về chuyên cần hoặc tinh thần học tập]\n• Năng lực & Bài thi: [Nhận xét chi tiết về bài kiểm tra đã hoàn thành]\n• Điểm sáng nỗ lực: [Ghi nhận sự cố gắng vượt bậc hoặc tiềm năng của học viên]\",\n  \"canKhacPhuc\": \"• Nguyên nhân gốc rễ: [Phân tích tác động của các buổi vắng/đi muộn hoặc thiếu hụt kiến thức cơ bản]\n• Điểm nghẽn kỹ năng: [Chỉ rõ phần bài thi/kỹ năng cần gia cố gấp]\n• Rủi ro cần phòng tránh: [Hậu quả nếu không khắc phục sớm ở các khóa học tiếp theo]\",\n  \"loiKhuyen\": \"• Bước 1 - Củng cố nền tảng: [Chủ điểm ngữ pháp và từ vựng cốt lõi cần ôn lại ngay theo chuẩn CEFR B1]\n• Bước 2 - Kỷ luật rèn luyện: [Kế hoạch phân bổ 30-45 phút tự học mỗi ngày và cách luyện đề trắc nghiệm AI]\n• Bước 3 - Mục tiêu bứt phá: [Chiến lược cụ thể cho kỳ thi cuối kỳ hoặc kế hoạch học tập tiếp theo]\",\n  \"tomTatChung\": \"[Đoạn nhận định sư phạm tổng thể 2-3 câu ngắn gọn, khách quan, mang tính xây dựng và tiếp thêm động lực cho học viên phấn đấu.]\"\n}\n",
+    "rawOutput": "{\n  \"diemManh\": \"• Thái độ & Kỷ luật: Học viên Lê Thị Hoa đạt chuyên cần tuyệt đối 100% (tham gia đủ 8/8 buổi, không vắng và không đi muộn), thể hiện sự cam kết và tinh thần học tập nghiêm túc.\\n• Năng lực & Bài thi: Hoàn thành xuất sắc khóa học với điểm tổng kết 87.75 (Điểm chuyên cần 95, giữa kỳ 82.5, cuối kỳ 88), xếp loại ĐẠT.\\n• Điểm sáng nỗ lực: Nền tảng ngữ pháp tốt và phát âm chuẩn, minh chứng qua kết quả bài thi cuối kỳ đạt mức cao (88 điểm).\",\n  \"canKhacPhuc\": \"• Nguyên nhân gốc rễ: Dù đạt kết quả tốt, học viên vẫn có điểm hạn chế nhỏ về từ vựng theo nhận xét của giáo viên phụ trách.\\n• Điểm nghẽn kỹ năng: Vẫn còn thiếu hụt vốn từ vựng chuyên sâu phục vụ cho phần thi Writing trong lộ trình hướng tới IELTS B2.\\n• Rủi ro cần phòng tránh: Nếu không mở rộng biên độ từ vựng học thuật, học viên có thể gặp khó khăn khi diễn đạt các ý tưởng phức tạp ở các khóa học nâng cao tiếp theo.\",\n  \"loiKhuyen\": \"• Bước 1 - Củng cố nền tảng: Chủ động ôn tập các chủ điểm từ vựng học thuật (Academic Vocabulary) theo chuẩn B1-B2, tập trung vào các chủ đề phổ biến trong IELTS Writing.\\n• Bước 2 - Kỷ luật rèn luyện: Duy trì thói quen tự học 30-45 phút mỗi ngày, viết ít nhất một bài luận ngắn và tận dụng hệ thống bài tập AI của trung tâm để chấm chữa lỗi từ vựng, ngữ pháp.\\n• Bước 3 - Mục tiêu bứt phá: Chuẩn bị sẵn sàng tâm thế và kiến thức để bước vào khóa học IELTS tiếp theo (B2), hướng tới mục tiêu band điểm cao hơn.\",\n  \"tomTatChung\": \"Học viên Lê Thị Hoa đã hoàn thành xuất sắc khóa học IELTS B1 K2 với sự kỷ luật tuyệt đối và kết quả tổng kết rất đáng tự hào (87.75 điểm). Chỉ cần tiếp tục mở rộng vốn từ vựng Writing theo đúng định hướng của giáo viên, học viên hoàn toàn có đủ tiềm năng để chinh phục thành công các mốc điểm cao hơn ở giai đoạn tiếp theo.\"\n}",
+    "validatedOutputJson": {
+      "duLieuGoc": {
+        "vang": 0,
+        "coMat": 8,
+        "coPhep": 0,
+        "diMuon": 0,
+        "xepLoai": "DAT",
+        "giaiDoan": "DA_TONG_KET_CUOI_KHOA",
+        "diemCuoiKy": 88,
+        "diemGiuaKy": 82.5,
+        "diemTongKet": 87.75,
+        "tongBuoiHoc": 8,
+        "giaiDoanText": "Đã hoàn thành và tổng kết khóa học",
+        "diemChuyenCan": 95,
+        "tyLeChuyenCan": "100.0%",
+        "nhanXetGiaoVien": "Ngữ pháp tốt, phát âm chuẩn. Cần luyện thêm từ vựng Writing."
+      },
+      "aiInsights": {
+        "diemManh": "• Thái độ & Kỷ luật: Học viên Lê Thị Hoa đạt chuyên cần tuyệt đối 100% (tham gia đủ 8/8 buổi, không vắng và không đi muộn), thể hiện sự cam kết và tinh thần học tập nghiêm túc.\n• Năng lực & Bài thi: Hoàn thành xuất sắc khóa học với điểm tổng kết 87.75 (Điểm chuyên cần 95, giữa kỳ 82.5, cuối kỳ 88), xếp loại ĐẠT.\n• Điểm sáng nỗ lực: Nền tảng ngữ pháp tốt và phát âm chuẩn, minh chứng qua kết quả bài thi cuối kỳ đạt mức cao (88 điểm).",
+        "loiKhuyen": "• Bước 1 - Củng cố nền tảng: Chủ động ôn tập các chủ điểm từ vựng học thuật (Academic Vocabulary) theo chuẩn B1-B2, tập trung vào các chủ đề phổ biến trong IELTS Writing.\n• Bước 2 - Kỷ luật rèn luyện: Duy trì thói quen tự học 30-45 phút mỗi ngày, viết ít nhất một bài luận ngắn và tận dụng hệ thống bài tập AI của trung tâm để chấm chữa lỗi từ vựng, ngữ pháp.\n• Bước 3 - Mục tiêu bứt phá: Chuẩn bị sẵn sàng tâm thế và kiến thức để bước vào khóa học IELTS tiếp theo (B2), hướng tới mục tiêu band điểm cao hơn.",
+        "canKhacPhuc": "• Nguyên nhân gốc rễ: Dù đạt kết quả tốt, học viên vẫn có điểm hạn chế nhỏ về từ vựng theo nhận xét của giáo viên phụ trách.\n• Điểm nghẽn kỹ năng: Vẫn còn thiếu hụt vốn từ vựng chuyên sâu phục vụ cho phần thi Writing trong lộ trình hướng tới IELTS B2.\n• Rủi ro cần phòng tránh: Nếu không mở rộng biên độ từ vựng học thuật, học viên có thể gặp khó khăn khi diễn đạt các ý tưởng phức tạp ở các khóa học nâng cao tiếp theo.",
+        "tomTatChung": "Học viên Lê Thị Hoa đã hoàn thành xuất sắc khóa học IELTS B1 K2 với sự kỷ luật tuyệt đối và kết quả tổng kết rất đáng tự hào (87.75 điểm). Chỉ cần tiếp tục mở rộng vốn từ vựng Writing theo đúng định hướng của giáo viên, học viên hoàn toàn có đủ tiềm năng để chinh phục thành công các mốc điểm cao hơn ở giai đoạn tiếp theo."
+      }
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2120,
+    "thoiGianGoi": "2026-09-17T09:21:21.331Z"
+  },
+  {
+    "id": 201,
+    "nguoiDungId": 1,
+    "loaiChucNang": "TOM_TAT_TIEN_DO",
+    "promptInput": "\nBạn là Trợ lý AI Phân tích Học tập của Trung tâm Anh ngữ ETC.\nDữ liệu học tập thực tế (Ground Truth) của học viên:\n- Họ và tên: Trịnh Đình Quang (Mã HV: HV006, Trình độ: C1)\n- Lớp học: IELTS B1 K2 (IELTS-B1-01) - Khóa học: IELTS Preparation B1 → B2\n- Giai đoạn học tập hiện tại: Đã hoàn thành và tổng kết khóa học\n- Chuyên cần: 8/8 buổi tham gia (100.0%), Vắng: 0 buổi, Đi muộn: 0 buổi, Có phép: 0 buổi.\n- Điểm chuyên cần (20%): 95\n- Điểm giữa kỳ (30%): 90\n- Điểm cuối kỳ (50%): 92\n- Điểm tổng kết: 92\n- Trạng thái hoàn thành: DAT\n- Nhận xét của giáo viên phụ trách: Kiến thức học thuật chuyên sâu.\n\nYÊU CẦU ĐẶC BIỆT (PHÂN TÍCH SƯ PHẠM CHUYÊN SÂU & ĐỊNH HƯỚNG CẢI THIỆN BẢN THÂN):\n1. Nhận diện chính xác giai đoạn học tập (Đã hoàn thành và tổng kết khóa học):\n   - Nếu đang học giữa kỳ: Đánh giá chi tiết cơ hội, tính toán mục tiêu điểm bài thi cuối kỳ (chiếm 50% tổng điểm) cần đạt để bứt phá.\n   - Nếu đã hoàn thành khóa học: Đánh giá toàn diện nguyên nhân Đạt hoặc Không Đạt (do chuyên cần thấp <80% hay điểm bài thi dưới chuẩn), rút ra bài học kinh nghiệm sâu sắc.\n   - Nếu mới bắt đầu: Khích lệ và nhấn mạnh tầm quan trọng của kỷ luật chuyên cần ngay từ đầu.\n2. Nội dung phân tích cần chi tiết, thấu đáo, mang tính hành động cao (Actionable Guidance) để người học cải thiện bản thân:\n   - Phân tích rõ nguyên nhân gốc rễ (Root Cause) của điểm số và chuyên cần.\n   - Trình bày dạng các gạch đầu dòng (•) rõ ràng, dễ đọc, mạch lạc.\n   - Đưa ra lộ trình hành động cụ thể: thời lượng tự học mỗi ngày, các chủ điểm ngữ pháp/từ vựng cốt lõi cần củng cố và cách tận dụng bài tập AI để lấy lại nền tảng.\n3. Tuyệt đối trung thực với dữ liệu số CSDL, không bịa đặt điểm số chưa thi.\n\nTrả về đúng định dạng JSON hợp lệ:\n{\n  \"diemManh\": \"• Thái độ & Kỷ luật: [Nhận xét cụ thể về chuyên cần hoặc tinh thần học tập]\n• Năng lực & Bài thi: [Nhận xét chi tiết về bài kiểm tra đã hoàn thành]\n• Điểm sáng nỗ lực: [Ghi nhận sự cố gắng vượt bậc hoặc tiềm năng của học viên]\",\n  \"canKhacPhuc\": \"• Nguyên nhân gốc rễ: [Phân tích tác động của các buổi vắng/đi muộn hoặc thiếu hụt kiến thức cơ bản]\n• Điểm nghẽn kỹ năng: [Chỉ rõ phần bài thi/kỹ năng cần gia cố gấp]\n• Rủi ro cần phòng tránh: [Hậu quả nếu không khắc phục sớm ở các khóa học tiếp theo]\",\n  \"loiKhuyen\": \"• Bước 1 - Củng cố nền tảng: [Chủ điểm ngữ pháp và từ vựng cốt lõi cần ôn lại ngay theo chuẩn CEFR C1]\n• Bước 2 - Kỷ luật rèn luyện: [Kế hoạch phân bổ 30-45 phút tự học mỗi ngày và cách luyện đề trắc nghiệm AI]\n• Bước 3 - Mục tiêu bứt phá: [Chiến lược cụ thể cho kỳ thi cuối kỳ hoặc kế hoạch học tập tiếp theo]\",\n  \"tomTatChung\": \"[Đoạn nhận định sư phạm tổng thể 2-3 câu ngắn gọn, khách quan, mang tính xây dựng và tiếp thêm động lực cho học viên phấn đấu.]\"\n}\n",
+    "rawOutput": "{\n  \"diemManh\": \"• Thái độ & Kỷ luật: Học viên Trịnh Đình Quang đạt chuyên cân tuyệt đối 100% (8/8 buổi), thể hiện tinh thần học tập vô cùng nghiêm túc và trách nhiệm cao với khóa học.\\n• Năng lực & Bài thi: Hoàn thành xuất sắc khóa học với điểm số ấn tượng: Chuyên cần 95, Giữa kỳ 90, Cuối kỳ 92, đạt điểm tổng kết 92 và chính thức xếp loại ĐẠT ở trình độ C1.\\n• Điểm sáng nỗ lực: Nền tảng học thuật chuyên sâu cùng sự ổn định trong suốt quá trình học giúp học viên dễ dàng chinh phục các mục tiêu đề ra của khóa học.\",\n  \"canKhacPhuc\": \"• Nguyên nhân gốc rễ: Không có điểm hạn chế lớn về chuyên cần hay thái độ; tuy nhiên, với trình độ C1, học viên cần tiếp tục duy trì nhịp độ học tập để tránh bị chững lại (plateau).\\n• Điểm nghẽn kỹ năng: Cần liên tục cập nhật các chủ điểm tiếng Anh học thuật nâng cao và trau dồi khả năng phản xạ linh hoạt trong môi trường quốc tế.\\n• Rủi ro cần phòng tránh: Chủ quan với kết quả hiện tại có thể làm giảm sút động lực phấn đấu ở các bậc học chuyên sâu hơn.\",\n  \"loiKhuyen\": \"• Bước 1 - Củng cố nền tảng: Ôn tập và mở rộng vốn từ vựng học thuật chuyên sâu (Academic Vocabulary) và các cấu trúc ngữ pháp phức tạp theo chuẩn CEFR C1.\\n• Bước 2 - Kỷ luật rèn luyện: Duy trì thói quen tự học 30-45 phút mỗi ngày, kết hợp tận dụng hệ thống bài tập AI để luyện tập các dạng bài khó và nâng cao phản xạ ngôn ngữ.\\n• Bước 3 - Mục tiêu bứt phá: Chuẩn bị tâm thế và lộ trình sẵn sàng chinh phục các chứng chỉ quốc tế hoặc các khóa học chuyên sâu tiếp theo ở mức độ cao hơn.\",\n  \"tomTatChung\": \"Học viên Trịnh Đình Quang đã hoàn thành xuất sắc khóa học với kết quả toàn diện và ấn tượng nhờ tinh thần kỷ luật cao cùng nền tảng kiến thức chuyên sâu. Trung tâm Anh ngữ ETC hy vọng học viên sẽ tiếp tục phát huy thế mạnh này để vươn xa hơn trong các chặng đường học tập tiếp theo.\"\n}",
+    "validatedOutputJson": {
+      "duLieuGoc": {
+        "vang": 0,
+        "coMat": 8,
+        "coPhep": 0,
+        "diMuon": 0,
+        "xepLoai": "DAT",
+        "giaiDoan": "DA_TONG_KET_CUOI_KHOA",
+        "diemCuoiKy": 92,
+        "diemGiuaKy": 90,
+        "diemTongKet": 92,
+        "tongBuoiHoc": 8,
+        "giaiDoanText": "Đã hoàn thành và tổng kết khóa học",
+        "diemChuyenCan": 95,
+        "tyLeChuyenCan": "100.0%",
+        "nhanXetGiaoVien": "Kiến thức học thuật chuyên sâu."
+      },
+      "aiInsights": {
+        "diemManh": "• Thái độ & Kỷ luật: Học viên Trịnh Đình Quang đạt chuyên cân tuyệt đối 100% (8/8 buổi), thể hiện tinh thần học tập vô cùng nghiêm túc và trách nhiệm cao với khóa học.\n• Năng lực & Bài thi: Hoàn thành xuất sắc khóa học với điểm số ấn tượng: Chuyên cần 95, Giữa kỳ 90, Cuối kỳ 92, đạt điểm tổng kết 92 và chính thức xếp loại ĐẠT ở trình độ C1.\n• Điểm sáng nỗ lực: Nền tảng học thuật chuyên sâu cùng sự ổn định trong suốt quá trình học giúp học viên dễ dàng chinh phục các mục tiêu đề ra của khóa học.",
+        "loiKhuyen": "• Bước 1 - Củng cố nền tảng: Ôn tập và mở rộng vốn từ vựng học thuật chuyên sâu (Academic Vocabulary) và các cấu trúc ngữ pháp phức tạp theo chuẩn CEFR C1.\n• Bước 2 - Kỷ luật rèn luyện: Duy trì thói quen tự học 30-45 phút mỗi ngày, kết hợp tận dụng hệ thống bài tập AI để luyện tập các dạng bài khó và nâng cao phản xạ ngôn ngữ.\n• Bước 3 - Mục tiêu bứt phá: Chuẩn bị tâm thế và lộ trình sẵn sàng chinh phục các chứng chỉ quốc tế hoặc các khóa học chuyên sâu tiếp theo ở mức độ cao hơn.",
+        "canKhacPhuc": "• Nguyên nhân gốc rễ: Không có điểm hạn chế lớn về chuyên cần hay thái độ; tuy nhiên, với trình độ C1, học viên cần tiếp tục duy trì nhịp độ học tập để tránh bị chững lại (plateau).\n• Điểm nghẽn kỹ năng: Cần liên tục cập nhật các chủ điểm tiếng Anh học thuật nâng cao và trau dồi khả năng phản xạ linh hoạt trong môi trường quốc tế.\n• Rủi ro cần phòng tránh: Chủ quan với kết quả hiện tại có thể làm giảm sút động lực phấn đấu ở các bậc học chuyên sâu hơn.",
+        "tomTatChung": "Học viên Trịnh Đình Quang đã hoàn thành xuất sắc khóa học với kết quả toàn diện và ấn tượng nhờ tinh thần kỷ luật cao cùng nền tảng kiến thức chuyên sâu. Trung tâm Anh ngữ ETC hy vọng học viên sẽ tiếp tục phát huy thế mạnh này để vươn xa hơn trong các chặng đường học tập tiếp theo."
+      }
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2519,
+    "thoiGianGoi": "2026-09-19T07:21:51.250Z"
+  },
+  {
+    "id": 202,
+    "nguoiDungId": 933,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "\nBạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.\nDữ liệu học viên:\n- Trình độ CEFR: A1\n- Lịch rảnh: {\"thu\":[2,4,6],\"gio\":\"18:00-21:00\"}\n- Mục tiêu / Nguyện vọng cá nhân của học viên: \"Em muốn học cấp tốc trong 2-3 tháng để đạt chuẩn đầu ra đại học / chứng chỉ quốc tế, chú trọng tăng phản xạ Nói và củng cố Ngữ pháp.\"\n\nDanh sách lớp học thực tế đang mở tuyển sinh:\n[{\"maLopHoc\":\"MAST-C2-01\",\"tenLopHoc\":\"C2 Academic Mastery & Advanced Debate\",\"khoaHoc\":\"Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)\",\"trinhDoYeuCau\":\"C2\",\"hocPhi\":6800000,\"conTrong\":12,\"lichHoc\":[\"Thứ 7 (10:00 - 12:30)\",\"Thứ 8 (10:00 - 12:30)\",\"Thứ 3 (18:00 - 20:30)\",\"Thứ 5 (18:00 - 20:30)\"]},{\"maLopHoc\":\"ENG-A1-02\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cuối Tuần\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":11,\"lichHoc\":[\"Thứ 7 (06:00 - 09:00)\",\"Thứ 8 (06:00 - 09:00)\"]},{\"maLopHoc\":\"IELTS-B1-02\",\"tenLopHoc\":\"IELTS B1\",\"khoaHoc\":\"IELTS Preparation B1 → B2\",\"trinhDoYeuCau\":\"B1\",\"hocPhi\":3500000,\"conTrong\":21,\"lichHoc\":[\"Thứ 7 (00:30 - 03:30)\",\"Thứ 8 (00:30 - 03:30)\",\"Thứ 3 (10:00 - 12:30)\"]},{\"maLopHoc\":\"IELTS-KTPM\",\"tenLopHoc\":\"IELTS-KTPM K23C\",\"khoaHoc\":\"IELTS-Free cho người mất gốc\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":1500000,\"conTrong\":25,\"lichHoc\":[]},{\"maLopHoc\":\"IELTS-CNTT\",\"tenLopHoc\":\"IELTS-CNTT K23A\",\"khoaHoc\":\"IELTS-Free cho người mất gốc\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":1500000,\"conTrong\":25,\"lichHoc\":[]},{\"maLopHoc\":\"ENG-A1-01\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":14,\"lichHoc\":[\"Thứ 3 (09:30 - 11:30)\",\"Thứ 5 (09:30 - 11:30)\"]}]\n\nYÊU CẦU PHÂN TÍCH TỪ AI:\n1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.\n2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.\n3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.\n4. So sánh đối chiếu (soSanhLopHoc): Phân tích ngắn gọn ưu và nhược điểm đối chiếu giữa các lớp được đề xuất (về lịch học, đối tượng, trọng tâm kỹ năng), gợi ý lớp học phù hợp nhất với mục tiêu của học viên.\n5. Trả về đúng định dạng JSON:\n{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"...\",\n      \"tenLopHoc\": \"...\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"...\",\n      \"diemNoiBat\": \"...\",\n      \"loTrinhKhuyenNghi\": \"...\"\n    }\n  ],\n  \"soSanhLopHoc\": \"...\"\n}\n",
+    "rawOutput": "{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"ENG-A1-01\",\n      \"tenLopHoc\": \"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\n      \"doTuongThich\": 85,\n      \"lyDoPhuHop\": \"Học viên đang ở trình độ A1, lớp này phù hợp đúng chuẩn đầu vào giúp củng cố lại nền tảng ngữ pháp cốt lõi. Tuy nhiên, lịch học của lớp này (Thứ 3, 5 từ 09:30 - 11:30) chưa trùng khớp hoàn toàn với khung giờ rảnh buổi tối của học viên (18:00 - 21:00).\",\n      \"diemNoiBat\": \"Thuộc khóa học Tiếng Anh Căn Bản Cho Người Mất Gốc (A1) với học phí hợp lý (2.200.000 VNĐ), sĩ số còn trống 14 chỗ, tập trung xây dựng gốc rễ vững chắc.\",\n      \"loTrinhKhuyenNghi\": \"Tham gia lớp ENG-A1-01 để củng cố ngữ pháp trong 2 tháng đầu, sau đó chuyển tiếp lên các khóa luyện thi chứng chỉ quốc tế hoặc giao tiếp phản xạ.\"\n    },\n    {\n      \"maLopHoc\": \"IELTS-KTPM\",\n      \"tenLopHoc\": \"IELTS-KTPM K23C\",\n      \"doTuongThich\": 80,\n      \"lyDoPhuHop\": \"Phù hợp với mục tiêu đạt chứng chỉ quốc tế / chuẩn đầu ra đại học cho người ở trình độ A1, chi phí tiết kiệm.\",\n      \"diemNoiBat\": \"Thuộc khóa IELTS-Free cho người mất gốc với học phí ưu đãi 1.500.000 VNĐ, còn trống 25 chỗ.\",\n      \"loTrinhKhuyenNghi\": \"Học tập trung trong 2-3 tháng để làm quen với định dạng bài thi IELTS và nâng cao từ vựng ngữ pháp cơ bản.\"\n    },\n    {\n      \"maLopHoc\": \"IELTS-CNTT\",\n      \"tenLopHoc\": \"IELTS-CNTT K23A\",\n      \"doTuongThich\": 80,\n      \"lyDoPhuHop\": \"Đáp ứng nguyện vọng đạt chứng chỉ quốc tế / chuẩn đầu ra trong thời gian ngắn cho học viên xuất phát từ A1.\",\n      \"diemNoiBat\": \"Học phí 1.500.000 VNĐ, hỗ trợ người mất gốc tiếp cận mục tiêu IELTS một cách kinh tế.\",\n      \"loTrinhKhuyenNghi\": \"Xây dựng nền tảng từ vựng và cấu trúc câu thông qua lộ trình 3 tháng để chuẩn bị cho kỳ thi chứng chỉ.\"\n    }\n  ],\n  \"soSanhLopHoc\": \"Đối chiếu các lớp được đề xuất: Lớp ENG-A1-01 có ưu điểm lớn về việc bám sát trình độ A1 và củng cố ngữ pháp chuyên sâu cho người mất gốc, nhưng lịch học ban ngày có thể gây khó khăn nếu học viên bận rộn; bù lại các lớp IELTS-KTPM và IELTS-CNTT có chi phí rất kinh tế (1.500.000 VNĐ) và phù hợp mục tiêu chứng chỉ quốc tế, tuy nhiên chưa liệt kê rõ lịch học cụ thể. Do học viên có lịch rảnh vào các Thứ 2, 4, 6 từ 18:00 - 21:00 nhưng không có lớp nào thực sự trùng khớp hoàn hảo vào khung giờ này, lớp ENG-A1-01 vẫn là lựa chọn tốt nhất về mặt chuyên môn ngữ pháp để khởi động lộ trình 2-3 tháng, học viên nên chủ động sắp xếp thời gian hoặc thương lượng lịch học với trung tâm.\"\n}",
+    "validatedOutputJson": {
+      "soSanhLopHoc": "Đối chiếu các lớp được đề xuất: Lớp ENG-A1-01 có ưu điểm lớn về việc bám sát trình độ A1 và củng cố ngữ pháp chuyên sâu cho người mất gốc, nhưng lịch học ban ngày có thể gây khó khăn nếu học viên bận rộn; bù lại các lớp IELTS-KTPM và IELTS-CNTT có chi phí rất kinh tế (1.500.000 VNĐ) và phù hợp mục tiêu chứng chỉ quốc tế, tuy nhiên chưa liệt kê rõ lịch học cụ thể. Do học viên có lịch rảnh vào các Thứ 2, 4, 6 từ 18:00 - 21:00 nhưng không có lớp nào thực sự trùng khớp hoàn hảo vào khung giờ này, lớp ENG-A1-01 vẫn là lựa chọn tốt nhất về mặt chuyên môn ngữ pháp để khởi động lộ trình 2-3 tháng, học viên nên chủ động sắp xếp thời gian hoặc thương lượng lịch học với trung tâm.",
+      "recommendations": [
+        {
+          "hocPhi": 2200000,
+          "conTrong": 14,
+          "maLopHoc": "ENG-A1-01",
+          "tenLopHoc": "Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu",
+          "diemNoiBat": "Thuộc khóa học Tiếng Anh Căn Bản Cho Người Mất Gốc (A1) với học phí hợp lý (2.200.000 VNĐ), sĩ số còn trống 14 chỗ, tập trung xây dựng gốc rễ vững chắc.",
+          "lyDoPhuHop": "Học viên đang ở trình độ A1, lớp này phù hợp đúng chuẩn đầu vào giúp củng cố lại nền tảng ngữ pháp cốt lõi. Tuy nhiên, lịch học của lớp này (Thứ 3, 5 từ 09:30 - 11:30) chưa trùng khớp hoàn toàn với khung giờ rảnh buổi tối của học viên (18:00 - 21:00).",
+          "lichHocText": "Thứ 3, Thứ 5",
+          "doTuongThich": 85,
+          "loTrinhKhuyenNghi": "Tham gia lớp ENG-A1-01 để củng cố ngữ pháp trong 2 tháng đầu, sau đó chuyển tiếp lên các khóa luyện thi chứng chỉ quốc tế hoặc giao tiếp phản xạ."
+        },
+        {
+          "hocPhi": 1500000,
+          "conTrong": 25,
+          "maLopHoc": "IELTS-KTPM",
+          "tenLopHoc": "IELTS-KTPM K23C",
+          "diemNoiBat": "Thuộc khóa IELTS-Free cho người mất gốc với học phí ưu đãi 1.500.000 VNĐ, còn trống 25 chỗ.",
+          "lyDoPhuHop": "Phù hợp với mục tiêu đạt chứng chỉ quốc tế / chuẩn đầu ra đại học cho người ở trình độ A1, chi phí tiết kiệm.",
+          "lichHocText": "",
+          "doTuongThich": 80,
+          "loTrinhKhuyenNghi": "Học tập trung trong 2-3 tháng để làm quen với định dạng bài thi IELTS và nâng cao từ vựng ngữ pháp cơ bản."
+        },
+        {
+          "hocPhi": 1500000,
+          "conTrong": 25,
+          "maLopHoc": "IELTS-CNTT",
+          "tenLopHoc": "IELTS-CNTT K23A",
+          "diemNoiBat": "Học phí 1.500.000 VNĐ, hỗ trợ người mất gốc tiếp cận mục tiêu IELTS một cách kinh tế.",
+          "lyDoPhuHop": "Đáp ứng nguyện vọng đạt chứng chỉ quốc tế / chuẩn đầu ra trong thời gian ngắn cho học viên xuất phát từ A1.",
+          "lichHocText": "",
+          "doTuongThich": 80,
+          "loTrinhKhuyenNghi": "Xây dựng nền tảng từ vựng và cấu trúc câu thông qua lộ trình 3 tháng để chuẩn bị cho kỳ thi chứng chỉ."
+        }
+      ]
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 3501,
+    "thoiGianGoi": "2026-09-19T07:24:40.346Z"
+  },
+  {
+    "id": 203,
+    "nguoiDungId": 933,
+    "loaiChucNang": "SINH_BAI_TAP",
+    "promptInput": "\nBạn là giáo viên tiếng Anh chuyên nghiệp.\nNhiệm vụ: Sinh 01 bài luyện tập trắc nghiệm HOÀN TOÀN MỚI VÀ KHÁC BIỆT, gồm đúng 5 câu về chủ đề \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\", độ khó chuẩn CEFR \"A1\".\nMã phiên sinh đề ngẫu nhiên: #1789802727580_7143.\n\nYÊU CẦU DẠNG CÂU HỎI:\nHãy tạo bài tập HỖN HỢP đa dạng gồm: trắc nghiệm 1 đáp án (\"SINGLE\" có 4 lựa chọn A, B, C, D), câu hỏi Đúng/Sai (\"TRUE_FALSE\" với BẮT BUỘC CHỈ 2 LỰA CHỌN là \"A\": \"True\" và \"B\": \"False\", TUYỆT ĐỐI KHÔNG ĐƯỢC THÊM C, D), và câu hỏi chọn nhiều đáp án đúng (\"MULTIPLE\" với dapAnDung là mảng như [\"A\", \"C\"]).\n\nRÀNG BUỘC NGHIÊM NGẶT:\n- Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, không trùng lặp các câu hỏi thông dụng trước đó.\n- BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG 5 CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng \"cauHoi\" trong JSON phải có đúng 5 phần tử.\n- Đúng 5 câu hỏi được đánh số id tuần tự từ 1 đến 5.\n- Bắt buộc có đáp án đúng (\"dapAnDung\") và giải thích ngắn gọn (\"giaiThich\") bằng tiếng Việt.\n- Trả về JSON hợp lệ:\n{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"A1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"...\",\n      \"loaiCauHoi\": \"SINGLE\" | \"TRUE_FALSE\" | \"MULTIPLE\",\n      \"luaChon\": { \"A\": \"...\", \"B\": \"...\" },\n      \"dapAnDung\": \"A\" hoặc [\"A\", \"C\"],\n      \"giaiThich\": \"...\"\n    }\n  ]\n}\n",
+    "rawOutput": "{\n  \"chuDe\": \"Thì Hiện Tại Hoàn Thành (Present Perfect Tense)\",\n  \"trinhDo\": \"A1\",\n  \"cauHoi\": [\n    {\n      \"id\": 1,\n      \"noiDung\": \"Choose the correct sentence in the Present Perfect tense.\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"She has visit her grandma today.\",\n        \"B\": \"She has visited her grandma today.\",\n        \"C\": \"She have visited her grandma today.\",\n        \"D\": \"She is visited her grandma today.\"\n      },\n      \"dapAnDung\": \"B\",\n      \"giaiThich\": \"Chủ ngữ số ít 'She' đi với trợ động từ 'has' và động từ chính ở dạng quá khứ phân từ 'visited'.\"\n    },\n    {\n      \"id\": 2,\n      \"noiDung\": \"We use the Present Perfect tense to talk about actions that happened at an unspecified time before now.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đúng, thì hiện tại hoàn thành thường dùng để diễn tả hành động xảy ra trong quá khứ mà không đề cập rõ thời gian cụ thể.\"\n    },\n    {\n      \"id\": 3,\n      \"noiDung\": \"Which of these words are commonly used with the Present Perfect tense? (Select all that apply)\",\n      \"loaiCauHoi\": \"MULTIPLE\",\n      \"luaChon\": {\n        \"A\": \"already\",\n        \"B\": \"yesterday\",\n        \"C\": \"yet\",\n        \"D\": \"every day\"\n      },\n      \"dapAnDung\": [\n        \"A\",\n        \"C\"\n      ],\n      \"giaiThich\": \"'Already' và 'yet' là các trạng ngữ phổ biến trong thì hiện tại hoàn thành. 'Yesterday' dùng cho quá khứ đơn, 'every day' dùng cho hiện tại đơn.\"\n    },\n    {\n      \"id\": 4,\n      \"noiDung\": \"Complete the sentence: 'I _____ my homework.'\",\n      \"loaiCauHoi\": \"SINGLE\",\n      \"luaChon\": {\n        \"A\": \"have finish\",\n        \"B\": \"has finished\",\n        \"C\": \"have finished\",\n        \"D\": \"am finish\"\n      },\n      \"dapAnDung\": \"C\",\n      \"giaiThich\": \"Chủ ngữ 'I' đi với 'have' và động từ phân từ II là 'finished'.\"\n    },\n    {\n      \"id\": 5,\n      \"noiDung\": \"The structure for a negative sentence in the Present Perfect tense is: Subject + have/has + NOT + past participle.\",\n      \"loaiCauHoi\": \"TRUE_FALSE\",\n      \"luaChon\": {\n        \"A\": \"True\",\n        \"B\": \"False\"\n      },\n      \"dapAnDung\": \"A\",\n      \"giaiThich\": \"Đúng, cấu trúc câu phủ định là Subject + have/has + not + V3/ed.\"\n    }\n  ]\n}",
+    "validatedOutputJson": {
+      "chuDe": "Thì Hiện Tại Hoàn Thành (Present Perfect Tense)",
+      "cauHoi": [
+        {
+          "id": 1,
+          "luaChon": {
+            "A": "She has visit her grandma today.",
+            "B": "She has visited her grandma today.",
+            "C": "She have visited her grandma today.",
+            "D": "She is visited her grandma today."
+          },
+          "noiDung": "Choose the correct sentence in the Present Perfect tense.",
+          "dapAnDung": "B",
+          "giaiThich": "Chủ ngữ số ít 'She' đi với trợ động từ 'has' và động từ chính ở dạng quá khứ phân từ 'visited'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 2,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "We use the Present Perfect tense to talk about actions that happened at an unspecified time before now.",
+          "dapAnDung": "A",
+          "giaiThich": "Đúng, thì hiện tại hoàn thành thường dùng để diễn tả hành động xảy ra trong quá khứ mà không đề cập rõ thời gian cụ thể.",
+          "loaiCauHoi": "TRUE_FALSE"
+        },
+        {
+          "id": 3,
+          "luaChon": {
+            "A": "already",
+            "B": "yesterday",
+            "C": "yet",
+            "D": "every day"
+          },
+          "noiDung": "Which of these words are commonly used with the Present Perfect tense? (Select all that apply)",
+          "dapAnDung": [
+            "A",
+            "C"
+          ],
+          "giaiThich": "'Already' và 'yet' là các trạng ngữ phổ biến trong thì hiện tại hoàn thành. 'Yesterday' dùng cho quá khứ đơn, 'every day' dùng cho hiện tại đơn.",
+          "loaiCauHoi": "MULTIPLE"
+        },
+        {
+          "id": 4,
+          "luaChon": {
+            "A": "have finish",
+            "B": "has finished",
+            "C": "have finished",
+            "D": "am finish"
+          },
+          "noiDung": "Complete the sentence: 'I _____ my homework.'",
+          "dapAnDung": "C",
+          "giaiThich": "Chủ ngữ 'I' đi với 'have' và động từ phân từ II là 'finished'.",
+          "loaiCauHoi": "SINGLE"
+        },
+        {
+          "id": 5,
+          "luaChon": {
+            "A": "True",
+            "B": "False"
+          },
+          "noiDung": "The structure for a negative sentence in the Present Perfect tense is: Subject + have/has + NOT + past participle.",
+          "dapAnDung": "A",
+          "giaiThich": "Đúng, cấu trúc câu phủ định là Subject + have/has + not + V3/ed.",
+          "loaiCauHoi": "TRUE_FALSE"
+        }
+      ],
+      "trinhDo": "A1"
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2791,
+    "thoiGianGoi": "2026-09-19T07:25:30.372Z"
+  },
+  {
+    "id": 204,
+    "nguoiDungId": 4,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "\nBạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.\nDữ liệu học viên:\n- Trình độ CEFR: B1\n- Lịch rảnh: {\"thu\":[2,4,6],\"gio\":\"18:00-21:00\"}\n- Mục tiêu / Nguyện vọng cá nhân của học viên: \"Em muốn học cấp tốc trong 2-3 tháng để đạt chuẩn đầu ra đại học / chứng chỉ quốc tế, chú trọng tăng phản xạ Nói và củng cố Ngữ pháp.\"\n\nDanh sách lớp học thực tế đang mở tuyển sinh:\n[{\"maLopHoc\":\"MAST-C2-01\",\"tenLopHoc\":\"C2 Academic Mastery & Advanced Debate\",\"khoaHoc\":\"Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)\",\"trinhDoYeuCau\":\"C2\",\"hocPhi\":6800000,\"conTrong\":12,\"lichHoc\":[\"Thứ 7 (10:00 - 12:30)\",\"Thứ 8 (10:00 - 12:30)\",\"Thứ 3 (18:00 - 20:30)\",\"Thứ 5 (18:00 - 20:30)\"]},{\"maLopHoc\":\"ENG-A1-02\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cuối Tuần\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":11,\"lichHoc\":[\"Thứ 7 (06:00 - 09:00)\",\"Thứ 8 (06:00 - 09:00)\"]},{\"maLopHoc\":\"IELTS-B1-02\",\"tenLopHoc\":\"IELTS B1\",\"khoaHoc\":\"IELTS Preparation B1 → B2\",\"trinhDoYeuCau\":\"B1\",\"hocPhi\":3500000,\"conTrong\":21,\"lichHoc\":[\"Thứ 7 (00:30 - 03:30)\",\"Thứ 8 (00:30 - 03:30)\",\"Thứ 3 (10:00 - 12:30)\"]},{\"maLopHoc\":\"IELTS-CNTT\",\"tenLopHoc\":\"IELTS-CNTT K23A\",\"khoaHoc\":\"IELTS-Free cho người mất gốc\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":1500000,\"conTrong\":25,\"lichHoc\":[]},{\"maLopHoc\":\"IELTS-KTPM\",\"tenLopHoc\":\"IELTS-KTPM K23C\",\"khoaHoc\":\"IELTS-Free cho người mất gốc\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":1500000,\"conTrong\":24,\"lichHoc\":[]},{\"maLopHoc\":\"ENG-A1-01\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":14,\"lichHoc\":[\"Thứ 3 (09:30 - 11:30)\",\"Thứ 5 (09:30 - 11:30)\"]}]\n\nYÊU CẦU PHÂN TÍCH TỪ AI:\n1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.\n2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.\n3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.\n4. So sánh đối chiếu (soSanhLopHoc): Phân tích ngắn gọn ưu và nhược điểm đối chiếu giữa các lớp được đề xuất (về lịch học, đối tượng, trọng tâm kỹ năng), gợi ý lớp học phù hợp nhất với mục tiêu của học viên.\n5. Trả về đúng định dạng JSON:\n{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"...\",\n      \"tenLopHoc\": \"...\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"...\",\n      \"diemNoiBat\": \"...\",\n      \"loTrinhKhuyenNghi\": \"...\"\n    }\n  ],\n  \"soSanhLopHoc\": \"...\"\n}\n",
+    "rawOutput": "{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"MAST-C2-01\",\n      \"tenLopHoc\": \"C2 Academic Mastery & Advanced Debate\",\n      \"doTuongThich\": 75,\n      \"lyDoPhuHop\": \"Học viên có trình độ B1 và lịch rảnh tối Thứ 3, Thứ 5 (18:00-20:30) trùng khớp với lịch học của lớp này, giúp đáp ứng nhu cầu học cấp tốc.\",\n      \"diemNoiBat\": \"Tập trung cao độ vào kỹ năng diễn thuyết chuyên sâu và phản xạ nâng cao, giúp cải thiện mạnh mẽ khả năng nói.\",\n      \"loTrinhKhuyenNghi\": \"Do đầu vào là B1 mà lớp yêu cầu C2, học viên cần nỗ lực tự học thêm ngữ pháp và từ vựng nâng cao song song với quá trình học để theo kịp chương trình.\"\n    }\n  ],\n  \"soSanhLopHoc\": \"Danh sách các lớp hiện tại chủ yếu dành cho trình độ A1 hoặc C2, chỉ có lớp MAST-C2-01 là có khung giờ tối Thứ 3 và Thứ 5 (18:00-20:30) phù hợp với lịch rảnh của học viên (Thứ 2, 4, 6 từ 18:00-21:00 có sự trùng lặp nhẹ vào Thứ 3, 5). Tuy nhiên, vì học viên ở trình độ B1 và muốn đạt chuẩn đầu ra đại học/chứng chỉ quốc tế trong 2-3 tháng với trọng tâm phản xạ Nói và Ngữ pháp, lớp MAST-C2-01 có khoảng cách trình độ khá lớn (yêu cầu C2). Học viên nên cân nhắc kỹ về độ chênh lệch trình độ hoặc trao đổi thêm với trung tâm để mở lớp chuyên biệt phù hợp hơn với trình độ B1.\"\n}",
+    "validatedOutputJson": {
+      "soSanhLopHoc": "Danh sách các lớp hiện tại chủ yếu dành cho trình độ A1 hoặc C2, chỉ có lớp MAST-C2-01 là có khung giờ tối Thứ 3 và Thứ 5 (18:00-20:30) phù hợp với lịch rảnh của học viên (Thứ 2, 4, 6 từ 18:00-21:00 có sự trùng lặp nhẹ vào Thứ 3, 5). Tuy nhiên, vì học viên ở trình độ B1 và muốn đạt chuẩn đầu ra đại học/chứng chỉ quốc tế trong 2-3 tháng với trọng tâm phản xạ Nói và Ngữ pháp, lớp MAST-C2-01 có khoảng cách trình độ khá lớn (yêu cầu C2). Học viên nên cân nhắc kỹ về độ chênh lệch trình độ hoặc trao đổi thêm với trung tâm để mở lớp chuyên biệt phù hợp hơn với trình độ B1.",
+      "recommendations": [
+        {
+          "hocPhi": 6800000,
+          "conTrong": 12,
+          "maLopHoc": "MAST-C2-01",
+          "tenLopHoc": "C2 Academic Mastery & Advanced Debate",
+          "diemNoiBat": "Tập trung cao độ vào kỹ năng diễn thuyết chuyên sâu và phản xạ nâng cao, giúp cải thiện mạnh mẽ khả năng nói.",
+          "lyDoPhuHop": "Học viên có trình độ B1 và lịch rảnh tối Thứ 3, Thứ 5 (18:00-20:30) trùng khớp với lịch học của lớp này, giúp đáp ứng nhu cầu học cấp tốc.",
+          "lichHocText": "Thứ 7, Thứ 8, Thứ 3, Thứ 5",
+          "doTuongThich": 75,
+          "loTrinhKhuyenNghi": "Do đầu vào là B1 mà lớp yêu cầu C2, học viên cần nỗ lực tự học thêm ngữ pháp và từ vựng nâng cao song song với quá trình học để theo kịp chương trình."
+        }
+      ]
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 1861,
+    "thoiGianGoi": "2026-09-19T07:55:18.602Z"
+  },
+  {
+    "id": 205,
+    "nguoiDungId": 9,
+    "loaiChucNang": "TU_VAN_LOP",
+    "promptInput": "\nBạn là Giám đốc Đào tạo & Chuyên gia Tư vấn Lộ trình cao cấp của trung tâm ngoại ngữ ETC English.\nDữ liệu học viên:\n- Trình độ CEFR: A2\n- Lịch rảnh: {\"thu\":[2,4,6],\"gio\":\"18:00-21:00\"}\n- Mục tiêu / Nguyện vọng cá nhân của học viên: \"một thằng ngu muốn học b1\"\n\nDanh sách lớp học thực tế đang mở tuyển sinh:\n[{\"maLopHoc\":\"MAST-C2-01\",\"tenLopHoc\":\"C2 Academic Mastery & Advanced Debate\",\"khoaHoc\":\"Tiếng Anh Học Thuật Tinh Hoa & Diễn Thuyết Chuyên Sâu (C2 Mastery)\",\"trinhDoYeuCau\":\"C2\",\"hocPhi\":6800000,\"conTrong\":12,\"lichHoc\":[\"Thứ 7 (10:00 - 12:30)\",\"Thứ 8 (10:00 - 12:30)\",\"Thứ 3 (18:00 - 20:30)\",\"Thứ 5 (18:00 - 20:30)\"]},{\"maLopHoc\":\"ENG-A1-02\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cuối Tuần\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":11,\"lichHoc\":[\"Thứ 7 (06:00 - 09:00)\",\"Thứ 8 (06:00 - 09:00)\"]},{\"maLopHoc\":\"IELTS-B1-02\",\"tenLopHoc\":\"IELTS B1\",\"khoaHoc\":\"IELTS Preparation B1 → B2\",\"trinhDoYeuCau\":\"B1\",\"hocPhi\":3500000,\"conTrong\":21,\"lichHoc\":[\"Thứ 7 (00:30 - 03:30)\",\"Thứ 8 (00:30 - 03:30)\",\"Thứ 3 (10:00 - 12:30)\"]},{\"maLopHoc\":\"IELTS-CNTT\",\"tenLopHoc\":\"IELTS-CNTT K23A\",\"khoaHoc\":\"IELTS-Free cho người mất gốc\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":1500000,\"conTrong\":25,\"lichHoc\":[]},{\"maLopHoc\":\"IELTS-KTPM\",\"tenLopHoc\":\"IELTS-KTPM K23C\",\"khoaHoc\":\"IELTS-Free cho người mất gốc\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":1500000,\"conTrong\":24,\"lichHoc\":[]},{\"maLopHoc\":\"ENG-A1-01\",\"tenLopHoc\":\"Tiếng Anh Căn Bản Cho Người Mới Bắt Đầu\",\"khoaHoc\":\"Tiếng Anh Căn Bản Cho Người Mất Gốc (A1)\",\"trinhDoYeuCau\":\"A1\",\"hocPhi\":2200000,\"conTrong\":14,\"lichHoc\":[\"Thứ 3 (09:30 - 11:30)\",\"Thứ 5 (09:30 - 11:30)\"]}]\n\nYÊU CẦU PHÂN TÍCH TỪ AI:\n1. Phân tích sâu nguyện vọng/mục tiêu của học viên và gợi ý tối đa 3 lớp học phù hợp nhất từ danh sách trên.\n2. CHỈ ĐƯỢC CHỌN các lớp có trong danh sách được cung cấp. TUYỆT ĐỐI KHÔNG BỊA ĐẶT mã lớp ngoài danh sách.\n3. Đánh giá độ tương thích (doTuongThich: số nguyên từ 75 đến 99), phân tích vì sao lớp này giúp học viên đạt mục tiêu, chỉ ra điểm nổi bật và lộ trình khuyến nghị tiếp theo.\n4. So sánh đối chiếu (soSanhLopHoc): Phân tích ngắn gọn ưu và nhược điểm đối chiếu giữa các lớp được đề xuất (về lịch học, đối tượng, trọng tâm kỹ năng), gợi ý lớp học phù hợp nhất với mục tiêu của học viên.\n5. Trả về đúng định dạng JSON:\n{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"...\",\n      \"tenLopHoc\": \"...\",\n      \"doTuongThich\": 95,\n      \"lyDoPhuHop\": \"...\",\n      \"diemNoiBat\": \"...\",\n      \"loTrinhKhuyenNghi\": \"...\"\n    }\n  ],\n  \"soSanhLopHoc\": \"...\"\n}\n",
+    "rawOutput": "{\n  \"danhSachLop\": [\n    {\n      \"maLopHoc\": \"MAST-C2-01\",\n      \"tenLopHoc\": \"C2 Academic Mastery & Advanced Debate\",\n      \"doTuongThich\": 75,\n      \"lyDoPhuHop\": \"Học viên hiện ở trình độ A2 và muốn chinh phục mục tiêu B1. Lớp học này có lịch học Thứ 3 (18:00 - 20:30) và Thứ 5 (18:00 - 20:30) hoàn toàn trùng khớp với khung giờ rảnh tối Thứ 2, 4, 6 (Thứ 3 và Thứ 5 nằm sát lịch rảnh của học viên).\",\n      \"diemNoiBat\": \"Cung cấp môi trường học thuật đỉnh cao, rèn luyện kỹ năng biện luận chuyên sâu.\",\n      \"loTrinhKhuyenNghi\": \"Tuy nhiên, do khoảng cách trình độ từ A2 lên C2 là rất lớn, học viên cần bổ sung thêm các khóa nền tảng trước khi tham gia.\"\n    }\n  ],\n  \"soSanhLopHoc\": \"Trung tâm hiện tại có các lớp A1 (ENG-A1-01, ENG-A1-02, IELTS-CNTT, IELTS-KTPM), lớp B1 (IELTS-B1-02 nhưng lệch lịch học hoàn toàn) và lớp C2 (MAST-C2-01). Về mặt thời gian rảnh của học viên (Thứ 2, 4, 6 từ 18:00-21:00), lớp MAST-C2-01 có lịch học Thứ 3 và Thứ 5 (18:00 - 20:30) là gần khớp nhất với khung giờ trống buổi tối của học viên. Tuy nhiên, về trình độ, học viên đang ở mức A2 và mong muốn đạt B1, trong khi các lớp khác hoặc không đúng khung giờ hoặc không đúng trình độ yêu cầu (như lớp C2 quá cao, lớp A1 quá thấp). Do đó, lớp MAST-C2-01 là lựa chọn duy nhất có khung giờ buổi tối khả thi để trung tâm tư vấn điều chỉnh lộ trình kèm riêng hoặc kết hợp tài liệu tự học cho học viên.\"\n}",
+    "validatedOutputJson": {
+      "soSanhLopHoc": "Trung tâm hiện tại có các lớp A1 (ENG-A1-01, ENG-A1-02, IELTS-CNTT, IELTS-KTPM), lớp B1 (IELTS-B1-02 nhưng lệch lịch học hoàn toàn) và lớp C2 (MAST-C2-01). Về mặt thời gian rảnh của học viên (Thứ 2, 4, 6 từ 18:00-21:00), lớp MAST-C2-01 có lịch học Thứ 3 và Thứ 5 (18:00 - 20:30) là gần khớp nhất với khung giờ trống buổi tối của học viên. Tuy nhiên, về trình độ, học viên đang ở mức A2 và mong muốn đạt B1, trong khi các lớp khác hoặc không đúng khung giờ hoặc không đúng trình độ yêu cầu (như lớp C2 quá cao, lớp A1 quá thấp). Do đó, lớp MAST-C2-01 là lựa chọn duy nhất có khung giờ buổi tối khả thi để trung tâm tư vấn điều chỉnh lộ trình kèm riêng hoặc kết hợp tài liệu tự học cho học viên.",
+      "recommendations": [
+        {
+          "hocPhi": 6800000,
+          "conTrong": 12,
+          "maLopHoc": "MAST-C2-01",
+          "tenLopHoc": "C2 Academic Mastery & Advanced Debate",
+          "diemNoiBat": "Cung cấp môi trường học thuật đỉnh cao, rèn luyện kỹ năng biện luận chuyên sâu.",
+          "lyDoPhuHop": "Học viên hiện ở trình độ A2 và muốn chinh phục mục tiêu B1. Lớp học này có lịch học Thứ 3 (18:00 - 20:30) và Thứ 5 (18:00 - 20:30) hoàn toàn trùng khớp với khung giờ rảnh tối Thứ 2, 4, 6 (Thứ 3 và Thứ 5 nằm sát lịch rảnh của học viên).",
+          "lichHocText": "Thứ 7, Thứ 8, Thứ 3, Thứ 5",
+          "doTuongThich": 75,
+          "loTrinhKhuyenNghi": "Tuy nhiên, do khoảng cách trình độ từ A2 lên C2 là rất lớn, học viên cần bổ sung thêm các khóa nền tảng trước khi tham gia."
+        }
+      ]
+    },
+    "trangThai": "THANH_CONG",
+    "thoiGianXuLyMs": 2220,
+    "thoiGianGoi": "2026-09-19T08:02:22.484Z"
+  }
+]
