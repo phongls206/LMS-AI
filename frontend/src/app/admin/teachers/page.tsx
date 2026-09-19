@@ -29,6 +29,8 @@ import {
   User,
   RefreshCw,
   AlertCircle,
+  Zap,
+  CheckCircle2,
 } from 'lucide-react';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
@@ -66,8 +68,10 @@ export default function AdminTeachersPage() {
     bangCap: '',
     soDienThoai: '',
     trangThai: 'DANG_LAM_VIEC',
-    matKhauMoi: '',
   });
+  const [resetPasswordInput, setResetPasswordInput] = useState('');
+  const [resettingPassword, setResettingPassword] = useState(false);
+  const [resetPasswordMsg, setResetPasswordMsg] = useState<string | null>(null);
 
   const fetchTeachers = async () => {
     try {
@@ -193,15 +197,16 @@ export default function AdminTeachersPage() {
     }
   };
 
-  const openEditModal = (t: any, defaultPassword?: string) => {
+  const openEditModal = (t: any) => {
     setEditingTeacher(t);
+    setResetPasswordInput('');
+    setResetPasswordMsg(null);
     setEditFormData({
       hoTen: t.hoTen || '',
       chuyenMon: t.chuyenMon || '',
       bangCap: t.bangCap || '',
       soDienThoai: t.nguoiDung?.soDienThoai || '',
       trangThai: (t as any).trangThai || 'DANG_LAM_VIEC',
-      matKhauMoi: defaultPassword || '',
     });
   };
 
@@ -210,17 +215,75 @@ export default function AdminTeachersPage() {
     if (!editingTeacher) return;
 
     try {
-      await usersService.updateTeacher(Number(editingTeacher.id), editFormData);
-      setMessage(
-        editFormData.matKhauMoi
-          ? `Cập nhật thông tin và ĐÃ RESET MẬT KHẨU về "${editFormData.matKhauMoi}" thành công!`
-          : 'Cập nhật thông tin và trạng thái giáo viên thành công!'
-      );
+      // CHỈ CẬP NHẬT THÔNG TIN HỒ SƠ & TRẠNG THÁI - KHÔNG GỬI MẬT KHẨU
+      await usersService.updateTeacher(Number(editingTeacher.id), {
+        hoTen: editFormData.hoTen,
+        chuyenMon: editFormData.chuyenMon,
+        bangCap: editFormData.bangCap,
+        soDienThoai: editFormData.soDienThoai,
+        trangThai: editFormData.trangThai as any,
+      });
+      setMessage('Cập nhật thông tin và trạng thái giáo viên thành công!');
       setEditingTeacher(null);
       fetchTeachers();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
       alert(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật giáo viên.');
+    }
+  };
+
+  const handleIndependentResetPassword = async (targetPassword?: string) => {
+    if (!editingTeacher) return;
+    const finalPass = (targetPassword !== undefined ? targetPassword : resetPasswordInput).trim();
+
+    if (!finalPass) {
+      alert('Vui lòng nhập mật khẩu mới cần đặt lại (hoặc bấm nút "Reset về 123456").');
+      return;
+    }
+    if (finalPass.length < 6) {
+      alert('Mật khẩu mới phải có ít nhất 6 ký tự.');
+      return;
+    }
+    if (/\s/.test(finalPass)) {
+      alert('Mật khẩu không được chứa khoảng trắng.');
+      return;
+    }
+
+    const confirmReset = window.confirm(
+      `XÁC NHẬN ĐẶT LẠI MẬT KHẨU:\nBạn có chắc chắn muốn đặt lại mật khẩu cho giáo viên ${editingTeacher.hoTen} (${editingTeacher.maGiaoVien}) thành "${finalPass}" không?`
+    );
+    if (!confirmReset) return;
+
+    try {
+      setResettingPassword(true);
+      setResetPasswordMsg(null);
+      await usersService.updateTeacher(Number(editingTeacher.id), {
+        matKhauMoi: finalPass,
+      });
+      setResetPasswordMsg(`Đã đặt lại mật khẩu thành công về: "${finalPass}"!`);
+      setResetPasswordInput('');
+      fetchTeachers();
+      setTimeout(() => setResetPasswordMsg(null), 5000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi xảy ra khi đặt lại mật khẩu.');
+    } finally {
+      setResettingPassword(false);
+    }
+  };
+
+  const handleQuickResetPassword = async (t: any) => {
+    const confirmReset = window.confirm(
+      `XÁC NHẬN RESET MẬT KHẨU NHANH:\nBạn có chắc chắn muốn reset mật khẩu tài khoản @${t.nguoiDung?.tenDangNhap} (${t.hoTen}) về mặc định "123456" không?`
+    );
+    if (!confirmReset) return;
+
+    try {
+      await usersService.updateTeacher(Number(t.id), { matKhauMoi: '123456' });
+      setMessage(`Đã reset mật khẩu của giáo viên ${t.hoTen} về "123456" thành công!`);
+      fetchTeachers();
+      setTimeout(() => setMessage(null), 4000);
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Có lỗi xảy ra khi reset mật khẩu.');
     }
   };
 
@@ -454,7 +517,7 @@ export default function AdminTeachersPage() {
                               <Eye className="w-3.5 h-3.5" />
                             </button>
                             <button
-                              onClick={() => openEditModal(t, '123456')}
+                              onClick={() => handleQuickResetPassword(t)}
                               title="Reset mật khẩu về 123456"
                               className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white border border-amber-200 hover:border-amber-600 transition cursor-pointer shrink-0"
                             >
@@ -951,29 +1014,52 @@ export default function AdminTeachersPage() {
                   </p>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200 space-y-2">
+                {/* KHÔI PHỤC / ĐẶT LẠI MẬT KHẨU - HÀNH ĐỘNG ĐỘC LẬP */}
+                <div className="p-3.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 space-y-2.5">
                   <div className="flex justify-between items-center">
-                    <label className="block text-amber-800 font-bold text-[11px] uppercase tracking-wider flex items-center space-x-1">
-                      <KeyRound className="w-3.5 h-3.5" />
+                    <label className="block text-amber-800 dark:text-amber-300 font-bold text-[11px] uppercase tracking-wider flex items-center space-x-1.5">
+                      <KeyRound className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                       <span>Khôi Phục / Đặt Lại Mật Khẩu (Admin)</span>
                     </label>
                     <button
                       type="button"
-                      onClick={() => setEditFormData({ ...editFormData, matKhauMoi: '123456' })}
-                      className="px-2 py-0.5 rounded bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold transition cursor-pointer"
+                      onClick={() => handleIndependentResetPassword('123456')}
+                      disabled={resettingPassword}
+                      className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold transition cursor-pointer shadow-xs disabled:opacity-50 flex items-center gap-1"
+                      title="Bấm để reset mật khẩu về 123456 ngay lập tức"
                     >
-                      ⚡ Reset về 123456
+                      <Zap className="w-3 h-3" />
+                      <span>Reset về 123456</span>
                     </button>
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Để trống nếu không muốn đổi mật khẩu..."
-                    value={editFormData.matKhauMoi}
-                    onChange={(e) => setEditFormData({ ...editFormData, matKhauMoi: e.target.value })}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-900 font-mono focus:outline-none focus:border-teal-500 text-xs"
-                  />
-                  <p className="text-[10px] text-slate-500">
-                    * Mật khẩu mới sẽ được mã hóa an toàn với Argon2 khi bạn bấm "Lưu Thay Đổi".
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Nhập mật khẩu mới tùy chỉnh (ít nhất 6 ký tự)..."
+                      value={resetPasswordInput}
+                      onChange={(e) => setResetPasswordInput(e.target.value.replace(/\s/g, ''))}
+                      className="flex-1 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white font-mono focus:outline-none focus:border-amber-500 text-xs"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleIndependentResetPassword()}
+                      disabled={resettingPassword || !resetPasswordInput.trim()}
+                      className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold text-xs transition cursor-pointer disabled:opacity-40 shrink-0"
+                    >
+                      {resettingPassword ? 'Đang đổi...' : 'Đặt Lại MK'}
+                    </button>
+                  </div>
+
+                  {resetPasswordMsg && (
+                    <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-semibold flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-600" />
+                      <span>{resetPasswordMsg}</span>
+                    </div>
+                  )}
+
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 italic">
+                    * Hành động độc lập: Mật khẩu chỉ được thay đổi khi bạn bấm nút "Reset về 123456" hoặc "Đặt Lại MK". Nút "Lưu Thay Đổi" ở dưới chỉ lưu thông tin hồ sơ và trạng thái công tác.
                   </p>
                 </div>
 
