@@ -336,8 +336,7 @@ export default function TeacherClassesPage() {
 
                 <div className="flex items-center justify-between relative z-10">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-                    <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-teal-100 bg-teal-900/40 px-2 py-0.5 rounded-full border border-teal-400/30">
+                    <span className="text-[11px] font-mono uppercase tracking-wider font-bold text-teal-100 bg-teal-900/50 px-2.5 py-1 rounded-full border border-teal-400/30">
                       HÔM NAY • {todayFormattedDate.split(',')[0].toUpperCase()}
                     </span>
                   </div>
@@ -367,7 +366,7 @@ export default function TeacherClassesPage() {
                       return (
                         <div
                           key={sess.id}
-                          className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/15 transition flex items-center justify-between gap-3 text-xs"
+                          className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 transition flex items-center justify-between gap-3 text-xs"
                         >
                           <div className="min-w-0 pr-1">
                             <div className="flex items-center gap-2 font-mono font-bold text-white text-sm">
@@ -389,24 +388,16 @@ export default function TeacherClassesPage() {
                             </div>
                           </div>
 
-                          <div className="flex flex-col gap-1 shrink-0">
-                            {isOngoing ? (
+                          {isOngoing && (
+                            <div className="shrink-0">
                               <Link
                                 href={`/teacher/attendance?classId=${sess.classId}`}
-                                className="px-3 py-1.5 rounded-lg bg-white text-teal-800 font-bold text-[11px] hover:bg-teal-50 transition text-center shadow-xs cursor-pointer"
+                                className="px-3 py-1.5 rounded-lg bg-white text-teal-800 font-bold text-[11px] hover:bg-teal-50 transition text-center shadow-xs cursor-pointer inline-block"
                               >
                                 Điểm Danh
                               </Link>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={() => handleScrollToClass(sess.classId)}
-                                className="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-[11px] transition text-center cursor-pointer"
-                              >
-                                Xem Lớp
-                              </button>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -542,10 +533,9 @@ export default function TeacherClassesPage() {
                       return (
                         <div
                           key={sess.id}
-                          onClick={() => handleScrollToClass(sess.classId)}
-                          className={`p-3 rounded-xl border transition-all cursor-pointer group shadow-2xs ${isToday
-                              ? 'bg-teal-50/40 dark:bg-teal-950/20 border-teal-300 dark:border-teal-800 hover:border-teal-500'
-                              : 'bg-slate-50 dark:bg-[#141d2e] border-slate-200 dark:border-[#22324e] hover:border-teal-400 dark:hover:border-teal-600'
+                          className={`p-3 rounded-xl border transition-all shadow-2xs ${isToday
+                              ? 'bg-teal-50/40 dark:bg-teal-950/20 border-teal-300 dark:border-teal-800'
+                              : 'bg-slate-50 dark:bg-[#141d2e] border-slate-200 dark:border-[#22324e]'
                             }`}
                         >
                           <div className="flex items-center justify-between mb-1.5">
@@ -570,26 +560,19 @@ export default function TeacherClassesPage() {
                             </span>
                           </div>
 
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <div className="font-bold text-slate-900 dark:text-white text-xs truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-                                [{sess.maLopHoc}] {sess.tenLopHoc}
-                              </div>
-                              <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 flex items-center gap-1" title={sess.phongHoc}>
-                                {sess.isOnline ? (
-                                  <Globe className="w-3 h-3 text-blue-500 shrink-0" />
-                                ) : (
-                                  <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-                                )}
-                                <span className="truncate">{sess.phongHoc}</span>
-                                <span>• Sĩ số: {sess.siSoHienTai}/{sess.siSoToiDa}</span>
-                              </div>
+                          <div className="min-w-0">
+                            <div className="font-bold text-slate-900 dark:text-white text-xs truncate">
+                              [{sess.maLopHoc}] {sess.tenLopHoc}
                             </div>
-
-                            <span className="text-[11px] text-teal-600 dark:text-teal-400 group-hover:translate-x-1 transition-transform shrink-0 flex items-center gap-0.5 font-bold mt-1">
-                              <span>Xem lớp</span>
-                              <ChevronRight className="w-3 h-3" />
-                            </span>
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 flex items-center gap-1" title={sess.phongHoc}>
+                              {sess.isOnline ? (
+                                <Globe className="w-3 h-3 text-blue-500 shrink-0" />
+                              ) : (
+                                <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                              )}
+                              <span className="truncate">{sess.phongHoc}</span>
+                              <span>• Sĩ số: {sess.siSoHienTai}/{sess.siSoToiDa} HV</span>
+                            </div>
                           </div>
                         </div>
                       );

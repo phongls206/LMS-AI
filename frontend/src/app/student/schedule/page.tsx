@@ -380,8 +380,7 @@ export default function StudentSchedulePage() {
                     {todaySessions.map((session) => (
                       <div
                         key={`today-${session.id}`}
-                        onClick={() => handleScrollToClass(session.classId)}
-                        className="p-3 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 transition cursor-pointer flex items-center justify-between gap-3 group"
+                        className="p-3 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 transition flex items-center justify-between gap-3"
                       >
                         <div className="min-w-0 space-y-1">
                           <div className="flex items-center gap-2 flex-wrap">
@@ -411,8 +410,6 @@ export default function StudentSchedulePage() {
                             </span>
                           </div>
                         </div>
-
-                        <ChevronRight className="w-4 h-4 text-white/70 group-hover:translate-x-1 transition-transform shrink-0" />
                       </div>
                     ))}
                   </div>
@@ -514,8 +511,7 @@ export default function StudentSchedulePage() {
                       return (
                         <div
                           key={`session-${session.id}`}
-                          onClick={() => handleScrollToClass(session.classId)}
-                          className={`p-3 rounded-xl border transition cursor-pointer hover:border-teal-400 dark:hover:border-teal-600 group ${
+                          className={`p-3 rounded-xl border transition ${
                             isSessionToday
                               ? 'bg-teal-50/50 dark:bg-teal-950/20 border-teal-200 dark:border-teal-900/60'
                               : 'bg-white dark:bg-[#162032] border-slate-200 dark:border-[#1e2d45]'
@@ -542,20 +538,16 @@ export default function StudentSchedulePage() {
                             )}
                           </div>
 
-                          <div className="flex items-center justify-between gap-2">
-                            <div className="min-w-0">
-                              <p className="font-bold text-xs text-slate-900 dark:text-white truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition">
-                                <span className="font-mono text-teal-700 dark:text-teal-400 mr-1">
-                                  [{session.maLopHoc}]
-                                </span>
-                                {session.tenLopHoc}
-                              </p>
-                              <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                                GV: <strong className="text-slate-700 dark:text-slate-300">{session.teacherName}</strong>
-                              </p>
-                            </div>
-
-                            <ChevronRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-teal-600 dark:group-hover:text-teal-400 group-hover:translate-x-0.5 transition shrink-0" />
+                          <div className="min-w-0">
+                            <p className="font-bold text-xs text-slate-900 dark:text-white truncate">
+                              <span className="font-mono text-teal-700 dark:text-teal-400 mr-1">
+                                [{session.maLopHoc}]
+                              </span>
+                              {session.tenLopHoc}
+                            </p>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                              GV: <strong className="text-slate-700 dark:text-slate-300">{session.teacherName}</strong>
+                            </p>
                           </div>
                         </div>
                       );
