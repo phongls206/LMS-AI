@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
-import { classesService } from '../../../services/api';
+import { classesService, attendancesService } from '../../../services/api';
 import {
   GraduationCap, Users, Calendar, Clock, MapPin, AlertCircle,
   CheckCircle, ChevronDown, ChevronUp, BookOpen, Lock, ChevronRight,
   RefreshCw, Search, Filter, Globe, CalendarCheck, Sparkles, ArrowRight,
-  Sun, Check, Eye
+  Sun, Check, Eye, Edit3, X
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatTrangThaiLopHoc } from '../../../utils/formatters';
@@ -66,6 +66,20 @@ export default function TeacherClassesPage() {
 
   // Tab switch for mobile view: 'timetable' | 'classes'
   const [mobileTab, setMobileTab] = useState<'timetable' | 'classes'>('timetable');
+
+  // Modal Chỉnh Sửa Buổi Học
+  const [editingSession, setEditingSession] = useState<any | null>(null);
+  const [showEditSessionModal, setShowEditSessionModal] = useState(false);
+  const [sessionFormData, setSessionFormData] = useState({
+    chuDe: '',
+    ngayHoc: '',
+    gioBatDau: '',
+    gioKetThuc: '',
+    phongHoc: '',
+  });
+  const [savingSession, setSavingSession] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const fetchClasses = async (isManual = false) => {
     try {
@@ -218,17 +232,80 @@ export default function TeacherClassesPage() {
     });
   }, [classes, search, statusFilter, selectedDayFilter]);
 
-  // Cuộn mượt tới thẻ lớp học khi bấm vào ca dạy trên TKB
-  const handleScrollToClass = (classId: number) => {
+  // Chọn lớp từ TKB: cuộn sang lớp bên phải, mở rộng chi tiết và chuyển tab trên mobile
+  const handleSelectClass = (classId: number) => {
     setHighlightedClassId(classId);
-    setMobileTab('classes'); // Switch tab on mobile
+    setExpandedClassId(classId);
+    setMobileTab('classes');
     const el = document.getElementById(`class-card-${classId}`);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
     setTimeout(() => {
       setHighlightedClassId((prev) => (prev === classId ? null : prev));
-    }, 3000);
+    }, 3500);
+  };
+
+  // Đọc tham số classId từ URL khi chuyển trang từ Dashboard sang
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const classIdParam = params.get('classId');
+      if (classIdParam && classes.length > 0) {
+        const cId = Number(classIdParam);
+        setHighlightedClassId(cId);
+        setExpandedClassId(cId);
+        setMobileTab('classes');
+        setTimeout(() => {
+          const el = document.getElementById(`class-card-${cId}`);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      }
+    }
+  }, [classes]);
+
+  // Mở modal chỉnh sửa thông tin buổi học
+  const handleOpenEditSession = (session: any, lop: any) => {
+    setEditingSession({ ...session, lopHoc: lop });
+    const cleanTopic = (session.chuDe || '').replace(/^Buổi\s+\d+\s*:\s*/i, '');
+    const dateVal = session.ngayHoc ? new Date(session.ngayHoc).toISOString().split('T')[0] : '';
+    const startVal = session.gioBatDau ? (typeof session.gioBatDau === 'string' && session.gioBatDau.includes('T') ? session.gioBatDau.substring(11, 16) : formatTime(session.gioBatDau)) : '';
+    const endVal = session.gioKetThuc ? (typeof session.gioKetThuc === 'string' && session.gioKetThuc.includes('T') ? session.gioKetThuc.substring(11, 16) : formatTime(session.gioKetThuc)) : '';
+
+    setSessionFormData({
+      chuDe: cleanTopic,
+      ngayHoc: dateVal,
+      gioBatDau: startVal,
+      gioKetThuc: endVal,
+      phongHoc: session.phongHoc || lop?.phongHoc || '',
+    });
+    setShowEditSessionModal(true);
+  };
+
+  // Lưu thông tin chỉnh sửa buổi học
+  const handleSaveEditSession = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingSession) return;
+    setSavingSession(true);
+    try {
+      await attendancesService.updateSession(editingSession.id, {
+        chuDe: sessionFormData.chuDe.trim(),
+        ngayHoc: sessionFormData.ngayHoc || undefined,
+        gioBatDau: sessionFormData.gioBatDau || undefined,
+        gioKetThuc: sessionFormData.gioKetThuc || undefined,
+        phongHoc: sessionFormData.phongHoc?.trim() || undefined,
+      });
+      setMessage(`Đã cập nhật thông tin buổi học số ${editingSession.soThuTu} thành công!`);
+      setShowEditSessionModal(false);
+      setEditingSession(null);
+      await fetchClasses();
+      setTimeout(() => setMessage(null), 3500);
+    } catch (err: any) {
+      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật buổi học.');
+      setTimeout(() => setErrorMessage(null), 4000);
+    } finally {
+      setSavingSession(false);
+    }
   };
 
   return (
@@ -238,6 +315,30 @@ export default function TeacherClassesPage() {
       subtitle="Theo dõi lịch dạy thực tế hôm nay, thời khóa biểu tuần và quản lý tiến độ các lớp học"
     >
       <div className="space-y-5">
+        {/* Thông báo thao tác */}
+        {message && (
+          <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-200 text-xs font-bold flex items-center justify-between gap-2 shadow-xs animate-fadeIn">
+            <span className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+              <span>{message}</span>
+            </span>
+            <button type="button" onClick={() => setMessage(null)} className="text-teal-600 hover:text-teal-800 dark:text-teal-400 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+        {errorMessage && (
+          <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs font-bold flex items-center justify-between gap-2 shadow-xs animate-fadeIn">
+            <span className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+              <span>{errorMessage}</span>
+            </span>
+            <button type="button" onClick={() => setErrorMessage(null)} className="text-rose-600 hover:text-rose-800 dark:text-rose-400 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Header Summary & Fast Controls */}
         <div className="bg-white dark:bg-[#111928] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -388,16 +489,25 @@ export default function TeacherClassesPage() {
                             </div>
                           </div>
 
-                          {isOngoing && (
-                            <div className="shrink-0">
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            {isOngoing && (
                               <Link
                                 href={`/teacher/attendance?classId=${sess.classId}`}
                                 className="px-3 py-1.5 rounded-lg bg-white text-teal-800 font-bold text-[11px] hover:bg-teal-50 transition text-center shadow-xs cursor-pointer inline-block"
                               >
                                 Điểm Danh
                               </Link>
-                            </div>
-                          )}
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => handleSelectClass(sess.classId)}
+                              className="px-2.5 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white font-bold text-[11px] transition text-center cursor-pointer flex items-center gap-1"
+                              title="Xem chi tiết và quản lý lớp học này"
+                            >
+                              <span>Quản lý</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </button>
+                          </div>
                         </div>
                       );
                     })}
@@ -533,10 +643,14 @@ export default function TeacherClassesPage() {
                       return (
                         <div
                           key={sess.id}
-                          className={`p-3 rounded-xl border transition-all shadow-2xs ${isToday
-                              ? 'bg-teal-50/40 dark:bg-teal-950/20 border-teal-300 dark:border-teal-800'
-                              : 'bg-slate-50 dark:bg-[#141d2e] border-slate-200 dark:border-[#22324e]'
-                            }`}
+                          onClick={() => handleSelectClass(sess.classId)}
+                          className={`p-3 rounded-xl border transition-all cursor-pointer group shadow-2xs ${
+                            highlightedClassId === sess.classId
+                              ? 'bg-teal-50/80 dark:bg-teal-950/40 border-teal-500 ring-2 ring-teal-500/30 shadow-md'
+                              : isToday
+                              ? 'bg-teal-50/40 dark:bg-teal-950/20 border-teal-300 dark:border-teal-800 hover:border-teal-400'
+                              : 'bg-slate-50 dark:bg-[#141d2e] border-slate-200 dark:border-[#22324e] hover:border-teal-400 dark:hover:border-teal-500 hover:shadow-xs'
+                          }`}
                         >
                           <div className="flex items-center justify-between mb-1.5">
                             <div className="flex items-center gap-1.5">
@@ -560,19 +674,26 @@ export default function TeacherClassesPage() {
                             </span>
                           </div>
 
-                          <div className="min-w-0">
-                            <div className="font-bold text-slate-900 dark:text-white text-xs truncate">
-                              [{sess.maLopHoc}] {sess.tenLopHoc}
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="min-w-0">
+                              <div className="font-bold text-slate-900 dark:text-white text-xs truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                                [{sess.maLopHoc}] {sess.tenLopHoc}
+                              </div>
+                              <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 flex items-center gap-1" title={sess.phongHoc}>
+                                {sess.isOnline ? (
+                                  <Globe className="w-3 h-3 text-blue-500 shrink-0" />
+                                ) : (
+                                  <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                                )}
+                                <span className="truncate">{sess.phongHoc}</span>
+                                <span>• Sĩ số: {sess.siSoHienTai}/{sess.siSoToiDa} HV</span>
+                              </div>
                             </div>
-                            <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5 flex items-center gap-1" title={sess.phongHoc}>
-                              {sess.isOnline ? (
-                                <Globe className="w-3 h-3 text-blue-500 shrink-0" />
-                              ) : (
-                                <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-                              )}
-                              <span className="truncate">{sess.phongHoc}</span>
-                              <span>• Sĩ số: {sess.siSoHienTai}/{sess.siSoToiDa} HV</span>
-                            </div>
+
+                            <span className="text-[11px] text-teal-600 dark:text-teal-400 group-hover:translate-x-0.5 transition-transform shrink-0 flex items-center gap-0.5 font-bold">
+                              <span>Quản lý</span>
+                              <ArrowRight className="w-3 h-3" />
+                            </span>
                           </div>
                         </div>
                       );
@@ -902,6 +1023,7 @@ export default function TeacherClassesPage() {
                                         <th className="py-2 px-3">Chủ Đề Buổi Học</th>
                                         <th className="py-2 px-3 w-24 text-center">Trạng Thái</th>
                                         <th className="py-2 px-3 w-28 text-center">Điểm Danh</th>
+                                        <th className="py-2 px-3 w-16 text-center">Sửa</th>
                                       </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100 dark:divide-[#1e2d45]">
@@ -923,7 +1045,7 @@ export default function TeacherClassesPage() {
                                               {formatTime(s.gioBatDau)} - {formatTime(s.gioKetThuc)}
                                             </td>
                                             <td className="py-2 px-3 font-medium text-slate-800 dark:text-slate-200">
-                                              {s.chuDe || `Buổi ${s.soThuTu}`}
+                                              {(s.chuDe || `Bài học số ${s.soThuTu}`).replace(/^Buổi\s+\d+\s*:\s*/i, '')}
                                             </td>
                                             <td className="py-2 px-3 text-center">
                                               <span
@@ -947,6 +1069,16 @@ export default function TeacherClassesPage() {
                                               ) : (
                                                 <span className="text-slate-400">Chưa điểm danh</span>
                                               )}
+                                            </td>
+                                            <td className="py-2 px-3 text-center">
+                                              <button
+                                                type="button"
+                                                onClick={() => handleOpenEditSession(s, lop)}
+                                                className="p-1.5 rounded-lg hover:bg-teal-50 dark:hover:bg-teal-950/50 text-slate-500 hover:text-teal-600 dark:hover:text-teal-400 transition cursor-pointer inline-flex items-center justify-center border border-transparent hover:border-teal-200 dark:hover:border-teal-800"
+                                                title="Chỉnh sửa nội dung / thời gian buổi học này"
+                                              >
+                                                <Edit3 className="w-3.5 h-3.5" />
+                                              </button>
                                             </td>
                                           </tr>
                                         );
@@ -980,6 +1112,135 @@ export default function TeacherClassesPage() {
           initialClassCode={selectedClassForStudents.code}
           onClose={() => setSelectedClassForStudents(null)}
         />
+      )}
+
+      {/* Modal Chỉnh Sửa Buổi Học Của Giáo Viên */}
+      {showEditSessionModal && editingSession && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs animate-fadeIn">
+          <div className="relative w-full max-w-lg rounded-2xl bg-white dark:bg-[#111928] border border-slate-200 dark:border-[#1e2d45] shadow-2xl overflow-hidden p-6 space-y-5">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 flex items-center justify-center">
+                  <Edit3 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                    Chỉnh Sửa Buổi Học Số {editingSession.soThuTu}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    Lớp: <strong className="text-teal-600 dark:text-teal-400">[{editingSession.lopHoc?.maLopHoc}] {editingSession.lopHoc?.tenLopHoc}</strong>
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowEditSessionModal(false);
+                  setEditingSession(null);
+                }}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSaveEditSession} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Chủ Đề / Tên Bài Học <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={sessionFormData.chuDe}
+                  onChange={(e) => setSessionFormData({ ...sessionFormData, chuDe: e.target.value })}
+                  placeholder="Ví dụ: Unit 2: Listening Strategies & Audio Comprehension"
+                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Ngày Học Thực Tế
+                </label>
+                <input
+                  type="date"
+                  value={sessionFormData.ngayHoc}
+                  onChange={(e) => setSessionFormData({ ...sessionFormData, ngayHoc: e.target.value })}
+                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition font-mono"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Giờ Bắt Đầu
+                  </label>
+                  <input
+                    type="time"
+                    value={sessionFormData.gioBatDau}
+                    onChange={(e) => setSessionFormData({ ...sessionFormData, gioBatDau: e.target.value })}
+                    className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition font-mono"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Giờ Kết Thúc
+                  </label>
+                  <input
+                    type="time"
+                    value={sessionFormData.gioKetThuc}
+                    onChange={(e) => setSessionFormData({ ...sessionFormData, gioKetThuc: e.target.value })}
+                    className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition font-mono"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                  Phòng Học / Link Trực Tuyến
+                </label>
+                <input
+                  type="text"
+                  value={sessionFormData.phongHoc}
+                  onChange={(e) => setSessionFormData({ ...sessionFormData, phongHoc: e.target.value })}
+                  placeholder="Ví dụ: P.201 hoặc https://meet.google.com/xyz"
+                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition"
+                />
+              </div>
+
+              {/* Footer Buttons */}
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditSessionModal(false);
+                    setEditingSession(null);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition cursor-pointer"
+                >
+                  Hủy Bỏ
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingSession}
+                  className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition shadow-xs cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                >
+                  {savingSession ? (
+                    <>
+                      <div className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      <span>Đang lưu...</span>
+                    </>
+                  ) : (
+                    <span>Lưu Thay Đổi</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </AppLayout>
   );

@@ -289,7 +289,7 @@ export class AttendancesService {
         dto?.chuDeMoi && i === 0
           ? dto.chuDeMoi
           : defaultSyllabus[(seq - 1) % defaultSyllabus.length] || `Kỹ năng tiếng Anh thực hành`;
-      const chuDe = `Buổi ${seq}: ${topicName}`;
+      const chuDe = topicName.replace(/^Buổi\s+\d+\s*:\s*/i, '');
 
       const session = await this.prisma.buoiHoc.create({
         data: {
@@ -344,11 +344,15 @@ export class AttendancesService {
   /**
    * Cập nhật tiêu đề / ngày / giờ / phòng học của một buổi học
    */
-  async updateSession(sessionId: number, dto: UpdateSessionDto) {
+  async updateSession(sessionId: number, dto: UpdateSessionDto, userId?: number) {
     const session = await this.prisma.buoiHoc.findUnique({
       where: { id: BigInt(sessionId) },
     });
     if (!session) throw new NotFoundException('Buổi học không tồn tại.');
+
+    if (userId) {
+      await this.verifyClassAccess(session.lopHocId, userId);
+    }
 
     const updateData: any = {};
     if (dto.chuDe !== undefined) updateData.chuDe = dto.chuDe;

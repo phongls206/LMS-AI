@@ -270,6 +270,7 @@ export class ClassesService {
     if (isNaN(sessDate.getTime())) sessDate = new Date();
     for (let i = 0; i < soBuoi; i++) {
       const topic = defaultSyllabus[i % defaultSyllabus.length] || `Kỹ năng tiếng Anh thực hành`;
+      const cleanTopic = topic.replace(/^Buổi\s+\d+\s*:\s*/i, '');
       await this.prisma.buoiHoc.create({
         data: {
           lopHocId: newClass.id,
@@ -278,7 +279,7 @@ export class ClassesService {
           gioBatDau: new Date('1970-01-01T18:00:00'),
           gioKetThuc: new Date('1970-01-01T20:30:00'),
           phongHoc: dto.phongHoc || 'Phòng A101',
-          chuDe: `Buổi ${i + 1}: ${topic}`,
+          chuDe: cleanTopic,
         },
       });
       sessDate.setDate(sessDate.getDate() + (i % 2 === 0 ? 2 : 3));
@@ -578,6 +579,48 @@ export class ClassesService {
         where: { id: BigInt(classId) },
         data: { phongHoc: cleanRoom },
       });
+
+      // Tự động đồng bộ lại ngày & giờ của các buổi học chưa điểm danh theo đúng lịch học mới
+      const existingSessions = await tx.buoiHoc.findMany({
+        where: { lopHocId: BigInt(classId) },
+        include: { _count: { select: { diemDanh: true } } },
+        orderBy: { soThuTu: 'asc' },
+      });
+
+      const unAttendedSessions = existingSessions.filter((s) => s._count.diemDanh === 0);
+      if (unAttendedSessions.length > 0) {
+        const allSchedules = await tx.lichHoc.findMany({
+          where: { lopHocId: BigInt(classId) },
+          orderBy: [{ thuTrongTuan: 'asc' }, { gioBatDau: 'asc' }],
+        });
+
+        if (allSchedules.length > 0) {
+          let curr = new Date(classRecord.ngayBatDau);
+          if (isNaN(curr.getTime())) curr = new Date();
+          let idx = 0;
+          let safety = 0;
+
+          while (idx < unAttendedSessions.length && safety < 365) {
+            const jsDay = curr.getDay();
+            const sysDay = jsDay === 0 ? 8 : jsDay + 1;
+            const match = allSchedules.find((s) => s.thuTrongTuan === sysDay);
+            if (match) {
+              await tx.buoiHoc.update({
+                where: { id: unAttendedSessions[idx].id },
+                data: {
+                  ngayHoc: new Date(curr),
+                  gioBatDau: match.gioBatDau,
+                  gioKetThuc: match.gioKetThuc,
+                  phongHoc: match.phongHoc || cleanRoom,
+                },
+              });
+              idx++;
+            }
+            curr.setDate(curr.getDate() + 1);
+            safety++;
+          }
+        }
+      }
     });
 
     const updated = await this.prisma.lichHoc.findMany({

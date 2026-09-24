@@ -121,8 +121,9 @@ export class AttendancesController {
   updateSession(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateSessionDto,
+    @CurrentUser() user: any,
   ) {
-    return this.attendancesService.updateSession(id, dto);
+    return this.attendancesService.updateSession(id, dto, user?.id);
   }
 
   /**

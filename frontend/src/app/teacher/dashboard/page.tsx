@@ -147,9 +147,11 @@ export default function TeacherDashboardPage() {
                     </span>
                   </div>
 
-                  <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-                    {item.lopHoc?.tenLopHoc}
-                  </h4>
+                  <Link href={`/teacher/classes?classId=${item.lopHoc?.id}`}>
+                    <h4 className="font-bold text-slate-900 dark:text-white text-sm mb-1 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                      {item.lopHoc?.tenLopHoc}
+                    </h4>
+                  </Link>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
                     {item.lopHoc?.khoaHoc?.tenKhoaHoc}
                   </p>
@@ -178,13 +180,19 @@ export default function TeacherDashboardPage() {
                   {/* Lối tắt tác vụ nhanh của giảng viên */}
                   <div className="mt-3.5 pt-2.5 border-t border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between sm:justify-end gap-2">
                     <Link
-                      href="/teacher/attendance"
+                      href={`/teacher/classes?classId=${item.lopHoc?.id}`}
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-bold transition-all hover:scale-105 inline-flex items-center gap-1 shadow-2xs"
+                    >
+                      <BookOpen className="w-3 h-3 text-teal-600 dark:text-teal-400" /> Chi Tiết
+                    </Link>
+                    <Link
+                      href={`/teacher/attendance?classId=${item.lopHoc?.id}`}
                       className="px-2.5 py-1 rounded-lg bg-teal-50 dark:bg-teal-950/50 hover:bg-teal-100 dark:hover:bg-teal-900 text-teal-700 dark:text-teal-300 border border-teal-200/60 dark:border-teal-800 text-[11px] font-bold transition-all hover:scale-105 inline-flex items-center gap-1 shadow-2xs"
                     >
                       <ClipboardList className="w-3 h-3" /> Điểm Danh
                     </Link>
                     <Link
-                      href="/teacher/grades"
+                      href={`/teacher/grades?classId=${item.lopHoc?.id}`}
                       className="px-2.5 py-1 rounded-lg bg-cyan-50 dark:bg-cyan-950/50 hover:bg-cyan-100 dark:hover:bg-cyan-900 text-cyan-700 dark:text-cyan-300 border border-cyan-200/60 dark:border-cyan-800 text-[11px] font-bold transition-all hover:scale-105 inline-flex items-center gap-1 shadow-2xs"
                     >
                       <Award className="w-3 h-3" /> Bảng Điểm

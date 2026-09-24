@@ -397,11 +397,14 @@ export default function TeacherAttendancePage() {
                       onChange={(e) => setSelectedSessionId(+e.target.value)}
                       className="h-10 min-h-[40px] w-full sm:w-auto max-w-full sm:max-w-[280px] xl:max-w-[320px] bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold truncate cursor-pointer transition-colors"
                     >
-                      {sessions.map((s) => (
-                        <option key={s.id} value={s.id}>
-                          Buổi {s.soThuTu}: {s.chuDe || 'Bài học'} — {s.ngayHoc ? new Date(s.ngayHoc).toLocaleDateString('vi-VN') : ''} ({s.trangThai === 'DA_KET_THUC' ? '✓ Đã điểm danh' : 'Chưa điểm danh'})
-                        </option>
-                      ))}
+                      {sessions.map((s) => {
+                        const cleanTopic = (s.chuDe || 'Bài học').replace(/^Buổi\s+\d+\s*:\s*/i, '');
+                        return (
+                          <option key={s.id} value={s.id}>
+                            Buổi {s.soThuTu}: {cleanTopic} — {s.ngayHoc ? new Date(s.ngayHoc).toLocaleDateString('vi-VN') : ''} ({s.trangThai === 'DA_KET_THUC' ? '✓ Đã điểm danh' : 'Chưa điểm danh'})
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
                 ) : activeTab === 'take_attendance' && (
