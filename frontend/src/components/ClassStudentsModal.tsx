@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
+import Link from 'next/link';
 import {
   X,
   Users,
@@ -21,6 +22,7 @@ import {
   UserCheck,
   ChevronRight,
   ExternalLink,
+  Award,
 } from 'lucide-react';
 import { classesService } from '../services/api';
 import { formatStatus, formatCSVDate } from '../utils/formatters';
@@ -432,6 +434,18 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
               </button>
             </div>
 
+            {/* Nút Xem Bảng Điểm */}
+            {classId && (
+              <Link
+                href={`/teacher/grades?classId=${classId}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 active:scale-95 text-teal-800 dark:text-teal-300 border border-teal-300 dark:border-teal-700 font-bold text-xs shadow-xs transition-all cursor-pointer shrink-0"
+                title="Xem bảng điểm chi tiết của lớp học này"
+              >
+                <Award className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <span>Bảng Điểm</span>
+              </Link>
+            )}
+
             {/* Nút Xuất CSV */}
             <button
               type="button"
@@ -809,6 +823,17 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {classId && (
+              <Link
+                href={`/teacher/grades?classId=${classId}`}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-300 border border-teal-300 dark:border-teal-700 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                title="Mở bảng điểm chi tiết của lớp học này"
+              >
+                <Award className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <span>Xem Bảng Điểm Lớp</span>
+              </Link>
+            )}
+
             <button
               type="button"
               onClick={onClose}
