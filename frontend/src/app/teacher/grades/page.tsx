@@ -24,7 +24,7 @@ export default function TeacherGradesPage() {
     try {
       const user = authStorage.getUser();
       if (user) setCurrentUser(user);
-    } catch {}
+    } catch { }
   }, []);
 
   const isManager = currentUser?.vaiTro === 'QUAN_LY';
@@ -41,7 +41,7 @@ export default function TeacherGradesPage() {
         try {
           const user = authStorage.getUser();
           if (user && user.vaiTro === 'QUAN_LY') isMgr = true;
-        } catch {}
+        } catch { }
 
         let assignedClasses: any[] = [];
         if (isMgr) {
@@ -265,20 +265,7 @@ export default function TeacherGradesPage() {
                       <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
                         {isManager ? 'Chọn Lớp Học' : 'Lớp Phụ Trách'}
                       </label>
-                      {isClassFinished ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
-                          <Lock className="w-3 h-3 text-slate-500" />
-                          Đã Kết Thúc (Khóa Điểm)
-                        </span>
-                      ) : isClassRecruiting ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
-                          Đang Tuyển Sinh
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
-                          Đang Học
-                        </span>
-                      )}
+
                     </div>
                     <select
                       value={selectedClassId || ''}
@@ -336,19 +323,7 @@ export default function TeacherGradesPage() {
               </div>
             </div>
 
-            {isClassFinished && (
-              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 text-xs text-amber-900 dark:text-amber-200 flex items-start space-x-3 animate-fadeIn">
-                <Lock className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <div className="font-bold text-amber-950 dark:text-amber-100">
-                    Lớp Học Đã Kết Thúc — Bảng Điểm Đã Đóng Sổ
-                  </div>
-                  <p className="text-amber-800 dark:text-amber-300 leading-relaxed text-[11px]">
-                    Toàn bộ điểm chuyên cần, giữa kỳ và cuối kỳ đã được chốt và lưu trữ vào hồ sơ trung tâm. Nếu có đơn phúc khảo hoặc cần cập nhật lại điểm, Quản trị viên cần chuyển trạng thái lớp sang 'Đang Học' trong mục Quản Lý Lớp Học.
-                  </p>
-                </div>
-              </div>
-            )}
+
 
             {isClassRecruiting && (
               <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 flex items-start space-x-3">
@@ -420,11 +395,10 @@ export default function TeacherGradesPage() {
                                 disabled={isClassRecruiting || isReadOnly}
                                 value={grade.cc}
                                 onChange={(e) => handleGradeChange(student.id, 'cc', e.target.value === '' ? '' : +e.target.value)}
-                                className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${
-                                  isReadOnly
-                                    ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
-                                    : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
-                                }`}
+                                className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${isReadOnly
+                                  ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                                  : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
+                                  }`}
                                 placeholder="—"
                               />
                             </td>
@@ -436,11 +410,10 @@ export default function TeacherGradesPage() {
                                 disabled={isClassRecruiting || isReadOnly}
                                 value={grade.gk}
                                 onChange={(e) => handleGradeChange(student.id, 'gk', e.target.value === '' ? '' : +e.target.value)}
-                                className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${
-                                  isReadOnly
-                                    ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
-                                    : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
-                                }`}
+                                className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${isReadOnly
+                                  ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                                  : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
+                                  }`}
                                 placeholder="—"
                               />
                             </td>
@@ -452,11 +425,10 @@ export default function TeacherGradesPage() {
                                 disabled={isClassRecruiting || isReadOnly}
                                 value={grade.ck}
                                 onChange={(e) => handleGradeChange(student.id, 'ck', e.target.value === '' ? '' : +e.target.value)}
-                                className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${
-                                  isReadOnly
-                                    ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
-                                    : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
-                                }`}
+                                className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${isReadOnly
+                                  ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                                  : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
+                                  }`}
                                 placeholder="—"
                               />
                             </td>
@@ -472,11 +444,10 @@ export default function TeacherGradesPage() {
                                 </span>
                               ) : (
                                 <span
-                                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
-                                    passed
-                                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
-                                      : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
-                                  }`}
+                                  className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${passed
+                                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                                    : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                                    }`}
                                 >
                                   {passed ? 'ĐẠT' : 'KHÔNG ĐẠT'}
                                 </span>
@@ -489,11 +460,10 @@ export default function TeacherGradesPage() {
                                 placeholder={isReadOnly ? 'Chưa có nhận xét' : 'Nhận xét tiến bộ...'}
                                 value={grade.nhanXet}
                                 onChange={(e) => handleGradeChange(student.id, 'nhanXet', e.target.value)}
-                                className={`w-full rounded-lg px-2.5 py-1 text-xs transition ${
-                                  isReadOnly
-                                    ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
-                                    : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500'
-                                }`}
+                                className={`w-full rounded-lg px-2.5 py-1 text-xs transition ${isReadOnly
+                                  ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                                  : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500'
+                                  }`}
                               />
                             </td>
                           </tr>
@@ -513,12 +483,12 @@ export default function TeacherGradesPage() {
                         </td>
                       </tr>
                     )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-        </>
-      )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </AppLayout>
   );
