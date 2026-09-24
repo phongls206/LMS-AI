@@ -74,14 +74,10 @@ export class GradesService {
       );
     }
 
-    // Nếu lớp học đã kết thúc, giáo viên không được tự ý sửa điểm nữa (chỉ Admin mới có thể điều chỉnh hoặc mở lại trạng thái)
-    if (
-      user &&
-      user.vaiTro === VaiTro.GIAO_VIEN &&
-      classRecord.trangThai === TrangThaiLopHoc.DA_KET_THUC
-    ) {
+    // Nếu lớp học đã kết thúc, bảng điểm tự động đóng sổ và không thể chỉnh sửa
+    if (classRecord.trangThai === TrangThaiLopHoc.DA_KET_THUC) {
       throw new BadRequestException(
-        'Lớp học đã kết thúc. Bảng điểm đã được đóng sổ và khóa chỉnh sửa đối với giáo viên. Vui lòng liên hệ Phòng Đào tạo nếu có đề nghị phúc khảo!',
+        'Lớp học đã kết thúc. Bảng điểm đã đóng sổ và không thể chỉnh sửa. Nếu có khiếu nại hoặc phúc khảo, vui lòng liên hệ Quản trị viên (Admin) để cập nhật lại trạng thái lớp học!',
       );
     }
 

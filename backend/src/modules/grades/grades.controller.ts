@@ -40,7 +40,7 @@ export class GradesController {
    * POST /api/v1/classes/:id/grades — UC009 (Giáo viên)
    */
   @Post('classes/:id/grades')
-  @Roles(VaiTro.GIAO_VIEN, VaiTro.QUAN_LY)
+  @Roles(VaiTro.GIAO_VIEN)
   @ApiOperation({
     summary: 'Nhập điểm cho lớp & tự động tính Điểm tổng kết (20% CC + 30% GK + 50% CK)',
   })

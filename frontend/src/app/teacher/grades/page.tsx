@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, gradesService, authStorage } from '../../../services/api';
-import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download, Award, Lock, X } from 'lucide-react';
+import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download, Award, Lock, X, ShieldAlert } from 'lucide-react';
 import { exportClassGradeBookExcel } from '../../../utils/excel-exporter';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
@@ -31,6 +31,7 @@ export default function TeacherGradesPage() {
   const isClassFinished = classDetail?.trangThai === 'DA_KET_THUC';
   const isClassRecruiting = classDetail?.trangThai === 'DANG_MO_DANG_KY' || classDetail?.trangThai === 'SAP_MO';
   const isLockedForTeacher = isClassFinished && !isManager;
+  const isReadOnly = isManager || isLockedForTeacher;
 
   // 1. Lấy danh sách lớp phụ trách (Chỉ Quản lý mới xem tất cả lớp, Giáo viên chỉ xem lớp mình được phân công)
   useEffect(() => {
@@ -114,7 +115,7 @@ export default function TeacherGradesPage() {
     field: 'cc' | 'gk' | 'ck' | 'nhanXet',
     value: any,
   ) => {
-    if (isLockedForTeacher) return;
+    if (isReadOnly) return;
     setGradesMap((prev) => ({
       ...prev,
       [studentId]: {
@@ -142,13 +143,18 @@ export default function TeacherGradesPage() {
 
   const handleSaveGrades = async () => {
     if (!selectedClassId) return;
+    if (isManager) {
+      setErrorMessage('Quản trị viên chỉ có quyền theo dõi bảng điểm. Việc nhập và lưu điểm thuộc thẩm quyền của Giáo viên phụ trách.');
+      setTimeout(() => setErrorMessage(null), 4000);
+      return;
+    }
     if (isClassRecruiting) {
       setErrorMessage('Lớp học đang mở tuyển sinh, chưa vào học chính thức. Không thể nhập bảng điểm!');
       setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
     if (isLockedForTeacher) {
-      setErrorMessage('Lớp học đã kết thúc. Bảng điểm đã đóng sổ và khóa chỉnh sửa đối với giáo viên.');
+      setErrorMessage('Lớp học đã kết thúc. Bảng điểm đã đóng sổ và không thể chỉnh sửa.');
       setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
@@ -163,11 +169,7 @@ export default function TeacherGradesPage() {
       }));
 
       await gradesService.submitGrades(selectedClassId, payload);
-      setMessage(
-        isManager && isClassFinished
-          ? 'Quản trị viên đã lưu cập nhật điều chỉnh điểm chính thức thành công!'
-          : 'Lưu bảng điểm & tự động tính điểm tổng kết 20/30/50 thành công!'
-      );
+      setMessage('Lưu bảng điểm & tự động tính điểm tổng kết 20/30/50 thành công!');
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
       setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi lưu bảng điểm.');
@@ -209,14 +211,29 @@ export default function TeacherGradesPage() {
   return (
     <AppLayout
       allowedRoles={['GIAO_VIEN', 'QUAN_LY']}
-      title={isManager ? "Quản Lý Bảng Điểm Toàn Trung Tâm" : "Bảng Điểm & Đánh Giá Kết Quả Học Tập"}
+      title={isManager ? "Theo Dõi Bảng Điểm Toàn Trung Tâm" : "Bảng Điểm & Đánh Giá Kết Quả Học Tập"}
       subtitle={
         isManager
-          ? "Tra cứu và theo dõi bảng điểm tất cả các lớp học. Quản trị viên có thẩm quyền điều chỉnh điểm khi có đơn phúc khảo."
+          ? "Tra cứu và theo dõi bảng điểm tất cả các lớp học. Việc nhập và tính điểm thuộc về giáo viên phụ trách lớp."
           : "Chỉ hiển thị các lớp học bạn được phân công phụ trách. Công thức: 20% Chuyên Cần + 30% Giữa Kỳ + 50% Cuối Kỳ"
       }
     >
       <div className="space-y-5">
+        {/* Banner chế độ giám sát dành riêng cho Admin */}
+        {isManager && (
+          <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-[#162032] border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <ShieldAlert className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+              <span>
+                <strong>Chế độ giám sát của Quản trị viên:</strong> Bạn đang theo dõi bảng điểm theo quyền quản lý trung tâm. Việc nhập điểm là nghiệp vụ của Giáo viên phụ trách.
+              </span>
+            </div>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
+              Chỉ Xem (Read-only)
+            </span>
+          </div>
+        )}
+
         {/* Thông báo lỗi & thành công */}
         {errorMessage && (
           <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs font-bold flex items-center justify-between gap-2 shadow-xs animate-fadeIn">
@@ -314,7 +331,15 @@ export default function TeacherGradesPage() {
                     <span>Xuất Bảng Điểm Excel</span>
                   </button>
 
-                  {isLockedForTeacher ? (
+                  {isManager ? (
+                    <div
+                      className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 flex items-center space-x-1.5 select-none"
+                      title="Quản trị viên chỉ có quyền theo dõi bảng điểm. Việc nhập và lưu điểm thuộc thẩm quyền của Giáo viên phụ trách."
+                    >
+                      <ShieldAlert className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                      <span>Chế Độ Quản Trị (Chỉ Xem)</span>
+                    </div>
+                  ) : isLockedForTeacher ? (
                     <div
                       className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 flex items-center space-x-1.5 cursor-not-allowed select-none"
                       title="Lớp học đã bế giảng. Bảng điểm đã đóng sổ và không thể chỉnh sửa."
@@ -322,17 +347,6 @@ export default function TeacherGradesPage() {
                       <Lock className="w-4 h-4 text-slate-500 shrink-0" />
                       <span>Bảng Điểm Đã Khóa</span>
                     </div>
-                  ) : isManager && isClassFinished ? (
-                    <button
-                      type="button"
-                      onClick={handleSaveGrades}
-                      disabled={saving || !selectedClassId || isClassRecruiting}
-                      className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
-                      title="Quản trị viên lưu điều chỉnh điểm theo đơn phúc khảo"
-                    >
-                      <Save className="w-4 h-4" />
-                      <span>{saving ? 'Đang lưu...' : 'Admin Lưu Điểm Phúc Khảo'}</span>
-                    </button>
                   ) : (
                     <button
                       type="button"
@@ -353,15 +367,15 @@ export default function TeacherGradesPage() {
                 <Lock className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <div className="font-bold text-amber-950 dark:text-amber-100 flex items-center gap-2">
-                    <span>Lớp Học Đã Kết Thúc — Bảng Điểm Đã Được Khóa Đóng Sổ</span>
+                    <span>Lớp Học Đã Kết Thúc — Bảng Điểm Đã Đóng Sổ</span>
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-200/60 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200">
-                      {isManager ? 'Thẩm Quyền Quản Trị Viên' : 'Chỉ Xem (Read-only)'}
+                      Chỉ Xem (Read-only)
                     </span>
                   </div>
                   <p className="text-amber-800 dark:text-amber-300 leading-relaxed text-[11px]">
                     {isManager
-                      ? 'Lớp học này đã bế giảng và đóng sổ điểm. Với thẩm quyền Quản trị viên (Admin), bạn có thể trực tiếp điều chỉnh điểm khi có đơn phúc khảo được duyệt, hoặc đổi trạng thái lớp tại màn hình Quản Lý Lớp Học.'
-                      : 'Toàn bộ điểm chuyên cần, giữa kỳ và cuối kỳ đã được chốt và lưu trữ vào hồ sơ trung tâm. Giáo viên không thể tự ý sửa đổi. Mọi yêu cầu phúc khảo hoặc điều chỉnh điểm cần có đơn gửi tới Phòng Đào tạo (Admin) để xử lý.'}
+                      ? "Lớp học đã bế giảng và bảng điểm đã được lưu trữ vào hồ sơ trung tâm. Nếu có đơn phúc khảo hoặc cần cập nhật lại điểm, Quản trị viên chỉ cần vào màn hình 'Quản Lý Lớp Học' chuyển trạng thái lớp sang 'Đang Học' để cấp quyền cho giáo viên phụ trách nhập lại điểm."
+                      : "Toàn bộ điểm chuyên cần, giữa kỳ và cuối kỳ đã được chốt và lưu trữ vào hồ sơ trung tâm. Giáo viên không thể tự ý sửa đổi. Mọi yêu cầu phúc khảo hoặc điều chỉnh điểm cần có đơn gửi tới Phòng Đào tạo (Admin) để mở lại trạng thái lớp học."}
                   </p>
                 </div>
               </div>
@@ -434,11 +448,11 @@ export default function TeacherGradesPage() {
                                 type="number"
                                 min={0}
                                 max={100}
-                                disabled={isClassRecruiting || isLockedForTeacher}
+                                disabled={isClassRecruiting || isReadOnly}
                                 value={grade.cc}
                                 onChange={(e) => handleGradeChange(student.id, 'cc', e.target.value === '' ? '' : +e.target.value)}
                                 className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${
-                                  isLockedForTeacher
+                                  isReadOnly
                                     ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
                                     : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
                                 }`}
@@ -450,11 +464,11 @@ export default function TeacherGradesPage() {
                                 type="number"
                                 min={0}
                                 max={100}
-                                disabled={isClassRecruiting || isLockedForTeacher}
+                                disabled={isClassRecruiting || isReadOnly}
                                 value={grade.gk}
                                 onChange={(e) => handleGradeChange(student.id, 'gk', e.target.value === '' ? '' : +e.target.value)}
                                 className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${
-                                  isLockedForTeacher
+                                  isReadOnly
                                     ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
                                     : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
                                 }`}
@@ -466,11 +480,11 @@ export default function TeacherGradesPage() {
                                 type="number"
                                 min={0}
                                 max={100}
-                                disabled={isClassRecruiting || isLockedForTeacher}
+                                disabled={isClassRecruiting || isReadOnly}
                                 value={grade.ck}
                                 onChange={(e) => handleGradeChange(student.id, 'ck', e.target.value === '' ? '' : +e.target.value)}
                                 className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${
-                                  isLockedForTeacher
+                                  isReadOnly
                                     ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
                                     : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
                                 }`}
@@ -502,12 +516,12 @@ export default function TeacherGradesPage() {
                             <td className="px-5 py-4">
                               <input
                                 type="text"
-                                disabled={isClassRecruiting || isLockedForTeacher}
-                                placeholder={isLockedForTeacher ? 'Chưa có nhận xét' : 'Nhận xét tiến bộ...'}
+                                disabled={isClassRecruiting || isReadOnly}
+                                placeholder={isReadOnly ? 'Chưa có nhận xét' : 'Nhận xét tiến bộ...'}
                                 value={grade.nhanXet}
                                 onChange={(e) => handleGradeChange(student.id, 'nhanXet', e.target.value)}
                                 className={`w-full rounded-lg px-2.5 py-1 text-xs transition ${
-                                  isLockedForTeacher
+                                  isReadOnly
                                     ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
                                     : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500'
                                 }`}
