@@ -1,0 +1,1781 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Sequence UC002" id="DO2vFZd8jXZc-6LbsBim">
+    <mxGraphModel dx="385" dy="671" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=16;" value="Người dùng" vertex="1">
+          <mxGeometry height="60" width="30" x="947.4477913411461" y="372.3367039659287" as="geometry" />
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-3" edge="1" parent="1" source="YbiYNWJCQj0HbE9tLH5Z-2" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="962.4477913411461" y="992.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-5" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1237.447791341146" y="422.3367039659288" as="sourcePoint" />
+            <mxPoint x="1237.447791341146" y="992.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-7" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1512.447791341146" y="422.3367039659288" as="sourcePoint" />
+            <mxPoint x="1512.447791341146" y="992.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-9" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1787.447791341146" y="422.3367039659288" as="sourcePoint" />
+            <mxPoint x="1787.447791341146" y="992.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-10" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="1: Nhap ten dang nhap va mat khau">
+          <mxGeometry relative="1" x="0.0545" y="-30" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <mxPoint x="962.4477913411461" y="462.3367039659287" as="sourcePoint" />
+            <mxPoint x="1237.447791341146" y="462.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-11" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="2: guiYeuCauDangNhap(thongTin)">
+          <mxGeometry relative="1" x="0.0182" y="-25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1237.447791341146" y="517.3367039659287" as="sourcePoint" />
+            <mxPoint x="1512.447791341146" y="517.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-12" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="3: kiemTraDuLieuDauVao()">
+          <mxGeometry relative="1" x="-0.0476" y="115" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="1552.447791341146" y="572.3367039659287" />
+              <mxPoint x="1552.447791341146" y="597.3367039659287" />
+            </Array>
+            <mxPoint x="1512.447791341146" y="572.3367039659287" as="sourcePoint" />
+            <mxPoint x="1512.447791341146" y="597.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-13" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="4: timTheoTenDangNhap()">
+          <mxGeometry relative="1" x="-0.0182" y="-25" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <mxPoint x="1512.447791341146" y="627.3367039659287" as="sourcePoint" />
+            <mxPoint x="1787.447791341146" y="627.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-14" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="5: Tra thong tin tai khoan">
+          <mxGeometry relative="1" x="0.0182" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1787.447791341146" y="682.3367039659287" as="sourcePoint" />
+            <mxPoint x="1512.447791341146" y="682.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-15" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=14;labelBackgroundColor=#FFFFFF;" value="6: kiemTraMatKhauVaTrangThai()">
+          <mxGeometry relative="1" x="0.0476" y="115" as="geometry">
+            <mxPoint y="1" as="offset" />
+            <Array as="points">
+              <mxPoint x="1552.447791341146" y="737.3367039659287" />
+              <mxPoint x="1552.447791341146" y="762.3367039659287" />
+            </Array>
+            <mxPoint x="1512.447791341146" y="737.3367039659287" as="sourcePoint" />
+            <mxPoint x="1512.447791341146" y="762.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-16" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="7: Tra token, vai tro / thong bao loi">
+          <mxGeometry relative="1" x="0.0546" y="30" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <mxPoint x="1512.447791341146" y="792.3367039659287" as="sourcePoint" />
+            <mxPoint x="1237.447791341146" y="792.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="YbiYNWJCQj0HbE9tLH5Z-17" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="8: Hien thi ket qua dang nhap">
+          <mxGeometry relative="1" x="0.0909" y="35" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1237.447791341146" y="847.3367039659287" as="sourcePoint" />
+            <mxPoint x="962.4477913411461" y="847.3367039659287" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-1" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="FormDangNhap" vertex="1">
+          <mxGeometry height="80" width="100" x="1180" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-2" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK XacThuc" vertex="1">
+          <mxGeometry height="80" width="70" x="1480" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-3" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="NguoiDung" vertex="1">
+          <mxGeometry height="80" width="80" x="1750" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-4" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=14;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;Quản lý / Tư vấn viên&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="2049.996748046875" y="309.999979654948" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-5" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=14;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2059.996748046875" y="389.999979654948" as="sourcePoint" />
+            <mxPoint x="2059.996748046875" y="1189.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-7" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=14;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2279.996748046875" y="359.999979654948" as="sourcePoint" />
+            <mxPoint x="2279.996748046875" y="1189.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-9" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=14;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2495.1143951056983" y="359.999979654948" as="sourcePoint" />
+            <mxPoint x="2499.996748046875" y="1189.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-11" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=14;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2719.996748046875" y="359.999979654948" as="sourcePoint" />
+            <mxPoint x="2719.996748046875" y="1189.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-13" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=14;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2939.996748046875" y="359.999979654948" as="sourcePoint" />
+            <mxPoint x="2939.996748046875" y="1189.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-14" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="1: Chon quan ly hoc vien">
+          <mxGeometry relative="1" x="-0.0909" y="10" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2059.996748046875" y="419.999979654948" as="sourcePoint" />
+            <mxPoint x="2279.996748046875" y="419.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-15" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="2: layDanhSachHocVien()">
+          <mxGeometry relative="1" x="-0.1364" y="15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2279.996748046875" y="454.999979654948" as="sourcePoint" />
+            <mxPoint x="2719.996748046875" y="454.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-16" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="3: truyVanHocVien()">
+          <mxGeometry relative="1" y="30" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2719.996748046875" y="509.999979654948" as="sourcePoint" />
+            <mxPoint x="2939.996748046875" y="509.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-17" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="4: Tra danh sach">
+          <mxGeometry relative="1" x="0.0909" y="-25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2939.996748046875" y="564.999979654948" as="sourcePoint" />
+            <mxPoint x="2719.996748046875" y="564.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-18" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="5: Hien thi danh sach">
+          <mxGeometry relative="1" y="-30" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2719.996748046875" y="619.999979654948" as="sourcePoint" />
+            <mxPoint x="2279.996748046875" y="619.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-19" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="6: Them / cap nhat ho so">
+          <mxGeometry relative="1" x="-0.1364" y="15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2059.996748046875" y="674.999979654948" as="sourcePoint" />
+            <mxPoint x="2499.996748046875" y="674.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-20" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="7: luuHoSo(duLieu)">
+          <mxGeometry relative="1" x="-0.1818" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2499.996748046875" y="729.999979654948" as="sourcePoint" />
+            <mxPoint x="2719.996748046875" y="729.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-21" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="8: kiemTraBatBuocVaTrungLap()">
+          <mxGeometry relative="1" x="-0.2381" y="62" as="geometry">
+            <mxPoint x="-2" y="-15" as="offset" />
+            <Array as="points">
+              <mxPoint x="2759.996748046875" y="784.999979654948" />
+              <mxPoint x="2759.996748046875" y="809.999979654948" />
+            </Array>
+            <mxPoint x="2719.996748046875" y="784.999979654948" as="sourcePoint" />
+            <mxPoint x="2719.996748046875" y="809.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-22" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="9: ghiHoSoVaTrinhDo()">
+          <mxGeometry relative="1" x="0.1818" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2719.996748046875" y="839.999979654948" as="sourcePoint" />
+            <mxPoint x="2939.996748046875" y="839.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-23" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="10: Tra ket qua">
+          <mxGeometry relative="1" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2939.996748046875" y="894.999979654948" as="sourcePoint" />
+            <mxPoint x="2719.996748046875" y="894.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-24" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="11: Thanh cong / du lieu khong hop le">
+          <mxGeometry relative="1" x="-0.1818" y="-10" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2719.996748046875" y="949.999979654948" as="sourcePoint" />
+            <mxPoint x="2499.996748046875" y="949.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-25" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="12: Hien thi thong bao">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2499.996748046875" y="1004.999979654948" as="sourcePoint" />
+            <mxPoint x="2059.996748046875" y="1004.999979654948" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-26" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form QLHocVien" vertex="1">
+          <mxGeometry height="80" width="100" x="2220" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-27" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form HoSo HocVien" vertex="1">
+          <mxGeometry height="80" width="100" x="2440" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-28" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DKHocVien" vertex="1">
+          <mxGeometry height="80" width="70" x="2690" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-29" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="DB HocVien" vertex="1">
+          <mxGeometry height="80" width="80" x="2900" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-30" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=16;" value="Quản lý" vertex="1">
+          <mxGeometry height="60" width="30" x="3189.9978862847215" y="288.9966666666665" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-31" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-30" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3204.9978862847215" y="1168.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-33" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3424.9978862847215" y="338.99666666666656" as="sourcePoint" />
+            <mxPoint x="3424.9978862847215" y="1168.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-35" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3644.9978862847215" y="338.99666666666656" as="sourcePoint" />
+            <mxPoint x="3644.9978862847215" y="1168.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-37" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3864.9978862847215" y="338.99666666666656" as="sourcePoint" />
+            <mxPoint x="3864.9978862847215" y="1168.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-39" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4084.9978862847215" y="338.99666666666656" as="sourcePoint" />
+            <mxPoint x="4084.9978862847215" y="1168.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-40" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Mo danh muc khoa hoc">
+          <mxGeometry relative="1" x="0.0909" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3204.9978862847215" y="378.9966666666665" as="sourcePoint" />
+            <mxPoint x="3424.9978862847215" y="378.9966666666665" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-41" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: layDanhSachKhoaHoc()">
+          <mxGeometry relative="1" x="-0.0455" y="-25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3424.9978862847215" y="433.9966666666665" as="sourcePoint" />
+            <mxPoint x="3864.9978862847215" y="433.9966666666665" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-42" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: truyVanKhoaHoc()">
+          <mxGeometry relative="1" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3864.9978862847215" y="488.9966666666665" as="sourcePoint" />
+            <mxPoint x="4084.9978862847215" y="488.9966666666665" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-43" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: Tra danh sach">
+          <mxGeometry relative="1" x="0.0909" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="4084.9978862847215" y="543.9966666666664" as="sourcePoint" />
+            <mxPoint x="3864.9978862847215" y="543.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-44" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Hien thi danh sach">
+          <mxGeometry relative="1" x="0.0455" y="-30" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3864.9978862847215" y="598.9966666666664" as="sourcePoint" />
+            <mxPoint x="3424.9978862847215" y="598.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-45" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: Nhap thong tin khoa hoc">
+          <mxGeometry relative="1" y="-25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3204.9978862847215" y="619.9966666666664" as="sourcePoint" />
+            <mxPoint x="3644.9978862847215" y="619.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-46" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: luuKhoaHoc(duLieu)">
+          <mxGeometry relative="1" x="0.0909" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3644.9978862847215" y="674.9966666666664" as="sourcePoint" />
+            <mxPoint x="3864.9978862847215" y="674.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-47" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="&lt;font&gt;8: kiemTraMaTrungVaHocPhi()&lt;/font&gt;">
+          <mxGeometry relative="1" x="0.0476" y="120" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="3904.9978862847215" y="729.9966666666664" />
+              <mxPoint x="3904.9978862847215" y="754.9966666666664" />
+            </Array>
+            <mxPoint x="3864.9978862847215" y="729.9966666666664" as="sourcePoint" />
+            <mxPoint x="3864.9978862847215" y="754.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-48" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: themHoacCapNhat()">
+          <mxGeometry relative="1" x="0.2727" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="3974.9978862847215" y="784.9966666666664" />
+            </Array>
+            <mxPoint x="3864.9978862847215" y="784.9966666666664" as="sourcePoint" />
+            <mxPoint x="4084.9978862847215" y="784.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-49" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra ket qua">
+          <mxGeometry relative="1" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="4084.9978862847215" y="839.9966666666664" as="sourcePoint" />
+            <mxPoint x="3864.9978862847215" y="839.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-50" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Thanh cong / khong hop le">
+          <mxGeometry relative="1" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3864.9978862847215" y="894.9966666666664" as="sourcePoint" />
+            <mxPoint x="3644.9978862847215" y="894.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-51" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="12: Hien thi thong bao">
+          <mxGeometry relative="1" x="0.0909" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3639.9978862847215" y="915.9966666666664" as="sourcePoint" />
+            <mxPoint x="3199.9978862847215" y="915.9966666666664" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-52" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form QLKhoaHoc" vertex="1">
+          <mxGeometry height="80" width="100" x="3370" y="259" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-54" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form KhoaHoc" vertex="1">
+          <mxGeometry height="80" width="100" x="3587" y="259" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-55" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DKKhoaHoc" vertex="1">
+          <mxGeometry height="80" width="70" x="3830" y="259" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-56" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="DB KhoaHoc" vertex="1">
+          <mxGeometry height="80" width="80" x="4043" y="259" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-57" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=16;" value="Quản lý" vertex="1">
+          <mxGeometry height="60" width="30" x="4350.00009765625" y="259.0000976562501" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-58" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-57" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4365.00009765625" y="1139.00009765625" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-60" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4585.00009765625" y="309.0000976562501" as="sourcePoint" />
+            <mxPoint x="4585.00009765625" y="1139.00009765625" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-62" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4805.00009765625" y="309.0000976562501" as="sourcePoint" />
+            <mxPoint x="4805.00009765625" y="1139.00009765625" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-64" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5025.00009765625" y="309.0000976562501" as="sourcePoint" />
+            <mxPoint x="5025.00009765625" y="1139.00009765625" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-66" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5245.00009765625" y="309.0000976562501" as="sourcePoint" />
+            <mxPoint x="5245.00009765625" y="1139.00009765625" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-67" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Chon quan ly lop hoc">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4365.00009765625" y="349.0000976562501" as="sourcePoint" />
+            <mxPoint x="4585.00009765625" y="349.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-68" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: layDanhSachLop()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4585.00009765625" y="404.0000976562501" as="sourcePoint" />
+            <mxPoint x="5025.00009765625" y="404.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-69" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: truyVanLopVaLich()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5025.00009765625" y="459.0000976562501" as="sourcePoint" />
+            <mxPoint x="5245.00009765625" y="459.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-70" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: Tra du lieu">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5245.00009765625" y="514.0000976562501" as="sourcePoint" />
+            <mxPoint x="5025.00009765625" y="514.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-71" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Hien thi danh sach">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5025.00009765625" y="569.0000976562501" as="sourcePoint" />
+            <mxPoint x="4585.00009765625" y="569.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-72" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: Nhap lop va lich hoc">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4365.00009765625" y="624.0000976562501" as="sourcePoint" />
+            <mxPoint x="4805.00009765625" y="624.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-73" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: luuLopVaLich(duLieu)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4805.00009765625" y="640.0000976562501" as="sourcePoint" />
+            <mxPoint x="5025.00009765625" y="640.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-74" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: kiemTraSiSoNgayVaTrungLich()">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="5065.00009765625" y="695.0000976562501" />
+              <mxPoint x="5065.00009765625" y="720.0000976562501" />
+            </Array>
+            <mxPoint x="5025.00009765625" y="695.0000976562501" as="sourcePoint" />
+            <mxPoint x="5025.00009765625" y="720.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-75" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: ghiLopVaLichHoc()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5025.00009765625" y="750.0000976562501" as="sourcePoint" />
+            <mxPoint x="5245.00009765625" y="750.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-76" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra ket qua">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5245.00009765625" y="805.0000976562501" as="sourcePoint" />
+            <mxPoint x="5025.00009765625" y="805.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-77" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Thanh cong / trung lich">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5030.00009765625" y="830.0000976562501" as="sourcePoint" />
+            <mxPoint x="4810.00009765625" y="830.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-78" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="12: Hien thi thong bao">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4810.00009765625" y="851.0000976562501" as="sourcePoint" />
+            <mxPoint x="4370.00009765625" y="851.0000976562501" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-79" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form QuanLyLop" vertex="1">
+          <mxGeometry height="80" width="100" x="4530" y="239" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-80" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form LopVaLich" vertex="1">
+          <mxGeometry height="80" width="100" x="4750" y="239" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-81" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="DB LopHoc LịchHoc" vertex="1">
+          <mxGeometry height="80" width="80" x="5200" y="239" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-83" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK LopHoc" vertex="1">
+          <mxGeometry height="80" width="70" x="4990" y="239" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-84" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" value="Quản lý" vertex="1">
+          <mxGeometry height="60" width="30" x="5480" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-85" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-84" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5495" y="1150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-87" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5715" y="320" as="sourcePoint" />
+            <mxPoint x="5715" y="1150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-89" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5935" y="320" as="sourcePoint" />
+            <mxPoint x="5935" y="1150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-91" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6155" y="320" as="sourcePoint" />
+            <mxPoint x="6155" y="1150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-93" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6375" y="320" as="sourcePoint" />
+            <mxPoint x="6375" y="1150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-94" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Mo danh sach giao vien">
+          <mxGeometry relative="1" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="5585" y="360" />
+            </Array>
+            <mxPoint x="5495" y="360" as="sourcePoint" />
+            <mxPoint x="5715" y="360" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-95" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: layDanhSachGiaoVien()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5715" y="415" as="sourcePoint" />
+            <mxPoint x="6155" y="415" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-96" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: truyVanGiaoVien()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6155" y="450" as="sourcePoint" />
+            <mxPoint x="6375" y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-97" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: Tra danh sach">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6375" y="490" as="sourcePoint" />
+            <mxPoint x="6155" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-98" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Hien thi danh sach">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6155" y="530" as="sourcePoint" />
+            <mxPoint x="5715" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-99" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: Chon giao vien va lop">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5495" y="570" as="sourcePoint" />
+            <mxPoint x="5935" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-100" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: phanCongGiaoVien()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5940" y="600" as="sourcePoint" />
+            <mxPoint x="6160" y="600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-101" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: kiemTraChuyenMonVaTrungLich()">
+          <mxGeometry relative="1" x="0.0476" y="120" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="6195" y="630" />
+              <mxPoint x="6195" y="655" />
+            </Array>
+            <mxPoint x="6155" y="630" as="sourcePoint" />
+            <mxPoint x="6155" y="655" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-102" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: luuPhanCong()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6155" y="685" as="sourcePoint" />
+            <mxPoint x="6375" y="685" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-103" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra ket qua">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6375" y="740" as="sourcePoint" />
+            <mxPoint x="6155" y="740" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-104" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Thanh cong / khong the phan cong">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6155" y="780" as="sourcePoint" />
+            <mxPoint x="5935" y="780" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-105" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="12: Hien thi thong bao">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5935" y="835" as="sourcePoint" />
+            <mxPoint x="5495" y="835" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-106" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form QuanLy GiaoVien" vertex="1">
+          <mxGeometry height="80" width="100" x="5660" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-107" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="DB GiaoVien PhanCong" vertex="1">
+          <mxGeometry height="80" width="80" x="6340" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-108" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DKPhanCong" vertex="1">
+          <mxGeometry height="91.43" width="80" x="6120" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-109" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form PhanCong" vertex="1">
+          <mxGeometry height="80" width="100" x="5880" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-110" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" value="Học viên / Tư vấn viên" vertex="1">
+          <mxGeometry height="60" width="30" x="6552.002002467106" y="259.99580232319084" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-111" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-110" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6567.002002467106" y="1139.995802323191" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-113" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6787.002002467106" y="309.9958023231909" as="sourcePoint" />
+            <mxPoint x="6787.002002467106" y="1139.995802323191" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-115" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7007.002002467106" y="309.9958023231909" as="sourcePoint" />
+            <mxPoint x="7007.002002467106" y="1139.995802323191" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-117" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7227.002002467106" y="309.9958023231909" as="sourcePoint" />
+            <mxPoint x="7227.002002467106" y="1139.995802323191" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-119" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7447.002002467106" y="309.9958023231909" as="sourcePoint" />
+            <mxPoint x="7447.002002467106" y="1139.995802323191" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-120" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Tim lop phu hop">
+          <mxGeometry relative="1" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="6567.002002467106" y="349.99580232319084" as="sourcePoint" />
+            <mxPoint x="6787.002002467106" y="349.99580232319084" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-121" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: layDanhSachLopBoLoc()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6787.002002467106" y="404.99580232319084" as="sourcePoint" />
+            <mxPoint x="7227.002002467106" y="404.99580232319084" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-122" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: truyVanLopDangMo()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7227.002002467106" y="429.99580232319084" as="sourcePoint" />
+            <mxPoint x="7447.002002467106" y="429.99580232319084" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-123" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: Tra danh sach lop">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7447.002002467106" y="469.9958023231909" as="sourcePoint" />
+            <mxPoint x="7227.002002467106" y="469.9958023231909" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-124" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Hien thi ket qua">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7227.002002467106" y="499.9958023231909" as="sourcePoint" />
+            <mxPoint x="6787.002002467106" y="499.9958023231909" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-125" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: Chon lop va dang ky">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6567.002002467106" y="539.9958023231909" as="sourcePoint" />
+            <mxPoint x="7007.002002467106" y="539.9958023231909" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-126" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: taoDangKy(hocVien, lop)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7007.002002467106" y="579.9958023231909" as="sourcePoint" />
+            <mxPoint x="7227.002002467106" y="579.9958023231909" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-127" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: kiemTraChoTrongTrinhDoTrungLich()">
+          <mxGeometry relative="1" x="0.0476" y="110" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="7267.002002467106" y="619.9958023231909" />
+              <mxPoint x="7267.002002467106" y="644.9958023231909" />
+            </Array>
+            <mxPoint x="7227.002002467106" y="619.9958023231909" as="sourcePoint" />
+            <mxPoint x="7227.002002467106" y="644.9958023231909" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-128" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: luuDangKyVaTaoHoaDon()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7227.002002467106" y="674.9958023231909" as="sourcePoint" />
+            <mxPoint x="7447.002002467106" y="674.9958023231909" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-129" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra ket qua">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7447.002002467106" y="729.9958023231909" as="sourcePoint" />
+            <mxPoint x="7227.002002467106" y="729.9958023231909" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-130" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Dang ky thanh cong / tu choi">
+          <mxGeometry relative="1" x="0.0909" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="7230.002002467106" y="799.9958023231909" as="sourcePoint" />
+            <mxPoint x="7010.002002467106" y="799.9958023231909" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-131" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="12: Hien thi thong bao">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7007.002002467106" y="829.9958023231909" as="sourcePoint" />
+            <mxPoint x="6567.002002467106" y="829.9958023231909" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-132" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form TraCuuLop" vertex="1">
+          <mxGeometry height="80" width="100" x="6730" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-133" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="DB LopHoc DangKyLop" vertex="1">
+          <mxGeometry height="80" width="80" x="7410" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-134" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form DangKyLop" vertex="1">
+          <mxGeometry height="80" width="100" x="6950" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-135" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK DangKyLop" vertex="1">
+          <mxGeometry height="91.43" width="80" x="7190" y="228.57" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-136" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" value="Tư vấn viên / Quản lý" vertex="1">
+          <mxGeometry height="60" width="30" x="920.0032926432294" y="1220.0033333333336" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-137" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-136" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="935.0032926432294" y="2100.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-139" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1155.0032926432295" y="1270.0033333333336" as="sourcePoint" />
+            <mxPoint x="1155.0032926432295" y="2100.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-141" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1375.0032926432295" y="1270.0033333333336" as="sourcePoint" />
+            <mxPoint x="1375.0032926432295" y="2100.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-143" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1595.0032926432295" y="1270.0033333333336" as="sourcePoint" />
+            <mxPoint x="1595.0032926432295" y="2100.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-145" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1815.0032926432295" y="1270.0033333333336" as="sourcePoint" />
+            <mxPoint x="1815.0032926432295" y="2100.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-146" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Tra cuu hoc phi hoc vien">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="935.0032926432294" y="1310.0033333333336" as="sourcePoint" />
+            <mxPoint x="1155.0032926432295" y="1310.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-147" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: layHoaDonVaGiaoDich()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1155.0032926432295" y="1365.0033333333336" as="sourcePoint" />
+            <mxPoint x="1595.0032926432295" y="1365.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-148" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: truyVanCongNo()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1595.0032926432295" y="1420.0033333333336" as="sourcePoint" />
+            <mxPoint x="1815.0032926432295" y="1420.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-149" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: Tra du lieu hoc phi">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1815.0032926432295" y="1475.0033333333336" as="sourcePoint" />
+            <mxPoint x="1595.0032926432295" y="1475.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-150" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Hien thi cong no">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1595.0032926432295" y="1510.0033333333336" as="sourcePoint" />
+            <mxPoint x="1155.0032926432295" y="1510.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-151" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: Nhap giao dich thanh toan">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="935.0032926432294" y="1550.0033333333336" as="sourcePoint" />
+            <mxPoint x="1375.0032926432295" y="1550.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-152" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: ghiNhanThanhToan()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1375.0032926432295" y="1605.0033333333336" as="sourcePoint" />
+            <mxPoint x="1595.0032926432295" y="1605.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-153" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: kiemTraSoTienVaTrangThai()">
+          <mxGeometry relative="1" x="0.0476" y="120" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="1635.0032926432295" y="1660.0033333333336" />
+              <mxPoint x="1635.0032926432295" y="1685.0033333333336" />
+            </Array>
+            <mxPoint x="1595.0032926432295" y="1660.0033333333336" as="sourcePoint" />
+            <mxPoint x="1595.0032926432295" y="1685.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-154" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: luuThanhToanCapNhatHoaDon()">
+          <mxGeometry relative="1" x="0.0909" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1595.0032926432295" y="1715.0033333333336" as="sourcePoint" />
+            <mxPoint x="1815.0032926432295" y="1715.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-155" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra ket qua">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1815.0032926432295" y="1770.0033333333336" as="sourcePoint" />
+            <mxPoint x="1595.0032926432295" y="1770.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-156" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Thanh cong / so tien khong hop le">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1595.0032926432295" y="1825.0033333333336" as="sourcePoint" />
+            <mxPoint x="1375.0032926432295" y="1825.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-157" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="12: Hien thi thong bao">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1375.0032926432295" y="1855.0033333333336" as="sourcePoint" />
+            <mxPoint x="935.0032926432294" y="1855.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-158" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form QuanLy HọcPhi" vertex="1">
+          <mxGeometry height="80" width="100" x="1100" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-159" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form ThanhToan" vertex="1">
+          <mxGeometry height="80" width="100" x="1320" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-160" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK HocPhi" vertex="1">
+          <mxGeometry height="100" width="84" x="1546" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-161" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="DB HoaDon ThanhToan" vertex="1">
+          <mxGeometry height="80" width="80" x="1770" y="1200" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-162" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" value="Giáo viên / Quản lý" vertex="1">
+          <mxGeometry height="60" width="30" x="2059.997058823529" y="1220.0070013786767" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-163" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-162" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2074.997058823529" y="2100.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-165" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2290.1147058823526" y="1270.0070013786767" as="sourcePoint" />
+            <mxPoint x="2294.997058823529" y="2100.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-167" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2514.997058823529" y="1270.0070013786767" as="sourcePoint" />
+            <mxPoint x="2514.997058823529" y="2100.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-169" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2734.997058823529" y="1270.0070013786767" as="sourcePoint" />
+            <mxPoint x="2734.997058823529" y="2100.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-171" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2954.997058823529" y="1270.0070013786767" as="sourcePoint" />
+            <mxPoint x="2954.997058823529" y="2100.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-172" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Chon lop va buoi hoc">
+          <mxGeometry relative="1" x="0.0909" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2074.997058823529" y="1310.0070013786767" as="sourcePoint" />
+            <mxPoint x="2294.997058823529" y="1310.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-173" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: layDanhSachHocVien()">
+          <mxGeometry relative="1" x="0.0455" y="-25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2294.997058823529" y="1365.0070013786767" as="sourcePoint" />
+            <mxPoint x="2734.997058823529" y="1365.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-174" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: truyVanBuoiHocVaHocVien()">
+          <mxGeometry relative="1" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2734.997058823529" y="1420.0070013786767" as="sourcePoint" />
+            <mxPoint x="2954.997058823529" y="1420.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-175" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: Tra danh sach">
+          <mxGeometry relative="1" y="15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2954.997058823529" y="1449.9970013786767" as="sourcePoint" />
+            <mxPoint x="2734.997058823529" y="1449.9970013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-176" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Hien thi bang diem danh">
+          <mxGeometry relative="1" x="0.0454" y="10" as="geometry">
+            <mxPoint x="-1" as="offset" />
+            <mxPoint x="2734.997058823529" y="1489.9970013786767" as="sourcePoint" />
+            <mxPoint x="2514.997058823529" y="1489.9970013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-177" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: Nhap trang thai diem danh">
+          <mxGeometry relative="1" x="0.0455" y="-25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2074.997058823529" y="1529.9970013786767" as="sourcePoint" />
+            <mxPoint x="2514.997058823529" y="1529.9970013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-178" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: luuDiemDanh(duLieu)">
+          <mxGeometry relative="1" x="0.0909" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2514.997058823529" y="1569.9970013786767" as="sourcePoint" />
+            <mxPoint x="2734.997058823529" y="1569.9970013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-179" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: kiemTraQuyenVaThoiHanSua()">
+          <mxGeometry relative="1" x="0.0476" y="130" as="geometry">
+            <mxPoint y="1" as="offset" />
+            <Array as="points">
+              <mxPoint x="2774.997058823529" y="1600.0070013786767" />
+              <mxPoint x="2774.997058823529" y="1625.0070013786767" />
+            </Array>
+            <mxPoint x="2734.997058823529" y="1600.0070013786767" as="sourcePoint" />
+            <mxPoint x="2734.997058823529" y="1625.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-180" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: ghiBanGhiDiemDanh()">
+          <mxGeometry relative="1" x="-0.0909" y="-10" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2734.997058823529" y="1655.0070013786767" as="sourcePoint" />
+            <mxPoint x="2954.997058823529" y="1655.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-181" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra ket qua">
+          <mxGeometry relative="1" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2954.997058823529" y="1710.0070013786767" as="sourcePoint" />
+            <mxPoint x="2734.997058823529" y="1710.0070013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-182" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Thanh cong / het thoi han">
+          <mxGeometry relative="1" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2734.997058823529" y="1749.9970013786767" as="sourcePoint" />
+            <mxPoint x="2514.997058823529" y="1749.9970013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-183" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="12: Hien thi thong bao">
+          <mxGeometry relative="1" x="-0.0909" y="-15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2514.997058823529" y="1804.9970013786767" as="sourcePoint" />
+            <mxPoint x="2074.997058823529" y="1804.9970013786767" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-184" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form LopGiangDay" vertex="1">
+          <mxGeometry height="80" width="100" x="2230" y="1210.01" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-185" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form DiemDanh" vertex="1">
+          <mxGeometry height="80" width="100" x="2460" y="1210.01" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-187" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK DiemDanh" vertex="1">
+          <mxGeometry height="91.43" width="80" x="2700" y="1198.58" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-188" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="DB BuoiHoc DiemDanh" vertex="1">
+          <mxGeometry height="80" width="80" x="2910" y="1210.01" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-189" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" value="Giáo viên" vertex="1">
+          <mxGeometry height="60" width="30" x="3080.0005882352943" y="1259.9964993106616" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-190" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-189" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3095.0005882352943" y="2139.9964993106614" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-192" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3310.1182352941178" y="1309.9964993106616" as="sourcePoint" />
+            <mxPoint x="3315.0005882352943" y="2139.9964993106614" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-194" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3530.1182352941178" y="1309.9964993106616" as="sourcePoint" />
+            <mxPoint x="3535.0005882352943" y="2139.9964993106614" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-196" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3755.0005882352943" y="1309.9964993106616" as="sourcePoint" />
+            <mxPoint x="3755.0005882352943" y="2139.9964993106614" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-198" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3975.0005882352943" y="1309.9964993106616" as="sourcePoint" />
+            <mxPoint x="3975.000588235294" y="2139.9964993106614" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-199" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Chon lop va hoc vien">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3095.0005882352943" y="1349.9964993106616" as="sourcePoint" />
+            <mxPoint x="3315.0005882352943" y="1349.9964993106616" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-200" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: layKetQuaHienCo()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3308.0005882352943" y="1379.9864993106617" as="sourcePoint" />
+            <mxPoint x="3748.0005882352943" y="1379.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-201" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: truyVanKetQua()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3755.0005882352943" y="1409.9864993106617" as="sourcePoint" />
+            <mxPoint x="3975.000588235294" y="1409.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-202" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: Tra ket qua hien co">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3980.000588235294" y="1449.9864993106617" as="sourcePoint" />
+            <mxPoint x="3760.0005882352943" y="1449.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-203" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Hien thi bieu mau">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3755.0005882352943" y="1479.9864993106617" as="sourcePoint" />
+            <mxPoint x="3535.0005882352943" y="1479.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-204" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: Nhap diem va nhan xet">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3090.0005882352943" y="1509.9864993106617" as="sourcePoint" />
+            <mxPoint x="3530.0005882352943" y="1509.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-205" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: luuKetQua(duLieu)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3535.0005882352943" y="1549.9864993106617" as="sourcePoint" />
+            <mxPoint x="3755.0005882352943" y="1549.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-206" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: kiemTraThangDiemVaQuyen()">
+          <mxGeometry relative="1" x="-0.1429" y="120" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="3795.0005882352943" y="1569.9864993106617" />
+              <mxPoint x="3795.0005882352943" y="1594.9864993106617" />
+            </Array>
+            <mxPoint x="3755.0005882352943" y="1569.9864993106617" as="sourcePoint" />
+            <mxPoint x="3755.0005882352943" y="1594.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-207" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: themHoacCapNhatKetQua()">
+          <mxGeometry relative="1" x="0.2727" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3755.0005882352943" y="1624.9864993106617" as="sourcePoint" />
+            <mxPoint x="3975.000588235294" y="1624.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-208" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra ket qua">
+          <mxGeometry relative="1" x="0.0909" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3975.000588235294" y="1679.9864993106617" as="sourcePoint" />
+            <mxPoint x="3755.0005882352943" y="1679.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-209" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Thanh cong / diem khong hop le">
+          <mxGeometry relative="1" x="-0.1364" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3755.0005882352943" y="1739.9864993106617" as="sourcePoint" />
+            <mxPoint x="3535.0005882352943" y="1739.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-210" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="12: Hien thi thong bao">
+          <mxGeometry relative="1" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3530.0005882352943" y="1779.9864993106617" as="sourcePoint" />
+            <mxPoint x="3090.0005882352943" y="1779.9864993106617" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-211" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form LopGiangDay" vertex="1">
+          <mxGeometry height="80" width="100" x="3250" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-212" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form KetQuaHocTap" vertex="1">
+          <mxGeometry height="91.43" width="114.29" x="3473" y="1238.57" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-213" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK KetQua" vertex="1">
+          <mxGeometry height="100" width="90" x="3710" y="1240" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-215" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="DB KetQuaHocTap" vertex="1">
+          <mxGeometry height="90" width="90" x="3930" y="1240" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-216" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=16;" value="Người dùng" vertex="1">
+          <mxGeometry height="60" width="30" x="4220.000048828125" y="1270" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-217" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-216" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4235.000048828125" y="2150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-219" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4455.000048828125" y="1320" as="sourcePoint" />
+            <mxPoint x="4455.000048828125" y="2150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-221" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4670.117695886948" y="1320" as="sourcePoint" />
+            <mxPoint x="4675.000048828125" y="2150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-223" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4895.000048828125" y="1320" as="sourcePoint" />
+            <mxPoint x="4895.000048828125" y="2150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-225" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=16;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5115.000048828125" y="1320" as="sourcePoint" />
+            <mxPoint x="5115.000048828125" y="2150" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-226" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="1: Nhap dieu kien tra cuu">
+          <mxGeometry relative="1" x="-0.0909" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="4240.000048828125" y="1390" as="sourcePoint" />
+            <mxPoint x="4460.000048828125" y="1390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-227" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="2: traCuu(boLoc, vaiTro)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4455.000048828125" y="1415" as="sourcePoint" />
+            <mxPoint x="4895.000048828125" y="1415" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-228" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="3: kiemTraQuyenVaBoLoc()">
+          <mxGeometry relative="1" x="-0.2381" y="36" as="geometry">
+            <mxPoint x="-6" y="-20" as="offset" />
+            <Array as="points">
+              <mxPoint x="4935.000048828125" y="1470" />
+              <mxPoint x="4935.000048828125" y="1495" />
+            </Array>
+            <mxPoint x="4895.000048828125" y="1470" as="sourcePoint" />
+            <mxPoint x="4895.000048828125" y="1495" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-229" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="4: truyVanLichLopHocPhi()">
+          <mxGeometry relative="1" y="15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="4895.000048828125" y="1525" as="sourcePoint" />
+            <mxPoint x="5115.000048828125" y="1525" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-230" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="5: Tra du lieu">
+          <mxGeometry relative="1" x="-0.0909" y="-10" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5115.000048828125" y="1580" as="sourcePoint" />
+            <mxPoint x="4895.000048828125" y="1580" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-231" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="6: Tra ket qua da loc">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4895.000048828125" y="1600" as="sourcePoint" />
+            <mxPoint x="4675.000048828125" y="1600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-232" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="7: Hien thi lich / lop / hoc phi">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4675.000048828125" y="1630" as="sourcePoint" />
+            <mxPoint x="4235.000048828125" y="1630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-233" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="8: Thay doi bo loc">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4235.000048828125" y="1690" as="sourcePoint" />
+            <mxPoint x="4455.000048828125" y="1690" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-234" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="9: traCuuLai()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="4450.000048828125" y="1720" as="sourcePoint" />
+            <mxPoint x="4890.000048828125" y="1720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-235" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=16;labelBackgroundColor=#FFFFFF;" value="10: truyVanTheoBoLocMoi()">
+          <mxGeometry relative="1" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="4895.000048828125" y="1770" as="sourcePoint" />
+            <mxPoint x="5115.000048828125" y="1770" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-236" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="11: Tra ket qua">
+          <mxGeometry relative="1" x="0.0909" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5115.000048828125" y="1825" as="sourcePoint" />
+            <mxPoint x="4895.000048828125" y="1825" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-237" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=16;labelBackgroundColor=#FFFFFF;" value="13: Hien thi ket qua moi">
+          <mxGeometry relative="1" x="0.0909" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="4670.000048828125" y="1920" as="sourcePoint" />
+            <mxPoint x="4240" y="1920" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-238" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form TraCuu" vertex="1">
+          <mxGeometry height="80" width="100" x="4400" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-239" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form KetQua TraCuu" vertex="1">
+          <mxGeometry height="80" width="100" x="4610" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-240" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="CSDL NghiepVu" vertex="1">
+          <mxGeometry height="80" width="80" x="5070" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-241" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK TraCuu" vertex="1">
+          <mxGeometry height="90" width="78.75" x="4855" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-242" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="12: Thanh cong / khong hop le">
+          <mxGeometry relative="1" x="-0.1364" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="4890" y="1890" as="sourcePoint" />
+            <mxPoint x="4670" y="1890" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-243" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" value="Quản lý" vertex="1">
+          <mxGeometry height="60" width="30" x="5320.003463541667" y="1290.0033333333336" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-244" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-243" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5335.003463541667" y="2170.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-246" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-265" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5555.003463541667" y="1340.0033333333336" as="sourcePoint" />
+            <mxPoint x="5555.003463541667" y="2170.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-248" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5775.003463541667" y="1340.0033333333336" as="sourcePoint" />
+            <mxPoint x="5775.003463541667" y="2170.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-250" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5995.003463541667" y="1340.0033333333336" as="sourcePoint" />
+            <mxPoint x="5995.003463541667" y="2170.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-252" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6215.003463541667" y="1340.0033333333336" as="sourcePoint" />
+            <mxPoint x="6215.003463541667" y="2170.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-253" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Chon loai thong ke va ky">
+          <mxGeometry relative="1" y="-30" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5335.003463541667" y="1380.0033333333336" as="sourcePoint" />
+            <mxPoint x="5555.003463541667" y="1380.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-254" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: taoThongKe(tieuChi, ky)">
+          <mxGeometry relative="1" x="0.0455" y="-25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5555.003463541667" y="1435.0033333333336" as="sourcePoint" />
+            <mxPoint x="5995.003463541667" y="1435.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-255" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: kiemTraTieuChiThongKe()">
+          <mxGeometry relative="1" x="-0.2381" y="41" as="geometry">
+            <mxPoint x="-1" y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="6035.003463541667" y="1490.0033333333336" />
+              <mxPoint x="6035.003463541667" y="1515.0033333333336" />
+            </Array>
+            <mxPoint x="5995.003463541667" y="1490.0033333333336" as="sourcePoint" />
+            <mxPoint x="5995.003463541667" y="1515.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-256" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: tongHopSiSoDoanhThuHoanThanh()">
+          <mxGeometry relative="1" x="-0.0909" y="-15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5995.003463541667" y="1545.0033333333336" as="sourcePoint" />
+            <mxPoint x="6215.003463541667" y="1545.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-257" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Tra du lieu tong hop">
+          <mxGeometry relative="1" x="-0.1818" y="30" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="6215.003463541667" y="1600.0033333333336" as="sourcePoint" />
+            <mxPoint x="5995.003463541667" y="1600.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-258" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: Tra bao cao thong ke">
+          <mxGeometry relative="1" x="0.1818" y="15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5995.003463541667" y="1630.0033333333336" as="sourcePoint" />
+            <mxPoint x="5775.003463541667" y="1630.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-259" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: Hien thi bao cao">
+          <mxGeometry relative="1" x="-0.0455" y="-10" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5775.003463541667" y="1670.0033333333336" as="sourcePoint" />
+            <mxPoint x="5335.003463541667" y="1670.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-260" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: Doi ky hoac bo loc">
+          <mxGeometry relative="1" x="-0.0909" y="-25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5335.003463541667" y="1700.0033333333336" as="sourcePoint" />
+            <mxPoint x="5555.003463541667" y="1700.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-261" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: taoThongKeLai()">
+          <mxGeometry relative="1" y="-30" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5555.003463541667" y="1724.0033333333336" as="sourcePoint" />
+            <mxPoint x="5995.003463541667" y="1724.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-262" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: tongHopTheoBoLocMoi()">
+          <mxGeometry relative="1" y="25" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5995.003463541667" y="1760.0033333333336" as="sourcePoint" />
+            <mxPoint x="6215.003463541667" y="1760.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-263" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Tra ket qua">
+          <mxGeometry relative="1" x="0.0909" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="6215.003463541667" y="1800.0033333333336" as="sourcePoint" />
+            <mxPoint x="5995.003463541667" y="1800.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-264" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="12: Hien thi bao cao moi">
+          <mxGeometry relative="1" x="0.1818" y="15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="5995.003463541667" y="1830.0033333333336" as="sourcePoint" />
+            <mxPoint x="5775" y="1830" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-266" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" target="W4p-DDBWbDvoxxRinDHV-265" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="5555.003463541667" y="1340.0033333333336" as="sourcePoint" />
+            <mxPoint x="5555.003463541667" y="2170.0033333333336" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-265" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form&amp;nbsp; ThongKe" vertex="1">
+          <mxGeometry height="80" width="100" x="5500" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-267" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form BaoCao" vertex="1">
+          <mxGeometry height="80" width="100" x="5718" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-268" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK ThongKe" vertex="1">
+          <mxGeometry height="90" width="78.75" x="5960" y="1270" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-269" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="CSDL ThongKe" vertex="1">
+          <mxGeometry height="80" width="80" x="6170" y="1275" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-270" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" value="Học viên / Tư vấn viên" vertex="1">
+          <mxGeometry height="60" width="30" x="6455.0030078125" y="1310.0033740234376" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-271" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-270" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6470.0030078125" y="2125.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-273" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6690.0030078125" y="1360.0033740234376" as="sourcePoint" />
+            <mxPoint x="6690.0030078125" y="2125.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-275" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6910.0030078125" y="1360.0033740234376" as="sourcePoint" />
+            <mxPoint x="6910.0030078125" y="2125.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-277" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7130.0030078125" y="1360.0033740234376" as="sourcePoint" />
+            <mxPoint x="7130.0030078125" y="2125.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-278" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontStyle=1;fontSize=15;" value="DichVuAI" vertex="1">
+          <mxGeometry height="40" width="120" x="7290.0030078125" y="1320.0033740234376" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-279" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-278" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7350.0030078125" y="2125.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-280" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Gui yeu cau tu van lop">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="6470.0030078125" y="1400.0033740234376" as="sourcePoint" />
+            <mxPoint x="6690.0030078125" y="1400.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-281" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: tuVanLop(trinhDo, lichRanh)">
+          <mxGeometry relative="1" y="15" as="geometry">
+            <mxPoint x="-1" as="offset" />
+            <mxPoint x="6690.0030078125" y="1455.0033740234376" as="sourcePoint" />
+            <mxPoint x="6910.0030078125" y="1455.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-282" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: kiemTraDuLieuDauVao()">
+          <mxGeometry relative="1" x="-0.0483" y="90" as="geometry">
+            <mxPoint y="-1" as="offset" />
+            <Array as="points">
+              <mxPoint x="6950.0030078125" y="1510.0033740234376" />
+              <mxPoint x="6950.0030078125" y="1535.0033740234376" />
+            </Array>
+            <mxPoint x="6910.0030078125" y="1510.0033740234376" as="sourcePoint" />
+            <mxPoint x="6910.0030078125" y="1535.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-283" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: layDanhSachLopDangMo()">
+          <mxGeometry relative="1" x="-0.0909" y="-15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="6910.0030078125" y="1565.0033740234376" as="sourcePoint" />
+            <mxPoint x="7130.0030078125" y="1565.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-284" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Tra cac lop con cho">
+          <mxGeometry relative="1" x="0.1818" y="10" as="geometry">
+            <mxPoint x="-1" as="offset" />
+            <mxPoint x="7130.0030078125" y="1620.0033740234376" as="sourcePoint" />
+            <mxPoint x="6910.0030078125" y="1620.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-285" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: goiYLopHoc(dauVao, danhSachLop)">
+          <mxGeometry relative="1" x="-0.0455" y="-25" as="geometry">
+            <mxPoint x="1" as="offset" />
+            <mxPoint x="6910.0030078125" y="1660.0033740234376" as="sourcePoint" />
+            <mxPoint x="7350.0030078125" y="1660.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-286" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: taoPromptVaGoiMoHinh()">
+          <mxGeometry relative="1" x="-0.2372" y="14" as="geometry">
+            <mxPoint x="-4" y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="7390.0030078125" y="1730.0033740234376" />
+              <mxPoint x="7390.0030078125" y="1755.0033740234376" />
+            </Array>
+            <mxPoint x="7350.0030078125" y="1730.0033740234376" as="sourcePoint" />
+            <mxPoint x="7350.0030078125" y="1755.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-287" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: Tra goi y co cau truc">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="7350.0030078125" y="1770.0033740234376" as="sourcePoint" />
+            <mxPoint x="6910.0030078125" y="1770.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-288" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: kiemTraLopTonTaiVaFallback()">
+          <mxGeometry relative="1" x="-0.0483" y="100" as="geometry">
+            <mxPoint y="-1" as="offset" />
+            <Array as="points">
+              <mxPoint x="6950.0030078125" y="1800.0033740234376" />
+              <mxPoint x="6950.0030078125" y="1825.0033740234376" />
+            </Array>
+            <mxPoint x="6910.0030078125" y="1800.0033740234376" as="sourcePoint" />
+            <mxPoint x="6910.0030078125" y="1825.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-289" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra danh sach goi y">
+          <mxGeometry relative="1" x="0.0909" y="15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="6910.0030078125" y="1860.0033740234376" as="sourcePoint" />
+            <mxPoint x="6690.0030078125" y="1860.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-290" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Hien thi lop phu hop">
+          <mxGeometry relative="1" x="0.0909" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="6690.0030078125" y="1880.0033740234376" as="sourcePoint" />
+            <mxPoint x="6470.0030078125" y="1880.0033740234376" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-291" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form AI TuVanLop" vertex="1">
+          <mxGeometry height="80" width="100" x="6630" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-292" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK AI&amp;nbsp; TuVan" vertex="1">
+          <mxGeometry height="90" width="78.75" x="6870" y="1280" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-293" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="DB LopHoc" vertex="1">
+          <mxGeometry height="80" width="80" x="7090" y="1290" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-294" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" value="Học viên / Giáo viên" vertex="1">
+          <mxGeometry height="60" width="30" x="990.0033875868057" y="2189.9987803819445" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-295" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-294" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1005.0033875868057" y="3004.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-297" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1225.0033875868057" y="2239.9987803819445" as="sourcePoint" />
+            <mxPoint x="1225.0033875868057" y="3004.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-299" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1445.0033875868057" y="2239.9987803819445" as="sourcePoint" />
+            <mxPoint x="1445.0033875868057" y="3004.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-301" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1665.0033875868057" y="2239.9987803819445" as="sourcePoint" />
+            <mxPoint x="1665.0033875868057" y="3004.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-302" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontStyle=1;fontSize=15;" value="DichVuAI" vertex="1">
+          <mxGeometry height="40" width="120" x="1825.0033875868057" y="2199.9987803819445" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-303" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-302" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontSize=15;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1885.0033875868057" y="3004.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-304" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Chon trinh do va chu de">
+          <mxGeometry relative="1" x="-0.0909" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1005.0033875868057" y="2279.9987803819445" as="sourcePoint" />
+            <mxPoint x="1225.0033875868057" y="2279.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-305" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: sinhBaiLuyenTap(yeuCau)">
+          <mxGeometry relative="1" x="-0.0909" y="-15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1225.0033875868057" y="2334.9987803819445" as="sourcePoint" />
+            <mxPoint x="1445.0033875868057" y="2334.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-306" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: kiemTraTrinhDoChuDe()">
+          <mxGeometry relative="1" x="-0.0483" y="100" as="geometry">
+            <mxPoint y="-1" as="offset" />
+            <Array as="points">
+              <mxPoint x="1485.0033875868057" y="2389.9987803819445" />
+              <mxPoint x="1485.0033875868057" y="2414.9987803819445" />
+            </Array>
+            <mxPoint x="1445.0033875868057" y="2389.9987803819445" as="sourcePoint" />
+            <mxPoint x="1445.0033875868057" y="2414.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-307" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: layNguCanhHocTap()">
+          <mxGeometry relative="1" y="-15" as="geometry">
+            <mxPoint x="-1" as="offset" />
+            <mxPoint x="1445.0033875868057" y="2444.9987803819445" as="sourcePoint" />
+            <mxPoint x="1665.0033875868057" y="2444.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-308" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Tra ngu canh phu hop">
+          <mxGeometry relative="1" x="-0.0909" y="20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1665.0033875868057" y="2499.9987803819445" as="sourcePoint" />
+            <mxPoint x="1445.0033875868057" y="2499.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-309" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: taoBaiLuyenTap(dauVao)">
+          <mxGeometry relative="1" x="0.0909" y="-15" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="1445.0033875868057" y="2554.9987803819445" as="sourcePoint" />
+            <mxPoint x="1885.0033875868057" y="2554.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-310" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: taoPromptVaGoiMoHinh()">
+          <mxGeometry relative="1" x="-0.2372" y="71" as="geometry">
+            <mxPoint x="-1" y="-10" as="offset" />
+            <Array as="points">
+              <mxPoint x="1925.0033875868057" y="2609.9987803819445" />
+              <mxPoint x="1925.0033875868057" y="2634.9987803819445" />
+            </Array>
+            <mxPoint x="1885.0033875868057" y="2609.9987803819445" as="sourcePoint" />
+            <mxPoint x="1885.0033875868057" y="2634.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-311" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: Tra bai tap va dap an">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1885.0033875868057" y="2664.9987803819445" as="sourcePoint" />
+            <mxPoint x="1445.0033875868057" y="2664.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-312" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: kiemTraSoCauNoiDungVaFallback()">
+          <mxGeometry relative="1" x="0.2372" y="-130" as="geometry">
+            <mxPoint x="130" y="130" as="offset" />
+            <Array as="points">
+              <mxPoint x="1485.0033875868057" y="2719.9987803819445" />
+              <mxPoint x="1485.0033875868057" y="2744.9987803819445" />
+            </Array>
+            <mxPoint x="1445.0033875868057" y="2719.9987803819445" as="sourcePoint" />
+            <mxPoint x="1445.0033875868057" y="2744.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-313" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra bai luyen tap hop le">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1445.0033875868057" y="2774.9987803819445" as="sourcePoint" />
+            <mxPoint x="1225.0033875868057" y="2774.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-314" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Hien thi bai luyen tap">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1225.0033875868057" y="2829.9987803819445" as="sourcePoint" />
+            <mxPoint x="1005.0033875868057" y="2829.9987803819445" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-315" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form Ai BaiTap" vertex="1">
+          <mxGeometry height="80" width="100" x="1170" y="2170" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-316" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK Ai BaiTap" vertex="1">
+          <mxGeometry height="90" width="78.75" x="1410" y="2160" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-318" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="CSDL&amp;nbsp; HocTap" vertex="1">
+          <mxGeometry height="80" width="80" x="1630" y="2170" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-361" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontSize=15;" value="Học viên / Giáo viên / Quản lý" vertex="1">
+          <mxGeometry height="60" width="30" x="2262.501219618056" y="2229.9977777777776" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-362" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-361" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2277.501219618056" y="3044.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-364" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2497.501219618056" y="2279.9977777777776" as="sourcePoint" />
+            <mxPoint x="2497.501219618056" y="3044.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-366" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2717.501219618056" y="2279.9977777777776" as="sourcePoint" />
+            <mxPoint x="2717.501219618056" y="3044.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-368" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2937.501219618056" y="2279.9977777777776" as="sourcePoint" />
+            <mxPoint x="2937.501219618056" y="3044.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-369" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;fontStyle=1;fontSize=15;" value="DichVuAI" vertex="1">
+          <mxGeometry height="40" width="120" x="3097.501219618056" y="2239.9977777777776" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-370" edge="1" parent="1" source="W4p-DDBWbDvoxxRinDHV-369" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1;endArrow=none;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="3157.501219618056" y="3044.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-371" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="1: Chon hoc vien va ky hoc">
+          <mxGeometry relative="1" x="0.0227" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="2277.501219618056" y="2336.9977777777776" as="sourcePoint" />
+            <mxPoint x="2497.501219618056" y="2336.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-372" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="2: tomTatTienDo(hocVien, ky)">
+          <mxGeometry relative="1" y="-25" as="geometry">
+            <mxPoint x="-1" as="offset" />
+            <mxPoint x="2497.501219618056" y="2374.9977777777776" as="sourcePoint" />
+            <mxPoint x="2717.501219618056" y="2374.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-373" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="3: kiemTraQuyenTruyCap()">
+          <mxGeometry relative="1" x="-0.0483" y="110" as="geometry">
+            <mxPoint y="-1" as="offset" />
+            <Array as="points">
+              <mxPoint x="2757.501219618056" y="2429.9977777777776" />
+              <mxPoint x="2757.501219618056" y="2454.9977777777776" />
+            </Array>
+            <mxPoint x="2717.501219618056" y="2429.9977777777776" as="sourcePoint" />
+            <mxPoint x="2717.501219618056" y="2454.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-374" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="4: layDiemChuyenCanVaNhanXet()">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2717.501219618056" y="2484.9977777777776" as="sourcePoint" />
+            <mxPoint x="2937.501219618056" y="2484.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-375" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="5: Tra du lieu tien do">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2937.501219618056" y="2539.9977777777776" as="sourcePoint" />
+            <mxPoint x="2717.501219618056" y="2539.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-376" edge="1" parent="1" style="edgeStyle=none;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="6: taoTomTat(duLieuNguon)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2717.501219618056" y="2594.9977777777776" as="sourcePoint" />
+            <mxPoint x="3157.501219618056" y="2594.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-377" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="7: taoPromptVaGoiMoHinh()">
+          <mxGeometry relative="1" x="-0.3806" y="10" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="3197.501219618056" y="2649.9977777777776" />
+              <mxPoint x="3197.501219618056" y="2674.9977777777776" />
+            </Array>
+            <mxPoint x="3157.501219618056" y="2649.9977777777776" as="sourcePoint" />
+            <mxPoint x="3157.501219618056" y="2674.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-378" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="8: Tra ban tom tat">
+          <mxGeometry relative="1" x="-0.0568" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="3157.501219618056" y="2719.9977777777776" as="sourcePoint" />
+            <mxPoint x="2717.501219618056" y="2719.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-379" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=classic;endFill=1;fontSize=15;labelBackgroundColor=#FFFFFF;" value="9: doiChieuSoLieuVaFallback()">
+          <mxGeometry relative="1" x="0.2372" y="-110" as="geometry">
+            <mxPoint x="110" y="110" as="offset" />
+            <Array as="points">
+              <mxPoint x="2757.501219618056" y="2759.9977777777776" />
+              <mxPoint x="2757.501219618056" y="2784.9977777777776" />
+            </Array>
+            <mxPoint x="2717.501219618056" y="2759.9977777777776" as="sourcePoint" />
+            <mxPoint x="2717.501219618056" y="2784.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-380" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="10: Tra tom tat da kiem tra">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2717.501219618056" y="2814.9977777777776" as="sourcePoint" />
+            <mxPoint x="2497.501219618056" y="2814.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-381" edge="1" parent="1" style="edgeStyle=none;dashed=1;html=1;strokeColor=#000000;strokeWidth=1.3;endArrow=open;endFill=0;fontSize=15;labelBackgroundColor=#FFFFFF;" value="11: Hien thi tien do hoc tap">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="2497.501219618056" y="2869.9977777777776" as="sourcePoint" />
+            <mxPoint x="2277.501219618056" y="2869.9977777777776" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-382" parent="1" style="shape=umlBoundary;whiteSpace=wrap;html=1;" value="Form AI TienDo" vertex="1">
+          <mxGeometry height="80" width="100" x="2440" y="2220" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-383" parent="1" style="ellipse;shape=umlControl;whiteSpace=wrap;html=1;" value="DK AI TienDo" vertex="1">
+          <mxGeometry height="90" width="78.75" x="2680" y="2210" as="geometry" />
+        </mxCell>
+        <mxCell id="W4p-DDBWbDvoxxRinDHV-384" parent="1" style="ellipse;shape=umlEntity;whiteSpace=wrap;html=1;" value="CSDL KetQua" vertex="1">
+          <mxGeometry height="80" width="80" x="2895" y="2215" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

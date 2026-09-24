@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import Link from 'next/link';
 import {
   X,
   Users,
@@ -11,6 +10,7 @@ import {
   Mail,
   Calendar,
   CheckCircle2,
+  XCircle,
   Clock,
   AlertCircle,
   CreditCard,
@@ -23,15 +23,19 @@ import {
   ChevronRight,
   ExternalLink,
   Award,
+  FileSpreadsheet,
+  TrendingUp,
 } from 'lucide-react';
-import { classesService } from '../services/api';
+import { classesService, gradesService } from '../services/api';
 import { formatStatus, formatCSVDate } from '../utils/formatters';
+import { exportClassGradeBookExcel } from '../utils/excel-exporter';
 
 interface ClassStudentsModalProps {
   classId: number | null;
   onClose: () => void;
   initialClassName?: string;
   initialClassCode?: string;
+  initialTab?: 'STUDENTS' | 'GRADES';
 }
 
 export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
@@ -39,13 +43,22 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
   onClose,
   initialClassName,
   initialClassCode,
+  initialTab = 'STUDENTS',
 }) => {
+  const [activeTab, setActiveTab] = useState<'STUDENTS' | 'GRADES'>(initialTab);
   const [classDetail, setClassDetail] = useState<any>(null);
+  const [gradesList, setGradesList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Student List Filter
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'CONFIRMED' | 'PENDING' | 'PAID'>('ALL');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  // Grade List Filter
+  const [gradeSearchQuery, setGradeSearchQuery] = useState('');
+  const [gradeFilter, setGradeFilter] = useState<'ALL' | 'PASS' | 'FAIL' | 'INCOMPLETE'>('ALL');
 
   // Đóng modal khi nhấn ESC
   useEffect(() => {
@@ -66,22 +79,26 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
     };
   }, []);
 
-  // Fetch chi tiết lớp học & danh sách học viên
+  // Fetch chi tiết lớp học & bảng điểm song song
   useEffect(() => {
     if (!classId) return;
 
     let isMounted = true;
-    const fetchClassStudents = async () => {
+    const fetchClassData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await classesService.getById(classId);
+        const [detailData, gradesData] = await Promise.all([
+          classesService.getById(classId),
+          gradesService.getClassGrades(classId).catch(() => []),
+        ]);
         if (isMounted) {
-          setClassDetail(data);
+          setClassDetail(detailData);
+          setGradesList(gradesData || []);
         }
       } catch (err: any) {
         if (isMounted) {
-          setError(err.response?.data?.message || 'Không thể tải danh sách học viên của lớp này.');
+          setError(err.response?.data?.message || 'Không thể tải thông tin của lớp này.');
         }
       } finally {
         if (isMounted) {
@@ -90,7 +107,7 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
       }
     };
 
-    fetchClassStudents();
+    fetchClassData();
 
     return () => {
       isMounted = false;
@@ -100,6 +117,110 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
   const enrollments: any[] = useMemo(() => {
     return classDetail?.dangKyHoc || [];
   }, [classDetail]);
+
+  // Helper tính điểm
+  const calculateFinal = (cc: any, gk: any, ck: any) => {
+    if (
+      cc === '' || gk === '' || ck === '' ||
+      cc === undefined || gk === undefined || ck === undefined ||
+      cc === null || gk === null || ck === null
+    ) {
+      return null;
+    }
+    const numCc = Number(cc);
+    const numGk = Number(gk);
+    const numCk = Number(ck);
+    if (isNaN(numCc) || isNaN(numGk) || isNaN(numCk)) return null;
+    return (numCc * 0.2 + numGk * 0.3 + numCk * 0.5).toFixed(2);
+  };
+
+  const isPass = (cc: any, final: any) => {
+    if (cc === '' || cc === undefined || cc === null || isNaN(Number(cc))) return false;
+    if (final === null || final === undefined || isNaN(Number(final))) return false;
+    return Number(final) >= 50 && Number(cc) >= 80;
+  };
+
+  // Map điểm theo học viên ID
+  const gradesMap: Record<number, any> = useMemo(() => {
+    const map: Record<number, any> = {};
+    gradesList.forEach((g: any) => {
+      map[Number(g.hocVienId)] = {
+        cc: g.diemChuyenCan !== null && g.diemChuyenCan !== undefined ? Number(g.diemChuyenCan) : '',
+        gk: g.diemGiuaKy !== null && g.diemGiuaKy !== undefined ? Number(g.diemGiuaKy) : '',
+        ck: g.diemCuoiKy !== null && g.diemCuoiKy !== undefined ? Number(g.diemCuoiKy) : '',
+        nhanXet: g.nhanXet || '',
+        trangThaiHoanThanh: g.trangThaiHoanThanh,
+      };
+    });
+    return map;
+  }, [gradesList]);
+
+  // Danh sách dòng bảng điểm đã xử lý
+  const gradeRows = useMemo(() => {
+    return enrollments.map((dk: any) => {
+      const hv = dk.hocVien || {};
+      const g = gradesMap[Number(hv.id)] || { cc: '', gk: '', ck: '', nhanXet: '' };
+      const final = calculateFinal(g.cc, g.gk, g.ck);
+      const passed = isPass(g.cc, final);
+      const hasScores = final !== null;
+
+      return {
+        id: hv.id,
+        maHocVien: hv.maHocVien || 'HV-ETC',
+        hoTen: hv.hoTen || 'Chưa cập nhật',
+        email: hv.nguoiDung?.email || '',
+        soDienThoai: hv.nguoiDung?.soDienThoai || '',
+        cc: g.cc,
+        gk: g.gk,
+        ck: g.ck,
+        finalScore: final,
+        passed,
+        hasScores,
+        nhanXet: g.nhanXet || '',
+      };
+    });
+  }, [enrollments, gradesMap]);
+
+  // Thống kê bảng điểm
+  const gradeStats = useMemo(() => {
+    const total = gradeRows.length;
+    const evaluated = gradeRows.filter((r) => r.hasScores).length;
+    const passed = gradeRows.filter((r) => r.hasScores && r.passed).length;
+    const failed = gradeRows.filter((r) => r.hasScores && !r.passed).length;
+    const incomplete = total - evaluated;
+    const passRate = evaluated > 0 ? Math.round((passed / evaluated) * 100) : 0;
+
+    const sumFinal = gradeRows.reduce((acc, r) => (r.finalScore !== null ? acc + Number(r.finalScore) : acc), 0);
+    const avgScore = evaluated > 0 ? (sumFinal / evaluated).toFixed(1) : null;
+
+    return { total, evaluated, passed, failed, incomplete, passRate, avgScore };
+  }, [gradeRows]);
+
+  // Bộ lọc bảng điểm
+  const filteredGradeRows = useMemo(() => {
+    let result = gradeRows;
+
+    if (gradeFilter === 'PASS') {
+      result = result.filter((r) => r.hasScores && r.passed);
+    } else if (gradeFilter === 'FAIL') {
+      result = result.filter((r) => r.hasScores && !r.passed);
+    } else if (gradeFilter === 'INCOMPLETE') {
+      result = result.filter((r) => !r.hasScores);
+    }
+
+    if (gradeSearchQuery.trim()) {
+      const q = gradeSearchQuery.toLowerCase().trim();
+      result = result.filter(
+        (r) =>
+          r.maHocVien.toLowerCase().includes(q) ||
+          r.hoTen.toLowerCase().includes(q) ||
+          r.email.toLowerCase().includes(q) ||
+          r.soDienThoai.toLowerCase().includes(q)
+      );
+    }
+
+    return result;
+  }, [gradeRows, gradeFilter, gradeSearchQuery]);
 
   // Bộ lọc danh sách học viên
   const filteredEnrollments = useMemo(() => {
@@ -131,7 +252,7 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
     return result;
   }, [enrollments, searchQuery, statusFilter]);
 
-  // Thống kê nhanh
+  // Thống kê nhanh danh sách học viên
   const stats = useMemo(() => {
     const total = enrollments.length;
     const confirmed = enrollments.filter((dk) => dk.trangThai === 'DA_XAC_NHAN').length;
@@ -265,9 +386,41 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
                 {classDetail?.tenLopHoc || initialClassName || 'Danh Sách Học Viên Lớp Học'}
               </h2>
 
-              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                <span>Quản lý danh sách học viên đăng ký, trạng thái điểm danh và thanh toán học phí</span>
-              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-0.5">
+                <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">
+                  {activeTab === 'STUDENTS'
+                    ? 'Quản lý danh sách học viên đăng ký, trạng thái điểm danh và thanh toán học phí'
+                    : 'Theo dõi bảng điểm chi tiết, tỷ lệ đạt đầu ra và nhận xét của giáo viên'}
+                </p>
+
+                {/* Tab Switcher */}
+                <div className="inline-flex p-0.5 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shrink-0 self-start sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('STUDENTS')}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                      activeTab === 'STUDENTS'
+                        ? 'bg-white dark:bg-slate-700 text-teal-700 dark:text-teal-300 shadow-2xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <Users className="w-3.5 h-3.5" />
+                    <span>Học Viên ({enrollments.length})</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('GRADES')}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold transition-all cursor-pointer ${
+                      activeTab === 'GRADES'
+                        ? 'bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-2xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                  >
+                    <Award className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Bảng Điểm ({enrollments.length})</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Nút đóng */}
@@ -281,184 +434,357 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
             </button>
           </div>
 
-          {/* Quick Metrics Bar - Tinh gọn, đồng bộ rounded-lg */}
-          <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
-            {/* Metric 1: Sĩ số lấp đầy */}
-            <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-              <div className="flex items-center justify-between mb-0.5">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Sĩ Số Lớp
-                </span>
-                <Users className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-              </div>
-              <div className="flex items-baseline justify-between gap-1">
-                <div>
-                  <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">{stats.current}</span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400"> / {stats.maxCapacity} HV</span>
-                </div>
-                <span className="text-xs font-bold text-teal-600 dark:text-teal-400">
-                  {stats.fillPercent}%
-                </span>
-              </div>
-              <div className="w-full h-1 rounded-full bg-slate-100 dark:bg-slate-700 mt-1 overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all duration-500 ${
-                    stats.fillPercent >= 90
-                      ? 'bg-rose-500'
-                      : stats.fillPercent >= 60
-                        ? 'bg-amber-500'
-                        : 'bg-teal-500'
-                  }`}
-                  style={{ width: `${stats.fillPercent}%` }}
-                />
-              </div>
-            </div>
-
-            {/* Metric 2: Đã xác nhận */}
-            <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-              <div className="flex items-center justify-between mb-0.5">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Đã Xác Nhận
-                </span>
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div className="flex items-baseline justify-between gap-1">
-                <div>
-                  <span className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400">
-                    {stats.confirmed}
+          {/* Quick Metrics Bar */}
+          {activeTab === 'STUDENTS' ? (
+            <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
+              {/* Metric 1: Sĩ số lấp đầy */}
+              <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Sĩ Số Lớp
                   </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400"> học viên</span>
+                  <Users className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                 </div>
-                <span className="text-[10px] text-slate-400 hidden sm:inline">Xếp lớp</span>
-              </div>
-            </div>
-
-            {/* Metric 3: Chờ xử lý */}
-            <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-              <div className="flex items-center justify-between mb-0.5">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Chờ Thanh Toán
-                </span>
-                <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-              </div>
-              <div className="flex items-baseline justify-between gap-1">
-                <div>
-                  <span className="text-base sm:text-lg font-black text-amber-600 dark:text-amber-400">
-                    {stats.pending}
+                <div className="flex items-baseline justify-between gap-1">
+                  <div>
+                    <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">{stats.current}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400"> / {stats.maxCapacity} HV</span>
+                  </div>
+                  <span className="text-xs font-bold text-teal-600 dark:text-teal-400">
+                    {stats.fillPercent}%
                   </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400"> học viên</span>
                 </div>
-                <span className="text-[10px] text-slate-400 hidden sm:inline">Chờ phí</span>
+                <div className="w-full h-1 rounded-full bg-slate-100 dark:bg-slate-700 mt-1 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      stats.fillPercent >= 90
+                        ? 'bg-rose-500'
+                        : stats.fillPercent >= 60
+                          ? 'bg-amber-500'
+                          : 'bg-teal-500'
+                    }`}
+                    style={{ width: `${stats.fillPercent}%` }}
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Metric 4: Đã nộp học phí */}
-            <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
-              <div className="flex items-center justify-between mb-0.5">
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                  Học Phí Đã Thu
-                </span>
-                <CreditCard className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-              </div>
-              <div className="flex items-baseline justify-between gap-1">
-                <div>
-                  <span className="text-base sm:text-lg font-black text-blue-600 dark:text-blue-400">
-                    {stats.paid}
+              {/* Metric 2: Đã xác nhận */}
+              <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Đã Xác Nhận
                   </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400"> hoàn tất</span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                <span className="text-[10px] text-slate-400 hidden sm:inline">Đã đóng</span>
+                <div className="flex items-baseline justify-between gap-1">
+                  <div>
+                    <span className="text-base sm:text-lg font-black text-emerald-600 dark:text-emerald-400">
+                      {stats.confirmed}
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400"> học viên</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 hidden sm:inline">Xếp lớp</span>
+                </div>
+              </div>
+
+              {/* Metric 3: Chờ xử lý */}
+              <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Chờ Thanh Toán
+                  </span>
+                  <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                </div>
+                <div className="flex items-baseline justify-between gap-1">
+                  <div>
+                    <span className="text-base sm:text-lg font-black text-amber-600 dark:text-amber-400">
+                      {stats.pending}
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400"> học viên</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 hidden sm:inline">Chờ phí</span>
+                </div>
+              </div>
+
+              {/* Metric 4: Đã nộp học phí */}
+              <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Học Phí Đã Thu
+                  </span>
+                  <CreditCard className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div className="flex items-baseline justify-between gap-1">
+                  <div>
+                    <span className="text-base sm:text-lg font-black text-blue-600 dark:text-blue-400">
+                      {stats.paid}
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400"> hoàn tất</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 hidden sm:inline">Đã đóng</span>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
+              {/* Metric 1: Sĩ số */}
+              <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Sĩ Số Lớp
+                  </span>
+                  <Users className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                </div>
+                <div className="flex items-baseline justify-between gap-1">
+                  <div>
+                    <span className="text-base sm:text-lg font-black text-slate-900 dark:text-white">{gradeStats.total}</span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400"> học viên</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 hidden sm:inline">Tổng số</span>
+                </div>
+              </div>
+
+              {/* Metric 2: Đã chấm điểm */}
+              <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Đã Có Điểm
+                  </span>
+                  <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                </div>
+                <div className="flex items-baseline justify-between gap-1">
+                  <div>
+                    <span className="text-base sm:text-lg font-black text-teal-600 dark:text-teal-400">
+                      {gradeStats.evaluated}
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400"> / {gradeStats.total}</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 hidden sm:inline">
+                    {gradeStats.incomplete > 0 ? `Thiếu ${gradeStats.incomplete}` : 'Đủ điểm'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Metric 3: Tỷ lệ đạt */}
+              <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Tỷ Lệ Đạt
+                  </span>
+                  <Award className="w-3.5 h-3.5 text-amber-500" />
+                </div>
+                <div className="flex items-baseline justify-between gap-1">
+                  <div>
+                    <span className="text-base sm:text-lg font-black text-amber-600 dark:text-amber-400">
+                      {gradeStats.passRate}%
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold hidden sm:inline">
+                    {gradeStats.passed} Đạt
+                  </span>
+                </div>
+              </div>
+
+              {/* Metric 4: Điểm trung bình */}
+              <div className="p-2 sm:p-2.5 rounded-lg bg-white dark:bg-slate-800/90 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    Điểm TB Lớp
+                  </span>
+                  <TrendingUp className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div className="flex items-baseline justify-between gap-1">
+                  <div>
+                    <span className="text-base sm:text-lg font-black text-blue-600 dark:text-blue-400">
+                      {gradeStats.avgScore ?? '—'}
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400"> / 100</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 hidden sm:inline">Thang 100</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Toolbar: Search, Filters & Export - Tinh gọn, đồng bộ rounded-lg */}
-        <div className="px-5 py-2.5 sm:px-6 sm:py-3 border-b border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0f172a] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3 shrink-0">
-          {/* Search Box */}
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm theo mã học viên, họ tên, email, số điện thoại..."
-              className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-teal-500 dark:focus:border-teal-400 focus:ring-2 focus:ring-teal-500/10 transition-all"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 p-0.5"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          {/* Filter Tabs & Export */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 shrink-0">
-            <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-semibold">
-              <button
-                type="button"
-                onClick={() => setStatusFilter('ALL')}
-                className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                  statusFilter === 'ALL'
-                    ? 'bg-white dark:bg-slate-700 text-teal-700 dark:text-teal-300 shadow-xs font-bold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-                }`}
-              >
-                Tất cả ({enrollments.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter('CONFIRMED')}
-                className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                  statusFilter === 'CONFIRMED'
-                    ? 'bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-xs font-bold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-                }`}
-              >
-                Xác nhận ({stats.confirmed})
-              </button>
-              <button
-                type="button"
-                onClick={() => setStatusFilter('PENDING')}
-                className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
-                  statusFilter === 'PENDING'
-                    ? 'bg-white dark:bg-slate-700 text-amber-700 dark:text-amber-300 shadow-xs font-bold'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
-                }`}
-              >
-                Chờ nộp ({stats.pending})
-              </button>
+        {/* Toolbar: Search, Filters & Export */}
+        {activeTab === 'STUDENTS' ? (
+          <div className="px-5 py-2.5 sm:px-6 sm:py-3 border-b border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0f172a] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3 shrink-0">
+            {/* Search Box */}
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Tìm kiếm theo mã học viên, họ tên, email, số điện thoại..."
+                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-teal-500 dark:focus:border-teal-400 focus:ring-2 focus:ring-teal-500/10 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 p-0.5"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
 
-            {/* Nút Xem Bảng Điểm */}
-            {classId && (
-              <Link
-                href={`/teacher/grades?classId=${classId}`}
+            {/* Filter Tabs & Export */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 shrink-0">
+              <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('ALL')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    statusFilter === 'ALL'
+                      ? 'bg-white dark:bg-slate-700 text-teal-700 dark:text-teal-300 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  Tất cả ({enrollments.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('CONFIRMED')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    statusFilter === 'CONFIRMED'
+                      ? 'bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  Xác nhận ({stats.confirmed})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter('PENDING')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    statusFilter === 'PENDING'
+                      ? 'bg-white dark:bg-slate-700 text-amber-700 dark:text-amber-300 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  Chờ nộp ({stats.pending})
+                </button>
+              </div>
+
+              {/* Nút Xem Bảng Điểm */}
+              <button
+                type="button"
+                onClick={() => setActiveTab('GRADES')}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 active:scale-95 text-teal-800 dark:text-teal-300 border border-teal-300 dark:border-teal-700 font-bold text-xs shadow-xs transition-all cursor-pointer shrink-0"
                 title="Xem bảng điểm chi tiết của lớp học này"
               >
                 <Award className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                 <span>Bảng Điểm</span>
-              </Link>
-            )}
+              </button>
 
-            {/* Nút Xuất CSV */}
-            <button
-              type="button"
-              onClick={handleExportCSV}
-              disabled={enrollments.length === 0}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold text-xs shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
-              title="Xuất bảng danh sách học viên định dạng CSV / Excel"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Xuất CSV</span>
-            </button>
+              {/* Nút Xuất CSV */}
+              <button
+                type="button"
+                onClick={handleExportCSV}
+                disabled={enrollments.length === 0}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold text-xs shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
+                title="Xuất bảng danh sách học viên định dạng CSV / Excel"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Xuất CSV</span>
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="px-5 py-2.5 sm:px-6 sm:py-3 border-b border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0f172a] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3 shrink-0">
+            {/* Search Box Bảng Điểm */}
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={gradeSearchQuery}
+                onChange={(e) => setGradeSearchQuery(e.target.value)}
+                placeholder="Tìm kiếm theo mã học viên, họ tên trong bảng điểm..."
+                className="w-full bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg pl-9 pr-4 py-1.5 text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-teal-500 dark:focus:border-teal-400 focus:ring-2 focus:ring-teal-500/10 transition-all"
+              />
+              {gradeSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setGradeSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 p-0.5"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Filter Tabs Bảng Điểm & Xuất Excel */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 shrink-0">
+              <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setGradeFilter('ALL')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    gradeFilter === 'ALL'
+                      ? 'bg-white dark:bg-slate-700 text-teal-700 dark:text-teal-300 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  Tất cả ({gradeStats.total})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGradeFilter('PASS')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    gradeFilter === 'PASS'
+                      ? 'bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  Đạt ({gradeStats.passed})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGradeFilter('FAIL')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    gradeFilter === 'FAIL'
+                      ? 'bg-white dark:bg-slate-700 text-rose-700 dark:text-rose-300 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  Không đạt ({gradeStats.failed})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setGradeFilter('INCOMPLETE')}
+                  className={`px-3 py-1 rounded-md transition-all cursor-pointer ${
+                    gradeFilter === 'INCOMPLETE'
+                      ? 'bg-white dark:bg-slate-700 text-amber-700 dark:text-amber-300 shadow-xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+                  }`}
+                >
+                  Chưa đủ điểm ({gradeStats.incomplete})
+                </button>
+              </div>
+
+              {/* Nút Xuất Excel */}
+              <button
+                type="button"
+                onClick={() =>
+                  exportClassGradeBookExcel({
+                    classDetail,
+                    gradesMap,
+                    teacherName: classDetail?.phanCong?.[0]?.giaoVien?.hoTen,
+                  })
+                }
+                disabled={enrollments.length === 0}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
+                title="Xuất bảng điểm chi tiết ra file Excel .xlsx"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Xuất Excel</span>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Content Body - Cuộn mượt với min-h-0 */}
         <div className="flex-1 min-h-0 overflow-y-auto">
@@ -484,21 +810,22 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
                 Thử lại
               </button>
             </div>
-          ) : filteredEnrollments.length === 0 ? (
-            <div className="py-12 px-4 text-center">
-              <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 mx-auto flex items-center justify-center mb-2">
-                <Users className="w-5 h-5" />
+          ) : activeTab === 'STUDENTS' ? (
+            filteredEnrollments.length === 0 ? (
+              <div className="py-12 px-4 text-center">
+                <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 mx-auto flex items-center justify-center mb-2">
+                  <Users className="w-5 h-5" />
+                </div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
+                  {searchQuery ? 'Không tìm thấy học viên phù hợp' : 'Lớp học chưa có học viên ghi danh'}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                  {searchQuery
+                    ? `Không có kết quả nào cho "${searchQuery}". Vui lòng thử tìm từ khóa khác.`
+                    : 'Lớp học này hiện tại chưa có học viên đăng ký hoặc ghi danh vào hệ thống.'}
+                </p>
               </div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
-                {searchQuery ? 'Không tìm thấy học viên phù hợp' : 'Lớp học chưa có học viên ghi danh'}
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
-                {searchQuery
-                  ? `Không có kết quả nào cho "${searchQuery}". Vui lòng thử tìm từ khóa khác.`
-                  : 'Lớp học này hiện tại chưa có học viên đăng ký hoặc ghi danh vào hệ thống.'}
-              </p>
-            </div>
-          ) : (
+            ) : (
             <>
               {/* Desktop Table View (>= sm) - Toàn bộ nhãn đồng bộ rounded-lg */}
               <div className="hidden sm:block overflow-x-auto">
@@ -810,28 +1137,271 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
                 })}
               </div>
             </>
-          )}
+          )) : (
+            filteredGradeRows.length === 0 ? (
+            <div className="py-12 px-4 text-center">
+              <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 mx-auto flex items-center justify-center mb-2">
+                <Award className="w-5 h-5" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
+                {gradeSearchQuery ? 'Không tìm thấy kết quả điểm số phù hợp' : 'Chưa có dữ liệu bảng điểm'}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                {gradeSearchQuery
+                  ? `Không có học viên nào khớp với "${gradeSearchQuery}". Vui lòng thử tìm từ khóa khác.`
+                  : 'Lớp học này hiện chưa có học viên hoặc chưa cập nhật điểm số.'}
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Desktop Grade Table (>= sm) */}
+              <div className="hidden sm:block overflow-x-auto">
+                <table className="w-full text-left text-xs sm:text-sm">
+                  <thead className="bg-slate-50/95 dark:bg-slate-900/95 text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider text-[11px] sticky top-0 backdrop-blur-sm border-b border-slate-200/80 dark:border-slate-800 z-10">
+                    <tr>
+                      <th className="px-4 py-3 w-12 text-center">STT</th>
+                      <th className="px-4 py-3">Học Viên</th>
+                      <th className="px-4 py-3">Mã Học Viên</th>
+                      <th className="px-3 py-3 text-center">
+                        <div>Chuyên Cần</div>
+                        <div className="text-[10px] text-teal-600 dark:text-teal-400 font-normal">20%</div>
+                      </th>
+                      <th className="px-3 py-3 text-center">
+                        <div>Giữa Kỳ</div>
+                        <div className="text-[10px] text-teal-600 dark:text-teal-400 font-normal">30%</div>
+                      </th>
+                      <th className="px-3 py-3 text-center">
+                        <div>Cuối Kỳ</div>
+                        <div className="text-[10px] text-teal-600 dark:text-teal-400 font-normal">50%</div>
+                      </th>
+                      <th className="px-3 py-3 text-center">
+                        <div>Tổng Kết</div>
+                        <div className="text-[10px] text-amber-600 dark:text-amber-400 font-normal">100%</div>
+                      </th>
+                      <th className="px-4 py-3 text-center">Kết Quả</th>
+                      <th className="px-4 py-3">Nhận Xét Của GV</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                    {filteredGradeRows.map((row, idx) => {
+                      const initials = getInitials(row.hoTen);
+                      return (
+                        <tr
+                          key={row.id || idx}
+                          className="hover:bg-teal-50/30 dark:hover:bg-slate-800/50 transition-colors group"
+                        >
+                          <td className="px-4 py-3 text-center font-mono text-slate-400 group-hover:text-teal-600 font-semibold text-xs">
+                            {String(idx + 1).padStart(2, '0')}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-amber-500 to-orange-500 text-white font-black text-xs flex items-center justify-center shadow-2xs shrink-0">
+                                {initials}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="font-bold text-slate-900 dark:text-white truncate group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors text-xs sm:text-sm">
+                                  {row.hoTen}
+                                </p>
+                                <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                                  {row.email || row.soDienThoai || 'Chưa cập nhật'}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 font-mono text-xs font-bold text-teal-700 dark:text-teal-300">
+                            {row.maHocVien}
+                          </td>
+                          <td className="px-3 py-3 text-center font-mono font-bold text-slate-700 dark:text-slate-200">
+                            {row.cc !== '' ? Number(row.cc).toFixed(1) : '—'}
+                          </td>
+                          <td className="px-3 py-3 text-center font-mono font-bold text-slate-700 dark:text-slate-200">
+                            {row.gk !== '' ? Number(row.gk).toFixed(1) : '—'}
+                          </td>
+                          <td className="px-3 py-3 text-center font-mono font-bold text-slate-700 dark:text-slate-200">
+                            {row.ck !== '' ? Number(row.ck).toFixed(1) : '—'}
+                          </td>
+                          <td className="px-3 py-3 text-center font-mono font-black text-sm">
+                            {row.finalScore !== null ? (
+                              <span className={Number(row.finalScore) >= 50 ? 'text-teal-600 dark:text-teal-400' : 'text-rose-600 dark:text-rose-400'}>
+                                {row.finalScore}
+                              </span>
+                            ) : (
+                              <span className="text-slate-400 font-normal text-xs italic">—</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-center">
+                            {row.hasScores ? (
+                              row.passed ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                  <CheckCircle2 className="w-3.5 h-3.5" />
+                                  <span>ĐẠT</span>
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-xs font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                                  <XCircle className="w-3.5 h-3.5" />
+                                  <span>KHÔNG ĐẠT</span>
+                                </span>
+                              )
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                                <Clock className="w-3 h-3" />
+                                <span>Chưa đủ</span>
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3 text-xs text-slate-600 dark:text-slate-300 max-w-xs truncate" title={row.nhanXet}>
+                            {row.nhanXet || <span className="text-slate-400 italic">Chưa có nhận xét</span>}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Mobile Grade Cards (< sm) */}
+              <div className="block sm:hidden p-3 space-y-3">
+                {filteredGradeRows.map((row, idx) => {
+                  const initials = getInitials(row.hoTen);
+                  return (
+                    <div
+                      key={row.id || idx}
+                      className="p-3.5 rounded-xl bg-slate-50/90 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 space-y-2.5 shadow-2xs"
+                    >
+                      <div className="flex items-start justify-between gap-2.5">
+                        <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                          <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-amber-500 to-orange-500 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                            {initials}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-bold text-slate-900 dark:text-white text-sm truncate">
+                              {row.hoTen}
+                            </p>
+                            <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 px-1.5 py-0.2 rounded-lg">
+                              {row.maHocVien}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="font-mono text-[11px] font-bold text-slate-500 bg-slate-200/80 dark:bg-slate-700 px-2 py-0.5 rounded-lg shrink-0">
+                          #{String(idx + 1).padStart(2, '0')}
+                        </span>
+                      </div>
+
+                      {/* Scores Grid */}
+                      <div className="grid grid-cols-3 gap-1.5 p-2 rounded-lg bg-white dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-700/60 text-center">
+                        <div>
+                          <div className="text-[10px] text-slate-400 font-medium">Chuyên cần (20%)</div>
+                          <div className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">
+                            {row.cc !== '' ? Number(row.cc).toFixed(1) : '—'}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-slate-400 font-medium">Giữa kỳ (30%)</div>
+                          <div className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">
+                            {row.gk !== '' ? Number(row.gk).toFixed(1) : '—'}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-slate-400 font-medium">Cuối kỳ (50%)</div>
+                          <div className="font-mono font-bold text-xs text-slate-800 dark:text-slate-200">
+                            {row.ck !== '' ? Number(row.ck).toFixed(1) : '—'}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Final Score & Status */}
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-700/60">
+                        <div>
+                          <div className="text-[10px] text-slate-400 font-semibold uppercase">Tổng kết:</div>
+                          <div className="font-mono font-black text-sm">
+                            {row.finalScore !== null ? (
+                              <span className={Number(row.finalScore) >= 50 ? 'text-teal-600 dark:text-teal-400' : 'text-rose-600 dark:text-rose-400'}>
+                                {row.finalScore} / 100
+                              </span>
+                            ) : (
+                              <span className="text-slate-400 text-xs italic">Chưa đủ điểm</span>
+                            )}
+                          </div>
+                        </div>
+                        <div>
+                          {row.hasScores ? (
+                            row.passed ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>ĐẠT</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                                <XCircle className="w-3.5 h-3.5" />
+                                <span>KHÔNG ĐẠT</span>
+                              </span>
+                            )
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                              <Clock className="w-3 h-3" />
+                              <span>Chưa đủ</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Comment */}
+                      {row.nhanXet && (
+                        <div className="text-[11px] text-slate-600 dark:text-slate-300 p-2 rounded-lg bg-teal-50/50 dark:bg-teal-950/20 border border-teal-200/50 dark:border-teal-900/30">
+                          <span className="font-semibold text-teal-700 dark:text-teal-300">Nhận xét:</span> {row.nhanXet}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Banner quy chuẩn */}
+              <div className="p-3 bg-amber-50/60 dark:bg-amber-950/30 border-t border-amber-200/60 dark:border-amber-900/40 text-[11px] text-amber-800 dark:text-amber-300 flex items-center justify-between gap-2">
+                <span>
+                  📌 <strong>Quy chuẩn hoàn thành:</strong> Điểm Chuyên cần ≥ 80.00 VÀ Điểm Tổng kết ≥ 50.00 (Thang 100, Trọng số: 20% Chuyên cần + 30% Giữa kỳ + 50% Cuối kỳ).
+                </span>
+              </div>
+            </>
+          ))}
         </div>
 
         {/* Modal Footer - Cố định hiển thị đầy đủ trên màn hình 100% */}
         <div className="px-5 py-2.5 sm:px-6 sm:py-3 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 dark:text-slate-400 shrink-0">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse"></span>
-            <span>
-              Hiển thị <strong>{filteredEnrollments.length}</strong> / {enrollments.length} học viên trong lớp
-            </span>
+            {activeTab === 'STUDENTS' ? (
+              <span>
+                Hiển thị <strong>{filteredEnrollments.length}</strong> / {enrollments.length} học viên trong lớp
+              </span>
+            ) : (
+              <span>
+                Hiển thị <strong>{filteredGradeRows.length}</strong> / {enrollments.length} học viên trong bảng điểm
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
-            {classId && (
-              <Link
-                href={`/teacher/grades?classId=${classId}`}
+            {activeTab === 'STUDENTS' ? (
+              <button
+                type="button"
+                onClick={() => setActiveTab('GRADES')}
                 className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-300 border border-teal-300 dark:border-teal-700 text-xs font-bold transition-all cursor-pointer shadow-2xs"
                 title="Mở bảng điểm chi tiết của lớp học này"
               >
                 <Award className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                 <span>Xem Bảng Điểm Lớp</span>
-              </Link>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setActiveTab('STUDENTS')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-300 border border-teal-300 dark:border-teal-700 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                title="Quay lại danh sách học viên của lớp"
+              >
+                <Users className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <span>Quay Lại DS Học Viên</span>
+              </button>
             )}
 
             <button

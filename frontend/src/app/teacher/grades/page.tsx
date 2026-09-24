@@ -211,28 +211,10 @@ export default function TeacherGradesPage() {
   return (
     <AppLayout
       allowedRoles={['GIAO_VIEN', 'QUAN_LY']}
-      title={isManager ? "Theo Dõi Bảng Điểm Toàn Trung Tâm" : "Bảng Điểm & Đánh Giá Kết Quả Học Tập"}
-      subtitle={
-        isManager
-          ? "Tra cứu và theo dõi bảng điểm tất cả các lớp học. Việc nhập và tính điểm thuộc về giáo viên phụ trách lớp."
-          : "Chỉ hiển thị các lớp học bạn được phân công phụ trách. Công thức: 20% Chuyên Cần + 30% Giữa Kỳ + 50% Cuối Kỳ"
-      }
+      title="Bảng Điểm & Đánh Giá Kết Quả Học Tập"
+      subtitle="Quản lý và theo dõi kết quả học tập. Công thức: 20% Chuyên Cần + 30% Giữa Kỳ + 50% Cuối Kỳ"
     >
       <div className="space-y-5">
-        {/* Banner chế độ giám sát dành riêng cho Admin */}
-        {isManager && (
-          <div className="p-3.5 rounded-xl bg-slate-100 dark:bg-[#162032] border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 flex items-center justify-between gap-3 shadow-xs">
-            <div className="flex items-center gap-2.5">
-              <ShieldAlert className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
-              <span>
-                <strong>Chế độ giám sát của Quản trị viên:</strong> Bạn đang theo dõi bảng điểm theo quyền quản lý trung tâm. Việc nhập điểm là nghiệp vụ của Giáo viên phụ trách.
-              </span>
-            </div>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 shrink-0">
-              Chỉ Xem (Read-only)
-            </span>
-          </div>
-        )}
 
         {/* Thông báo lỗi & thành công */}
         {errorMessage && (
@@ -331,15 +313,7 @@ export default function TeacherGradesPage() {
                     <span>Xuất Bảng Điểm Excel</span>
                   </button>
 
-                  {isManager ? (
-                    <div
-                      className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 flex items-center space-x-1.5 select-none"
-                      title="Quản trị viên chỉ có quyền theo dõi bảng điểm. Việc nhập và lưu điểm thuộc thẩm quyền của Giáo viên phụ trách."
-                    >
-                      <ShieldAlert className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
-                      <span>Chế Độ Quản Trị (Chỉ Xem)</span>
-                    </div>
-                  ) : isLockedForTeacher ? (
+                  {isManager ? null : isLockedForTeacher ? (
                     <div
                       className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 flex items-center space-x-1.5 cursor-not-allowed select-none"
                       title="Lớp học đã bế giảng. Bảng điểm đã đóng sổ và không thể chỉnh sửa."
@@ -366,16 +340,11 @@ export default function TeacherGradesPage() {
               <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 text-xs text-amber-900 dark:text-amber-200 flex items-start space-x-3 animate-fadeIn">
                 <Lock className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <div className="font-bold text-amber-950 dark:text-amber-100 flex items-center gap-2">
-                    <span>Lớp Học Đã Kết Thúc — Bảng Điểm Đã Đóng Sổ</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-200/60 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200">
-                      Chỉ Xem (Read-only)
-                    </span>
+                  <div className="font-bold text-amber-950 dark:text-amber-100">
+                    Lớp Học Đã Kết Thúc — Bảng Điểm Đã Đóng Sổ
                   </div>
                   <p className="text-amber-800 dark:text-amber-300 leading-relaxed text-[11px]">
-                    {isManager
-                      ? "Lớp học đã bế giảng và bảng điểm đã được lưu trữ vào hồ sơ trung tâm. Nếu có đơn phúc khảo hoặc cần cập nhật lại điểm, Quản trị viên chỉ cần vào màn hình 'Quản Lý Lớp Học' chuyển trạng thái lớp sang 'Đang Học' để cấp quyền cho giáo viên phụ trách nhập lại điểm."
-                      : "Toàn bộ điểm chuyên cần, giữa kỳ và cuối kỳ đã được chốt và lưu trữ vào hồ sơ trung tâm. Giáo viên không thể tự ý sửa đổi. Mọi yêu cầu phúc khảo hoặc điều chỉnh điểm cần có đơn gửi tới Phòng Đào tạo (Admin) để mở lại trạng thái lớp học."}
+                    Toàn bộ điểm chuyên cần, giữa kỳ và cuối kỳ đã được chốt và lưu trữ vào hồ sơ trung tâm. Nếu có đơn phúc khảo hoặc cần cập nhật lại điểm, Quản trị viên cần chuyển trạng thái lớp sang 'Đang Học' trong mục Quản Lý Lớp Học.
                   </p>
                 </div>
               </div>
