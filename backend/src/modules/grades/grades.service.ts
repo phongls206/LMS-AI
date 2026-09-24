@@ -74,6 +74,17 @@ export class GradesService {
       );
     }
 
+    // Nếu lớp học đã kết thúc, giáo viên không được tự ý sửa điểm nữa (chỉ Admin mới có thể điều chỉnh hoặc mở lại trạng thái)
+    if (
+      user &&
+      user.vaiTro === VaiTro.GIAO_VIEN &&
+      classRecord.trangThai === TrangThaiLopHoc.DA_KET_THUC
+    ) {
+      throw new BadRequestException(
+        'Lớp học đã kết thúc. Bảng điểm đã được đóng sổ và khóa chỉnh sửa đối với giáo viên. Vui lòng liên hệ Phòng Đào tạo nếu có đề nghị phúc khảo!',
+      );
+    }
+
     // Nếu người thực hiện là Giáo viên, bắt buộc phải được phân công phụ trách lớp học này
     if (user && user.vaiTro === VaiTro.GIAO_VIEN) {
       const teacher = await this.prisma.hoSoGiaoVien.findUnique({

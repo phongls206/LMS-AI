@@ -57,6 +57,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           { label: 'Hồ Sơ Giáo Viên', href: '/admin/teachers', icon: UserCheck },
           { label: 'Quản Lý Học Phí', href: '/admin/fees', icon: Receipt },
           { label: 'Báo Cáo Thống Kê', href: '/admin/reports', icon: BarChart3 },
+          { label: 'Bảng Điểm Lớp Học', href: '/teacher/grades', icon: Award },
           { label: 'AI Tóm Tắt Tiến Độ', href: '/student/ai-progress', icon: TrendingUp },
         ];
       case 'GIAO_VIEN':

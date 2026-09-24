@@ -228,24 +228,7 @@ export default function TeacherAttendancePage() {
     }
   };
 
-  const handleAutoGenerateSessions = async () => {
-    if (!selectedClassId) return;
-    setGeneratingSessions(true);
-    try {
-      await attendancesService.generateSessions(selectedClassId, { soBuoiHoc: 12 });
-      setMessage('Đã khởi tạo thành công 12 buổi học giáo trình cho lớp!');
-      const classSessions = await attendancesService.getClassSessions(selectedClassId);
-      setSessions(classSessions || []);
-      if (classSessions && classSessions.length > 0) {
-        setSelectedSessionId(classSessions[0].id);
-      }
-      setTimeout(() => setMessage(null), 4000);
-    } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi khởi tạo buổi học.');
-    } finally {
-      setGeneratingSessions(false);
-    }
-  };
+
 
   const isClassRecruiting = classDetail?.trangThai === 'DANG_MO_DANG_KY' || classDetail?.trangThai === 'SAP_MO';
 
@@ -408,20 +391,11 @@ export default function TeacherAttendancePage() {
                     </select>
                   </div>
                 ) : activeTab === 'take_attendance' && (
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-                    <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-2 rounded-xl border border-amber-200 flex items-center justify-center gap-1.5 min-h-[40px]">
-                      <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                      Lớp chưa có buổi học
+                  <div className="flex items-center gap-2 w-full sm:w-auto">
+                    <span className="text-xs font-semibold text-amber-700 bg-amber-50 dark:bg-amber-950/40 dark:text-amber-300 px-3.5 py-2 rounded-xl border border-amber-200 dark:border-amber-800 flex items-center gap-1.5 min-h-[40px]">
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                      Lớp chưa được Phòng Đào tạo xếp lịch buổi học. Vui lòng liên hệ Đào tạo.
                     </span>
-                    <button
-                      type="button"
-                      onClick={handleAutoGenerateSessions}
-                      disabled={generatingSessions}
-                      className="px-3.5 py-2 min-h-[40px] rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-teal-600/20 cursor-pointer disabled:opacity-50"
-                    >
-                      <Sparkles className="w-3.5 h-3.5" />
-                      <span>{generatingSessions ? 'Đang tạo...' : '⚡ Khởi Tạo 12 Buổi Cho Lớp'}</span>
-                    </button>
                   </div>
                 )}
               </div>
@@ -617,22 +591,13 @@ export default function TeacherAttendancePage() {
                   <div className="p-8 text-center bg-amber-50 border-b border-amber-200 space-y-3">
                     <AlertCircle className="w-10 h-10 text-amber-500 mx-auto" />
                     <div>
-                      <h4 className="text-sm font-bold text-amber-900">
+                      <h4 className="text-sm font-bold text-amber-900 dark:text-amber-200">
                         Lớp [{classDetail?.maLopHoc}] {classDetail?.tenLopHoc} chưa có danh sách buổi học
                       </h4>
-                      <p className="text-xs text-amber-700 mt-1 max-w-lg mx-auto leading-relaxed">
-                        Để điểm danh chuyên cần từng buổi (Buổi 1, Buổi 2...), hệ thống cần danh mục buổi học giáo trình. Hãy bấm nút dưới đây để khởi tạo tự động 12 buổi học chuẩn theo lịch của lớp ngay lập tức!
+                      <p className="text-xs text-amber-700 dark:text-amber-300 mt-1 max-w-lg mx-auto leading-relaxed">
+                        Lớp học chưa được Phòng Đào tạo xếp lịch buổi học chính thức. Vui lòng liên hệ Phòng Đào tạo / Ban Quản Lý để hoàn tất xếp thời khóa biểu cho lớp trước khi điểm danh.
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={handleAutoGenerateSessions}
-                      disabled={generatingSessions}
-                      className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition inline-flex items-center gap-2 shadow-md shadow-teal-600/20 cursor-pointer disabled:opacity-50"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      <span>{generatingSessions ? 'Đang khởi tạo...' : 'Khởi Tạo 12 Buổi Học Chuẩn Cho Lớp Này'}</span>
-                    </button>
                   </div>
                 )}
 
@@ -837,21 +802,11 @@ export default function TeacherAttendancePage() {
                 </div>
 
                 {(!matrixData?.buoiHoc || matrixData.buoiHoc.length === 0) && (
-                  <div className="p-3.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs text-amber-800 dark:text-amber-300">
-                    <div className="flex items-center space-x-2">
-                      <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
-                      <span>
-                        Lớp học này hiện chưa có buổi học nào được tạo trong hệ thống. Bạn có thể sang tab <strong>1. Bảng Điểm Danh Buổi Học</strong> và bấm <strong>⚡ Khởi Tạo 12 Buổi Cho Lớp</strong>.
-                      </span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleAutoGenerateSessions}
-                      disabled={generatingSessions}
-                      className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-[11px] shrink-0 transition flex items-center space-x-1 cursor-pointer disabled:opacity-50"
-                    >
-                      <span>⚡ Khởi tạo ngay</span>
-                    </button>
+                  <div className="p-3.5 rounded-xl bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 flex items-center gap-2.5 text-xs text-amber-800 dark:text-amber-300">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
+                    <span>
+                      Lớp học này hiện chưa có buổi học nào. Vui lòng liên hệ <strong>Phòng Đào tạo / Ban Quản Lý</strong> để xếp lịch buổi học trước khi theo dõi ma trận chuyên cần.
+                    </span>
                   </div>
                 )}
 

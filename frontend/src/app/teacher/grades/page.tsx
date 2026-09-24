@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, gradesService, authStorage } from '../../../services/api';
-import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download, Award } from 'lucide-react';
+import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download, Award, Lock, X } from 'lucide-react';
 import { exportClassGradeBookExcel } from '../../../utils/excel-exporter';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
@@ -17,19 +17,33 @@ export default function TeacherGradesPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
+
+  useEffect(() => {
+    try {
+      const user = authStorage.getUser();
+      if (user) setCurrentUser(user);
+    } catch {}
+  }, []);
+
+  const isManager = currentUser?.vaiTro === 'QUAN_LY';
+  const isClassFinished = classDetail?.trangThai === 'DA_KET_THUC';
+  const isClassRecruiting = classDetail?.trangThai === 'DANG_MO_DANG_KY' || classDetail?.trangThai === 'SAP_MO';
+  const isLockedForTeacher = isClassFinished && !isManager;
 
   // 1. Lấy danh sách lớp phụ trách (Chỉ Quản lý mới xem tất cả lớp, Giáo viên chỉ xem lớp mình được phân công)
   useEffect(() => {
     const fetchAssignedClasses = async () => {
       try {
-        let isManager = false;
+        let isMgr = false;
         try {
           const user = authStorage.getUser();
-          if (user && user.vaiTro === 'QUAN_LY') isManager = true;
+          if (user && user.vaiTro === 'QUAN_LY') isMgr = true;
         } catch {}
 
         let assignedClasses: any[] = [];
-        if (isManager) {
+        if (isMgr) {
           const all = await classesService.getAll();
           assignedClasses = all || [];
         } else {
@@ -42,7 +56,13 @@ export default function TeacherGradesPage() {
 
         const validClasses = (assignedClasses || []).filter((c: any) => c.trangThai !== 'DA_HUY');
         setClasses(validClasses);
-        if (validClasses.length > 0) {
+
+        // Đọc query param ?classId=... từ URL nếu có
+        const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+        const queryClassId = urlParams ? urlParams.get('classId') : null;
+        if (queryClassId && validClasses.some((c: any) => c.id === +queryClassId)) {
+          setSelectedClassId(+queryClassId);
+        } else if (validClasses.length > 0) {
           setSelectedClassId(validClasses[0].id);
         } else {
           setSelectedClassId(null);
@@ -94,6 +114,7 @@ export default function TeacherGradesPage() {
     field: 'cc' | 'gk' | 'ck' | 'nhanXet',
     value: any,
   ) => {
+    if (isLockedForTeacher) return;
     setGradesMap((prev) => ({
       ...prev,
       [studentId]: {
@@ -119,12 +140,16 @@ export default function TeacherGradesPage() {
     return final >= 50.0 && Number(cc) >= 80.0;
   };
 
-  const isClassRecruiting = classDetail?.trangThai === 'DANG_MO_DANG_KY' || classDetail?.trangThai === 'SAP_MO';
-
   const handleSaveGrades = async () => {
     if (!selectedClassId) return;
     if (isClassRecruiting) {
-      alert('Lớp học đang mở tuyển sinh, chưa vào học chính thức. Không thể nhập bảng điểm!');
+      setErrorMessage('Lớp học đang mở tuyển sinh, chưa vào học chính thức. Không thể nhập bảng điểm!');
+      setTimeout(() => setErrorMessage(null), 4000);
+      return;
+    }
+    if (isLockedForTeacher) {
+      setErrorMessage('Lớp học đã kết thúc. Bảng điểm đã đóng sổ và khóa chỉnh sửa đối với giáo viên.');
+      setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
     setSaving(true);
@@ -138,10 +163,15 @@ export default function TeacherGradesPage() {
       }));
 
       await gradesService.submitGrades(selectedClassId, payload);
-      setMessage('Lưu bảng điểm & tự động tính điểm tổng kết 20/30/50 thành công!');
+      setMessage(
+        isManager && isClassFinished
+          ? 'Quản trị viên đã lưu cập nhật điều chỉnh điểm chính thức thành công!'
+          : 'Lưu bảng điểm & tự động tính điểm tổng kết 20/30/50 thành công!'
+      );
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi lưu bảng điểm.');
+      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi lưu bảng điểm.');
+      setTimeout(() => setErrorMessage(null), 4500);
     } finally {
       setSaving(false);
     }
@@ -179,32 +209,78 @@ export default function TeacherGradesPage() {
   return (
     <AppLayout
       allowedRoles={['GIAO_VIEN', 'QUAN_LY']}
-      title="Bảng Điểm & Đánh Giá Kết Quả Học Tập"
-      subtitle="Chỉ hiển thị các lớp học bạn được phân công phụ trách. Công thức: 20% Chuyên Cần + 30% Giữa Kỳ + 50% Cuối Kỳ"
+      title={isManager ? "Quản Lý Bảng Điểm Toàn Trung Tâm" : "Bảng Điểm & Đánh Giá Kết Quả Học Tập"}
+      subtitle={
+        isManager
+          ? "Tra cứu và theo dõi bảng điểm tất cả các lớp học. Quản trị viên có thẩm quyền điều chỉnh điểm khi có đơn phúc khảo."
+          : "Chỉ hiển thị các lớp học bạn được phân công phụ trách. Công thức: 20% Chuyên Cần + 30% Giữa Kỳ + 50% Cuối Kỳ"
+      }
     >
-      <div className="space-y-6">
+      <div className="space-y-5">
+        {/* Thông báo lỗi & thành công */}
+        {errorMessage && (
+          <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-200 text-xs font-bold flex items-center justify-between gap-2 shadow-xs animate-fadeIn">
+            <span className="flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400 shrink-0" />
+              <span>{errorMessage}</span>
+            </span>
+            <button type="button" onClick={() => setErrorMessage(null)} className="text-rose-600 hover:text-rose-800 dark:text-rose-400 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+        {message && (
+          <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-200 text-xs font-bold flex items-center justify-between gap-2 shadow-xs animate-fadeIn">
+            <span className="flex items-center gap-2">
+              <CheckCircle className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+              <span>{message}</span>
+            </span>
+            <button type="button" onClick={() => setMessage(null)} className="text-teal-600 hover:text-teal-800 dark:text-teal-400 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {loading ? (
           <div className="py-20 flex justify-center items-center">
             <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
           </div>
         ) : classes.length === 0 ? (
-          <div className="p-8 bg-amber-50 border border-amber-200 rounded-2xl text-center space-y-3">
-            <AlertCircle className="w-10 h-10 text-amber-600 mx-auto" />
-            <h3 className="text-base font-bold text-amber-900">Chưa được phân công phụ trách lớp học nào</h3>
-            <p className="text-xs text-amber-700 max-w-md mx-auto">
+          <div className="p-8 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl text-center space-y-3">
+            <AlertCircle className="w-10 h-10 text-amber-600 dark:text-amber-400 mx-auto" />
+            <h3 className="text-base font-bold text-amber-900 dark:text-amber-200">Chưa được phân công phụ trách lớp học nào</h3>
+            <p className="text-xs text-amber-700 dark:text-amber-300 max-w-md mx-auto">
               Bạn chỉ có thể xem và nhập bảng điểm cho các lớp học được Ban Quản Lý phân công giảng dạy. Vui lòng liên hệ quản trị viên nếu có thắc mắc.
             </p>
           </div>
         ) : (
           <>
-            <div className="bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] p-4 sm:p-5 rounded-2xl shadow-sm space-y-4">
+            <div className="bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] p-4 sm:p-5 rounded-2xl shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div className="flex items-center space-x-3 w-full sm:w-auto">
-                  <div className="w-9 h-9 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center text-teal-700 shrink-0">
+                  <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0">
                     <BookOpen className="w-5 h-5" />
                   </div>
                   <div>
-                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Lớp Phụ Trách</label>
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
+                        {isManager ? 'Chọn Lớp Học' : 'Lớp Phụ Trách'}
+                      </label>
+                      {isClassFinished ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                          <Lock className="w-3 h-3 text-slate-500" />
+                          Đã Kết Thúc (Khóa Điểm)
+                        </span>
+                      ) : isClassRecruiting ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                          Đang Tuyển Sinh
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+                          Đang Học
+                        </span>
+                      )}
+                    </div>
                     <select
                       value={selectedClassId || ''}
                       onChange={(e) => setSelectedClassId(+e.target.value)}
@@ -212,7 +288,7 @@ export default function TeacherGradesPage() {
                     >
                       {classes.map((c) => (
                         <option key={c.id} value={c.id}>
-                          [{c.maLopHoc}] {c.tenLopHoc}
+                          [{c.maLopHoc}] {c.tenLopHoc} {c.trangThai === 'DA_KET_THUC' ? '• (Đã kết thúc)' : ''}
                         </option>
                       ))}
                     </select>
@@ -231,84 +307,117 @@ export default function TeacherGradesPage() {
                       })
                     }
                     disabled={!selectedClassId || !classDetail?.dangKyHoc?.length}
-                    className="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition flex items-center space-x-1.5 shadow-xs cursor-pointer disabled:opacity-50"
+                    className="px-3.5 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 text-xs font-bold transition flex items-center space-x-1.5 shadow-xs cursor-pointer disabled:opacity-50"
                     title="Xuất bảng điểm chi tiết ra file Excel .xlsx"
                   >
-                    <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                    <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Xuất Bảng Điểm Excel</span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={handleSaveGrades}
-                    disabled={saving || !selectedClassId || isClassRecruiting}
-                    className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow transition flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>{saving ? 'Đang lưu...' : 'Lưu Bảng Điểm'}</span>
-                  </button>
+                  {isLockedForTeacher ? (
+                    <div
+                      className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 flex items-center space-x-1.5 cursor-not-allowed select-none"
+                      title="Lớp học đã bế giảng. Bảng điểm đã đóng sổ và không thể chỉnh sửa."
+                    >
+                      <Lock className="w-4 h-4 text-slate-500 shrink-0" />
+                      <span>Bảng Điểm Đã Khóa</span>
+                    </div>
+                  ) : isManager && isClassFinished ? (
+                    <button
+                      type="button"
+                      onClick={handleSaveGrades}
+                      disabled={saving || !selectedClassId || isClassRecruiting}
+                      className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center space-x-1.5 cursor-pointer disabled:opacity-50"
+                      title="Quản trị viên lưu điều chỉnh điểm theo đơn phúc khảo"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>{saving ? 'Đang lưu...' : 'Admin Lưu Điểm Phúc Khảo'}</span>
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSaveGrades}
+                      disabled={saving || !selectedClassId || isClassRecruiting}
+                      className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl shadow-xs hover:shadow transition flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>{saving ? 'Đang lưu...' : 'Lưu Bảng Điểm'}</span>
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
 
+            {isClassFinished && (
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/80 text-xs text-amber-900 dark:text-amber-200 flex items-start space-x-3 animate-fadeIn">
+                <Lock className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="font-bold text-amber-950 dark:text-amber-100 flex items-center gap-2">
+                    <span>Lớp Học Đã Kết Thúc — Bảng Điểm Đã Được Khóa Đóng Sổ</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-200/60 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200">
+                      {isManager ? 'Thẩm Quyền Quản Trị Viên' : 'Chỉ Xem (Read-only)'}
+                    </span>
+                  </div>
+                  <p className="text-amber-800 dark:text-amber-300 leading-relaxed text-[11px]">
+                    {isManager
+                      ? 'Lớp học này đã bế giảng và đóng sổ điểm. Với thẩm quyền Quản trị viên (Admin), bạn có thể trực tiếp điều chỉnh điểm khi có đơn phúc khảo được duyệt, hoặc đổi trạng thái lớp tại màn hình Quản Lý Lớp Học.'
+                      : 'Toàn bộ điểm chuyên cần, giữa kỳ và cuối kỳ đã được chốt và lưu trữ vào hồ sơ trung tâm. Giáo viên không thể tự ý sửa đổi. Mọi yêu cầu phúc khảo hoặc điều chỉnh điểm cần có đơn gửi tới Phòng Đào tạo (Admin) để xử lý.'}
+                  </p>
+                </div>
+              </div>
+            )}
+
             {isClassRecruiting && (
-              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-start space-x-3">
+              <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 flex items-start space-x-3">
                 <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <div className="space-y-1">
-                  <div className="font-bold text-amber-950">
+                  <div className="font-bold text-amber-950 dark:text-amber-100">
                     Lớp học đang trong giai đoạn Mở Tuyển Sinh (Chưa Khai Giảng Chính Thức)
                   </div>
-                  <p className="text-amber-800 leading-relaxed">
+                  <p className="text-amber-800 dark:text-amber-300 leading-relaxed text-[11px]">
                     Lớp <strong className="font-mono">[{classDetail?.maLopHoc}] {classDetail?.tenLopHoc}</strong> hiện đang tiếp nhận học viên. Bảng điểm sẽ được kích hoạt khi lớp hoàn tất tuyển sinh.
                   </p>
                 </div>
               </div>
             )}
 
-            <div className="p-3.5 rounded-xl bg-teal-50 border border-teal-200 text-xs text-teal-800 flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 text-teal-600 shrink-0" />
+            <div className="p-3.5 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-xs text-teal-800 dark:text-teal-300 flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
               <span>
                 <strong>Quy chuẩn ĐẠT:</strong> Điểm Tổng Kết ≥ 50.00 điểm <strong>VÀ</strong> Chuyên Cần ≥ 80.00 điểm.
               </span>
             </div>
 
-            {message && (
-              <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center space-x-2 shadow-sm">
-                <CheckCircle className="w-4 h-4 text-emerald-600" />
-                <span>{message}</span>
-              </div>
-            )}
-
-            <div className="bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] rounded-2xl overflow-hidden shadow-xs">
               <div className="w-full overflow-x-auto scrollbar-thin">
                 <table className="min-w-[780px] w-full text-left text-xs text-slate-700 dark:text-slate-200">
-                  <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+                  <thead className="bg-slate-50 dark:bg-[#162032] text-slate-600 dark:text-slate-300 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200 dark:border-[#1e2d45]">
                     <tr>
-                      <th onClick={() => toggleSort('maHocVien')} className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 transition">
+                      <th onClick={() => toggleSort('maHocVien')} className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         <div className="flex items-center space-x-1"><span>Mã HV</span><SortIndicator sortKey="maHocVien" activeKey={sortKey} sortOrder={sortOrder} /></div>
                       </th>
-                      <th onClick={() => toggleSort('hoTen')} className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 transition">
+                      <th onClick={() => toggleSort('hoTen')} className="px-5 py-3.5 cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         <div className="flex items-center space-x-1"><span>Họ Và Tên</span><SortIndicator sortKey="hoTen" activeKey={sortKey} sortOrder={sortOrder} /></div>
                       </th>
-                      <th onClick={() => toggleSort('cc')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 transition">
+                      <th onClick={() => toggleSort('cc')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         <div className="flex items-center justify-center space-x-1"><span>Chuyên Cần (20%)</span><SortIndicator sortKey="cc" activeKey={sortKey} sortOrder={sortOrder} /></div>
                       </th>
-                      <th onClick={() => toggleSort('gk')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 transition">
+                      <th onClick={() => toggleSort('gk')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         <div className="flex items-center justify-center space-x-1"><span>Giữa Kỳ (30%)</span><SortIndicator sortKey="gk" activeKey={sortKey} sortOrder={sortOrder} /></div>
                       </th>
-                      <th onClick={() => toggleSort('ck')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 transition">
+                      <th onClick={() => toggleSort('ck')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         <div className="flex items-center justify-center space-x-1"><span>Cuối Kỳ (50%)</span><SortIndicator sortKey="ck" activeKey={sortKey} sortOrder={sortOrder} /></div>
                       </th>
-                      <th onClick={() => toggleSort('final')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 transition">
+                      <th onClick={() => toggleSort('final')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         <div className="flex items-center justify-center space-x-1"><span>Tổng Kết</span><SortIndicator sortKey="final" activeKey={sortKey} sortOrder={sortOrder} /></div>
                       </th>
-                      <th onClick={() => toggleSort('xepLoai')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 transition">
+                      <th onClick={() => toggleSort('xepLoai')} className="px-5 py-3.5 text-center cursor-pointer select-none hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         <div className="flex items-center justify-center space-x-1"><span>Xếp Loại</span><SortIndicator sortKey="xepLoai" activeKey={sortKey} sortOrder={sortOrder} /></div>
                       </th>
                       <th className="px-5 py-3.5">Nhận Xét</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-slate-100 dark:divide-[#1e2d45]">
                     {sortedEnrollments.length > 0 ? (
                       sortedEnrollments.map((dk: any) => {
                         const student = dk.hocVien;
@@ -317,17 +426,22 @@ export default function TeacherGradesPage() {
                         const passed = final !== null ? isPass(grade.cc, Number(final)) : false;
 
                         return (
-                          <tr key={student.id} className="hover:bg-teal-50/30 transition">
-                            <td className="px-5 py-4 font-mono font-bold text-teal-700">{student.maHocVien}</td>
-                            <td className="px-5 py-4 font-bold text-slate-900">{student.hoTen}</td>
+                          <tr key={student.id} className="hover:bg-teal-50/30 dark:hover:bg-teal-950/20 transition">
+                            <td className="px-5 py-4 font-mono font-bold text-teal-700 dark:text-teal-400">{student.maHocVien}</td>
+                            <td className="px-5 py-4 font-bold text-slate-900 dark:text-slate-100">{student.hoTen}</td>
                             <td className="px-5 py-4 text-center">
                               <input
                                 type="number"
                                 min={0}
                                 max={100}
+                                disabled={isClassRecruiting || isLockedForTeacher}
                                 value={grade.cc}
                                 onChange={(e) => handleGradeChange(student.id, 'cc', e.target.value === '' ? '' : +e.target.value)}
-                                className="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-center font-bold text-slate-900 focus:outline-none focus:border-teal-500"
+                                className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${
+                                  isLockedForTeacher
+                                    ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                                    : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
+                                }`}
                                 placeholder="—"
                               />
                             </td>
@@ -336,9 +450,14 @@ export default function TeacherGradesPage() {
                                 type="number"
                                 min={0}
                                 max={100}
+                                disabled={isClassRecruiting || isLockedForTeacher}
                                 value={grade.gk}
                                 onChange={(e) => handleGradeChange(student.id, 'gk', e.target.value === '' ? '' : +e.target.value)}
-                                className="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-center font-bold text-slate-900 focus:outline-none focus:border-teal-500"
+                                className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${
+                                  isLockedForTeacher
+                                    ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                                    : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
+                                }`}
                                 placeholder="—"
                               />
                             </td>
@@ -347,28 +466,33 @@ export default function TeacherGradesPage() {
                                 type="number"
                                 min={0}
                                 max={100}
+                                disabled={isClassRecruiting || isLockedForTeacher}
                                 value={grade.ck}
                                 onChange={(e) => handleGradeChange(student.id, 'ck', e.target.value === '' ? '' : +e.target.value)}
-                                className="w-16 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-center font-bold text-slate-900 focus:outline-none focus:border-teal-500"
+                                className={`w-16 rounded-lg px-2 py-1 text-center font-bold transition ${
+                                  isLockedForTeacher
+                                    ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                                    : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500'
+                                }`}
                                 placeholder="—"
                               />
                             </td>
                             <td className="px-5 py-4 text-center">
-                              <span className="text-sm font-black text-teal-700 font-mono">
+                              <span className="text-sm font-black text-teal-700 dark:text-teal-400 font-mono">
                                 {final ?? '—'}
                               </span>
                             </td>
                             <td className="px-5 py-4 text-center">
                               {final === null ? (
-                                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500 border border-slate-200">
+                                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                                   Chưa đủ điểm
                                 </span>
                               ) : (
                                 <span
                                   className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
                                     passed
-                                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                                      : 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
                                   }`}
                                 >
                                   {passed ? 'ĐẠT' : 'KHÔNG ĐẠT'}
@@ -378,10 +502,15 @@ export default function TeacherGradesPage() {
                             <td className="px-5 py-4">
                               <input
                                 type="text"
-                                placeholder="Nhận xét tiến bộ..."
+                                disabled={isClassRecruiting || isLockedForTeacher}
+                                placeholder={isLockedForTeacher ? 'Chưa có nhận xét' : 'Nhận xét tiến bộ...'}
                                 value={grade.nhanXet}
                                 onChange={(e) => handleGradeChange(student.id, 'nhanXet', e.target.value)}
-                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
+                                className={`w-full rounded-lg px-2.5 py-1 text-xs transition ${
+                                  isLockedForTeacher
+                                    ? 'bg-slate-100 dark:bg-slate-800/80 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-not-allowed'
+                                    : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500'
+                                }`}
                               />
                             </td>
                           </tr>

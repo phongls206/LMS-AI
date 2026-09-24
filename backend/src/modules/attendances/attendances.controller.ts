@@ -84,11 +84,11 @@ export class AttendancesController {
   }
 
   /**
-   * POST /api/v1/classes/:id/generate-sessions — (Quản lý, Giáo viên)
+   * POST /api/v1/classes/:id/generate-sessions — (Quản lý)
    * Tự động sinh danh sách buổi học theo tiến trình giáo trình và lịch tuần
    */
   @Post('classes/:id/generate-sessions')
-  @Roles(VaiTro.QUAN_LY, VaiTro.GIAO_VIEN)
+  @Roles(VaiTro.QUAN_LY)
   @ApiOperation({ summary: 'Tự động sinh danh mục buổi học cho lớp học' })
   generateSessions(
     @Param('id', ParseIntPipe) id: number,
@@ -98,11 +98,11 @@ export class AttendancesController {
   }
 
   /**
-   * POST /api/v1/classes/:id/sessions — (Quản lý, Giáo viên)
+   * POST /api/v1/classes/:id/sessions — (Quản lý)
    * Tạo một buổi học lẻ cho lớp
    */
   @Post('classes/:id/sessions')
-  @Roles(VaiTro.QUAN_LY, VaiTro.GIAO_VIEN)
+  @Roles(VaiTro.QUAN_LY)
   @ApiOperation({ summary: 'Tạo một buổi học mới cho lớp' })
   createSession(
     @Param('id', ParseIntPipe) id: number,
@@ -112,18 +112,17 @@ export class AttendancesController {
   }
 
   /**
-   * PUT /api/v1/sessions/:id — (Quản lý, Giáo viên)
+   * PUT /api/v1/sessions/:id — (Quản lý)
    * Sửa thông tin / tiêu đề của buổi học
    */
   @Put('sessions/:id')
-  @Roles(VaiTro.QUAN_LY, VaiTro.GIAO_VIEN)
+  @Roles(VaiTro.QUAN_LY)
   @ApiOperation({ summary: 'Cập nhật thông tin / tiêu đề buổi học' })
   updateSession(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateSessionDto,
-    @CurrentUser() user: any,
   ) {
-    return this.attendancesService.updateSession(id, dto, user?.id);
+    return this.attendancesService.updateSession(id, dto);
   }
 
   /**
