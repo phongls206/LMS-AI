@@ -3,7 +3,7 @@
 **Tổng số:** 45 ca kiểm thử  
 **Nguồn:** `docs/design/EnglishCenterTOP.docx` — Bảng 9.3  
 **Phạm vi:** 14 Use Case (UC001–UC014) + Audit Log AI  
-**Ngày lập:** 25/09/2026
+**Ngày lập:** 01/09/2026
 
 > Mỗi ca kiểm thử bao phủ luồng chính (Main Flow), luồng ngoại lệ (Alternative Flow), điều kiện biên và kiểm soát an toàn AI.
 

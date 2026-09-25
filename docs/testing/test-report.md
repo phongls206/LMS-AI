@@ -2,7 +2,6 @@
 
 **Phiên bản:** 1.0  
 **Ngày testing:** 02/09/2026  
-**Người tham gia:** Tester & Developer  
 **Môi trường:** Neon Cloud PostgreSQL + Google Gemini AI API  
 **Nguồn:** `docs/design/EnglishCenterTOP.docx` — Bảng 46
 

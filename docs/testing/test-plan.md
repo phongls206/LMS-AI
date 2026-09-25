@@ -1,8 +1,7 @@
 # Test Plan — ETC English Center LMS AI
 
 **Phiên bản:** 1.0  
-**Ngày lập:** 25/09/2026  
-**Người lập:** QA Team  
+**Ngày lập:** 01/09/2026  
 **Tài liệu tham chiếu:** `docs/design/EnglishCenterTOP.docx`
 
 ---
