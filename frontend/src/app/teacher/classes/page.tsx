@@ -7,7 +7,7 @@ import {
   GraduationCap, Users, Calendar, Clock, MapPin, AlertCircle,
   CheckCircle, ChevronDown, ChevronUp, BookOpen, Lock, ChevronRight,
   RefreshCw, Search, Filter, Globe, CalendarCheck, Sparkles, ArrowRight,
-  Sun, Check, Eye, Edit3, X
+  Sun, Check, Eye, Edit3, X, ChevronsUpDown
 } from 'lucide-react';
 import Link from 'next/link';
 import { formatTrangThaiLopHoc } from '../../../utils/formatters';
@@ -63,6 +63,9 @@ export default function TeacherClassesPage() {
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'DANG_HOC' | 'DANG_MO_DANG_KY'>('ALL');
   const [selectedDayFilter, setSelectedDayFilter] = useState<number | 'ALL'>('ALL');
   const [highlightedClassId, setHighlightedClassId] = useState<number | null>(null);
+
+  // Quản lý trạng thái ẩn/hiện chi tiết của từng thẻ lớp học ở cột bên phải (mặc định thu gọn để tránh lặp lịch học)
+  const [openedClassIds, setOpenedClassIds] = useState<Record<number, boolean>>({});
 
   // Tab switch for mobile view: 'timetable' | 'classes'
   const [mobileTab, setMobileTab] = useState<'timetable' | 'classes'>('timetable');
@@ -220,9 +223,37 @@ export default function TeacherClassesPage() {
     });
   }, [classes, search, statusFilter, selectedDayFilter]);
 
-  // Chọn lớp từ TKB: cuộn sang lớp bên phải, mở rộng chi tiết và chuyển tab trên mobile
+  // Toggle ẩn / hiện chi tiết của 1 thẻ lớp học
+  const toggleClassCard = (classId: number) => {
+    setOpenedClassIds((prev) => ({
+      ...prev,
+      [classId]: !prev[classId],
+    }));
+  };
+
+  // Kiểm tra xem tất cả các thẻ lớp học đang lọc đã mở chưa
+  const isAllCardsOpened = useMemo(() => {
+    if (filteredClasses.length === 0) return false;
+    return filteredClasses.every((item) => openedClassIds[Number(item.lopHoc?.id)]);
+  }, [filteredClasses, openedClassIds]);
+
+  // Mở rộng tất cả hoặc thu gọn tất cả thẻ lớp học
+  const toggleAllCards = () => {
+    if (isAllCardsOpened) {
+      setOpenedClassIds({});
+    } else {
+      const all: Record<number, boolean> = {};
+      filteredClasses.forEach((item) => {
+        if (item.lopHoc?.id) all[Number(item.lopHoc.id)] = true;
+      });
+      setOpenedClassIds(all);
+    }
+  };
+
+  // Chọn lớp từ TKB: cuộn sang lớp bên phải, tự động mở rộng chi tiết lớp và chuyển tab trên mobile
   const handleSelectClass = (classId: number) => {
     setHighlightedClassId(classId);
+    setOpenedClassIds((prev) => ({ ...prev, [classId]: true }));
     setExpandedClassId(classId);
     setMobileTab('classes');
     const el = document.getElementById(`class-card-${classId}`);
@@ -242,6 +273,7 @@ export default function TeacherClassesPage() {
       if (classIdParam && classes.length > 0) {
         const cId = Number(classIdParam);
         setHighlightedClassId(cId);
+        setOpenedClassIds((prev) => ({ ...prev, [cId]: true }));
         setExpandedClassId(cId);
         setMobileTab('classes');
         setTimeout(() => {
@@ -653,7 +685,7 @@ export default function TeacherClassesPage() {
                   )}
                 </div>
 
-                <div className="flex items-center gap-1.5 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
                   <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">Trạng thái:</span>
                   {(['ALL', 'DANG_HOC', 'DANG_MO_DANG_KY'] as const).map((st) => {
                     const label =
@@ -678,6 +710,19 @@ export default function TeacherClassesPage() {
                       </button>
                     );
                   })}
+
+                  {filteredClasses.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={toggleAllCards}
+                      className="px-2.5 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer bg-slate-50 hover:bg-slate-100 dark:bg-[#162032] dark:hover:bg-[#1e2d45] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-[#22324e] inline-flex items-center gap-1.5 shrink-0"
+                      title={isAllCardsOpened ? 'Thu gọn tất cả lớp học' : 'Hiển thị chi tiết tất cả lớp học'}
+                    >
+                      <ChevronsUpDown className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                      <span className="hidden sm:inline">{isAllCardsOpened ? 'Thu Gọn Tất Cả' : 'Mở Rộng Tất Cả'}</span>
+                      <span className="sm:hidden">{isAllCardsOpened ? 'Thu Gọn' : 'Mở Rộng'}</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -723,10 +768,12 @@ export default function TeacherClassesPage() {
                 <div className="space-y-4">
                   {filteredClasses.map((item) => {
                     const lop = item.lopHoc;
+                    const classIdNum = Number(lop?.id);
+                    const isCardOpen = !!openedClassIds[classIdNum];
                     const isRecruiting = lop?.trangThai === 'DANG_MO_DANG_KY' || lop?.trangThai === 'SAP_MO';
                     const isOngoing = lop?.trangThai === 'DANG_HOC';
-                    const isExpanded = expandedClassId === Number(lop?.id);
-                    const isHighlighted = highlightedClassId === Number(lop?.id);
+                    const isExpanded = expandedClassId === classIdNum;
+                    const isHighlighted = highlightedClassId === classIdNum;
                     const sessions = lop?.buoiHoc || [];
 
                     return (
@@ -738,268 +785,318 @@ export default function TeacherClassesPage() {
                             : 'border-slate-200/90 dark:border-[#1e2d45] hover:border-teal-400 dark:hover:border-teal-500'
                           }`}
                       >
-                        <div className="p-4 sm:p-5 space-y-3.5">
-                          {/* Top Row: Mã lớp, CEFR, Trạng thái & Role badge */}
-                          <div className="flex flex-wrap justify-between items-start gap-2">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-400 px-2.5 py-0.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800">
-                                {lop?.maLopHoc}
-                              </span>
-                              <span className="text-[11px] px-2 py-0.5 rounded-full font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                                CEFR {lop?.khoaHoc?.trinhDoYeuCau || 'Chuẩn'}
-                              </span>
-                              {isRecruiting ? (
-                                <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 flex items-center gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                  Đang Tuyển Sinh
+                        {/* Header của thẻ lớp học (Luôn hiển thị — Bấm vào để ẩn/hiện chi tiết) */}
+                        <div
+                          onClick={() => toggleClassCard(classIdNum)}
+                          className="p-4 sm:p-5 cursor-pointer hover:bg-slate-50/70 dark:hover:bg-[#162032]/40 transition-colors select-none"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="space-y-1.5 min-w-0 flex-1">
+                              {/* Top Row: Mã lớp, CEFR, Trạng thái & Role badge */}
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-400 px-2.5 py-0.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800">
+                                  {lop?.maLopHoc}
                                 </span>
-                              ) : isOngoing ? (
-                                <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                  Đang Học
+                                <span className="text-[11px] px-2 py-0.5 rounded-full font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                                  CEFR {lop?.khoaHoc?.trinhDoYeuCau || 'Chuẩn'}
                                 </span>
-                              ) : (
-                                <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
-                                  {formatTrangThaiLopHoc(lop?.trangThai)}
+                                {isRecruiting ? (
+                                  <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                    Đang Tuyển Sinh
+                                  </span>
+                                ) : isOngoing ? (
+                                  <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    Đang Học
+                                  </span>
+                                ) : (
+                                  <span className="text-[11px] px-2.5 py-0.5 rounded-full font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                                    {formatTrangThaiLopHoc(lop?.trangThai)}
+                                  </span>
+                                )}
+
+                                <span className="text-[11px] font-bold text-teal-800 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-lg border border-teal-200 dark:border-teal-800">
+                                  Giáo Viên Phụ Trách
                                 </span>
+                              </div>
+
+                              {/* Tên lớp & Khóa học */}
+                              <div>
+                                <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+                                  {lop?.tenLopHoc}
+                                </h3>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                                  {lop?.khoaHoc?.tenKhoaHoc}
+                                </p>
+                              </div>
+
+                              {/* Tóm tắt nhanh khi đang thu gọn: tránh lặp lại lịch học với TKB bên trái */}
+                              {!isCardOpen && (
+                                <div className="flex flex-wrap items-center gap-2 pt-1 text-xs text-slate-500 dark:text-slate-400">
+                                  <span>
+                                    Sĩ số: <strong className="text-slate-700 dark:text-slate-300">{lop?.siSoHienTai || 0}/{lop?.siSoToiDa || 25} HV</strong>
+                                  </span>
+                                  <span>•</span>
+                                  <span className="flex items-center gap-1 text-teal-600 dark:text-teal-400 font-medium">
+                                    <Clock className="w-3.5 h-3.5" />
+                                    {lop?.lichHoc?.length || 0} ca dạy/tuần
+                                  </span>
+                                  <span>•</span>
+                                  <span>{sessions.length} buổi học</span>
+                                </div>
                               )}
                             </div>
 
-                            <span className="text-[11px] font-bold text-teal-800 dark:text-teal-300 bg-teal-50 dark:bg-teal-950/60 px-2 py-0.5 rounded-lg border border-teal-200 dark:border-teal-800">
-                              Giáo Viên Phụ Trách
-                            </span>
-                          </div>
-
-                          {/* Tên lớp & Khóa học */}
-                          <div>
-                            <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                              {lop?.tenLopHoc}
-                            </h3>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                              {lop?.khoaHoc?.tenKhoaHoc}
-                            </p>
-                          </div>
-
-                          {/* Cảnh báo nếu lớp đang tuyển sinh */}
-                          {isRecruiting && (
-                            <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2">
-                              <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-600 mt-0.5" />
-                              <div className="leading-relaxed text-[11px]">
-                                <strong>Lớp đang tuyển sinh:</strong> Sĩ số hiện tại: {lop?.siSoHienTai || 0}/{lop?.siSoToiDa || 25} HV.
-                                Tính năng Điểm danh & Bảng điểm sẽ kích hoạt khi lớp chuyển sang <strong>"Đang Học"</strong>.
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Metric stats grid */}
-                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200/80 dark:border-[#22324e] text-xs">
-                            <div
-                              onClick={() =>
-                                setSelectedClassForStudents({
-                                  id: Number(lop?.id),
-                                  name: lop?.tenLopHoc,
-                                  code: lop?.maLopHoc,
-                                })
-                              }
-                              className="p-2 rounded-lg bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#1e2d45] hover:border-teal-400 transition cursor-pointer group shadow-2xs"
-                              title="Bấm để xem danh sách học viên"
-                            >
-                              <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-                                <span>Sĩ số:</span>
-                                <span className="font-bold text-teal-600 dark:text-teal-400 flex items-center gap-0.5">
-                                  Xem DS <ChevronRight className="w-3 h-3" />
-                                </span>
-                              </div>
-                              <div className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">
-                                {lop?.siSoHienTai || 0} / {lop?.siSoToiDa || 25} HV
-                              </div>
-                            </div>
-
-                            <div className="p-2 rounded-lg bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#1e2d45]">
-                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Thời gian học:</span>
-                              <div className="font-bold text-slate-900 dark:text-white text-xs mt-0.5">
-                                {lop?.ngayBatDau ? formatDate(lop.ngayBatDau) : '—'} → {lop?.ngayKetThuc ? formatDate(lop.ngayKetThuc) : '—'}
-                              </div>
-                            </div>
-
-                            <div className="p-2 rounded-lg bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#1e2d45]">
-                              <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Tiến độ buổi học:</span>
-                              <div className="font-bold text-slate-900 dark:text-white text-xs mt-0.5">
-                                {sessions.filter((s: any) => s.trangThai === 'DA_KET_THUC').length} / {sessions.length} Buổi
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Khung giờ cố định của lớp này */}
-                          <div>
-                            <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
-                              Khung Giờ Lên Lớp Hàng Tuần
-                            </span>
-                            {lop?.lichHoc && lop.lichHoc.length > 0 ? (
-                              <div className="flex flex-wrap gap-1.5">
-                                {lop.lichHoc.map((lh: any) => (
-                                  <div
-                                    key={lh.id}
-                                    className="px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-xs flex items-center gap-1.5"
-                                  >
-                                    <span className="font-bold text-teal-700 dark:text-teal-400 font-mono">
-                                      {lh.thuTrongTuan === 8 ? 'Chủ Nhật' : `Thứ ${lh.thuTrongTuan}`}
-                                    </span>
-                                    <span className="font-mono text-slate-600 dark:text-slate-300 text-[11px]">
-                                      {formatTime(lh.gioBatDau)} - {formatTime(lh.gioKetThuc)}
-                                    </span>
-                                    <span className="text-slate-400 dark:text-slate-500 text-[10px]">
-                                      ({lh.phongHoc})
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-xs text-slate-400 italic">Chưa xếp lịch học hàng tuần.</p>
-                            )}
-                          </div>
-
-                          {/* Action Buttons Bar */}
-                          <div className="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-                            <button
-                              type="button"
-                              onClick={() => setExpandedClassId(isExpanded ? null : Number(lop?.id))}
-                              className="px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100/80 dark:bg-teal-950/50 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
-                            >
-                              <Calendar className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                              <span>
-                                {isExpanded
-                                  ? 'Thu gọn lịch trình'
-                                  : `Lịch Trình Chi Tiết (${sessions.length} Buổi)`}
-                              </span>
-                              {isExpanded ? (
-                                <ChevronUp className="w-3.5 h-3.5" />
-                              ) : (
-                                <ChevronDown className="w-3.5 h-3.5" />
-                              )}
-                            </button>
-
-                            <div className="flex items-center gap-2">
-                              {isRecruiting ? (
-                                <>
-                                  <button
-                                    disabled
-                                    className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 text-xs font-bold border border-slate-200 dark:border-slate-700 cursor-not-allowed flex items-center gap-1"
-                                    title="Lớp đang mở tuyển sinh, chưa bắt đầu học."
-                                  >
-                                    <Lock className="w-3 h-3" />
-                                    <span>Điểm Danh</span>
-                                  </button>
-                                  <button
-                                    disabled
-                                    className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 text-xs font-bold border border-slate-200 dark:border-slate-700 cursor-not-allowed flex items-center gap-1"
-                                    title="Lớp đang mở tuyển sinh, chưa có điểm số."
-                                  >
-                                    <Lock className="w-3 h-3" />
-                                    <span>Bảng Điểm</span>
-                                  </button>
-                                </>
-                              ) : (
-                                <>
-                                  <Link
-                                    href={`/teacher/attendance?classId=${lop?.id}`}
-                                    className="px-4 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
-                                  >
-                                    <span>Điểm Danh</span>
-                                  </Link>
-                                  <Link
-                                    href={`/teacher/grades?classId=${lop?.id}`}
-                                    className="px-4 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition border border-slate-200 dark:border-slate-700 cursor-pointer"
-                                  >
-                                    Bảng Điểm
-                                  </Link>
-                                </>
-                              )}
+                            {/* Nút Toggle ẩn/hiện chi tiết */}
+                            <div className="shrink-0 flex items-center self-start sm:self-center">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleClassCard(classIdNum);
+                                }}
+                                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer border shadow-2xs ${
+                                  isCardOpen
+                                    ? 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800'
+                                    : 'bg-slate-100 hover:bg-teal-50 dark:bg-[#162032] dark:hover:bg-teal-950/40 text-slate-700 dark:text-slate-300 hover:text-teal-700 dark:hover:text-teal-300 border-slate-200 dark:border-[#22324e] hover:border-teal-300'
+                                }`}
+                              >
+                                <span>{isCardOpen ? 'Thu Gọn' : 'Xem Chi Tiết'}</span>
+                                {isCardOpen ? (
+                                  <ChevronUp className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                                ) : (
+                                  <ChevronDown className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                                )}
+                              </button>
                             </div>
                           </div>
                         </div>
 
-                        {/* Expandable Session Timeline Table */}
-                        {isExpanded && (
-                          <div className="bg-slate-50/80 dark:bg-[#141c2e]/90 border-t border-slate-200 dark:border-[#1e2d45] p-4 sm:p-5 space-y-3 animate-fadeIn">
-                            <div className="flex justify-between items-center">
-                              <h5 className="font-bold text-xs text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                                <BookOpen className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                                <span>Lịch Trình Chi Tiết Từng Buổi Học ({sessions.length} Buổi)</span>
-                              </h5>
-                              <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                                {isRecruiting ? 'Lớp chưa khai giảng' : 'Lớp đang học'}
-                              </span>
-                            </div>
-
-                            {sessions.length > 0 ? (
-                              <div className="border border-slate-200 dark:border-[#22324e] rounded-xl overflow-hidden bg-white dark:bg-[#101725]">
-                                <div className="max-h-64 overflow-auto">
-                                  <table className="w-full text-left text-xs border-collapse">
-                                    <thead className="bg-slate-50 dark:bg-[#162032] text-slate-600 dark:text-slate-300 font-bold sticky top-0 border-b border-slate-200 dark:border-[#22324e] z-10">
-                                      <tr>
-                                        <th className="py-2 px-3 w-14 text-center">Buổi</th>
-                                        <th className="py-2 px-3 w-28">Ngày Học</th>
-                                        <th className="py-2 px-3 w-28">Khung Giờ</th>
-                                        <th className="py-2 px-3">Chủ Đề Buổi Học</th>
-                                        <th className="py-2 px-3 w-24 text-center">Trạng Thái</th>
-                                        <th className="py-2 px-3 w-28 text-center">Điểm Danh</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100 dark:divide-[#1e2d45]">
-                                      {sessions.map((s: any) => {
-                                        const isDone = s.trangThai === 'DA_KET_THUC';
-                                        const attCount = s._count?.diemDanh || 0;
-
-                                        return (
-                                          <tr key={s.id} className="hover:bg-slate-50/80 dark:hover:bg-teal-950/20 transition">
-                                            <td className="py-2 px-3 text-center font-bold">
-                                              <span className="w-5 h-5 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 inline-flex items-center justify-center font-mono text-[10px]">
-                                                {s.soThuTu}
-                                              </span>
-                                            </td>
-                                            <td className="py-2 px-3 font-medium text-slate-800 dark:text-slate-200">
-                                              {formatDate(s.ngayHoc)}
-                                            </td>
-                                            <td className="py-2 px-3 font-mono text-slate-600 dark:text-slate-400 text-[11px]">
-                                              {formatTime(s.gioBatDau)} - {formatTime(s.gioKetThuc)}
-                                            </td>
-                                            <td className="py-2 px-3 font-medium text-slate-800 dark:text-slate-200">
-                                              {(s.chuDe || `Bài học số ${s.soThuTu}`).replace(/^Buổi\s+\d+\s*:\s*/i, '')}
-                                            </td>
-                                            <td className="py-2 px-3 text-center">
-                                              <span
-                                                className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${isDone
-                                                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
-                                                    : s.trangThai === 'DANG_DIEN_RA'
-                                                      ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
-                                                      : 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800'
-                                                  }`}
-                                              >
-                                                {isDone ? 'Đã học' : s.trangThai === 'DANG_DIEN_RA' ? 'Đang học' : 'Chưa học'}
-                                              </span>
-                                            </td>
-                                            <td className="py-2 px-3 text-center font-mono text-[11px]">
-                                              {isDone ? (
-                                                <span className="text-emerald-700 dark:text-emerald-400 font-bold">
-                                                  Đã ghi ({attCount} HV)
-                                                </span>
-                                              ) : isRecruiting ? (
-                                                <span className="text-slate-400">Chưa khai giảng</span>
-                                              ) : (
-                                                <span className="text-slate-400">Chưa điểm danh</span>
-                                              )}
-                                            </td>
-                                          </tr>
-                                        );
-                                      })}
-                                    </tbody>
-                                  </table>
+                        {/* Thân thẻ lớp học: Chỉ hiển thị khi bấm mở rộng (Tránh lặp lại 2 lịch học cạnh nhau) */}
+                        {isCardOpen && (
+                          <div className="p-4 sm:p-5 pt-0 space-y-3.5 border-t border-slate-100 dark:border-[#1e2d45] mt-0 animate-fadeIn">
+                            {/* Cảnh báo nếu lớp đang tuyển sinh */}
+                            {isRecruiting && (
+                              <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2 mt-3">
+                                <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-600 mt-0.5" />
+                                <div className="leading-relaxed text-[11px]">
+                                  <strong>Lớp đang tuyển sinh:</strong> Sĩ số hiện tại: {lop?.siSoHienTai || 0}/{lop?.siSoToiDa || 25} HV.
+                                  Tính năng Điểm danh & Bảng điểm sẽ kích hoạt khi lớp chuyển sang <strong>"Đang Học"</strong>.
                                 </div>
                               </div>
-                            ) : (
-                              <div className="p-4 rounded-xl bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#22324e] text-center text-xs text-slate-400">
-                                Chưa có danh sách buổi học nào cho lớp này.
+                            )}
+
+                            {/* Metric stats grid */}
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3 rounded-xl bg-slate-50 dark:bg-[#162032] border border-slate-200/80 dark:border-[#22324e] text-xs pt-3 border-t border-slate-100 dark:border-[#1e2d45]">
+                              <div
+                                onClick={() =>
+                                  setSelectedClassForStudents({
+                                    id: Number(lop?.id),
+                                    name: lop?.tenLopHoc,
+                                    code: lop?.maLopHoc,
+                                  })
+                                }
+                                className="p-2 rounded-lg bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#1e2d45] hover:border-teal-400 transition cursor-pointer group shadow-2xs"
+                                title="Bấm để xem danh sách học viên"
+                              >
+                                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                                  <span>Sĩ số:</span>
+                                  <span className="font-bold text-teal-600 dark:text-teal-400 flex items-center gap-0.5">
+                                    Xem DS <ChevronRight className="w-3 h-3" />
+                                  </span>
+                                </div>
+                                <div className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">
+                                  {lop?.siSoHienTai || 0} / {lop?.siSoToiDa || 25} HV
+                                </div>
+                              </div>
+
+                              <div className="p-2 rounded-lg bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#1e2d45]">
+                                <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Thời gian học:</span>
+                                <div className="font-bold text-slate-900 dark:text-white text-xs mt-0.5">
+                                  {lop?.ngayBatDau ? formatDate(lop.ngayBatDau) : '—'} → {lop?.ngayKetThuc ? formatDate(lop.ngayKetThuc) : '—'}
+                                </div>
+                              </div>
+
+                              <div className="p-2 rounded-lg bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#1e2d45]">
+                                <span className="text-[11px] text-slate-500 dark:text-slate-400 block">Tiến độ buổi học:</span>
+                                <div className="font-bold text-slate-900 dark:text-white text-xs mt-0.5">
+                                  {sessions.filter((s: any) => s.trangThai === 'DA_KET_THUC').length} / {sessions.length} Buổi
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Khung giờ cố định của lớp này */}
+                            <div>
+                              <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1.5">
+                                Khung Giờ Lên Lớp Hàng Tuần
+                              </span>
+                              {lop?.lichHoc && lop.lichHoc.length > 0 ? (
+                                <div className="flex flex-wrap gap-1.5">
+                                  {lop.lichHoc.map((lh: any) => (
+                                    <div
+                                      key={lh.id}
+                                      className="px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-xs flex items-center gap-1.5"
+                                    >
+                                      <span className="font-bold text-teal-700 dark:text-teal-400 font-mono">
+                                        {lh.thuTrongTuan === 8 ? 'Chủ Nhật' : `Thứ ${lh.thuTrongTuan}`}
+                                      </span>
+                                      <span className="font-mono text-slate-600 dark:text-slate-300 text-[11px]">
+                                        {formatTime(lh.gioBatDau)} - {formatTime(lh.gioKetThuc)}
+                                      </span>
+                                      <span className="text-slate-400 dark:text-slate-500 text-[10px]">
+                                        ({lh.phongHoc})
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-xs text-slate-400 italic">Chưa xếp lịch học hàng tuần.</p>
+                              )}
+                            </div>
+
+                            {/* Action Buttons Bar */}
+                            <div className="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                              <button
+                                type="button"
+                                onClick={() => setExpandedClassId(isExpanded ? null : Number(lop?.id))}
+                                className="px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100/80 dark:bg-teal-950/50 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-200 text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                              >
+                                <Calendar className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                                <span>
+                                  {isExpanded
+                                    ? 'Thu gọn lịch trình'
+                                    : `Lịch Trình Chi Tiết (${sessions.length} Buổi)`}
+                                </span>
+                                {isExpanded ? (
+                                  <ChevronUp className="w-3.5 h-3.5" />
+                                ) : (
+                                  <ChevronDown className="w-3.5 h-3.5" />
+                                )}
+                              </button>
+
+                              <div className="flex items-center gap-2">
+                                {isRecruiting ? (
+                                  <>
+                                    <button
+                                      disabled
+                                      className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 text-xs font-bold border border-slate-200 dark:border-slate-700 cursor-not-allowed flex items-center gap-1"
+                                      title="Lớp đang mở tuyển sinh, chưa bắt đầu học."
+                                    >
+                                      <Lock className="w-3 h-3" />
+                                      <span>Điểm Danh</span>
+                                    </button>
+                                    <button
+                                      disabled
+                                      className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 text-xs font-bold border border-slate-200 dark:border-slate-700 cursor-not-allowed flex items-center gap-1"
+                                      title="Lớp đang mở tuyển sinh, chưa có điểm số."
+                                    >
+                                      <Lock className="w-3 h-3" />
+                                      <span>Bảng Điểm</span>
+                                    </button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Link
+                                      href={`/teacher/attendance?classId=${lop?.id}`}
+                                      className="px-4 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
+                                    >
+                                      <span>Điểm Danh</span>
+                                    </Link>
+                                    <Link
+                                      href={`/teacher/grades?classId=${lop?.id}`}
+                                      className="px-4 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition border border-slate-200 dark:border-slate-700 cursor-pointer"
+                                    >
+                                      Bảng Điểm
+                                    </Link>
+                                  </>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Expandable Session Timeline Table */}
+                            {isExpanded && (
+                              <div className="bg-slate-50/80 dark:bg-[#141c2e]/90 border-t border-slate-200 dark:border-[#1e2d45] p-4 sm:p-5 space-y-3 animate-fadeIn mt-2 -mx-4 -mb-4 sm:-mx-5 sm:-mb-5">
+                                <div className="flex justify-between items-center">
+                                  <h5 className="font-bold text-xs text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                                    <BookOpen className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                                    <span>Lịch Trình Chi Tiết Từng Buổi Học ({sessions.length} Buổi)</span>
+                                  </h5>
+                                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                                    {isRecruiting ? 'Lớp chưa khai giảng' : 'Lớp đang học'}
+                                  </span>
+                                </div>
+
+                                {sessions.length > 0 ? (
+                                  <div className="border border-slate-200 dark:border-[#22324e] rounded-xl overflow-hidden bg-white dark:bg-[#101725]">
+                                    <div className="max-h-64 overflow-auto">
+                                      <table className="w-full text-left text-xs border-collapse">
+                                        <thead className="bg-slate-50 dark:bg-[#162032] text-slate-600 dark:text-slate-300 font-bold sticky top-0 border-b border-slate-200 dark:border-[#22324e] z-10">
+                                          <tr>
+                                            <th className="py-2 px-3 w-14 text-center">Buổi</th>
+                                            <th className="py-2 px-3 w-28">Ngày Học</th>
+                                            <th className="py-2 px-3 w-28">Khung Giờ</th>
+                                            <th className="py-2 px-3">Chủ Đề Buổi Học</th>
+                                            <th className="py-2 px-3 w-24 text-center">Trạng Thái</th>
+                                            <th className="py-2 px-3 w-28 text-center">Điểm Danh</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100 dark:divide-[#1e2d45]">
+                                          {sessions.map((s: any) => {
+                                            const isDone = s.trangThai === 'DA_KET_THUC';
+                                            const attCount = s._count?.diemDanh || 0;
+
+                                            return (
+                                              <tr key={s.id} className="hover:bg-slate-50/80 dark:hover:bg-teal-950/20 transition">
+                                                <td className="py-2 px-3 text-center font-bold">
+                                                  <span className="w-5 h-5 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 inline-flex items-center justify-center font-mono text-[10px]">
+                                                    {s.soThuTu}
+                                                  </span>
+                                                </td>
+                                                <td className="py-2 px-3 font-medium text-slate-800 dark:text-slate-200">
+                                                  {formatDate(s.ngayHoc)}
+                                                </td>
+                                                <td className="py-2 px-3 font-mono text-slate-600 dark:text-slate-400 text-[11px]">
+                                                  {formatTime(s.gioBatDau)} - {formatTime(s.gioKetThuc)}
+                                                </td>
+                                                <td className="py-2 px-3 font-medium text-slate-800 dark:text-slate-200">
+                                                  {(s.chuDe || `Bài học số ${s.soThuTu}`).replace(/^Buổi\s+\d+\s*:\s*/i, '')}
+                                                </td>
+                                                <td className="py-2 px-3 text-center">
+                                                  <span
+                                                    className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${isDone
+                                                        ? 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                                                        : s.trangThai === 'DANG_DIEN_RA'
+                                                          ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                                                          : 'bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800'
+                                                      }`}
+                                                  >
+                                                    {isDone ? 'Đã học' : s.trangThai === 'DANG_DIEN_RA' ? 'Đang học' : 'Chưa học'}
+                                                  </span>
+                                                </td>
+                                                <td className="py-2 px-3 text-center font-mono text-[11px]">
+                                                  {isDone ? (
+                                                    <span className="text-emerald-700 dark:text-emerald-400 font-bold">
+                                                      Đã ghi ({attCount} HV)
+                                                    </span>
+                                                  ) : isRecruiting ? (
+                                                    <span className="text-slate-400">Chưa khai giảng</span>
+                                                  ) : (
+                                                    <span className="text-slate-400">Chưa điểm danh</span>
+                                                  )}
+                                                </td>
+                                              </tr>
+                                            );
+                                          })}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="p-4 rounded-xl bg-white dark:bg-[#101725] border border-slate-200 dark:border-[#22324e] text-center text-xs text-slate-400">
+                                    Chưa có danh sách buổi học nào cho lớp này.
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>

@@ -101,12 +101,14 @@ export default function TeacherAttendancePage() {
 
     const fetchClassDetailAndSessions = async () => {
       try {
-        const [detail, classSessions] = await Promise.all([
+        const [detail, classSessions, matrix] = await Promise.all([
           classesService.getById(selectedClassId),
           attendancesService.getClassSessions(selectedClassId),
+          attendancesService.getClassAttendanceMatrix(selectedClassId),
         ]);
         setClassDetail(detail);
         setSessions(classSessions || []);
+        setMatrixData(matrix);
 
         if (classSessions && classSessions.length > 0) {
           // Mặc định chọn buổi gần nhất chưa học hoặc buổi đầu tiên
@@ -125,34 +127,48 @@ export default function TeacherAttendancePage() {
   useEffect(() => {
     if (!selectedSessionId || !classDetail) return;
 
+    let isMounted = true;
     const fetchSessionAttendance = async () => {
       try {
-        const session = sessions.find((s) => s.id === selectedSessionId);
         const records: Record<number, TrangThaiDiemDanh> = {};
         const noteRecords: Record<number, string> = {};
 
         // Khởi tạo mặc định: CO_MAT cho tất cả học viên trong lớp
         classDetail.dangKyHoc?.forEach((dk: any) => {
           records[dk.hocVien.id] = 'CO_MAT';
+          noteRecords[dk.hocVien.id] = '';
         });
 
+        // Tải chi tiết điểm danh từ API getSessionAttendance hoặc từ sessions
+        let sessionData: any = null;
+        try {
+          sessionData = await attendancesService.getSessionAttendance(selectedSessionId);
+        } catch {
+          sessionData = sessions.find((s) => s.id === selectedSessionId);
+        }
+
         // Điền dữ liệu thực tế nếu buổi học đã được điểm danh trước đó
-        if (session && session.diemDanh && session.diemDanh.length > 0) {
-          session.diemDanh.forEach((d: any) => {
+        if (sessionData && sessionData.diemDanh && sessionData.diemDanh.length > 0) {
+          sessionData.diemDanh.forEach((d: any) => {
             records[d.hocVienId] = d.trangThai;
-            if (d.ghiChu) noteRecords[d.hocVienId] = d.ghiChu;
+            noteRecords[d.hocVienId] = d.ghiChu || '';
           });
         }
 
-        setAttendanceRecords(records);
-        setNotes(noteRecords);
+        if (isMounted) {
+          setAttendanceRecords(records);
+          setNotes(noteRecords);
+        }
       } catch (err) {
         console.error(err);
       }
     };
 
     fetchSessionAttendance();
-  }, [selectedSessionId, classDetail, sessions]);
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedSessionId, classDetail]);
 
   // 4. Tải dữ liệu Ma trận điểm danh khi chuyển sang tab matrix_view
   useEffect(() => {
@@ -203,22 +219,20 @@ export default function TeacherAttendancePage() {
     const danhSach = Object.entries(attendanceRecords).map(([studentId, trangThai]) => ({
       hocVienId: +studentId,
       trangThai,
-      ghiChu: notes[+studentId] || undefined,
+      ghiChu: (notes[+studentId] ?? '').trim(),
     }));
 
     try {
       await attendancesService.submitAttendance(selectedSessionId, danhSach);
       setMessage('Lưu kết quả điểm danh thành công!');
 
-      // Cập nhật lại danh sách sessions cục bộ
-      const classSessions = await attendancesService.getClassSessions(selectedClassId!);
-      setSessions(classSessions);
-
-      // Nếu đang mở ma trận thì cập nhật luôn
-      if (activeTab === 'matrix_view') {
-        const data = await attendancesService.getClassAttendanceMatrix(selectedClassId!);
-        setMatrixData(data);
-      }
+      // Cập nhật lại danh sách sessions và ma trận dữ liệu toàn khóa
+      const [classSessions, matrix] = await Promise.all([
+        attendancesService.getClassSessions(selectedClassId!),
+        attendancesService.getClassAttendanceMatrix(selectedClassId!),
+      ]);
+      setSessions(classSessions || []);
+      setMatrixData(matrix);
 
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {

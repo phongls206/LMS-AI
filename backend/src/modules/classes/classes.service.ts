@@ -725,12 +725,24 @@ export class ClassesService {
         });
       }
 
-      return tx.phanCongGiaoVien.create({
-        data: {
+      return tx.phanCongGiaoVien.upsert({
+        where: {
+          lopHocId_giaoVienId: {
+            lopHocId: BigInt(classId),
+            giaoVienId: BigInt(dto.giaoVienId),
+          },
+        },
+        update: {
+          vaiTroPhanCong: role,
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+          thoiGianPhanCong: new Date(),
+        },
+        create: {
           lopHocId: BigInt(classId),
           giaoVienId: BigInt(dto.giaoVienId),
           vaiTroPhanCong: role,
-          trangThai: 'DANG_PHU_TRACH',
+          trangThai: TrangThaiPhanCong.DANG_PHU_TRACH,
+          thoiGianPhanCong: new Date(),
         },
         include: {
           giaoVien: { select: { id: true, maGiaoVien: true, hoTen: true } },

@@ -70,6 +70,7 @@ export class AttendancesService {
     const sessions = await this.prisma.buoiHoc.findMany({
       where: { lopHocId: BigInt(classId) },
       include: {
+        diemDanh: true,
         _count: { select: { diemDanh: true } },
       },
       orderBy: { soThuTu: 'asc' },
@@ -167,8 +168,12 @@ export class AttendancesService {
     // Transaction cập nhật tất cả bản ghi điểm danh song song
     await this.prisma.$transaction(
       async (tx) => {
-        const promises = dto.danhSach.map((item) =>
-          tx.banGhiDiemDanh.upsert({
+        const promises = dto.danhSach.map((item) => {
+          const cleanNote = item.ghiChu !== undefined && item.ghiChu !== null && String(item.ghiChu).trim() !== ''
+            ? String(item.ghiChu).trim()
+            : null;
+
+          return tx.banGhiDiemDanh.upsert({
             where: {
               buoiHocId_hocVienId: {
                 buoiHocId: BigInt(sessionId),
@@ -177,7 +182,7 @@ export class AttendancesService {
             },
             update: {
               trangThai: item.trangThai,
-              ghiChu: item.ghiChu || null,
+              ghiChu: cleanNote,
               giaoVienDiemDanhId: recordTeacherId,
               thoiGianDiemDanh: new Date(),
             },
@@ -185,11 +190,12 @@ export class AttendancesService {
               buoiHocId: BigInt(sessionId),
               hocVienId: BigInt(item.hocVienId),
               trangThai: item.trangThai,
-              ghiChu: item.ghiChu || null,
+              ghiChu: cleanNote,
               giaoVienDiemDanhId: recordTeacherId,
+              thoiGianDiemDanh: new Date(),
             },
-          }),
-        );
+          });
+        });
 
         await Promise.all(promises);
 
