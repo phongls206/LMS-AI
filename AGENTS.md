@@ -52,7 +52,6 @@ Khi thực thi các tác vụ chuyên môn, Agent bắt buộc phải tuân th�
 | Soạn thảo tài liệu            | `documentation`         |
 | Thiết kế & vẽ sơ đồ (UML/ERD) | `diagram-design`        |
 | Thiết kế giao diện UI/UX      | `figma-design`          |
-| Thiết kế Mockup & Prototype   | `ui-mockup-designer`    |
 | Định hướng Visual & UI cao cấp| `frontend-design`       |
 | Tối ưu Mobile Responsive      | `mobile-responsive`     |
 
