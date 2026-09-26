@@ -372,30 +372,21 @@ export default function TeacherAiExercisesPage() {
       <div className="space-y-6">
         {/* Form Cấu Hình Sinh Đề */}
         <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111827] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 dark:border-[#1e2d45] pb-3">
+          {/* Header & Nguồn đề ngang hàng với Lịch sử */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-slate-100 dark:border-[#1e2d45] pb-3">
             <div className="flex items-center space-x-2">
               <BrainCircuit className="w-4 h-4 text-teal-600" />
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wide">
                 Biên Soạn Bộ Đề Bài Tập AI
               </span>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowHistoryModal(true)}
-              className="px-3.5 py-1.5 min-h-[40px] rounded-xl bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer self-start sm:self-auto shadow-2xs"
-            >
-              <History className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-              <span>Lịch Sử Đề Đã Tạo</span>
-            </button>
-          </div>
 
-          <form onSubmit={handleGenerate} className="space-y-4 text-xs">
-            {/* Chọn nguồn tạo đề */}
-            <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-[#131d2e] border border-slate-200/90 dark:border-[#202e45] space-y-2">
-              <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px]">
-                Nguồn Tạo Đề Bài Tập:
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex flex-wrap items-center gap-2.5">
+              {/* Chọn nguồn đề bài tập ngang hàng */}
+              <div className="inline-flex items-center p-1 bg-slate-100 dark:bg-[#162032] border border-slate-200/80 dark:border-[#22324e] rounded-xl text-xs">
+                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 px-2 hidden sm:inline">
+                  Nguồn đề:
+                </span>
                 <button
                   type="button"
                   onClick={() => {
@@ -403,27 +394,15 @@ export default function TeacherAiExercisesPage() {
                     setBankNotFoundMsg(null);
                   }}
                   disabled={isExamInProgress}
-                  className={`p-3 rounded-xl border text-left transition flex items-start space-x-3 cursor-pointer ${
+                  title="Sinh đề mới ngẫu nhiên từ Gemini AI, hỗ trợ mọi chủ đề"
+                  className={`px-3 py-1.5 rounded-lg font-bold text-xs transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
                     nguonDe === 'AI'
-                      ? 'border-teal-500 bg-teal-50/80 dark:bg-teal-950/40 text-teal-950 dark:text-teal-200 ring-1 ring-teal-500/30'
-                      : 'border-slate-200 dark:border-[#22324e] bg-white dark:bg-[#162032] text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
-                  } disabled:opacity-60 disabled:cursor-not-allowed`}
+                      ? 'bg-teal-600 text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
                 >
-                  <div
-                    className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      nguonDe === 'AI' ? 'border-teal-600 bg-teal-600' : 'border-slate-300 dark:border-slate-600'
-                    }`}
-                  >
-                    {nguonDe === 'AI' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                  </div>
-                  <div>
-                    <div className="font-bold text-xs sm:text-sm">Trí Tuệ Nhân Tạo (AI)</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                      Sinh đề mới ngẫu nhiên từ Gemini, hỗ trợ mọi chủ đề và câu hỏi mới mẻ
-                    </div>
-                  </div>
+                  Trí Tuệ Nhân Tạo (AI)
                 </button>
-
                 <button
                   type="button"
                   onClick={() => {
@@ -431,28 +410,30 @@ export default function TeacherAiExercisesPage() {
                     setBankNotFoundMsg(null);
                   }}
                   disabled={isExamInProgress}
-                  className={`p-3 rounded-xl border text-left transition flex items-start space-x-3 cursor-pointer ${
+                  title="Bài tập chuẩn theo giáo trình 15 chủ đề do trung tâm biên soạn"
+                  className={`px-3 py-1.5 rounded-lg font-bold text-xs transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
                     nguonDe === 'KHO_MAU'
-                      ? 'border-teal-500 bg-teal-50/80 dark:bg-teal-950/40 text-teal-950 dark:text-teal-200 ring-1 ring-teal-500/30'
-                      : 'border-slate-200 dark:border-[#22324e] bg-white dark:bg-[#162032] text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
-                  } disabled:opacity-60 disabled:cursor-not-allowed`}
+                      ? 'bg-teal-600 text-white shadow-xs'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
                 >
-                  <div
-                    className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
-                      nguonDe === 'KHO_MAU' ? 'border-teal-600 bg-teal-600' : 'border-slate-300 dark:border-slate-600'
-                    }`}
-                  >
-                    {nguonDe === 'KHO_MAU' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
-                  </div>
-                  <div>
-                    <div className="font-bold text-xs sm:text-sm">Kho Đề Mẫu Giáo Trình</div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
-                      Bài tập chuẩn theo giáo trình 15 chủ đề do trung tâm ETC biên soạn
-                    </div>
-                  </div>
+                  Kho Đề Mẫu Giáo Trình
                 </button>
               </div>
+
+              {/* Lịch sử đề đã tạo */}
+              <button
+                type="button"
+                onClick={() => setShowHistoryModal(true)}
+                className="px-3.5 py-1.5 min-h-[36px] sm:min-h-0 rounded-xl bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer shadow-2xs"
+              >
+                <History className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <span>Lịch Sử Đề Đã Tạo</span>
+              </button>
             </div>
+          </div>
+
+          <form onSubmit={handleGenerate} className="space-y-4 text-xs">
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
               <div className="md:col-span-4">
