@@ -379,7 +379,7 @@ export default function StudentAiPracticePage() {
                 <div className="relative group">
                   <select
                     value={nguonDe}
-                    disabled={isExamInProgress}
+                    disabled={isExamInProgress || loading}
                     onChange={(e) => {
                       setNguonDe(e.target.value as 'AI' | 'KHO_MAU');
                       setBankNotFoundMsg(null);
@@ -411,7 +411,6 @@ export default function StudentAiPracticePage() {
           </div>
 
           <form onSubmit={handleGenerate} className="space-y-4 text-xs">
-
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
               {/* Chủ đề */}
               <div className="md:col-span-4">
@@ -421,7 +420,7 @@ export default function StudentAiPracticePage() {
                 </label>
                 <select
                   value={selectedTopic}
-                  disabled={isExamInProgress}
+                  disabled={isExamInProgress || loading}
                   onChange={(e) => setSelectedTopic(e.target.value)}
                   className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 hover:shadow-xs cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
@@ -440,7 +439,7 @@ export default function StudentAiPracticePage() {
                 </label>
                 <select
                   value={cefr}
-                  disabled={isExamInProgress}
+                  disabled={isExamInProgress || loading}
                   onChange={(e) => setCefr(e.target.value)}
                   className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl px-3 py-2.5 text-slate-900 dark:text-slate-100 font-bold focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 hover:shadow-xs cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
@@ -460,7 +459,7 @@ export default function StudentAiPracticePage() {
                 </label>
                 <select
                   value={loaiCauHoi}
-                  disabled={isExamInProgress}
+                  disabled={isExamInProgress || loading}
                   onChange={(e) => setLoaiCauHoi(e.target.value)}
                   className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl px-3 py-2.5 text-teal-800 dark:text-teal-300 font-bold focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 hover:shadow-xs cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
@@ -479,7 +478,7 @@ export default function StudentAiPracticePage() {
                 <div className="flex items-center space-x-2 w-full">
                   <select
                     value={soLuong}
-                    disabled={isExamInProgress}
+                    disabled={isExamInProgress || loading}
                     onChange={(e) => setSoLuong(+e.target.value)}
                     className="w-24 shrink-0 bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl px-2.5 py-2.5 text-teal-800 dark:text-teal-300 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 hover:shadow-xs font-bold cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
@@ -499,7 +498,7 @@ export default function StudentAiPracticePage() {
                         ? 'bg-amber-100/90 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-700/80 text-amber-900 dark:text-amber-200 cursor-not-allowed shadow-none'
                         : isExamInProgress
                           ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed opacity-75 shadow-none'
-                          : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-lg hover:shadow-teal-600/25 active:scale-[0.98] text-white shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                          : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:from-cyan-500 hover:shadow-lg hover:shadow-teal-600/25 active:scale-[0.98] text-white shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                       }`}
                   >
                     {loading ? (
@@ -537,11 +536,12 @@ export default function StudentAiPracticePage() {
                 <input
                   type="text"
                   required
+                  disabled={isExamInProgress || loading}
                   maxLength={100}
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
                   placeholder="VD: Công nghệ thông tin (IT), Du lịch khách sạn, Điện ảnh giải trí, Inversion..."
-                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-400 dark:hover:border-teal-500 rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-xs transition-all duration-200 shadow-2xs hover:shadow-xs"
+                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-400 dark:hover:border-teal-500 rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-xs transition-all duration-200 shadow-2xs hover:shadow-xs disabled:opacity-60 disabled:cursor-not-allowed"
                 />
               </div>
             )}
@@ -589,11 +589,6 @@ export default function StudentAiPracticePage() {
                 <span className="text-xs text-teal-900 dark:text-teal-200 font-bold">
                   Bài tập: <strong>{result.data.chuDe}</strong> — Trình độ: <strong>CEFR {result.data.trinhDo}</strong> ({result.data.cauHoi.length} câu)
                 </span>
-                {result.data.boDe && (
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800">
-
-                  </span>
-                )}
               </div>
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
                 <span

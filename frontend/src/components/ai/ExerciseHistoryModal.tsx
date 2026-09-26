@@ -242,7 +242,8 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
                             }`}
                         >
                           {item.mode === 'CURRICULUM_BANK' || item.nguonDe === 'KHO_MAU'
-                            ? `📚 Ngân Hàng Đề Mẫu
+                            ? '📚 Ngân Hàng Đề Mẫu'
+                            : item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
                             ? '✨ Trí Tuệ Nhân Tạo'
                             : item.mode === 'AI_COMMUNITY_CACHE'
                             ? '⚡ Đề Tương Thích (Kho AI)'
