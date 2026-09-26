@@ -153,7 +153,7 @@ export default function AdminDashboardPage() {
               title="Cập nhật lại số liệu thống kê mới nhất (không cần tải lại trang)"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${refreshing ? 'animate-spin text-teal-600 dark:text-teal-400' : ''}`} />
-              <span>{refreshing ? 'Đang tải...' : 'Làm mới số liệu'}</span>
+              <span>{refreshing ? 'Đang tải...' : 'Làm mới'}</span>
             </button>
           </div>
 
