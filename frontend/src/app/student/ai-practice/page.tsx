@@ -171,7 +171,6 @@ export default function StudentAiPracticePage() {
         soLuong,
         loaiCauHoi,
         nguonDe,
-        boDe > 0 ? boDe : undefined,
       );
       setResult(res);
       saveToSession(res, {}, false);
@@ -398,32 +397,6 @@ export default function StudentAiPracticePage() {
                   <ChevronDown className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 group-hover:translate-y-[-40%]" />
                 </div>
               </div>
-
-              {/* Lựa chọn Bộ đề (1-10) khi chọn Ngân hàng đề mẫu */}
-              {nguonDe === 'KHO_MAU' && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">
-                    Bộ đề:
-                  </span>
-                  <div className="relative group">
-                    <select
-                      value={boDe}
-                      disabled={isExamInProgress}
-                      onChange={(e) => setBoDe(Number(e.target.value))}
-                      title="Chọn 1 trong 10 bộ đề chuẩn được biên soạn cho chủ đề này"
-                      className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed appearance-none shadow-2xs hover:shadow-xs"
-                    >
-                      <option value={0}>Tự Động (1 - 10)</option>
-                      {[...Array(10)].map((_, i) => (
-                        <option key={i + 1} value={i + 1}>
-                          Bộ Đề #{i + 1}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 group-hover:translate-y-[-40%]" />
-                  </div>
-                </div>
-              )}
 
               {/* Lịch sử đề đã tạo */}
               <button

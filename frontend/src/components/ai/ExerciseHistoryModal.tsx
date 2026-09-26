@@ -129,7 +129,7 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
             </div>
             <div>
               <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                <span>Lịch Sử Đề Bài Tập Đã Tạo (AI)</span>
+                <span>Lịch Sử Đề Bài Tập Đã Tạo</span>
                 <span className="text-[11px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-300">
                   {filteredHistory.length} đề
                 </span>
@@ -234,14 +234,18 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
                         </span>
                         <span
                           className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${
-                            item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
+                            item.mode === 'CURRICULUM_BANK' || item.nguonDe === 'KHO_MAU'
+                              ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800'
+                              : item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
                               ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
                               : item.mode === 'AI_COMMUNITY_CACHE'
                               ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800'
                               : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
                           }`}
                         >
-                          {item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
+                          {item.mode === 'CURRICULUM_BANK' || item.nguonDe === 'KHO_MAU'
+                            ? `📚 Ngân Hàng Đề Mẫu${item.boDe || item.data?.boDe ? ` (Đề #${item.boDe || item.data?.boDe})` : ''}`
+                            : item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
                             ? '✨ Trí Tuệ Nhân Tạo'
                             : item.mode === 'AI_COMMUNITY_CACHE'
                             ? '⚡ Đề Tương Thích (Kho AI)'

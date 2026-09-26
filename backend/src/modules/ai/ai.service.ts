@@ -619,12 +619,18 @@ Trả về định dạng JSON:
         );
       }
 
+      const enrichedBankResult = {
+        ...bankResult,
+        nguonDe: 'KHO_MAU',
+        mode: 'CURRICULUM_BANK',
+      };
+
       await this.logAiRequest(
         userId,
         LoaiChucNangAI.SINH_BAI_TAP,
         `[KHO_MAU] Chủ đề: ${dto.chuDe} (${matchedBankKey}) - CEFR: ${dto.trinhDo} - Bộ đề #${bankResult.boDe || 1}`,
         null,
-        bankResult,
+        enrichedBankResult,
         TrangThaiYeuCauAI.THANH_CONG,
         Date.now() - startTime,
       );
@@ -632,7 +638,7 @@ Trả về định dạng JSON:
       return this.serializeBigInt({
         success: true,
         mode: 'CURRICULUM_BANK',
-        data: bankResult,
+        data: enrichedBankResult,
       });
     }
 
@@ -913,6 +919,7 @@ RÀNG BUỘC NGHIÊM NGẶT:
         thoiGianGoi: true,
         thoiGianXuLyMs: true,
         trangThai: true,
+        promptInput: true,
         validatedOutputJson: true,
       },
     });
@@ -922,15 +929,31 @@ RÀNG BUỘC NGHIÊM NGẶT:
       .map((r) => {
         const json: any = r.validatedOutputJson;
         const cauHoi = Array.isArray(json?.cauHoi) ? json.cauHoi : [];
+        const isCurriculumBank =
+          json?.nguonDe === 'KHO_MAU' ||
+          json?.mode === 'CURRICULUM_BANK' ||
+          (typeof r.promptInput === 'string' && r.promptInput.startsWith('[KHO_MAU]')) ||
+          Boolean(json?.tenBoDe);
+
+        const mode = isCurriculumBank
+          ? 'CURRICULUM_BANK'
+          : r.trangThai === TrangThaiYeuCauAI.THANH_CONG
+          ? 'AI_GEMINI'
+          : 'TEMPLATE_FALLBACK';
+
+        const nguonDe = isCurriculumBank ? 'KHO_MAU' : 'AI';
+
         return {
           id: Number(r.id),
           thoiGianGoi: r.thoiGianGoi,
           thoiGianXuLyMs: r.thoiGianXuLyMs,
           trangThai: r.trangThai,
-          mode: r.trangThai === TrangThaiYeuCauAI.THANH_CONG ? 'AI_GEMINI' : 'TEMPLATE_FALLBACK',
+          mode,
+          nguonDe,
           chuDe: json.chuDe || 'Bài luyện tập tiếng Anh',
           trinhDo: json.trinhDo || 'B1',
           soCau: cauHoi.length,
+          boDe: json.boDe,
           data: json,
         };
       });
