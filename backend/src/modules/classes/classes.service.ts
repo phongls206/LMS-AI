@@ -19,6 +19,7 @@ import {
   TrangThaiPhanCong,
   TrangThaiDangKy,
   TrangThaiHoaDon,
+  TrangThaiGiaoVien,
 } from '@prisma/client';
 
 @Injectable()
@@ -674,8 +675,9 @@ export class ClassesService {
       where: { id: BigInt(dto.giaoVienId) },
     });
     if (!teacher) throw new NotFoundException('Giáo viên không tồn tại.');
-    if (teacher.trangThai === 'DA_NGHI_VIEC') {
-      throw new BadRequestException('Không thể phân công giáo viên đã nghỉ việc.');
+    if (teacher.trangThai !== TrangThaiGiaoVien.DANG_LAM_VIEC) {
+      const reason = teacher.trangThai === TrangThaiGiaoVien.TAM_NGHI ? 'đang tạm nghỉ' : 'đã nghỉ việc';
+      throw new BadRequestException(`Không thể phân công giáo viên ${reason}.`);
     }
 
     // Kiểm tra lịch học của lớp này có bị trùng với các lớp khác giáo viên đang dạy không

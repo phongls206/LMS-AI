@@ -285,6 +285,24 @@ export default function AdminClassesPage() {
     }
   };
 
+  const handleOpenAssignTeacher = (classId: number) => {
+    setShowAssignTeacher(classId);
+    const targetCls = classes.find((c) => Number(c.id) === Number(classId));
+    const currentTeacherId = targetCls?.phanCong?.[0]?.giaoVien?.id;
+    const activeTeacher = teachers.find((t) => t.trangThai === 'DANG_LAM_VIEC');
+    const defaultTeacherId = currentTeacherId
+      ? Number(currentTeacherId)
+      : activeTeacher
+      ? Number(activeTeacher.id)
+      : teachers[0]?.id
+      ? Number(teachers[0].id)
+      : 1;
+
+    setAssignForm({
+      giaoVienId: defaultTeacherId,
+    });
+  };
+
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async (isManual = false) => {
@@ -436,6 +454,11 @@ export default function AdminClassesPage() {
   const handleAssignTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!showAssignTeacher) return;
+    const selectedTeacher = teachers.find((t) => Number(t.id) === Number(assignForm.giaoVienId));
+    if (selectedTeacher && selectedTeacher.trangThai !== 'DANG_LAM_VIEC') {
+      setMessage({ type: 'error', text: 'Không thể phân công giáo viên đang tạm nghỉ hoặc đã nghỉ việc.' });
+      return;
+    }
     try {
       await classesService.assignTeacher(showAssignTeacher, assignForm);
       setMessage({ type: 'success', text: 'Phân công giáo viên thành công (Đã qua kiểm tra chống trùng giờ dạy)!' });
@@ -983,7 +1006,7 @@ export default function AdminClassesPage() {
                                 {/* 3. Gán giáo viên */}
                                 <div className="relative group/tip">
                                   <button
-                                    onClick={() => setShowAssignTeacher(c.id)}
+                                    onClick={() => handleOpenAssignTeacher(c.id)}
                                     className="w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 hover:border-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800 flex items-center justify-center transition shadow-xs cursor-pointer"
                                     title="Phân công giáo viên phụ trách"
                                     aria-label="Phân công giáo viên phụ trách"
@@ -1209,7 +1232,7 @@ export default function AdminClassesPage() {
 
                         <button
                           type="button"
-                          onClick={() => setShowAssignTeacher(c.id)}
+                          onClick={() => handleOpenAssignTeacher(c.id)}
                           className="h-11 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800 flex flex-col items-center justify-center transition cursor-pointer shadow-xs"
                         >
                           <UserPlus className="w-3.5 h-3.5" />
@@ -1934,6 +1957,8 @@ export default function AdminClassesPage() {
               {(() => {
                 const targetClass = classes.find((c) => c.id === showAssignTeacher);
                 const currentTeacher = targetClass?.phanCong?.[0]?.giaoVien;
+                const selectedTeacher = teachers.find((t) => Number(t.id) === Number(assignForm.giaoVienId));
+                const isSelectedTeacherValid = selectedTeacher ? selectedTeacher.trangThai === 'DANG_LAM_VIEC' : false;
 
                 return (
                   <form onSubmit={handleAssignTeacher} className="space-y-3.5 text-xs">
@@ -1962,20 +1987,28 @@ export default function AdminClassesPage() {
                         className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2.5 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-teal-500 text-xs sm:text-sm"
                       >
                         {teachers.map((t) => {
+                          const isAvailable = t.trangThai === 'DANG_LAM_VIEC';
                           const activeClasses = t.phanCong?.length || 0;
                           const workloadText = activeClasses > 0 ? `Đang dạy ${activeClasses} lớp` : 'Chưa có lớp';
-                          const statusText =
-                            t.trangThai === 'DANG_LAM_VIEC'
-                              ? `🟢 ${workloadText}`
-                              : '🟡 Tạm nghỉ';
+                          const statusText = isAvailable
+                            ? `🟢 ${workloadText}`
+                            : t.trangThai === 'TAM_NGHI'
+                            ? '🟡 Tạm nghỉ (Không thể gán)'
+                            : '🔴 Đã nghỉ việc (Không thể gán)';
                           return (
-                            <option key={t.id} value={t.id}>
+                            <option key={t.id} value={t.id} disabled={!isAvailable}>
                               [{t.maGiaoVien}] {t.hoTen} — {t.chuyenMon} ({statusText})
                             </option>
                           );
                         })}
                       </select>
                     </div>
+
+                    {!isSelectedTeacherValid && selectedTeacher && (
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-medium">
+                        ⚠️ Giáo viên đã chọn đang ở trạng thái {selectedTeacher.trangThai === 'TAM_NGHI' ? 'Tạm nghỉ' : 'Đã nghỉ việc'}. Chỉ có thể phân công giáo viên đang làm việc.
+                      </div>
+                    )}
 
                     <div className="p-3 rounded-xl bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300 space-y-1 text-[11px] leading-relaxed">
                       <p className="text-teal-900 dark:text-teal-200 font-bold">ℹ️ Quy chế phân công &amp; Chống trùng lịch:</p>
@@ -1994,7 +2027,8 @@ export default function AdminClassesPage() {
                       </button>
                       <button
                         type="submit"
-                        className="w-full sm:w-auto h-10 min-h-[40px] px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition shadow-sm cursor-pointer flex items-center justify-center"
+                        disabled={!isSelectedTeacherValid}
+                        className="w-full sm:w-auto h-10 min-h-[40px] px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold transition shadow-sm cursor-pointer flex items-center justify-center"
                       >
                         Xác Nhận Phân Công
                       </button>
