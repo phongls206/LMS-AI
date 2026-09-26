@@ -5,12 +5,15 @@ description: Quy chuẩn và quy trình phân tích yêu cầu nghiệp vụ, đ
 
 # Requirements Analysis Skill (Phân Tích & Đặc Tả Yêu Cầu Nghiệp Vụ)
 
-## 1. Mục Đích & Phạm Vi
-Skill này quy định phương pháp phân tích yêu cầu phần mềm theo tiêu chuẩn SRS (Software Requirements Specification), đặc tả chi tiết 14 Use Case, phân định quyền hạn 4 tác nhân, thiết lập các quy tắc nghiệp vụ (Business Rules) và duy trì Ma trận truy vết yêu cầu (RTM) cho hệ thống **ETC English Center**.
+## 1. Mục Đích & Phương Pháp Luận
+Skill này quy định phương pháp để AI đóng vai trò **Lead Requirements Engineer** chuyển hóa kết quả khảo sát từ `context-builder` thành tài liệu đặc tả yêu cầu phần mềm theo tiêu chuẩn SRS (IEEE 830). AI tự động:
+1. **Khái quát hóa Use Case:** Ánh xạ từ 5 nhóm khảo sát và 5 điểm nghẽn thành **14 Use Cases** bao phủ 4 tác nhân.
+2. **Khai phá Quy tắc nghiệp vụ (Rule Mining):** Trích xuất các ràng buộc logic thực tế (sĩ số $\le 25$, chuyên cần $\ge 80\%$, trùng lịch) thành các quy tắc toán học chặt chẽ (`BR-01` đến `BR-05`).
+3. **Thiết lập Ground Truth & RTM:** Đóng băng danh mục FR/NFR/UC/BR làm cơ sở neo giữ (Grounding) cho các Sub-Agent kỹ thuật phía sau, đảm bảo tính truy vết hai chiều (Requirements Traceability Matrix).
 
 ---
 
-## 2. Quy Chuẩn Phân Loại Yêu Cầu
+## 2. Danh Mục Yêu Cầu Đã Chuẩn Hóa (Grounding Baseline)
 
 ### 2.1 Yêu Cầu Chức Năng (Functional Requirements - FR)
 Agent phải đảm bảo mọi chức năng thuộc đúng mã định danh đã chốt:
@@ -63,7 +66,7 @@ $$\text{Requirement (FR/NFR)} \longleftrightarrow \text{Use Case (UC)} \longleft
 
 ## 6. Quy Trình Phân Tích Yêu Cầu
 ```text
-1. Tiếp nhận Đề bài / Yêu cầu nghiệp vụ mới
+1. Tiếp nhận Đề bài (de_tai_42.md) & Đối soát Baseline (EnglishCenterTOP.docx)
    ↓
 2. Xác định Actor & Phạm vi ảnh hưởng
    ↓
