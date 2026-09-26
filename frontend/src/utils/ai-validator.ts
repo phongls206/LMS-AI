@@ -93,7 +93,17 @@ export function validateAiPrompt(
     };
   }
 
-  // 8. Chặn từ quá dài không dấu cách hoặc chứa cụm phụ âm bất thường
+  // 8. Chặn các tổ hợp phụ âm / ký tự bất thường không tồn tại trong từ điển tiếng Anh hoặc tiếng Việt
+  // (ví dụ: pfk, dsf, jw, q không đi kèm u, fk, qj, vj, zj, xj, bcf, gjk...)
+  const ABNORMAL_LETTER_CLUSTERS = /(?:[bcdfghjklmnpqrstvwxyz]{4,}|fk|jw|q[^u]|dsf|pfk|bcf|gjk|mkl|qj|vj|zj|xj|hjkl|jkl;|zxcv|xcvb|cvbn|vbnm|qwerty|werty|asdfg|sdfgh)/i;
+  if (ABNORMAL_LETTER_CLUSTERS.test(text)) {
+    return {
+      isValid: false,
+      errorMessage: `Phát hiện từ hoặc chuỗi ký tự bất thường không có nghĩa. Vui lòng nhập chủ đề tiếng Anh thực tế (ví dụ: Tenses, Mệnh đề quan hệ, Từ vựng du lịch...).`,
+    };
+  }
+
+  // 9. Chặn từ quá dài không dấu cách hoặc chứa cụm phụ âm/cấu trúc bất thường
   const words = text.split(/\s+/);
   for (const word of words) {
     const cleanWord = word.replace(/[^a-zA-ZÀ-ỹ]/g, '').toLowerCase();
@@ -106,16 +116,32 @@ export function validateAiPrompt(
       };
     }
 
-    // Cụm phụ âm liên tiếp >= 5 phụ âm (gõ phím loạn)
-    if (/[bcdfghjklmnpqrstvwxyz]{5,}/i.test(cleanWord)) {
-      return {
-        isValid: false,
-        errorMessage: `Phát hiện từ chứa chuỗi phụ âm bất thường: "${word}". Vui lòng nhập từ ngữ học tập hợp lệ.`,
-      };
+    // Nếu chỉ có 1 từ đơn không dấu cách và dài >= 10 ký tự:
+    // Kiểm tra xem có đuôi từ vựng / ngữ pháp tiếng Anh hợp lệ hoặc tiếng Việt có dấu không
+    if (words.length === 1 && cleanWord.length >= 10 && !word.includes('-')) {
+      const isVietnamese = /[àảãáạăằẳẵắặâầẩẫấậèẻẽéẹêềểễếệìỉĩíịòỏõóọôồổỗốộơờởỡớợùủũúụưừửữứựỳỷỹýỵđ]/.test(cleanWord);
+      const hasValidEnglishSuffix = /(?:tion|sion|ment|ness|able|ible|ships|ship|less|hood|wise|tives|tive|ance|ence|tures|ture|ologies|ology|logy|ated|ting|icals|ical|ally|ular|ities|ity|isms|ism|ists|ist|als|al|ings|ing|ed|ies)$/i.test(cleanWord);
+      if (!isVietnamese && !hasValidEnglishSuffix) {
+        return {
+          isValid: false,
+          errorMessage: `Phát hiện từ không rõ nghĩa hoặc gõ phím ngẫu nhiên: "${word}". Vui lòng nhập chủ đề học tiếng Anh cụ thể (ví dụ: Thì hiện tại hoàn thành, Mệnh đề quan hệ, Từ vựng giao tiếp...).`,
+        };
+      }
     }
 
-    // Từ dài >= 6 ký tự nhưng không có nguyên âm nào
-    if (cleanWord.length >= 6) {
+    // Cụm phụ âm liên tiếp >= 4 phụ âm (trừ các cụm chuẩn như str, spl, scr, spr, ngth)
+    if (/[bcdfghjklmnpqrstvwxyz]{4,}/i.test(cleanWord)) {
+      const allowedClusters = /(?:str|spl|scr|spr|ngth)/i;
+      if (!allowedClusters.test(cleanWord)) {
+        return {
+          isValid: false,
+          errorMessage: `Phát hiện từ chứa chuỗi phụ âm bất thường: "${word}". Vui lòng nhập từ ngữ học tập hợp lệ.`,
+        };
+      }
+    }
+
+    // Từ dài >= 5 ký tự nhưng không có nguyên âm nào
+    if (cleanWord.length >= 5) {
       const hasVowels = /[aeiouyáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ]/.test(cleanWord);
       if (!hasVowels) {
         return {

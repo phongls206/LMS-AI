@@ -41,25 +41,6 @@ const PREDEFINED_TOPICS = [
   'CUSTOM',
 ];
 
-const TOPIC_ICONS: Record<string, string> = {
-  'Thì Hiện Tại Hoàn Thành (Present Perfect Tense)': '⏳',
-  'Câu Điều Kiện Loại 1, 2, 3 (Conditional Sentences)': '🔀',
-  'Mệnh Đề Quan Hệ (Relative Clauses)': '🔗',
-  'Câu Bị Động Nâng Cao (Passive Voice)': '🔄',
-  'Cụm Động Từ Thông Dụng (Common Phrasal Verbs)': '🎯',
-  'Từ Vựng Tiếng Anh Công Sở & Giao Tiếp (Business English)': '💼',
-  'Tiếng Anh Chuyên Ngành Công Nghệ Thông Tin (IT & Tech)': '💻',
-  'Từ Vựng Du Lịch, Khách Sạn & Khám Phá (Travel & Tourism)': '✈️',
-  'Điện Ảnh, Âm Nhạc & Giải Trí (Entertainment & Media)': '🎬',
-  'Giới Từ Chỉ Thời Gian & Nơi Chốn (Prepositions)': '📍',
-  'Động Từ Khuyết Thiếu (Modal Verbs)': '🗝️',
-  'Sự Hòa Hợp Chủ Vị (Subject-Verb Agreement)': '⚖️',
-  'Câu Tường Thuật Gián Tiếp (Reported Speech)': '💬',
-  'So Sánh Hơn & So Sánh Nhất (Comparatives & Superlatives)': '📈',
-  'Từ Vựng IELTS Chủ Đề Môi Trường & Xã Hội': '🌿',
-  'CUSTOM': '✍️',
-};
-
 const QUICK_SUGGESTIONS = [
   'Công nghệ thông tin (IT)',
   'Du lịch & Khám phá (Travel)',
@@ -78,6 +59,8 @@ export default function TeacherAiExercisesPage() {
   const [cefr, setCefr] = useState('B1');
   const [soLuong, setSoLuong] = useState(5);
   const [loaiCauHoi, setLoaiCauHoi] = useState('MIXED');
+  const [nguonDe, setNguonDe] = useState<'AI' | 'KHO_MAU'>('AI');
+  const [bankNotFoundMsg, setBankNotFoundMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
 
@@ -101,6 +84,7 @@ export default function TeacherAiExercisesPage() {
     if (item.chuDe) setSelectedTopic(item.chuDe);
     if (item.trinhDo) setCefr(item.trinhDo);
     if (item.soCau) setSoLuong(item.soCau);
+    if (item.nguonDe) setNguonDe(item.nguonDe);
     saveToSession(loadedResult, {}, false, teacherViewKey);
     setTimeout(() => {
       window.scrollTo({ top: 350, behavior: 'smooth' });
@@ -133,6 +117,7 @@ export default function TeacherAiExercisesPage() {
         if (parsed.cefr) setCefr(parsed.cefr);
         if (parsed.soLuong) setSoLuong(parsed.soLuong);
         if (parsed.loaiCauHoi) setLoaiCauHoi(parsed.loaiCauHoi);
+        if (parsed.nguonDe) setNguonDe(parsed.nguonDe);
       }
     } catch (e) {
       console.error('Lỗi đọc phiên bài tập:', e);
@@ -158,6 +143,7 @@ export default function TeacherAiExercisesPage() {
           cefr,
           soLuong,
           loaiCauHoi,
+          nguonDe,
         }),
       );
     } catch (e) {}
@@ -168,12 +154,14 @@ export default function TeacherAiExercisesPage() {
     setResult(null);
     setUserAnswers({});
     setSubmitted(false);
+    setBankNotFoundMsg(null);
   };
 
   const activeTopic = selectedTopic === 'CUSTOM' ? customTopic.trim() : selectedTopic;
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
+    setBankNotFoundMsg(null);
 
     // Kiểm tra chủ đề rác / vô nghĩa ngay tại Frontend
     if (selectedTopic === 'CUSTOM') {
@@ -194,11 +182,16 @@ export default function TeacherAiExercisesPage() {
     sessionStorage.removeItem('etc_ai_teacher_exercises');
 
     try {
-      const res = await aiService.generateExercises(activeTopic, cefr, soLuong, loaiCauHoi);
+      const res = await aiService.generateExercises(activeTopic, cefr, soLuong, loaiCauHoi, nguonDe);
       setResult(res);
       saveToSession(res, {}, false, teacherViewKey);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi sinh bài tập.');
+      const msg = err.response?.data?.message || 'Có lỗi khi tạo bài tập.';
+      if (err.response?.status === 404 && nguonDe === 'KHO_MAU') {
+        setBankNotFoundMsg(msg);
+      } else {
+        alert(msg);
+      }
     } finally {
       setLoading(false);
       setCooldown(5); // 5s cooldown chống spam
@@ -397,6 +390,70 @@ export default function TeacherAiExercisesPage() {
           </div>
 
           <form onSubmit={handleGenerate} className="space-y-4 text-xs">
+            {/* Chọn nguồn tạo đề */}
+            <div className="p-3 sm:p-3.5 rounded-xl bg-slate-50 dark:bg-[#131d2e] border border-slate-200/90 dark:border-[#202e45] space-y-2">
+              <label className="block font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px]">
+                Nguồn Tạo Đề Bài Tập:
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNguonDe('AI');
+                    setBankNotFoundMsg(null);
+                  }}
+                  disabled={isExamInProgress}
+                  className={`p-3 rounded-xl border text-left transition flex items-start space-x-3 cursor-pointer ${
+                    nguonDe === 'AI'
+                      ? 'border-teal-500 bg-teal-50/80 dark:bg-teal-950/40 text-teal-950 dark:text-teal-200 ring-1 ring-teal-500/30'
+                      : 'border-slate-200 dark:border-[#22324e] bg-white dark:bg-[#162032] text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+                  } disabled:opacity-60 disabled:cursor-not-allowed`}
+                >
+                  <div
+                    className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                      nguonDe === 'AI' ? 'border-teal-600 bg-teal-600' : 'border-slate-300 dark:border-slate-600'
+                    }`}
+                  >
+                    {nguonDe === 'AI' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </div>
+                  <div>
+                    <div className="font-bold text-xs sm:text-sm">Trí Tuệ Nhân Tạo (AI)</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                      Sinh đề mới ngẫu nhiên từ Gemini, hỗ trợ mọi chủ đề và câu hỏi mới mẻ
+                    </div>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNguonDe('KHO_MAU');
+                    setBankNotFoundMsg(null);
+                  }}
+                  disabled={isExamInProgress}
+                  className={`p-3 rounded-xl border text-left transition flex items-start space-x-3 cursor-pointer ${
+                    nguonDe === 'KHO_MAU'
+                      ? 'border-teal-500 bg-teal-50/80 dark:bg-teal-950/40 text-teal-950 dark:text-teal-200 ring-1 ring-teal-500/30'
+                      : 'border-slate-200 dark:border-[#22324e] bg-white dark:bg-[#162032] text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700'
+                  } disabled:opacity-60 disabled:cursor-not-allowed`}
+                >
+                  <div
+                    className={`mt-0.5 w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${
+                      nguonDe === 'KHO_MAU' ? 'border-teal-600 bg-teal-600' : 'border-slate-300 dark:border-slate-600'
+                    }`}
+                  >
+                    {nguonDe === 'KHO_MAU' && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                  </div>
+                  <div>
+                    <div className="font-bold text-xs sm:text-sm">Kho Đề Mẫu Giáo Trình</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                      Bài tập chuẩn theo giáo trình 15 chủ đề do trung tâm ETC biên soạn
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
               <div className="md:col-span-4">
                 <label className="block font-bold text-teal-800 dark:text-teal-400 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
@@ -411,9 +468,7 @@ export default function TeacherAiExercisesPage() {
                 >
                   {PREDEFINED_TOPICS.map((t) => (
                     <option key={t} value={t}>
-                      {t === 'CUSTOM'
-                        ? '✍️ Nhập chủ đề tùy chỉnh khác...'
-                        : `${TOPIC_ICONS[t] || '📘'} ${t}`}
+                      {t === 'CUSTOM' ? 'Nhập chủ đề tùy chỉnh khác...' : t}
                     </option>
                   ))}
                 </select>
@@ -543,6 +598,26 @@ export default function TeacherAiExercisesPage() {
                 </div>
               </div>
             )}
+
+            {/* Thông báo khi không tìm thấy trong kho đề mẫu giáo trình */}
+            {bankNotFoundMsg && (
+              <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+                <div>
+                  <div className="font-bold">Chưa có bài tập mẫu cho chủ đề này</div>
+                  <div className="mt-0.5 text-amber-800 dark:text-amber-300">{bankNotFoundMsg}</div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNguonDe('AI');
+                    setBankNotFoundMsg(null);
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition whitespace-nowrap cursor-pointer shadow-xs"
+                >
+                  Chuyển sang Sinh Bằng AI
+                </button>
+              </div>
+            )}
           </form>
         </div>
 
@@ -551,7 +626,9 @@ export default function TeacherAiExercisesPage() {
           <div className="py-20 flex flex-col items-center justify-center space-y-3">
             <div className="w-10 h-10 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
             <p className="text-xs text-teal-700 font-bold animate-pulse">
-              AI Trợ Giảng đang tổng hợp ngân hàng đề và sinh bài tập chuẩn CEFR {cefr}...
+              {nguonDe === 'KHO_MAU'
+                ? `Hệ thống đang truy xuất bài tập chuẩn giáo trình cho chủ đề ${activeTopic}...`
+                : `AI Trợ Giảng đang tổng hợp ngân hàng đề và sinh bài tập chuẩn CEFR ${cefr}...`}
             </p>
           </div>
         )}
@@ -582,20 +659,24 @@ export default function TeacherAiExercisesPage() {
                 </button>
                 <span
                   className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${
-                    result.mode === 'AI_CACHE' || result.mode === 'AI_COMMUNITY_CACHE'
+                    result.mode === 'CURRICULUM_BANK'
+                      ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800'
+                      : result.mode === 'AI_CACHE' || result.mode === 'AI_COMMUNITY_CACHE'
                       ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800'
                       : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
                       ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border-teal-300 dark:border-teal-800'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700'
                   }`}
                 >
-                  {result.mode === 'AI_CACHE'
-                    ? '⚡ Bộ Nhớ Đệm AI (Tức Thì)'
+                  {result.mode === 'CURRICULUM_BANK'
+                    ? 'Đề Mẫu Giáo Trình ETC'
+                    : result.mode === 'AI_CACHE'
+                    ? 'Bộ Nhớ Đệm AI (Tức Thì)'
                     : result.mode === 'AI_COMMUNITY_CACHE'
-                    ? '⚡ Đề Tương Thích (Kho AI)'
+                    ? 'Đề Tương Thích (Kho AI)'
                     : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
-                    ? '✨ Trí Tuệ Nhân Tạo (AI)'
-                    : '📦 Mẫu Dự Phòng (Fallback)'}
+                    ? 'Trí Tuệ Nhân Tạo (AI)'
+                    : 'Mẫu Dự Phòng (Fallback)'}
                 </span>
                 <button
                   type="button"

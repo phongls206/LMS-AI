@@ -532,6 +532,284 @@ export const FALLBACK_QUESTION_BANKS: Record<string, QuestionItem[]> = {
       giaiThich: 'Đúng. "Layover" (điểm dừng quá cảnh) là khoảng dừng ngắn giữa các chuyến bay nối chuyến trước khi bay tiếp đến đích.',
     },
   ],
+
+  'PREPOSITIONS': [
+    {
+      id: 1,
+      noiDung: 'The international academic conference starts promptly __________ 8:30 AM tomorrow.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'at', B: 'on', C: 'in', D: 'by' },
+      dapAnDung: 'A',
+      giaiThich: 'Dùng giới từ "at" trước mốc giờ giấc cụ thể (at 8:30 AM).',
+    },
+    {
+      id: 2,
+      noiDung: 'He has worked as an IELTS instructor __________ Hanoi since he graduated from university.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'in', B: 'on', C: 'at', D: 'to' },
+      dapAnDung: 'A',
+      giaiThich: 'Dùng "in" trước tên thành phố, quốc gia hoặc khu vực địa lý lớn (in Hanoi).',
+    },
+    {
+      id: 3,
+      noiDung: 'We use the preposition "on" for specific days of the week and exact dates, such as "on Monday" or "on July 4th".',
+      loaiCauHoi: 'TRUE_FALSE',
+      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
+      dapAnDung: 'A',
+      giaiThich: 'Đúng. Giới từ "on" dùng cho ngày trong tuần và ngày tháng cụ thể.',
+    },
+    {
+      id: 4,
+      noiDung: 'The main administrative office of ETC English Center is located __________ the 3rd floor.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'on', B: 'in', C: 'at', D: 'under' },
+      dapAnDung: 'A',
+      giaiThich: 'Dùng "on the ... floor" khi nói về tầng trong một tòa nhà.',
+    },
+    {
+      id: 5,
+      noiDung: 'Which of the following time phrases are paired with the correct preposition? (Chọn tất cả đáp án đúng)',
+      loaiCauHoi: 'MULTIPLE',
+      luaChon: { A: 'at midnight', B: 'on Friday morning', C: 'in the summer', D: 'at 2026' },
+      dapAnDung: ['A', 'B', 'C'],
+      giaiThich: '"at midnight", "on Friday morning", "in the summer" đều đúng. Với năm thì dùng "in 2026", không dùng "at".',
+    },
+  ],
+
+  'MODAL_VERBS': [
+    {
+      id: 1,
+      noiDung: 'Motorcyclists __________ wear a certified safety helmet when driving on the road; it is strictly required by traffic law.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'must', B: 'might', C: 'could', D: 'may' },
+      dapAnDung: 'A',
+      giaiThich: '"Must" diễn tả sự bắt buộc theo luật định hoặc quy định nghiêm ngặt.',
+    },
+    {
+      id: 2,
+      noiDung: 'She __________ speak three foreign languages fluently when she was only ten years old.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'could', B: 'can', C: 'must', D: 'should' },
+      dapAnDung: 'A',
+      giaiThich: '"Could" diễn tả năng lực hoặc khả năng chung trong quá khứ.',
+    },
+    {
+      id: 3,
+      noiDung: '"Mustn\'t" indicates that something is strictly prohibited, whereas "don\'t have to" indicates lack of necessity/obligation.',
+      loaiCauHoi: 'TRUE_FALSE',
+      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
+      dapAnDung: 'A',
+      giaiThich: 'Đúng. "Mustn\'t" là cấm đoán, còn "don\'t have to" là không cần thiết (làm hay không tùy ý).',
+    },
+    {
+      id: 4,
+      noiDung: 'If you want to achieve an IELTS band 7.0+, you __________ practice academic reading and writing on a daily basis.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'should', B: 'might', C: 'would', D: 'shall' },
+      dapAnDung: 'A',
+      giaiThich: '"Should" được dùng để đưa ra lời khuyên hữu ích cho người học.',
+    },
+    {
+      id: 5,
+      noiDung: 'Which of the following modal verbs can be used to express possibility or uncertainty about a future event? (Chọn tất cả đáp án đúng)',
+      loaiCauHoi: 'MULTIPLE',
+      luaChon: { A: 'might', B: 'may', C: 'could', D: 'must' },
+      dapAnDung: ['A', 'B', 'C'],
+      giaiThich: '"might", "may", "could" đều diễn tả khả năng có thể xảy ra trong tương lai nhưng không chắc chắn 100%. "Must" diễn tả suy đoán gần như chắc chắn.',
+    },
+  ],
+
+  'SUBJECT_VERB_AGREEMENT': [
+    {
+      id: 1,
+      noiDung: 'Each of the students in this intensive grammar course __________ given a personalized learning profile.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'is', B: 'are', C: 'were', D: 'have been' },
+      dapAnDung: 'A',
+      giaiThich: 'Cụm chủ ngữ bắt đầu bằng "Each of + N(số nhiều)" đi với động từ số ít ("is").',
+    },
+    {
+      id: 2,
+      noiDung: 'Neither the head teacher nor the teaching assistants __________ informed about the room reassignment yesterday.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'were', B: 'was', C: 'is', D: 'are' },
+      dapAnDung: 'A',
+      giaiThich: 'Cấu trúc "Neither... nor..." chia động từ theo chủ ngữ gần nó nhất ("the teaching assistants" số nhiều -> were).',
+    },
+    {
+      id: 3,
+      noiDung: 'When a subject consists of two singular nouns connected by "and", the verb that follows is usually plural.',
+      loaiCauHoi: 'TRUE_FALSE',
+      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
+      dapAnDung: 'A',
+      giaiThich: 'Đúng. Hai danh từ số ít nối bằng "and" thường tạo thành chủ ngữ số nhiều (ví dụ: Lan and Nam are students).',
+    },
+    {
+      id: 4,
+      noiDung: 'The total number of enrolled students at ETC Center __________ steadily over the past two quarters.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'has increased', B: 'have increased', C: 'are increasing', D: 'were increased' },
+      dapAnDung: 'A',
+      giaiThich: '"The number of + N số nhiều" luôn đi với động từ số ít ("has increased"), khác với "A number of + N" đi với động từ số nhiều.',
+    },
+    {
+      id: 5,
+      noiDung: 'Which of the following sentences demonstrate correct subject-verb agreement? (Chọn tất cả đáp án đúng)',
+      loaiCauHoi: 'MULTIPLE',
+      luaChon: {
+        A: 'Ten kilometers is a challenging distance for amateur runners.',
+        B: 'Bread and butter is a classic English breakfast.',
+        C: 'The news broadcast yesterday were extremely encouraging.',
+        D: 'Everybody have finished their mid-term exam.',
+      },
+      dapAnDung: ['A', 'B'],
+      giaiThich: 'Khoảng cách ("Ten kilometers") và món ăn kết hợp ("Bread and butter") tính là đơn vị số ít. "News" và "Everybody" phải đi với động từ số ít.',
+    },
+  ],
+
+  'REPORTED_SPEECH': [
+    {
+      id: 1,
+      noiDung: '"I am working on the semester report right now," Mai said. -> Mai said that she __________ on the semester report at that time.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'was working', B: 'is working', C: 'worked', D: 'has worked' },
+      dapAnDung: 'A',
+      giaiThich: 'Lùi thì từ Hiện tại tiếp diễn (am working) sang Quá khứ tiếp diễn (was working) trong câu gián tiếp.',
+    },
+    {
+      id: 2,
+      noiDung: 'The examiner asked the candidate where he __________ the previous weekend.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'had traveled', B: 'traveled', C: 'has traveled', D: 'was traveling' },
+      dapAnDung: 'A',
+      giaiThich: 'Câu hỏi ở quá khứ đơn ("did you travel") khi chuyển sang câu gián tiếp lùi về Quá khứ hoàn thành (had traveled).',
+    },
+    {
+      id: 3,
+      noiDung: 'In indirect questions, the question word order reverts to normal statement word order (Subject + Verb), and the question mark is omitted.',
+      loaiCauHoi: 'TRUE_FALSE',
+      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
+      dapAnDung: 'A',
+      giaiThich: 'Đúng. Trong câu tường thuật gián tiếp dạng câu hỏi, trật tự từ đổi thành câu trần thuật (S + V) và không dùng dấu chấm hỏi.',
+    },
+    {
+      id: 4,
+      noiDung: '"Please don\'t use your smartphone during the speaking test," the proctor warned. -> The proctor warned the students __________ their smartphones during the test.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'not to use', B: 'to not use', C: 'don\'t use', D: 'no using' },
+      dapAnDung: 'A',
+      giaiThich: 'Cấu trúc câu mệnh lệnh phủ định gián tiếp: tell / warn + O + not to V (not to use).',
+    },
+    {
+      id: 5,
+      noiDung: 'Which of the following time expression transformations are correct in reported speech? (Chọn tất cả đáp án đúng)',
+      loaiCauHoi: 'MULTIPLE',
+      luaChon: {
+        A: 'today -> that day',
+        B: 'tomorrow -> the following day / the next day',
+        C: 'now -> then',
+        D: 'yesterday -> tomorrow',
+      },
+      dapAnDung: ['A', 'B', 'C'],
+      giaiThich: 'A, B, C đều là quy tắc chuyển đổi trạng ngữ chỉ thời gian đúng trong câu gián tiếp. "yesterday" chuyển thành "the day before" hoặc "the previous day".',
+    },
+  ],
+
+  'COMPARATIVES': [
+    {
+      id: 1,
+      noiDung: 'The updated Next.js platform runs much __________ than the legacy monolithic system.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'more smoothly', B: 'smoothlier', C: 'most smoothly', D: 'as smoothly' },
+      dapAnDung: 'A',
+      giaiThich: 'Trạng từ 2 âm tiết "smoothly" tạo dạng so sánh hơn bằng cách thêm "more": more smoothly.',
+    },
+    {
+      id: 2,
+      noiDung: 'Mount Everest is widely recognized as the __________ peak on Earth.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'highest', B: 'higher', C: 'most high', D: 'more higher' },
+      dapAnDung: 'A',
+      giaiThich: 'Tính từ ngắn "high" tạo dạng so sánh nhất bằng đuôi "-est": the highest.',
+    },
+    {
+      id: 3,
+      noiDung: 'Double comparative sentences follow the pattern "The + comparative ..., the + comparative ..." to demonstrate proportional cause-and-effect relationships.',
+      loaiCauHoi: 'TRUE_FALSE',
+      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
+      dapAnDung: 'A',
+      giaiThich: 'Đúng. Cấu trúc so sánh kép "The more... the better..." diễn tả mối tương quan nhân quả đồng biến hoặc nghịch biến.',
+    },
+    {
+      id: 4,
+      noiDung: 'Studying online with interactive AI tools is becoming __________ popular among young adults.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'more and more', B: 'most and most', C: 'more popular than', D: 'as popular' },
+      dapAnDung: 'A',
+      giaiThich: 'Cấu trúc "more and more + adj" diễn tả sự việc ngày càng tăng tiến (ngày càng phổ biến).',
+    },
+    {
+      id: 5,
+      noiDung: 'Which of the following irregular comparative and superlative adjective forms are correct? (Chọn tất cả đáp án đúng)',
+      loaiCauHoi: 'MULTIPLE',
+      luaChon: {
+        A: 'good -> better -> best',
+        B: 'bad -> worse -> worst',
+        C: 'far -> further / farther -> furthest / farthest',
+        D: 'little -> less -> least',
+      },
+      dapAnDung: ['A', 'B', 'C', 'D'],
+      giaiThich: 'Tất cả 4 cặp trên đều là các dạng so sánh hơn và so sánh nhất bất quy tắc hoàn toàn chính xác trong tiếng Anh.',
+    },
+  ],
+
+  'ENVIRONMENT_SOCIETY': [
+    {
+      id: 1,
+      noiDung: 'Accelerating the global transition to __________ energy sources such as solar and wind power is vital to curbing carbon emissions.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'renewable', B: 'fossil', C: 'exhaustible', D: 'radioactive' },
+      dapAnDung: 'A',
+      giaiThich: '"Renewable energy" là năng lượng tái tạo (năng lượng mặt trời, gió, thủy triều).',
+    },
+    {
+      id: 2,
+      noiDung: 'Uncontrolled logging and agricultural expansion have resulted in widespread __________ in the Amazon basin.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'deforestation', B: 'reforestation', C: 'urbanization', D: 'conservation' },
+      dapAnDung: 'A',
+      giaiThich: '"Deforestation" (nạn phá rừng) là hiện tượng rừng bị tàn phá do khai thác gỗ hoặc mở rộng canh tác.',
+    },
+    {
+      id: 3,
+      noiDung: '"Carbon footprint" is the total amount of greenhouse gases (including carbon dioxide and methane) generated by our direct and indirect actions.',
+      loaiCauHoi: 'TRUE_FALSE',
+      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
+      dapAnDung: 'A',
+      giaiThich: 'Đúng. "Carbon footprint" (dấu chân carbon) là tổng lượng khí thải nhà kính do các hoạt động sinh hoạt, sản xuất thải ra.',
+    },
+    {
+      id: 4,
+      noiDung: 'Rapid __________ frequently causes municipal overcrowding, traffic gridlock, and severe pressure on public housing infrastructure.',
+      loaiCauHoi: 'SINGLE',
+      luaChon: { A: 'urbanization', B: 'ruralization', C: 'sanitation', D: 'cultivation' },
+      dapAnDung: 'A',
+      giaiThich: '"Urbanization" (quá trình đô thị hóa) khi diễn ra quá nhanh sẽ gây áp lực lên hạ tầng giao thông và nhà ở.',
+    },
+    {
+      id: 5,
+      noiDung: 'Which of the following actions are recognized as environmentally sustainable practices? (Chọn tất cả đáp án đúng)',
+      loaiCauHoi: 'MULTIPLE',
+      luaChon: {
+        A: 'Promoting circular economy and waste recycling',
+        B: 'Preserving natural ecosystems and biodiversity',
+        C: 'Unlimited disposal of single-use plastics into rivers',
+        D: 'Investing in zero-emission electric public transit',
+      },
+      dapAnDung: ['A', 'B', 'D'],
+      giaiThich: 'Kinh tế tuần hoàn (A), bảo tồn đa dạng sinh học (B) và phát triển xe điện công cộng (D) là các giải pháp bảo vệ môi trường bền vững. Xả rác nhựa (C) là hành vi gây ô nhiễm.',
+    },
+  ],
 };
 
 export function getFallbackExercises(
@@ -595,6 +873,18 @@ export function getFallbackExercises(
     normalized.includes('giao tiếp')
   ) {
     bankKey = 'BUSINESS_ENGLISH';
+  } else if (normalized.includes('giới từ') || normalized.includes('preposition')) {
+    bankKey = 'PREPOSITIONS';
+  } else if (normalized.includes('khuyết thiếu') || normalized.includes('modal')) {
+    bankKey = 'MODAL_VERBS';
+  } else if (normalized.includes('chủ vị') || normalized.includes('hòa hợp') || normalized.includes('subject-verb')) {
+    bankKey = 'SUBJECT_VERB_AGREEMENT';
+  } else if (normalized.includes('tường thuật') || normalized.includes('gián tiếp') || normalized.includes('reported speech')) {
+    bankKey = 'REPORTED_SPEECH';
+  } else if (normalized.includes('so sánh') || normalized.includes('comparative') || normalized.includes('superlative')) {
+    bankKey = 'COMPARATIVES';
+  } else if (normalized.includes('môi trường') || normalized.includes('xã hội') || normalized.includes('environment')) {
+    bankKey = 'ENVIRONMENT_SOCIETY';
   }
 
   // Lấy các câu hỏi từ ngân hàng đã chọn
@@ -616,6 +906,78 @@ export function getFallbackExercises(
   const combined = [...primaryList, ...allOtherQuestions].sort(() => Math.random() - 0.5);
   const targetCount = [5, 10, 15].includes(count) ? count : 5;
   const selectedQuestions = combined.slice(0, targetCount);
+
+  return {
+    chuDe: topic,
+    trinhDo: cefr,
+    cauHoi: selectedQuestions.map((q, idx) => ({
+      ...q,
+      id: idx + 1,
+      loaiCauHoi: q.loaiCauHoi || (Array.isArray(q.dapAnDung) ? 'MULTIPLE' : Object.keys(q.luaChon).length === 2 ? 'TRUE_FALSE' : 'SINGLE'),
+    })),
+  };
+}
+
+/**
+ * Tra cứu bộ đề bài tập từ Ngân hàng đề mẫu chuẩn giáo trình trung tâm ETC.
+ * Nếu chủ đề không khớp với bất kỳ bài học/ngân hàng mẫu nào, trả về null.
+ */
+export function findCurriculumBankExercise(
+  topic: string,
+  cefr: string,
+  count: number = 5,
+  loaiCauHoi?: string,
+): FallbackExerciseSet | null {
+  const normalized = topic.toLowerCase().trim();
+  let bankKey: string | null = null;
+
+  if (normalized.includes('hoàn thành') || normalized.includes('present perfect')) {
+    bankKey = 'PRESENT_PERFECT';
+  } else if (normalized.includes('điều kiện') || normalized.includes('conditional')) {
+    bankKey = 'CONDITIONALS';
+  } else if (normalized.includes('quan hệ') || normalized.includes('relative')) {
+    bankKey = 'RELATIVE_CLAUSES';
+  } else if (normalized.includes('bị động') || normalized.includes('passive')) {
+    bankKey = 'PASSIVE_VOICE';
+  } else if (normalized.includes('cụm động từ') || normalized.includes('phrasal')) {
+    bankKey = 'PHRASAL_VERBS';
+  } else if (normalized.includes('công sở') || normalized.includes('business')) {
+    bankKey = 'BUSINESS_ENGLISH';
+  } else if (normalized.includes('công nghệ') || normalized.includes('thông tin') || normalized.includes('it & tech') || normalized.includes('technology')) {
+    bankKey = 'INFORMATION_TECHNOLOGY';
+  } else if (normalized.includes('du lịch') || normalized.includes('khách sạn') || normalized.includes('travel') || normalized.includes('tourism')) {
+    bankKey = 'TOURISM_TRAVEL';
+  } else if (normalized.includes('giải trí') || normalized.includes('điện ảnh') || normalized.includes('âm nhạc') || normalized.includes('entertainment')) {
+    bankKey = 'ENTERTAINMENT';
+  } else if (normalized.includes('giới từ') || normalized.includes('preposition')) {
+    bankKey = 'PREPOSITIONS';
+  } else if (normalized.includes('khuyết thiếu') || normalized.includes('modal')) {
+    bankKey = 'MODAL_VERBS';
+  } else if (normalized.includes('chủ vị') || normalized.includes('hòa hợp') || normalized.includes('subject-verb')) {
+    bankKey = 'SUBJECT_VERB_AGREEMENT';
+  } else if (normalized.includes('tường thuật') || normalized.includes('gián tiếp') || normalized.includes('reported speech')) {
+    bankKey = 'REPORTED_SPEECH';
+  } else if (normalized.includes('so sánh') || normalized.includes('comparative') || normalized.includes('superlative')) {
+    bankKey = 'COMPARATIVES';
+  } else if (normalized.includes('môi trường') || normalized.includes('xã hội') || normalized.includes('environment')) {
+    bankKey = 'ENVIRONMENT_SOCIETY';
+  }
+
+  if (!bankKey || !FALLBACK_QUESTION_BANKS[bankKey]) {
+    return null;
+  }
+
+  let primaryList = [...FALLBACK_QUESTION_BANKS[bankKey]];
+
+  if (loaiCauHoi && loaiCauHoi !== 'MIXED') {
+    const filteredPrimary = primaryList.filter((q) => q.loaiCauHoi === loaiCauHoi);
+    if (filteredPrimary.length > 0) {
+      primaryList = filteredPrimary;
+    }
+  }
+
+  const targetCount = [5, 10, 15].includes(count) ? count : 5;
+  const selectedQuestions = primaryList.slice(0, targetCount);
 
   return {
     chuDe: topic,
