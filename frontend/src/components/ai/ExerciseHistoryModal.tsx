@@ -219,9 +219,8 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
               return (
                 <div
                   key={item.id}
-                  className={`p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-teal-300 dark:hover:border-teal-800/80 bg-white dark:bg-slate-800/40 transition shadow-2xs space-y-3 ${
-                    isDeleting ? 'opacity-50 pointer-events-none' : ''
-                  }`}
+                  className={`p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-teal-300 dark:hover:border-teal-800/80 bg-white dark:bg-slate-800/40 transition shadow-2xs space-y-3 ${isDeleting ? 'opacity-50 pointer-events-none' : ''
+                    }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
                     <div className="space-y-1 flex-1">
@@ -233,19 +232,17 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
                           {item.soCau} câu hỏi
                         </span>
                         <span
-                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${
-                            item.mode === 'CURRICULUM_BANK' || item.nguonDe === 'KHO_MAU'
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${item.mode === 'CURRICULUM_BANK' || item.nguonDe === 'KHO_MAU'
                               ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800'
                               : item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
-                              : item.mode === 'AI_COMMUNITY_CACHE'
-                              ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800'
-                              : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
-                          }`}
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
+                                : item.mode === 'AI_COMMUNITY_CACHE'
+                                  ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800'
+                                  : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
+                            }`}
                         >
                           {item.mode === 'CURRICULUM_BANK' || item.nguonDe === 'KHO_MAU'
-                            ? `📚 Ngân Hàng Đề Mẫu${item.boDe || item.data?.boDe ? ` (Đề #${item.boDe || item.data?.boDe})` : ''}`
-                            : item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
+                            ? `📚 Ngân Hàng Đề Mẫu
                             ? '✨ Trí Tuệ Nhân Tạo'
                             : item.mode === 'AI_COMMUNITY_CACHE'
                             ? '⚡ Đề Tương Thích (Kho AI)'
@@ -335,11 +332,11 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
                             <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium mt-1">
                               Đáp án: [{Array.isArray(q.dapAnDung) ? q.dapAnDung.join(', ') : q.dapAnDung}]
                               {q.giaiThich ? ` — ${q.giaiThich}` : ''}
-                            </p>
-                          </div>
-                        ))}
+                        </p>
                       </div>
+                        ))}
                     </div>
+                  </div>
                   )}
                 </div>
               );

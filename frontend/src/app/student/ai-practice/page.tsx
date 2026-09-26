@@ -129,7 +129,7 @@ export default function StudentAiPracticePage() {
           boDe,
         }),
       );
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const handleResetSession = () => {
@@ -265,8 +265,8 @@ export default function StudentAiPracticePage() {
       const current = Array.isArray(userAnswers[qIdx])
         ? [...(userAnswers[qIdx] as string[])]
         : userAnswers[qIdx]
-        ? [userAnswers[qIdx] as string]
-        : [];
+          ? [userAnswers[qIdx] as string]
+          : [];
       const next = current.includes(optionKey)
         ? current.filter((k) => k !== optionKey)
         : [...current, optionKey].sort();
@@ -293,8 +293,8 @@ export default function StudentAiPracticePage() {
         typeof userAns === 'string'
           ? userAns.trim().toUpperCase()
           : Array.isArray(userAns)
-          ? userAns[0]
-          : '';
+            ? userAns[0]
+            : '';
       return userKey === correctKey;
     }
 
@@ -495,13 +495,12 @@ export default function StudentAiPracticePage() {
                         ? 'Bạn đang có bài làm dở dang. Vui lòng hoàn thành nộp bài hoặc nhấn "Hủy & Tạo Đề Khác" ở cuối trang để tạo đề mới.'
                         : 'Tạo bài luyện tập mới với AI'
                     }
-                    className={`flex-1 min-w-0 px-3.5 h-10 min-h-[40px] font-bold rounded-xl flex items-center justify-center space-x-1.5 transition-all duration-200 ${
-                      cooldown > 0
+                    className={`flex-1 min-w-0 px-3.5 h-10 min-h-[40px] font-bold rounded-xl flex items-center justify-center space-x-1.5 transition-all duration-200 ${cooldown > 0
                         ? 'bg-amber-100/90 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-700/80 text-amber-900 dark:text-amber-200 cursor-not-allowed shadow-none'
                         : isExamInProgress
-                        ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed opacity-75 shadow-none'
-                        : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-lg hover:shadow-teal-600/25 active:scale-[0.98] text-white shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
-                    }`}
+                          ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed opacity-75 shadow-none'
+                          : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-lg hover:shadow-teal-600/25 active:scale-[0.98] text-white shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                      }`}
                   >
                     {loading ? (
                       <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -529,9 +528,8 @@ export default function StudentAiPracticePage() {
                     Nhập Chủ Đề Tùy Chỉnh Của Bạn:
                   </label>
                   <span
-                    className={`text-[10px] font-mono ${
-                      customTopic.length > 80 ? 'text-amber-600' : 'text-slate-400'
-                    }`}
+                    className={`text-[10px] font-mono ${customTopic.length > 80 ? 'text-amber-600' : 'text-slate-400'
+                      }`}
                   >
                     {customTopic.length}/100 ký tự
                   </span>
@@ -593,29 +591,28 @@ export default function StudentAiPracticePage() {
                 </span>
                 {result.data.boDe && (
                   <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800">
-                    Bộ Đề #{result.data.boDe}/10
+
                   </span>
                 )}
               </div>
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
                 <span
-                  className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
-                    result.mode === 'CURRICULUM_BANK'
+                  className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${result.mode === 'CURRICULUM_BANK'
                       ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800'
                       : result.mode === 'AI_COMMUNITY_CACHE'
-                      ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800'
-                      : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
-                      ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border-teal-300 dark:border-teal-800'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700'
-                  }`}
+                        ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800'
+                        : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
+                          ? 'bg-teal-100 dark:bg-teal-950/60 text-teal-800 dark:text-teal-300 border-teal-300 dark:border-teal-800'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700'
+                    }`}
                 >
                   {result.mode === 'CURRICULUM_BANK'
                     ? 'Ngân Hàng Đề Mẫu ETC'
                     : result.mode === 'AI_COMMUNITY_CACHE'
-                    ? 'Đề Tương Thích (Kho AI)'
-                    : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
-                    ? 'Trí Tuệ Nhân Tạo'
-                    : 'Mẫu Dự Phòng (Fallback)'}
+                      ? 'Đề Tương Thích (Kho AI)'
+                      : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
+                        ? 'Trí Tuệ Nhân Tạo'
+                        : 'Mẫu Dự Phòng (Fallback)'}
                 </span>
                 <button
                   type="button"
@@ -656,112 +653,110 @@ export default function StudentAiPracticePage() {
                     </div>
 
                     <div
-                      className={`grid gap-2 sm:gap-2.5 pl-0 sm:pl-9 ${
-                        typeInfo.isTrueFalse ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'
-                      }`}
+                      className={`grid gap-2 sm:gap-2.5 pl-0 sm:pl-9 ${typeInfo.isTrueFalse ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'
+                        }`}
                     >
                       {getRenderOptions(q, typeInfo.isTrueFalse).map(([optKey, optVal]: [string, any]) => {
-                          const isChosen = Array.isArray(selected)
-                            ? selected.includes(optKey)
-                            : selected === optKey;
+                        const isChosen = Array.isArray(selected)
+                          ? selected.includes(optKey)
+                          : selected === optKey;
 
-                          const isAnswerKey = typeInfo.isTrueFalse
-                            ? (optKey === 'A' &&
-                                (q.dapAnDung === 'A' ||
-                                  String(q.dapAnDung).toUpperCase().includes('TRUE'))) ||
-                              (optKey === 'B' &&
-                                (q.dapAnDung === 'B' ||
-                                  String(q.dapAnDung).toUpperCase().includes('FALSE')))
-                            : Array.isArray(q.dapAnDung)
+                        const isAnswerKey = typeInfo.isTrueFalse
+                          ? (optKey === 'A' &&
+                            (q.dapAnDung === 'A' ||
+                              String(q.dapAnDung).toUpperCase().includes('TRUE'))) ||
+                          (optKey === 'B' &&
+                            (q.dapAnDung === 'B' ||
+                              String(q.dapAnDung).toUpperCase().includes('FALSE')))
+                          : Array.isArray(q.dapAnDung)
                             ? q.dapAnDung.includes(optKey)
                             : typeof q.dapAnDung === 'string' && q.dapAnDung.includes(',')
-                            ? q.dapAnDung
+                              ? q.dapAnDung
                                 .split(',')
                                 .map((k: string) => k.trim())
                                 .includes(optKey)
-                            : q.dapAnDung === optKey;
+                              : q.dapAnDung === optKey;
 
-                          let btnClass = '';
-                          let badgeClass = '';
-                          let textClass = '';
+                        let btnClass = '';
+                        let badgeClass = '';
+                        let textClass = '';
 
-                          if (submitted) {
-                            if (isAnswerKey) {
-                              // Câu có đáp án đúng:
-                              // Nền emerald dịu nhẹ, viền emerald đậm, chữ trắng đậm đồng nhất
-                              btnClass =
-                                'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-400 dark:border-emerald-500 ring-1 ring-emerald-400/40';
-                              badgeClass =
-                                'bg-emerald-600 text-white font-bold shadow-xs ai-quiz-badge-text';
-                              textClass =
-                                'ai-quiz-option-text text-slate-900 dark:text-white font-bold';
-                            } else if (isChosen && !isCorrect) {
-                              // Câu sai do học viên chọn:
-                              // Nền rose đỏ dịu nhẹ, viền rose, chữ trắng đậm đồng nhất
-                              btnClass =
-                                'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-500 ring-1 ring-rose-400/40';
-                              badgeClass =
-                                'bg-rose-600 text-white font-bold shadow-xs ai-quiz-badge-text';
-                              textClass =
-                                'ai-quiz-option-text text-slate-900 dark:text-white font-bold';
-                            } else {
-                              // Các phương án không chọn: nền slate tối, chữ trắng đậm đồng nhất
-                              btnClass =
-                                'bg-slate-50/80 dark:bg-[#151f32] border-slate-200/90 dark:border-[#243550]';
-                              badgeClass =
-                                'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-bold border border-slate-300 dark:border-slate-500/70 shadow-xs ai-quiz-badge-text';
-                              textClass =
-                                'ai-quiz-option-text text-slate-900 dark:text-white font-bold';
-                            }
-                          } else if (isChosen) {
-                            // Đang làm bài và học viên chọn:
+                        if (submitted) {
+                          if (isAnswerKey) {
+                            // Câu có đáp án đúng:
+                            // Nền emerald dịu nhẹ, viền emerald đậm, chữ trắng đậm đồng nhất
                             btnClass =
-                              'bg-teal-600 border-teal-600 shadow-sm ring-2 ring-teal-600/30';
-                            badgeClass = 'bg-white/25 text-white shadow-xs font-bold ai-quiz-badge-text';
-                            textClass = 'ai-quiz-option-text text-white font-bold';
-                          } else {
-                            // Đang làm bài và chưa chọn: chữ A B C D sáng rõ trong dark mode
-                            btnClass =
-                              'bg-slate-50 dark:bg-[#162238] border-slate-200 dark:border-[#223554] hover:border-teal-400 dark:hover:border-teal-500 hover:bg-teal-50/50 dark:hover:bg-teal-950/40';
+                              'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-400 dark:border-emerald-500 ring-1 ring-emerald-400/40';
                             badgeClass =
-                              'bg-slate-200/90 dark:bg-slate-700 text-slate-900 dark:text-white font-bold border border-slate-300/80 dark:border-slate-500/70 shadow-xs ai-quiz-badge-text';
+                              'bg-emerald-600 text-white font-bold shadow-xs ai-quiz-badge-text';
+                            textClass =
+                              'ai-quiz-option-text text-slate-900 dark:text-white font-bold';
+                          } else if (isChosen && !isCorrect) {
+                            // Câu sai do học viên chọn:
+                            // Nền rose đỏ dịu nhẹ, viền rose, chữ trắng đậm đồng nhất
+                            btnClass =
+                              'bg-rose-50 dark:bg-rose-950/60 border-rose-300 dark:border-rose-500 ring-1 ring-rose-400/40';
+                            badgeClass =
+                              'bg-rose-600 text-white font-bold shadow-xs ai-quiz-badge-text';
+                            textClass =
+                              'ai-quiz-option-text text-slate-900 dark:text-white font-bold';
+                          } else {
+                            // Các phương án không chọn: nền slate tối, chữ trắng đậm đồng nhất
+                            btnClass =
+                              'bg-slate-50/80 dark:bg-[#151f32] border-slate-200/90 dark:border-[#243550]';
+                            badgeClass =
+                              'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-bold border border-slate-300 dark:border-slate-500/70 shadow-xs ai-quiz-badge-text';
                             textClass =
                               'ai-quiz-option-text text-slate-900 dark:text-white font-bold';
                           }
+                        } else if (isChosen) {
+                          // Đang làm bài và học viên chọn:
+                          btnClass =
+                            'bg-teal-600 border-teal-600 shadow-sm ring-2 ring-teal-600/30';
+                          badgeClass = 'bg-white/25 text-white shadow-xs font-bold ai-quiz-badge-text';
+                          textClass = 'ai-quiz-option-text text-white font-bold';
+                        } else {
+                          // Đang làm bài và chưa chọn: chữ A B C D sáng rõ trong dark mode
+                          btnClass =
+                            'bg-slate-50 dark:bg-[#162238] border-slate-200 dark:border-[#223554] hover:border-teal-400 dark:hover:border-teal-500 hover:bg-teal-50/50 dark:hover:bg-teal-950/40';
+                          badgeClass =
+                            'bg-slate-200/90 dark:bg-slate-700 text-slate-900 dark:text-white font-bold border border-slate-300/80 dark:border-slate-500/70 shadow-xs ai-quiz-badge-text';
+                          textClass =
+                            'ai-quiz-option-text text-slate-900 dark:text-white font-bold';
+                        }
 
-                          return (
-                            <button
-                              key={optKey}
-                              type="button"
-                              onClick={() => handleSelectOption(idx, optKey, typeInfo.isMulti)}
-                              className={`p-3 min-h-[44px] rounded-xl border text-xs text-left transition-all duration-200 active:scale-[0.99] flex items-center space-x-2.5 sm:space-x-3 cursor-pointer w-full ${btnClass}`}
+                        return (
+                          <button
+                            key={optKey}
+                            type="button"
+                            onClick={() => handleSelectOption(idx, optKey, typeInfo.isMulti)}
+                            className={`p-3 min-h-[44px] rounded-xl border text-xs text-left transition-all duration-200 active:scale-[0.99] flex items-center space-x-2.5 sm:space-x-3 cursor-pointer w-full ${btnClass}`}
+                          >
+                            <span
+                              className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${badgeClass}`}
                             >
-                              <span
-                                className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${badgeClass}`}
-                              >
-                                {optKey}
+                              {optKey}
+                            </span>
+                            <span className={`flex-1 min-w-0 leading-snug break-words ${textClass}`}>
+                              {optVal}
+                            </span>
+                            {!submitted && typeInfo.isMulti && isChosen && (
+                              <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 ml-auto text-white">
+                                <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                               </span>
-                              <span className={`flex-1 min-w-0 leading-snug break-words ${textClass}`}>
-                                {optVal}
-                              </span>
-                              {!submitted && typeInfo.isMulti && isChosen && (
-                                <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0 ml-auto text-white">
-                                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                                </span>
-                              )}
-                            </button>
-                          );
-                        })}
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
 
                     {/* Giải thích chi tiết sau khi nộp bài */}
                     {submitted && (
                       <div
-                        className={`ml-0 sm:ml-9 p-3 sm:p-3.5 rounded-xl border text-xs ${
-                          isCorrect
+                        className={`ml-0 sm:ml-9 p-3 sm:p-3.5 rounded-xl border text-xs ${isCorrect
                             ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/70 text-emerald-800 dark:text-emerald-200'
                             : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800/70 text-rose-800 dark:text-rose-200'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center space-x-1.5 font-bold mb-1">
                           {isCorrect ? (
