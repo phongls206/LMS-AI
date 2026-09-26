@@ -1,6 +1,6 @@
 ---
 name: context-builder
-description: Quy chuẩn và quy trình khảo sát hiện trạng, thu thập yêu cầu bài toán (20 câu hỏi khảo sát), xác định cơ cấu nhân sự, phạm vi và xây dựng ngữ cảnh ban đầu cho hệ thống ETC English Center.
+description: Quy chuẩn và quy trình khảo sát hiện trạng, thu thập yêu cầu bài toán, xác định cơ cấu nhân sự, phạm vi và xây dựng ngữ cảnh ban đầu cho hệ thống ETC English Center.
 ---
 
 # Context Builder Skill (Khảo Sát Hiện Trạng & Khởi Tạo Ngữ Cảnh)

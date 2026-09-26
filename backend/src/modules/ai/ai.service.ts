@@ -3,7 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ConsultClassDto, GenerateExercisesDto, SummarizeProgressDto } from './dto/ai.dto';
 import { GoogleGenAI } from '@google/genai';
-import { getFallbackExercises, findCurriculumBankExercise } from './fallback-data';
+import {
+  getFallbackExercises,
+  findCurriculumBankExercise,
+  matchTopicByKeywords,
+  CURRICULUM_BANK_KEYS,
+} from './curriculum-bank';
 import {
   LoaiChucNangAI,
   TrangThaiYeuCauAI,
@@ -502,6 +507,84 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
   }
 
   /**
+   * Phân loại và tìm kiếm chủ đề tương ứng trong kho đề mẫu.
+   * Kết hợp Fast Keyword/Synonym matching và Semantic Gemini AI Fallback.
+   */
+  async matchCurriculumBankKey(userTopic: string): Promise<string | null> {
+    // 1. Fast deterministic keyword / synonym match
+    const directMatch = matchTopicByKeywords(userTopic);
+    if (directMatch) {
+      return directMatch;
+    }
+
+    // 2. Sử dụng Semantic AI (Gemini) để phân loại xem prompt có liên quan tới 15 bộ đề trong kho hay không
+    if (this.ai) {
+      try {
+        const prompt = `
+Bạn là chuyên gia phân loại chương trình đào tạo tiếng Anh chuẩn CEFR của trung tâm ETC.
+Nhiệm vụ: Phân tích chủ đề người dùng nhập: "${userTopic}".
+Xác định xem chủ đề này có liên quan trực tiếp, tương đương, hoặc là một nhánh con thuộc về một trong 15 chủ đề có sẵn trong Ngân hàng đề mẫu sau đây hay không:
+
+DANH SÁCH 15 CHỦ ĐỀ TRONG KHO ĐỀ MẪU:
+1. PRESENT_PERFECT: Thì Hiện Tại Hoàn Thành (Present Perfect Tense)
+2. CONDITIONALS: Câu Điều Kiện Loại 1, 2, 3 (Conditional Sentences)
+3. RELATIVE_CLAUSES: Mệnh Đề Quan Hệ (Relative Clauses)
+4. PASSIVE_VOICE: Câu Bị Động Nâng Cao (Passive Voice)
+5. PHRASAL_VERBS: Cụm Động Từ Thông Dụng (Common Phrasal Verbs)
+6. BUSINESS_ENGLISH: Từ Vựng Tiếng Anh Công Sở & Giao Tiếp (Business English)
+7. INFORMATION_TECHNOLOGY: Tiếng Anh Chuyên Ngành Công Nghệ Thông Tin (IT & Tech)
+8. TOURISM_TRAVEL: Từ Vựng Du Lịch, Khách Sạn & Khám Phá (Travel & Tourism)
+9. ENTERTAINMENT: Điện Ảnh, Âm Nhạc & Giải Trí (Entertainment & Media)
+10. PREPOSITIONS: Giới Từ Chỉ Thời Gian & Nơi Chốn (Prepositions)
+11. MODAL_VERBS: Động Từ Khuyết Thiếu (Modal Verbs)
+12. SUBJECT_VERB_AGREEMENT: Sự Hòa Hợp Chủ Vị (Subject-Verb Agreement)
+13. REPORTED_SPEECH: Câu Tường Thuật Gián Tiếp (Reported Speech)
+14. COMPARATIVES: So Sánh Hơn & So Sánh Nhất (Comparatives & Superlatives)
+15. ENVIRONMENT_SOCIETY: Từ Vựng IELTS Chủ Đề Môi Trường & Xã Hội
+
+NGUYÊN TẮC QUAN TRỌNG:
+- Chỉ trả về "matchedBankKey" nếu chủ đề người dùng nhập THỰC SỰ có liên quan ngữ nghĩa rõ ràng đến một trong 15 chủ đề trên.
+  Ví dụ: "lập trình phần mềm", "developer", "coding", "khoa học máy tính", "IT" -> "INFORMATION_TECHNOLOGY".
+  Ví dụ: "phỏng vấn xin việc", "đàm phán hợp đồng", "viết email kinh doanh" -> "BUSINESS_ENGLISH".
+  Ví dụ: "đặt vé máy bay", "khách sạn nghỉ dưỡng", "chuyến bay" -> "TOURISM_TRAVEL".
+  Ví dụ: "lùi thì gián tiếp", "câu kể lại" -> "REPORTED_SPEECH".
+- Nếu chủ đề người dùng nhập KHÔNG THUỘC bất kỳ chủ đề nào trong 15 chủ đề trên (ví dụ: "Câu giả định (Subjunctive Mood)", "Đảo ngữ (Inversion)", "Mạo từ A / An / The", "Gerund vs Infinitive", "Ẩm thực nấu ăn", "Lịch sử phong kiến"...), bắt buộc trả về matchedBankKey: null.
+- Tuyệt đối không gượng ép gán ghép nếu không thực sự liên quan.
+
+Trả về định dạng JSON:
+{
+  "matchedBankKey": "KEY_NAME" hoặc null,
+  "confidence": number,
+  "reason": "Giải thích ngắn gọn"
+}
+`;
+        const rawOutput = await this.callGeminiWithTimeout(
+          this.configService.get('GEMINI_FLASH_MODEL') || 'gemini-2.5-flash',
+          prompt,
+          true,
+        );
+        const cleaned = rawOutput.replace(/```json/g, '').replace(/```/g, '').trim();
+        const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          if (
+            parsed.matchedBankKey &&
+            CURRICULUM_BANK_KEYS.includes(parsed.matchedBankKey) &&
+            parsed.confidence >= 0.6
+          ) {
+            this.logger.log(`AI Semantic Matching: "${userTopic}" -> ${parsed.matchedBankKey} (confidence: ${parsed.confidence})`);
+            return parsed.matchedBankKey;
+          }
+        }
+      } catch (err: any) {
+        this.logger.warn(`AI Semantic Matching error for "${userTopic}": ${err?.message}`);
+      }
+    }
+
+    return null;
+  }
+
+  /**
    * UC013 — AI Sinh bài luyện tập trắc nghiệm (Smart Caching + Gemini API + Fallback)
    */
   async generateExercises(dto: GenerateExercisesDto, userId: number) {
@@ -513,8 +596,24 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
 
     // NẾU NGƯỜI DÙNG CHỦ ĐỘNG CHỌN NGUỒN ĐỀ MẪU TỪ GIÁO TRÌNH TRUNG TÂM
     if (dto.nguonDe === 'KHO_MAU') {
-      const bankResult = findCurriculumBankExercise(dto.chuDe, dto.trinhDo, count, dto.loaiCauHoi);
-      if (!bankResult) {
+      const matchedBankKey = await this.matchCurriculumBankKey(dto.chuDe);
+
+      if (!matchedBankKey) {
+        throw new NotFoundException(
+          `Kho đề mẫu giáo trình hiện chưa có bài tập cho chủ đề "${dto.chuDe}". Bạn có thể chọn các chủ đề có sẵn trong danh mục giáo trình hoặc chuyển sang chế độ "Sinh đề bằng AI" để tự động tạo đề tức thì.`,
+        );
+      }
+
+      const bankResult = findCurriculumBankExercise(
+        matchedBankKey,
+        dto.chuDe,
+        dto.trinhDo,
+        count,
+        dto.loaiCauHoi,
+        dto.boDe,
+      );
+
+      if (!bankResult || !bankResult.cauHoi || bankResult.cauHoi.length === 0) {
         throw new NotFoundException(
           `Kho đề mẫu giáo trình hiện chưa có bài tập cho chủ đề "${dto.chuDe}". Bạn có thể chọn các chủ đề có sẵn trong danh mục giáo trình hoặc chuyển sang chế độ "Sinh đề bằng AI" để tự động tạo đề tức thì.`,
         );
@@ -523,7 +622,7 @@ YÊU CẦU PHÂN TÍCH TỪ AI:
       await this.logAiRequest(
         userId,
         LoaiChucNangAI.SINH_BAI_TAP,
-        `[KHO_MAU] Chủ đề: ${dto.chuDe} - CEFR: ${dto.trinhDo}`,
+        `[KHO_MAU] Chủ đề: ${dto.chuDe} (${matchedBankKey}) - CEFR: ${dto.trinhDo} - Bộ đề #${bankResult.boDe || 1}`,
         null,
         bankResult,
         TrangThaiYeuCauAI.THANH_CONG,

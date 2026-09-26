@@ -42,18 +42,6 @@ const PREDEFINED_TOPICS = [
   'CUSTOM',
 ];
 
-const QUICK_SUGGESTIONS = [
-  'Công nghệ thông tin (IT)',
-  'Du lịch & Khám phá (Travel)',
-  'Điện ảnh & Giải trí (Entertainment)',
-  'Đảo ngữ (Inversion)',
-  'Câu giả định (Subjunctive Mood)',
-  'Phrasal verbs with "Look"',
-  'Mạo từ A / An / The',
-  'Gerund vs Infinitive',
-  'IELTS Writing Task 2 Vocab',
-];
-
 export default function StudentAiPracticePage() {
   const [selectedTopic, setSelectedTopic] = useState(PREDEFINED_TOPICS[0]);
   const [customTopic, setCustomTopic] = useState('');
@@ -61,6 +49,7 @@ export default function StudentAiPracticePage() {
   const [soLuong, setSoLuong] = useState(5);
   const [loaiCauHoi, setLoaiCauHoi] = useState('MIXED');
   const [nguonDe, setNguonDe] = useState<'AI' | 'KHO_MAU'>('AI');
+  const [boDe, setBoDe] = useState<number>(0); // 0 = ngẫu nhiên (1-10)
   const [bankNotFoundMsg, setBankNotFoundMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -83,6 +72,7 @@ export default function StudentAiPracticePage() {
     if (item.trinhDo) setCefr(item.trinhDo);
     if (item.soCau) setSoLuong(item.soCau);
     if (item.nguonDe) setNguonDe(item.nguonDe);
+    if (item.boDe) setBoDe(item.boDe);
     saveToSession(loadedResult, {}, false);
     setTimeout(() => {
       window.scrollTo({ top: 350, behavior: 'smooth' });
@@ -115,6 +105,7 @@ export default function StudentAiPracticePage() {
         if (parsed.soLuong) setSoLuong(parsed.soLuong);
         if (parsed.loaiCauHoi) setLoaiCauHoi(parsed.loaiCauHoi);
         if (parsed.nguonDe) setNguonDe(parsed.nguonDe);
+        if (parsed.boDe) setBoDe(parsed.boDe);
       }
     } catch (e) {
       console.error('Lỗi đọc phiên làm bài:', e);
@@ -135,6 +126,7 @@ export default function StudentAiPracticePage() {
           soLuong,
           loaiCauHoi,
           nguonDe,
+          boDe,
         }),
       );
     } catch (e) {}
@@ -173,7 +165,14 @@ export default function StudentAiPracticePage() {
     sessionStorage.removeItem('etc_ai_practice_session');
 
     try {
-      const res = await aiService.generateExercises(activeTopic, cefr, soLuong, loaiCauHoi, nguonDe);
+      const res = await aiService.generateExercises(
+        activeTopic,
+        cefr,
+        soLuong,
+        loaiCauHoi,
+        nguonDe,
+        boDe > 0 ? boDe : undefined,
+      );
       setResult(res);
       saveToSession(res, {}, false);
     } catch (err: any) {
@@ -400,6 +399,32 @@ export default function StudentAiPracticePage() {
                 </div>
               </div>
 
+              {/* Lựa chọn Bộ đề (1-10) khi chọn Ngân hàng đề mẫu */}
+              {nguonDe === 'KHO_MAU' && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                    Bộ đề:
+                  </span>
+                  <div className="relative group">
+                    <select
+                      value={boDe}
+                      disabled={isExamInProgress}
+                      onChange={(e) => setBoDe(Number(e.target.value))}
+                      title="Chọn 1 trong 10 bộ đề chuẩn được biên soạn cho chủ đề này"
+                      className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-indigo-700 dark:text-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed appearance-none shadow-2xs hover:shadow-xs"
+                    >
+                      <option value={0}>Tự Động (1 - 10)</option>
+                      {[...Array(10)].map((_, i) => (
+                        <option key={i + 1} value={i + 1}>
+                          Bộ Đề #{i + 1}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 group-hover:translate-y-[-40%]" />
+                  </div>
+                </div>
+              )}
+
               {/* Lịch sử đề đã tạo */}
               <button
                 type="button"
@@ -544,24 +569,9 @@ export default function StudentAiPracticePage() {
                   maxLength={100}
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
-                  placeholder="VD: Công nghệ thông tin, Du lịch khách sạn, Điện ảnh giải trí, Inversion..."
+                  placeholder="VD: Công nghệ thông tin (IT), Du lịch khách sạn, Điện ảnh giải trí, Inversion..."
                   className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-400 dark:hover:border-teal-500 rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-xs transition-all duration-200 shadow-2xs hover:shadow-xs"
                 />
-
-                {/* Gợi ý chủ đề nhanh & thông dụng */}
-                <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Gợi ý nhanh:</span>
-                  {QUICK_SUGGESTIONS.map((sug) => (
-                    <button
-                      key={sug}
-                      type="button"
-                      onClick={() => setCustomTopic(sug)}
-                      className="px-2.5 py-1 rounded-md bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/80 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800 hover:border-teal-400 dark:hover:border-teal-600 text-[10px] font-semibold transition-all duration-200 hover:shadow-2xs active:scale-95 cursor-pointer"
-                    >
-                      +{sug}
-                    </button>
-                  ))}
-                </div>
               </div>
             )}
 
@@ -604,9 +614,16 @@ export default function StudentAiPracticePage() {
           <div className="space-y-6">
             {/* Header Thống Kê */}
             <div className="p-3.5 sm:p-4 rounded-xl bg-teal-50 dark:bg-[#13222e] border border-teal-200 dark:border-teal-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <span className="text-xs text-teal-900 dark:text-teal-200 font-bold">
-                Bài tập: <strong>{result.data.chuDe}</strong> — Trình độ: <strong>CEFR {result.data.trinhDo}</strong> ({result.data.cauHoi.length} câu)
-              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs text-teal-900 dark:text-teal-200 font-bold">
+                  Bài tập: <strong>{result.data.chuDe}</strong> — Trình độ: <strong>CEFR {result.data.trinhDo}</strong> ({result.data.cauHoi.length} câu)
+                </span>
+                {result.data.boDe && (
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800">
+                    Bộ Đề #{result.data.boDe}/10
+                  </span>
+                )}
+              </div>
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
                 <span
                   className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${
