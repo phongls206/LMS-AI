@@ -420,7 +420,7 @@ export default function AdminDashboardPage() {
                   <span className="font-bold text-teal-700 dark:text-teal-300 block mb-0.5">
                     Chuẩn Đánh Giá Đầu Ra ETC:
                   </span>
-                  Học viên được công nhận hoàn thành khi đạt đồng thời{' '}
+                  Học viên được công nhận hoàn thành khi{' '}
                   <strong className="text-slate-900 dark:text-slate-100 font-semibold">Điểm Tổng Kết ≥ 50</strong>{' '}
                   và <strong className="text-slate-900 dark:text-slate-100 font-semibold">Chuyên Cần ≥ 80%</strong>.
                   Bấm vào từng mục ở trên để mở xem chi tiết danh sách học viên tương ứng.
