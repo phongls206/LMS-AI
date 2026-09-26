@@ -1006,7 +1006,7 @@ export default function AdminClassesPage() {
                                     <Edit3 className="w-3.5 h-3.5" />
                                   </button>
                                   <span className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 hidden group-hover/tip:flex items-center px-2 py-1 rounded-md text-[10px] font-bold text-white bg-slate-900/95 dark:bg-slate-800 shadow-lg whitespace-nowrap z-30 border border-slate-700">
-                                    Chỉnh sửa lớp
+                                    Sửa
                                   </span>
                                 </div>
                               </>
@@ -1907,8 +1907,8 @@ export default function AdminClassesPage() {
                       {submittingSchedule
                         ? 'Đang Cập Nhật...'
                         : replaceExistingSchedule
-                        ? `Cập Nhật Thời Khóa Biểu (${selectedDays.length} Ngày)`
-                        : `Thêm Bổ Sung Lịch (${selectedDays.length} Ngày)`}
+                          ? `Cập Nhật Thời Khóa Biểu (${selectedDays.length} Ngày)`
+                          : `Thêm Bổ Sung Lịch (${selectedDays.length} Ngày)`}
                     </span>
                   </button>
                 </div>
