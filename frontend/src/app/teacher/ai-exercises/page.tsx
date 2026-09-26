@@ -399,12 +399,12 @@ export default function TeacherAiExercisesPage() {
                     title={
                       nguonDe === 'AI'
                         ? 'Sinh đề mới ngẫu nhiên từ Gemini AI, hỗ trợ mọi chủ đề'
-                        : 'Bài tập chuẩn theo giáo trình 15 chủ đề do trung tâm biên soạn'
+                        : 'Bài tập chuẩn theo ngân hàng đề 15 chủ đề do trung tâm biên soạn'
                     }
                     className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-teal-800 dark:text-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed appearance-none shadow-2xs hover:shadow-xs"
                   >
-                    <option value="AI">Trí Tuệ Nhân Tạo (AI)</option>
-                    <option value="KHO_MAU">Kho Đề Mẫu Giáo Trình</option>
+                    <option value="AI">Trí Tuệ Nhân Tạo</option>
+                    <option value="KHO_MAU">Ngân Hàng Đề Mẫu</option>
                   </select>
                   <ChevronDown className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 group-hover:translate-y-[-40%]" />
                 </div>
@@ -503,17 +503,19 @@ export default function TeacherAiExercisesPage() {
                         ? 'Đang có bộ đề thử nghiệm dở dang. Vui lòng nộp bài hoặc nhấn "Hủy & Tạo Đề Khác" ở cuối trang để tạo đề mới.'
                         : 'Biên soạn bài tập mới với AI'
                     }
-                    className={`flex-1 min-w-0 px-3.5 h-10 min-h-[40px] font-bold rounded-xl flex items-center justify-center space-x-1.5 shadow-md transition-all duration-200 ${
-                      isExamInProgress
+                    className={`flex-1 min-w-0 px-3.5 h-10 min-h-[40px] font-bold rounded-xl flex items-center justify-center space-x-1.5 transition-all duration-200 ${
+                      cooldown > 0
+                        ? 'bg-amber-100/90 dark:bg-amber-950/70 border border-amber-300 dark:border-amber-700/80 text-amber-900 dark:text-amber-200 cursor-not-allowed shadow-none'
+                        : isExamInProgress
                         ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed opacity-75 shadow-none'
-                        : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-lg hover:shadow-teal-600/25 active:scale-[0.98] text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                        : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-lg hover:shadow-teal-600/25 active:scale-[0.98] text-white shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                     }`}
                   >
                     {loading ? (
                       <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
                     ) : cooldown > 0 ? (
-                      <span className="flex items-center space-x-1 text-amber-100 text-[11px] font-bold">
-                        <Clock className="w-3.5 h-3.5 text-amber-200 animate-spin" />
+                      <span className="flex items-center space-x-1.5 text-amber-900 dark:text-amber-200 text-xs font-bold">
+                        <Clock className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400 animate-spin" />
                         <span>{cooldown}s</span>
                       </span>
                     ) : (
@@ -569,11 +571,11 @@ export default function TeacherAiExercisesPage() {
               </div>
             )}
 
-            {/* Thông báo khi không tìm thấy trong kho đề mẫu giáo trình */}
+            {/* Thông báo khi không tìm thấy trong ngân hàng đề mẫu */}
             {bankNotFoundMsg && (
               <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
                 <div>
-                  <div className="font-bold">Chưa có bài tập mẫu cho chủ đề này</div>
+                  <div className="font-bold">Chưa có bài tập trong ngân hàng đề cho chủ đề này</div>
                   <div className="mt-0.5 text-amber-800 dark:text-amber-300">{bankNotFoundMsg}</div>
                 </div>
                 <button
@@ -597,7 +599,7 @@ export default function TeacherAiExercisesPage() {
             <div className="w-10 h-10 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
             <p className="text-xs text-teal-700 font-bold animate-pulse">
               {nguonDe === 'KHO_MAU'
-                ? `Hệ thống đang truy xuất bài tập chuẩn giáo trình cho chủ đề ${activeTopic}...`
+                ? `Hệ thống đang truy xuất bài tập từ ngân hàng đề cho chủ đề ${activeTopic}...`
                 : `AI Trợ Giảng đang tổng hợp ngân hàng đề và sinh bài tập chuẩn CEFR ${cefr}...`}
             </p>
           </div>
@@ -639,13 +641,13 @@ export default function TeacherAiExercisesPage() {
                   }`}
                 >
                   {result.mode === 'CURRICULUM_BANK'
-                    ? 'Đề Mẫu Giáo Trình ETC'
+                    ? 'Ngân Hàng Đề Mẫu ETC'
                     : result.mode === 'AI_CACHE'
                     ? 'Bộ Nhớ Đệm AI (Tức Thì)'
                     : result.mode === 'AI_COMMUNITY_CACHE'
                     ? 'Đề Tương Thích (Kho AI)'
                     : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
-                    ? 'Trí Tuệ Nhân Tạo (AI)'
+                    ? 'Trí Tuệ Nhân Tạo'
                     : 'Mẫu Dự Phòng (Fallback)'}
                 </span>
                 <button
