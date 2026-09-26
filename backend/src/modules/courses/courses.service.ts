@@ -32,7 +32,10 @@ export class CoursesService {
       include: {
         _count: { select: { lopHoc: true } },
       },
-      orderBy: { id: 'asc' },
+      orderBy: [
+        { trangThai: 'asc' },
+        { id: 'asc' },
+      ],
     });
 
     return this.serializeBigInt(courses);

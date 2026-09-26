@@ -6,7 +6,8 @@ import { coursesService } from '../../../services/api';
 import { KhoaHoc, TrinhDoCEFR } from '../../../types';
 import { 
   BookOpen, Plus, Clock, DollarSign, Award, CheckCircle, 
-  Eye, Edit, Users, School, AlertCircle, X, ChevronRight, Check
+  Eye, Edit, Users, School, AlertCircle, X, ChevronRight, Check,
+  Search, RotateCcw
 } from 'lucide-react';
 import Link from 'next/link';
 import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
@@ -51,6 +52,11 @@ export default function AdminCoursesPage() {
   });
   const [savingEdit, setSavingEdit] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Bộ lọc danh mục & Tìm kiếm
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'HOAT_DONG' | 'NGUNG_HOAT_DONG'>('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [cefrFilter, setCefrFilter] = useState<string>('ALL');
 
   const fetchCourses = async () => {
     try {
@@ -176,6 +182,33 @@ export default function AdminCoursesPage() {
     }
   };
 
+  // Đếm số lượng theo trạng thái
+  const countActive = courses.filter((c) => c.trangThai === 'HOAT_DONG' || (c as any).trangThai === 'DANG_MO').length;
+  const countInactive = courses.filter((c) => c.trangThai === 'NGUNG_HOAT_DONG').length;
+
+  // Lọc và Sắp xếp: Khóa Đang Hoạt Động lên đầu, Ngừng Hoạt Động đẩy xuống cuối
+  const filteredAndSortedCourses = courses
+    .filter((course) => {
+      const isInactive = course.trangThai === 'NGUNG_HOAT_DONG';
+      if (statusFilter === 'HOAT_DONG' && isInactive) return false;
+      if (statusFilter === 'NGUNG_HOAT_DONG' && !isInactive) return false;
+      if (cefrFilter !== 'ALL' && course.trinhDoYeuCau !== cefrFilter) return false;
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim();
+        const matchName = course.tenKhoaHoc?.toLowerCase().includes(q);
+        const matchCode = course.maKhoaHoc?.toLowerCase().includes(q);
+        if (!matchName && !matchCode) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      const isAInactive = a.trangThai === 'NGUNG_HOAT_DONG';
+      const isBInactive = b.trangThai === 'NGUNG_HOAT_DONG';
+      if (!isAInactive && isBInactive) return -1;
+      if (isAInactive && !isBInactive) return 1;
+      return Number(a.id) - Number(b.id);
+    });
+
   return (
     <AppLayout
       allowedRoles={['QUAN_LY']}
@@ -199,6 +232,106 @@ export default function AdminCoursesPage() {
             <Plus className="w-4 h-4" />
             <span>Mở Khóa Học Mới</span>
           </button>
+        </div>
+
+        {/* Filter and Search Bar */}
+        <div className="bg-white dark:bg-slate-900 p-3 sm:p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 sm:gap-4">
+          {/* Status Tabs */}
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100/90 dark:bg-slate-800/80 rounded-xl overflow-x-auto scrollbar-none">
+            <button
+              onClick={() => setStatusFilter('ALL')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                statusFilter === 'ALL'
+                  ? 'bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-400 shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
+            >
+              <span>Tất cả</span>
+              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
+                statusFilter === 'ALL'
+                  ? 'bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300'
+                  : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+              }`}>
+                {courses.length}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setStatusFilter('HOAT_DONG')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                statusFilter === 'HOAT_DONG'
+                  ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>Đang hoạt động</span>
+              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
+                statusFilter === 'HOAT_DONG'
+                  ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300'
+                  : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+              }`}>
+                {countActive}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setStatusFilter('NGUNG_HOAT_DONG')}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
+                statusFilter === 'NGUNG_HOAT_DONG'
+                  ? 'bg-white dark:bg-slate-900 text-rose-700 dark:text-rose-400 shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+              <span>Ngừng hoạt động</span>
+              <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-black ${
+                statusFilter === 'NGUNG_HOAT_DONG'
+                  ? 'bg-rose-100 dark:bg-rose-950 text-rose-800 dark:text-rose-300'
+                  : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
+              }`}>
+                {countInactive}
+              </span>
+            </button>
+          </div>
+
+          {/* Search & CEFR Dropdown */}
+          <div className="flex items-center gap-2.5 flex-1 md:max-w-md">
+            {/* Search Input */}
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Tìm mã hoặc tên khóa học..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* CEFR Dropdown */}
+            <select
+              value={cefrFilter}
+              onChange={(e) => setCefrFilter(e.target.value)}
+              className="py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition cursor-pointer"
+            >
+              <option value="ALL">Tất cả CEFR</option>
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
+            </select>
+          </div>
         </div>
 
         {message && (
@@ -230,13 +363,44 @@ export default function AdminCoursesPage() {
           <div className="py-20 flex justify-center items-center">
             <div className="w-8 h-8 border-4 border-teal-500/20 border-t-teal-600 rounded-full animate-spin"></div>
           </div>
+        ) : filteredAndSortedCourses.length === 0 ? (
+          <div className="py-16 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-8 shadow-sm animate-fadeIn">
+            <div className="w-12 h-12 mx-auto rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mb-3">
+              <Search className="w-6 h-6" />
+            </div>
+            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
+              Không tìm thấy khóa học phù hợp
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-4">
+              Không có khóa học nào khớp với bộ lọc trạng thái hoặc từ khóa tìm kiếm hiện tại.
+            </p>
+            {(statusFilter !== 'ALL' || cefrFilter !== 'ALL' || searchQuery) && (
+              <button
+                onClick={() => {
+                  setStatusFilter('ALL');
+                  setCefrFilter('ALL');
+                  setSearchQuery('');
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold hover:bg-teal-100 dark:hover:bg-teal-900 transition cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Đặt lại bộ lọc</span>
+              </button>
+            )}
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {courses.map((course) => (
-              <div
-                key={course.id}
-                className="group rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-teal-500/70 hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between overflow-hidden"
-              >
+            {filteredAndSortedCourses.map((course) => {
+              const isInactive = course.trangThai === 'NGUNG_HOAT_DONG';
+              return (
+                <div
+                  key={course.id}
+                  className={`group rounded-2xl bg-white dark:bg-slate-900 border ${
+                    isInactive
+                      ? 'border-slate-200/70 dark:border-slate-800/70 bg-slate-50/40 dark:bg-slate-900/40 opacity-80 hover:opacity-100'
+                      : 'border-slate-200/90 dark:border-slate-800 hover:border-teal-500/70 hover:shadow-xl hover:shadow-teal-500/10 hover:-translate-y-1'
+                  } transition-all duration-200 flex flex-col justify-between overflow-hidden`}
+                >
                 <div className="p-6">
                   {/* Top Badges */}
                   <div className="flex items-center justify-between gap-2 mb-3">
@@ -306,7 +470,8 @@ export default function AdminCoursesPage() {
                   </button>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
         )}
 
