@@ -18,6 +18,7 @@ import {
   Printer,
   AlertTriangle,
   Check,
+  ChevronDown,
 } from 'lucide-react';
 import { ExerciseHistoryModal } from '../../../components/ai/ExerciseHistoryModal';
 import { PaperExamModal } from '../../../components/ai/PaperExamModal';
@@ -381,53 +382,41 @@ export default function TeacherAiExercisesPage() {
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5">
-              {/* Chọn nguồn đề bài tập ngang hàng */}
-              <div className="inline-flex items-center p-1 bg-slate-100 dark:bg-[#162032] border border-slate-200/80 dark:border-[#22324e] rounded-xl text-xs">
-                <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 px-2 hidden sm:inline">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Chọn nguồn đề dạng Option Select */}
+              <div className="flex items-center space-x-2">
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap">
                   Nguồn đề:
                 </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNguonDe('AI');
-                    setBankNotFoundMsg(null);
-                  }}
-                  disabled={isExamInProgress}
-                  title="Sinh đề mới ngẫu nhiên từ Gemini AI, hỗ trợ mọi chủ đề"
-                  className={`px-3 py-1.5 rounded-lg font-bold text-xs transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
-                    nguonDe === 'AI'
-                      ? 'bg-teal-600 text-white shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                  }`}
-                >
-                  Trí Tuệ Nhân Tạo (AI)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNguonDe('KHO_MAU');
-                    setBankNotFoundMsg(null);
-                  }}
-                  disabled={isExamInProgress}
-                  title="Bài tập chuẩn theo giáo trình 15 chủ đề do trung tâm biên soạn"
-                  className={`px-3 py-1.5 rounded-lg font-bold text-xs transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
-                    nguonDe === 'KHO_MAU'
-                      ? 'bg-teal-600 text-white shadow-xs'
-                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                  }`}
-                >
-                  Kho Đề Mẫu Giáo Trình
-                </button>
+                <div className="relative group">
+                  <select
+                    value={nguonDe}
+                    disabled={isExamInProgress}
+                    onChange={(e) => {
+                      setNguonDe(e.target.value as 'AI' | 'KHO_MAU');
+                      setBankNotFoundMsg(null);
+                    }}
+                    title={
+                      nguonDe === 'AI'
+                        ? 'Sinh đề mới ngẫu nhiên từ Gemini AI, hỗ trợ mọi chủ đề'
+                        : 'Bài tập chuẩn theo giáo trình 15 chủ đề do trung tâm biên soạn'
+                    }
+                    className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl pl-3 pr-8 py-1.5 text-xs font-bold text-teal-800 dark:text-teal-300 focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed appearance-none shadow-2xs hover:shadow-xs"
+                  >
+                    <option value="AI">Trí Tuệ Nhân Tạo (AI)</option>
+                    <option value="KHO_MAU">Kho Đề Mẫu Giáo Trình</option>
+                  </select>
+                  <ChevronDown className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-200 group-hover:translate-y-[-40%]" />
+                </div>
               </div>
 
               {/* Lịch sử đề đã tạo */}
               <button
                 type="button"
                 onClick={() => setShowHistoryModal(true)}
-                className="px-3.5 py-1.5 min-h-[36px] sm:min-h-0 rounded-xl bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer shadow-2xs"
+                className="group px-3.5 py-1.5 min-h-[34px] rounded-xl bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/80 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800 hover:border-teal-300 dark:hover:border-teal-700 text-xs font-bold flex items-center space-x-1.5 transition-all duration-200 hover:shadow-xs active:scale-[0.98] cursor-pointer shadow-2xs"
               >
-                <History className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <History className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 group-hover:rotate-18 transition-transform duration-200" />
                 <span>Lịch Sử Đề Đã Tạo</span>
               </button>
             </div>
@@ -445,7 +434,7 @@ export default function TeacherAiExercisesPage() {
                   value={selectedTopic}
                   disabled={isExamInProgress}
                   onChange={(e) => setSelectedTopic(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-teal-500 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-100 font-semibold focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 hover:shadow-xs cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {PREDEFINED_TOPICS.map((t) => (
                     <option key={t} value={t}>
@@ -463,7 +452,7 @@ export default function TeacherAiExercisesPage() {
                   value={cefr}
                   disabled={isExamInProgress}
                   onChange={(e) => setCefr(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3 py-2.5 text-slate-900 dark:text-slate-100 font-bold focus:outline-none focus:border-teal-500 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl px-3 py-2.5 text-slate-900 dark:text-slate-100 font-bold focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 hover:shadow-xs cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="A1">A1 — Sơ cấp</option>
                   <option value="A2">A2 — Tiền trung cấp</option>
@@ -482,7 +471,7 @@ export default function TeacherAiExercisesPage() {
                   value={loaiCauHoi}
                   disabled={isExamInProgress}
                   onChange={(e) => setLoaiCauHoi(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3 py-2.5 text-teal-800 dark:text-teal-300 font-bold focus:outline-none focus:border-teal-500 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl px-3 py-2.5 text-teal-800 dark:text-teal-300 font-bold focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 hover:shadow-xs cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <option value="MIXED">Hỗn hợp (Trắc nghiệm, Đúng/Sai, Nhiều đáp án)</option>
                   <option value="SINGLE">Chọn 1 đáp án (A, B, C, D)</option>
@@ -500,7 +489,7 @@ export default function TeacherAiExercisesPage() {
                     value={soLuong}
                     disabled={isExamInProgress}
                     onChange={(e) => setSoLuong(+e.target.value)}
-                    className="w-24 shrink-0 bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-2.5 py-2.5 text-teal-800 dark:text-teal-300 focus:outline-none focus:border-teal-500 font-bold cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-24 shrink-0 bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-500 dark:hover:border-teal-400 rounded-xl px-2.5 py-2.5 text-teal-800 dark:text-teal-300 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 hover:shadow-xs font-bold cursor-pointer transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <option value={5}>5 câu</option>
                     <option value={10}>10 câu</option>
@@ -514,10 +503,10 @@ export default function TeacherAiExercisesPage() {
                         ? 'Đang có bộ đề thử nghiệm dở dang. Vui lòng nộp bài hoặc nhấn "Hủy & Tạo Đề Khác" ở cuối trang để tạo đề mới.'
                         : 'Biên soạn bài tập mới với AI'
                     }
-                    className={`flex-1 min-w-0 px-3.5 h-10 min-h-[40px] font-bold rounded-xl flex items-center justify-center space-x-1.5 shadow-md transition ${
+                    className={`flex-1 min-w-0 px-3.5 h-10 min-h-[40px] font-bold rounded-xl flex items-center justify-center space-x-1.5 shadow-md transition-all duration-200 ${
                       isExamInProgress
                         ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed opacity-75 shadow-none'
-                        : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white shadow-teal-600/20 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
+                        : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 hover:shadow-lg hover:shadow-teal-600/25 active:scale-[0.98] text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed'
                     }`}
                   >
                     {loading ? (
@@ -542,7 +531,7 @@ export default function TeacherAiExercisesPage() {
             {selectedTopic === 'CUSTOM' && (
               <div className="pt-2 space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="block font-bold text-teal-800 uppercase tracking-wider text-[11px]">
+                  <label className="block font-bold text-teal-800 dark:text-teal-400 uppercase tracking-wider text-[11px]">
                     Nhập Chủ Đề Tùy Chỉnh Của Bạn:
                   </label>
                   <span
@@ -560,18 +549,18 @@ export default function TeacherAiExercisesPage() {
                   value={customTopic}
                   onChange={(e) => setCustomTopic(e.target.value)}
                   placeholder="VD: Công nghệ thông tin, Du lịch khách sạn, Điện ảnh giải trí, Inversion..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500 text-xs"
+                  className="w-full bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] hover:border-teal-400 dark:hover:border-teal-500 rounded-xl px-4 py-2.5 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-xs transition-all duration-200 shadow-2xs hover:shadow-xs"
                 />
 
                 {/* Gợi ý chủ đề nhanh & thông dụng */}
                 <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                  <span className="text-[10px] text-slate-500 font-medium">💡 Gợi ý nhanh:</span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Gợi ý nhanh:</span>
                   {QUICK_SUGGESTIONS.map((sug) => (
                     <button
                       key={sug}
                       type="button"
                       onClick={() => setCustomTopic(sug)}
-                      className="px-2 py-0.5 rounded-md bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-[10px] font-semibold transition cursor-pointer"
+                      className="px-2.5 py-1 rounded-md bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/80 text-teal-800 dark:text-teal-300 border border-teal-200 dark:border-teal-800 hover:border-teal-400 dark:hover:border-teal-600 text-[10px] font-semibold transition-all duration-200 hover:shadow-2xs active:scale-95 cursor-pointer"
                     >
                       +{sug}
                     </button>
@@ -770,7 +759,7 @@ export default function TeacherAiExercisesPage() {
                               key={optKey}
                               type="button"
                               onClick={() => handleSelectOption(idx, optKey, typeInfo.isMulti)}
-                              className={`p-3 min-h-[44px] rounded-xl border text-xs text-left transition flex items-center space-x-2.5 sm:space-x-3 cursor-pointer w-full ${btnClass}`}
+                              className={`p-3 min-h-[44px] rounded-xl border text-xs text-left transition-all duration-200 active:scale-[0.99] flex items-center space-x-2.5 sm:space-x-3 cursor-pointer w-full ${btnClass}`}
                             >
                               <span
                                 className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition-colors ${badgeClass}`}
