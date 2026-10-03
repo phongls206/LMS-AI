@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
-import { classesService, attendancesService, authStorage } from '../../../services/api';
+import { classesService, attendancesService, gradesService, authStorage } from '../../../services/api';
 import { toast } from '../../../components/Toast';
 import { TrangThaiDiemDanh } from '../../../types';
 import {
@@ -26,7 +26,7 @@ import {
   AlertCircle,
   FileSpreadsheet,
 } from 'lucide-react';
-import { exportClassAttendanceExcel } from '../../../utils/excel-exporter';
+import { exportClassAttendanceExcel, exportFullClassPackageExcel } from '../../../utils/excel-exporter';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
 export default function TeacherAttendancePage() {
@@ -40,6 +40,7 @@ export default function TeacherAttendancePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [generatingSessions, setGeneratingSessions] = useState(false);
+  const [exportingPackage, setExportingPackage] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [searchStudent, setSearchStudent] = useState('');
 
@@ -244,7 +245,38 @@ export default function TeacherAttendancePage() {
     }
   };
 
-
+  // Handler xuất trọn bộ hồ sơ lớp học (Bảng điểm + Điểm danh + Danh sách)
+  const handleExportFullPackage = async () => {
+    if (!classDetail || !selectedClassId) return;
+    try {
+      setExportingPackage(true);
+      let gradesData: any[] = [];
+      try {
+        gradesData = await gradesService.getClassGrades(selectedClassId);
+      } catch {}
+      const gMap: Record<number, any> = {};
+      (gradesData || []).forEach((g: any) => {
+        gMap[Number(g.hocVienId)] = {
+          cc: g.diemChuyenCan !== null && g.diemChuyenCan !== undefined ? Number(g.diemChuyenCan) : '',
+          gk: g.diemGiuaKy !== null && g.diemGiuaKy !== undefined ? Number(g.diemGiuaKy) : '',
+          ck: g.diemCuoiKy !== null && g.diemCuoiKy !== undefined ? Number(g.diemCuoiKy) : '',
+          nhanXet: g.nhanXet || '',
+        };
+      });
+      exportFullClassPackageExcel({
+        classDetail: {
+          ...classDetail,
+          dangKyHoc: activeClassEnrollments,
+        },
+        gradesMap: gMap,
+        sessions,
+        matrixData,
+        teacherName: currentUser?.hoTen,
+      });
+    } finally {
+      setExportingPackage(false);
+    }
+  };
 
   const isClassRecruiting = classDetail?.trangThai === 'DANG_MO_DANG_KY' || classDetail?.trangThai === 'SAP_MO';
 
@@ -429,6 +461,7 @@ export default function TeacherAttendancePage() {
                       sessions,
                       matrixData,
                       selectedSessionId: activeTab === 'take_attendance' ? selectedSessionId : null,
+                      teacherName: currentUser?.hoTen,
                     })
                   }
                   disabled={!selectedClassId || !activeClassEnrollments.length}
@@ -436,7 +469,20 @@ export default function TeacherAttendancePage() {
                   title="Xuất kết quả điểm danh ra file Excel .xlsx"
                 >
                   <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-                  <span className="whitespace-nowrap">Xuất Excel Điểm Danh</span>
+                  <span className="whitespace-nowrap">
+                    {activeTab === 'take_attendance' ? 'Xuất Buổi Này' : 'Xuất Ma Trận Excel'}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleExportFullPackage}
+                  disabled={!selectedClassId || !activeClassEnrollments.length || exportingPackage}
+                  className="flex-1 sm:flex-initial px-3.5 py-2 min-h-[40px] rounded-xl bg-teal-50 hover:bg-teal-100 dark:bg-teal-950/40 dark:hover:bg-teal-900/50 text-teal-800 dark:text-teal-300 border border-teal-300 dark:border-teal-800/60 text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer disabled:opacity-50 whitespace-nowrap"
+                  title="Xuất trọn bộ hồ sơ lớp học (Bảng điểm + Ma trận điểm danh + Danh sách lớp) ra file Excel 3 Sheet"
+                >
+                  <FileSpreadsheet className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
+                  <span className="whitespace-nowrap">{exportingPackage ? 'Đang xuất...' : 'Trọn Bộ Hồ Sơ'}</span>
                 </button>
 
                 {activeTab === 'take_attendance' && (
