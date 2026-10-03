@@ -122,13 +122,13 @@ export function ConfirmDialogContainer() {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-xs flex items-start justify-center pt-[10vh] p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[9999] bg-slate-950/30 flex items-start justify-center pt-[8vh] p-4 animate-in fade-in duration-300"
       onClick={handleCancel}
       role="dialog"
       aria-modal="true"
     >
       <div
-        className="bg-white dark:bg-[#111928] border border-slate-200 dark:border-[#1e2d45] rounded-2xl shadow-2xl max-w-md w-full p-5 sm:p-6 space-y-4 animate-in zoom-in-95 duration-150 text-slate-900 dark:text-slate-100"
+        className="bg-white/95 dark:bg-[#111928]/95 backdrop-blur-md border border-slate-200/60 dark:border-[#1e2d45]/80 rounded-2xl shadow-xl shadow-slate-900/10 dark:shadow-black/30 max-w-md w-full p-5 sm:p-6 space-y-4 animate-in slide-in-from-top-4 fade-in duration-300 text-slate-900 dark:text-slate-100"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-start gap-3.5">
