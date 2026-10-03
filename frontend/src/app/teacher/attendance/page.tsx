@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, attendancesService, authStorage } from '../../../services/api';
+import { toast } from '../../../components/Toast';
 import { TrangThaiDiemDanh } from '../../../types';
 import {
   CheckCircle,
@@ -210,7 +211,7 @@ export default function TeacherAttendancePage() {
   const handleSaveAttendance = async () => {
     if (!selectedSessionId || !classDetail) return;
     if (classDetail.trangThai === 'DANG_MO_DANG_KY' || classDetail.trangThai === 'SAP_MO') {
-      alert('Lớp học đang trong giai đoạn mở tuyển sinh, chưa vào học chính thức. Không thể điểm danh!');
+      toast.warning('Lớp học đang trong giai đoạn mở tuyển sinh, chưa vào học chính thức. Không thể điểm danh!');
       return;
     }
     setSaving(true);
@@ -225,6 +226,7 @@ export default function TeacherAttendancePage() {
     try {
       await attendancesService.submitAttendance(selectedSessionId, danhSach);
       setMessage('Lưu kết quả điểm danh thành công!');
+      toast.success('Lưu kết quả điểm danh thành công!');
 
       // Cập nhật lại danh sách sessions và ma trận dữ liệu toàn khóa
       const [classSessions, matrix] = await Promise.all([
@@ -236,7 +238,7 @@ export default function TeacherAttendancePage() {
 
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi lưu điểm danh.');
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi lưu điểm danh.');
     } finally {
       setSaving(false);
     }

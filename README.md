@@ -256,21 +256,7 @@ cd LMS-AI
 
 ---
 
-## 🔑 7. Demo Credentials
-
-> 💡 **Default Password for ALL demo accounts:** `123456`
-
-| Role | Username | Password | Core Responsibilities |
-| :--- | :--- | :--- | :--- |
-| **Administrator** | `admin01` | `123456` | Complete system control: KPIs, Courses, Classes, Teachers, Students, Financial Auditing, System Settings |
-| **Academic Staff** | `staff01`, `staff02` | `123456` | Student admissions, class placement, fee collection, debt follow-up, receipt printing |
-| **Teacher** | `teacher01` → `teacher10` | `123456` | Weekly schedule, session attendance, course attendance matrix, grade entry, AI quiz generation |
-| **Student** | `student01` → `student54` | `123456` | Personal schedule, academic transcripts, class enrollment, tuition bills, AI consulting & practice |
-| **New Student (Test)** | `phongls206` | `123456` | Clean test account for testing self-enrollment and automated invoice generation |
-
----
-
-## 🖥️ 8. Role-Based Functional Modules
+## 🖥️ 7. Role-Based Functional Modules
 
 ### 1. Administrator Portal (`/admin`)
 * **Executive Dashboard (`/admin/dashboard`):** Real-time analytics on revenue, active student count, class utilization, and CEFR level distribution.
@@ -298,7 +284,7 @@ cd LMS-AI
 
 ---
 
-## 📚 9. Interactive API Documentation (Swagger)
+## 📚 8. Interactive API Documentation (Swagger)
 
 The backend provides complete OpenAPI documentation accessible at:  
 👉 **`http://localhost:8000/api/docs`**
@@ -310,7 +296,7 @@ Key highlights:
 
 ---
 
-## 🧪 10. Testing & Quality Assurance
+## 🧪 9. Testing & Quality Assurance
 
 The codebase includes automated test suites and linting utilities:
 
@@ -335,7 +321,7 @@ npx prisma studio
 
 ---
 
-## 📬 11. Contact & Support
+## 📬 10. Contact & Support
 
 For inquiries, academic collaboration, or architectural discussions:
 * **Lead Developer:** Le Hong Phong

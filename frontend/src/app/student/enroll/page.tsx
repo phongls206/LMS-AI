@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, enrollmentsService, authService, gradesService } from '../../../services/api';
+import { toast } from '../../../components/Toast';
 import { LopHoc } from '../../../types';
 import {
   formatTrangThaiDangKy,
@@ -140,7 +141,7 @@ export default function StudentEnrollPage() {
 
   const handleEnroll = async (classId: number) => {
     if (!user?.hoSoHocVien?.id) {
-      alert('Không tìm thấy thông tin hồ sơ học viên của bạn.');
+      toast.error('Không tìm thấy thông tin hồ sơ học viên của bạn.');
       return;
     }
 

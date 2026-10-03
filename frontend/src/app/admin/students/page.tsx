@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
+import { toast } from '../../../components/Toast';
 import { HocVien, TrinhDoCEFR } from '../../../types';
 import { formatTrangThaiHocVien, formatTrangThaiDangKy } from '../../../utils/formatters';
 import {
@@ -180,7 +181,7 @@ export default function AdminStudentsPage() {
   const handleCreateStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (Object.keys(createDuplicateErrors).length > 0) {
-      alert('Vui lòng sửa các thông tin đang bị trùng lặp trước khi lưu!');
+      toast.warning('Vui lòng sửa các thông tin đang bị trùng lặp trước khi lưu!');
       return;
     }
 

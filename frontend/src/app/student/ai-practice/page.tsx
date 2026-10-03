@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService } from '../../../services/api';
 import { validateAiPrompt } from '../../../utils/ai-validator';
+import { toast } from '../../../components/Toast';
 import {
   BrainCircuit,
   CheckCircle2,
@@ -150,11 +151,11 @@ export default function StudentAiPracticePage() {
     if (selectedTopic === 'CUSTOM') {
       const validation = validateAiPrompt(activeTopic, 'TOPIC');
       if (!validation.isValid) {
-        alert(validation.errorMessage);
+        toast.warning(validation.errorMessage || 'Chủ đề không hợp lệ.');
         return;
       }
     } else if (!activeTopic || activeTopic.length < 3) {
-      alert('Chủ đề bài tập quá ngắn! Vui lòng chọn chủ đề hợp lệ.');
+      toast.warning('Chủ đề bài tập quá ngắn! Vui lòng chọn chủ đề hợp lệ.');
       return;
     }
 
@@ -179,13 +180,14 @@ export default function StudentAiPracticePage() {
       if (err.response?.status === 404 && nguonDe === 'KHO_MAU') {
         setBankNotFoundMsg(msg);
       } else {
-        alert(msg);
+        toast.error(msg);
       }
     } finally {
       setLoading(false);
       setCooldown(5); // 5s cooldown chống spam
     }
   };
+
 
   // Xác định câu hỏi thuộc dạng nào
   const getQuestionTypeInfo = (q: any) => {

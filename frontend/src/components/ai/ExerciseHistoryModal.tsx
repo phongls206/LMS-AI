@@ -16,6 +16,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { aiService } from '../../services/api';
+import { toast } from '../Toast';
 
 interface ExerciseHistoryModalProps {
   isOpen: boolean;
@@ -66,8 +67,9 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
     try {
       await aiService.deleteExerciseHistoryItem(id);
       setHistory((prev) => prev.filter((item) => item.id !== id));
+      toast.success('Đã xóa đề bài tập khỏi lịch sử.');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi xóa đề bài tập.');
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi xóa đề bài tập.');
     } finally {
       setDeletingId(null);
     }
@@ -86,8 +88,9 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
     try {
       await aiService.clearExerciseHistory();
       setHistory([]);
+      toast.success('Đã xóa toàn bộ lịch sử đề bài tập.');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi xóa toàn bộ lịch sử.');
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi xóa toàn bộ lịch sử.');
     } finally {
       setClearingAll(false);
     }

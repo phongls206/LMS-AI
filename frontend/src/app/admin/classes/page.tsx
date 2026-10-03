@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, coursesService, usersService, attendancesService } from '../../../services/api';
+import { toast } from '../../../components/Toast';
 import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
 import {
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
@@ -512,7 +513,7 @@ export default function AdminClassesPage() {
       });
     } catch (err) {
       console.error(err);
-      alert('Không thể tải danh sách buổi học.');
+      toast.error('Không thể tải danh sách buổi học.');
     } finally {
       setLoadingSessions(false);
     }
@@ -522,16 +523,18 @@ export default function AdminClassesPage() {
     setGeneratingSessions(true);
     try {
       await attendancesService.generateSessions(classId, { soBuoiHoc: count });
+      const successText = `Đã tự động khởi tạo ${count} buổi học theo lịch trình lớp thành công!`;
       setMessage({
         type: 'success',
-        text: `Đã tự động khởi tạo ${count} buổi học theo lịch trình lớp thành công!`,
+        text: successText,
       });
+      toast.success(successText);
       const data = await attendancesService.getClassSessions(classId);
       setClassSessions(data || []);
       fetchData();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi tự động sinh buổi học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi tự động sinh buổi học.');
     } finally {
       setGeneratingSessions(false);
     }
@@ -543,6 +546,7 @@ export default function AdminClassesPage() {
     try {
       await attendancesService.createSession(showSessionsClassId, newSessionForm);
       setMessage({ type: 'success', text: 'Thêm buổi học mới thành công!' });
+      toast.success('Thêm buổi học mới thành công!');
       setShowAddSessionForm(false);
       const data = await attendancesService.getClassSessions(showSessionsClassId);
       setClassSessions(data || []);
@@ -558,7 +562,7 @@ export default function AdminClassesPage() {
       fetchData();
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi tạo buổi học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi tạo buổi học.');
     }
   };
 
@@ -583,7 +587,7 @@ export default function AdminClassesPage() {
 
   const handleSaveSession = async (sessionId: number) => {
     if (!editSessionForm.chuDe.trim()) {
-      alert('Vui lòng nhập tiêu đề buổi học.');
+      toast.warning('Vui lòng nhập tiêu đề buổi học.');
       return;
     }
     setSavingEditSession(true);
@@ -595,9 +599,10 @@ export default function AdminClassesPage() {
       }
       setEditingSessionId(null);
       setMessage({ type: 'success', text: 'Cập nhật ngày học, khung giờ, phòng học và tiêu đề thành công!' });
+      toast.success('Cập nhật buổi học thành công!');
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi cập nhật buổi học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi cập nhật buổi học.');
     } finally {
       setSavingEditSession(false);
     }
@@ -620,12 +625,14 @@ export default function AdminClassesPage() {
     setSavingEditClass(true);
     try {
       await classesService.update(editingClass.id, editClassForm);
-      setMessage({ type: 'success', text: `Cập nhật thông tin và phòng học lớp ${editingClass.maLopHoc} thành công!` });
+      const successText = `Cập nhật thông tin và phòng học lớp ${editingClass.maLopHoc} thành công!`;
+      setMessage({ type: 'success', text: successText });
+      toast.success(successText);
       setEditingClass(null);
       fetchData();
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi cập nhật lớp học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi cập nhật lớp học.');
     } finally {
       setSavingEditClass(false);
     }
@@ -633,7 +640,7 @@ export default function AdminClassesPage() {
 
   const handleDeleteSession = async (sessionId: number, soThuTu: number, isCompleted: boolean) => {
     if (isCompleted) {
-      alert(
+      toast.warning(
         `Buổi ${soThuTu} đã hoàn thành hoặc có dữ liệu điểm danh, không thể xóa để bảo toàn dữ liệu tính điểm và chuyên cần!`
       );
       return;
@@ -651,14 +658,16 @@ export default function AdminClassesPage() {
         const data = await attendancesService.getClassSessions(showSessionsClassId);
         setClassSessions(data || []);
       }
+      const successMsg = res?.message || `Đã xóa Buổi ${soThuTu} và tự động dồn số thứ tự các buổi tiếp theo!`;
       setMessage({
         type: 'success',
-        text: res?.message || `Đã xóa Buổi ${soThuTu} và tự động dồn số thứ tự các buổi tiếp theo!`,
+        text: successMsg,
       });
+      toast.success(successMsg);
       fetchData();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi xóa buổi học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi xóa buổi học.');
     }
   };
 
