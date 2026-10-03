@@ -203,27 +203,51 @@ export default function StaffCollectFeePage() {
 
   const handleEnrollAndInvoice = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (currentClass) {
+      const start = currentClass.ngayBatDau ? new Date(currentClass.ngayBatDau) : null;
+      const end = currentClass.ngayKetThuc ? new Date(currentClass.ngayKetThuc) : null;
+      const buoiCount = currentClass.buoiHoc?.length || (currentClass as any)._count?.buoiHoc || 0;
+      if (start && end) {
+        if (end <= start) {
+          toast.error('Lớp học này có ngày kết thúc trước hoặc trùng ngày bắt đầu!');
+          return;
+        }
+        const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        if (buoiCount > 0 && diffDays < buoiCount) {
+          toast.error(
+            `Thời gian đào tạo của lớp không hợp lệ (${buoiCount} buổi trong ${diffDays} ngày). Vui lòng điều chỉnh lịch lớp trước khi ghi danh!`
+          );
+          return;
+        }
+      }
+    }
+
     setSubmitting(true);
     setMessage(null);
 
     try {
       const res = await enrollmentsService.enroll(selectedStudentId, selectedClassId);
       const isReactivate = !!previouslyCancelledInvoice;
+      const successText = isReactivate
+        ? `Tái kích hoạt và ghi danh thành công! Hóa đơn ${res.invoice?.maHoaDon} đã được kích hoạt lại (bảo toàn ${Number(res.invoice?.soTienDaTra || 0).toLocaleString()} đ đã đóng trước đó).`
+        : `Ghi danh thành công! Đã tạo hóa đơn ${res.invoice?.maHoaDon} với số tiền ${Number(res.invoice?.soTienPhaiTra).toLocaleString()} đ. Bạn có thể thu học phí ngay.`;
       setMessage({
         type: 'success',
-        text: isReactivate
-          ? `Tái kích hoạt và ghi danh thành công! Hóa đơn ${res.invoice?.maHoaDon} đã được kích hoạt lại (bảo toàn ${Number(res.invoice?.soTienDaTra || 0).toLocaleString()} đ đã đóng trước đó).`
-          : `Ghi danh thành công! Đã tạo hóa đơn ${res.invoice?.maHoaDon} với số tiền ${Number(res.invoice?.soTienPhaiTra).toLocaleString()} đ. Bạn có thể thu học phí ngay.`,
+        text: successText,
       });
+      toast.success(successText);
       await fetchData();
       if (res.invoice && Number(res.invoice.soTienPhaiTra) - Number(res.invoice.soTienDaTra) > 0) {
         handleOpenPayment(res.invoice);
       }
     } catch (err: any) {
+      const errMsg = err.response?.data?.message || 'Lỗi ghi danh lớp học.';
       setMessage({
         type: 'error',
-        text: err.response?.data?.message || 'Lỗi ghi danh lớp học.',
+        text: errMsg,
       });
+      toast.error(errMsg);
     } finally {
       setSubmitting(false);
     }

@@ -9,7 +9,7 @@ import {
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
   Sparkles, Clock, Trash2, Edit3, Check, X, BookOpen, Layers, Lock, Users,
   Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, RefreshCw,
-  MapPin, Globe, UserPlus
+  MapPin, Globe, UserPlus, AlertTriangle
 } from 'lucide-react';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
@@ -126,6 +126,25 @@ const isUniformSchedule = (grouped: GroupedScheduleDay[]): boolean => {
     if (g.sessions[0].timeStr !== firstTime) return false;
   }
   return true;
+};
+
+const calculateDaysDifference = (startStr: string, endStr: string): number => {
+  if (!startStr || !endStr) return 0;
+  const start = new Date(startStr);
+  const end = new Date(endStr);
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return 0;
+  return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+};
+
+const suggestEndDate = (startStr: string, sessionCount: number): string => {
+  if (!startStr || !sessionCount || sessionCount <= 0) return '';
+  const start = new Date(startStr);
+  if (isNaN(start.getTime())) return '';
+  const weeksNeeded = Math.ceil(sessionCount / 3);
+  const daysToAdd = Math.max(sessionCount, weeksNeeded * 7);
+  const end = new Date(start);
+  end.setDate(end.getDate() + daysToAdd);
+  return end.toISOString().split('T')[0];
 };
 
 export default function AdminClassesPage() {
@@ -335,20 +354,51 @@ export default function AdminClassesPage() {
     e.preventDefault();
     const selectedCourse = courses.find((c) => Number(c.id) === Number(classForm.khoaHocId));
     if (selectedCourse?.trangThai === 'NGUNG_HOAT_DONG') {
+      const msg = `Khóa học "${selectedCourse.tenKhoaHoc}" hiện đang ngừng hoạt động. Không thể mở lớp mới cho chương trình này!`;
       setMessage({
         type: 'error',
-        text: `Khóa học "${selectedCourse.tenKhoaHoc}" hiện đang ngừng hoạt động. Không thể mở lớp mới cho chương trình này!`,
+        text: msg,
       });
+      toast.error(msg);
+      return;
+    }
+
+    if (!classForm.ngayBatDau || !classForm.ngayKetThuc) {
+      toast.error('Vui lòng chọn ngày bắt đầu và ngày kết thúc cho lớp học.');
+      return;
+    }
+
+    const start = new Date(classForm.ngayBatDau);
+    const end = new Date(classForm.ngayKetThuc);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      toast.error('Ngày bắt đầu hoặc ngày kết thúc không hợp lệ.');
+      return;
+    }
+    if (end <= start) {
+      toast.error('Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày.');
+      return;
+    }
+
+    const diffDays = calculateDaysDifference(classForm.ngayBatDau, classForm.ngayKetThuc);
+    const soBuoi = classForm.soBuoiHoc && classForm.soBuoiHoc > 0 ? classForm.soBuoiHoc : 12;
+    if (diffDays < soBuoi) {
+      toast.error(
+        `Không thể mở lớp! Thời gian đào tạo (${diffDays} ngày) quá ngắn, không thể bố trí ${soBuoi} buổi học. Khoảng cách giữa ngày bắt đầu và ngày kết thúc phải từ ${soBuoi} ngày trở lên!`
+      );
       return;
     }
 
     try {
       await classesService.create(classForm);
-      setMessage({ type: 'success', text: 'Mở lớp học mới thành công!' });
+      const successText = 'Mở lớp học mới thành công!';
+      setMessage({ type: 'success', text: successText });
+      toast.success(successText);
       setShowCreateClass(false);
       fetchData();
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Lỗi mở lớp học.' });
+      const errMsg = err.response?.data?.message || 'Lỗi mở lớp học.';
+      setMessage({ type: 'error', text: errMsg });
+      toast.error(errMsg);
     }
   };
 
@@ -622,6 +672,29 @@ export default function AdminClassesPage() {
   const handleSaveClass = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingClass) return;
+
+    if (editClassForm.ngayBatDau && editClassForm.ngayKetThuc) {
+      const start = new Date(editClassForm.ngayBatDau);
+      const end = new Date(editClassForm.ngayKetThuc);
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        toast.error('Ngày bắt đầu hoặc ngày kết thúc không hợp lệ.');
+        return;
+      }
+      if (end <= start) {
+        toast.error('Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày.');
+        return;
+      }
+
+      const diffDays = calculateDaysDifference(editClassForm.ngayBatDau, editClassForm.ngayKetThuc);
+      const buoiHocCount = editingClass.buoiHoc?.length || (editingClass as any)._count?.buoiHoc || 0;
+      if (buoiHocCount > 0 && diffDays < buoiHocCount) {
+        toast.error(
+          `Không thể lưu thay đổi! Lớp có ${buoiHocCount} buổi học giáo trình, khoảng cách thời gian (${diffDays} ngày) không đủ để bố trí lịch học. Khoảng cách ngày phải lớn hơn hoặc bằng ${buoiHocCount} ngày.`
+        );
+        return;
+      }
+    }
+
     setSavingEditClass(true);
     try {
       await classesService.update(editingClass.id, editClassForm);
@@ -1451,7 +1524,20 @@ export default function AdminClassesPage() {
                       type="date"
                       required
                       value={classForm.ngayBatDau}
-                      onChange={(e) => setClassForm({ ...classForm, ngayBatDau: e.target.value })}
+                      onChange={(e) => {
+                        const newStart = e.target.value;
+                        const soBuoi = classForm.soBuoiHoc || 12;
+                        const currentDiff = calculateDaysDifference(newStart, classForm.ngayKetThuc);
+                        if (!classForm.ngayKetThuc || currentDiff < soBuoi) {
+                          setClassForm({
+                            ...classForm,
+                            ngayBatDau: newStart,
+                            ngayKetThuc: suggestEndDate(newStart, soBuoi),
+                          });
+                        } else {
+                          setClassForm({ ...classForm, ngayBatDau: newStart });
+                        }
+                      }}
                       className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-teal-500"
                     />
                   </div>
@@ -1466,6 +1552,54 @@ export default function AdminClassesPage() {
                     />
                   </div>
                 </div>
+
+                {/* Cảnh báo và gợi ý khoảng cách thời gian mở lớp */}
+                {classForm.ngayBatDau && classForm.ngayKetThuc && (() => {
+                  const diff = calculateDaysDifference(classForm.ngayBatDau, classForm.ngayKetThuc);
+                  const isAfter = new Date(classForm.ngayKetThuc) > new Date(classForm.ngayBatDau);
+                  const soBuoi = classForm.soBuoiHoc || 12;
+                  const isInvalid = !isAfter || diff < soBuoi;
+
+                  if (isInvalid) {
+                    return (
+                      <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs flex items-start gap-2.5 animate-fadeIn">
+                        <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
+                        <div className="space-y-1">
+                          <p className="font-bold">Lịch đào tạo không hợp lệ:</p>
+                          <p>
+                            {!isAfter
+                              ? 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày.'
+                              : `Thời gian học (${diff} ngày) không thể tổ chức ${soBuoi} buổi học. Khoảng cách ngày phải lớn hơn hoặc bằng ${soBuoi} ngày.`}
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setClassForm((prev) => ({
+                                ...prev,
+                                ngayKetThuc: suggestEndDate(prev.ngayBatDau, soBuoi),
+                              }))
+                            }
+                            className="text-teal-600 dark:text-teal-400 font-bold underline hover:opacity-80 inline-flex items-center gap-1 cursor-pointer pt-0.5"
+                          >
+                            ✨ Tự động điều chỉnh ngày kết thúc hợp lệ ({suggestEndDate(classForm.ngayBatDau, soBuoi)})
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="p-2.5 rounded-xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200/60 dark:border-teal-800/40 text-teal-700 dark:text-teal-300 text-[11px] flex items-center justify-between">
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <Check className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                        Thời gian khóa học: <strong>{diff} ngày</strong> ({soBuoi} buổi học)
+                      </span>
+                      <span className="text-slate-400 dark:text-slate-500 font-mono text-[10px]">
+                        ~{(diff / soBuoi).toFixed(1)} ngày/buổi
+                      </span>
+                    </div>
+                  );
+                })()}
 
                 {/* Cấu hình số buổi học dự kiến */}
                 <div className="p-3 bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 rounded-xl space-y-2">
@@ -1484,7 +1618,21 @@ export default function AdminClassesPage() {
                       min={1}
                       max={100}
                       value={classForm.soBuoiHoc || 12}
-                      onChange={(e) => setClassForm({ ...classForm, soBuoiHoc: +e.target.value })}
+                      onChange={(e) => {
+                        const num = +e.target.value;
+                        if (classForm.ngayBatDau) {
+                          const currentDiff = calculateDaysDifference(classForm.ngayBatDau, classForm.ngayKetThuc);
+                          if (!classForm.ngayKetThuc || currentDiff < num) {
+                            setClassForm({
+                              ...classForm,
+                              soBuoiHoc: num,
+                              ngayKetThuc: suggestEndDate(classForm.ngayBatDau, num),
+                            });
+                            return;
+                          }
+                        }
+                        setClassForm({ ...classForm, soBuoiHoc: num });
+                      }}
                       className="w-20 bg-white dark:bg-slate-900 border border-teal-300 dark:border-teal-700 rounded-lg px-2.5 py-1.5 text-slate-900 dark:text-white font-bold text-center focus:outline-none focus:ring-1 focus:ring-teal-500"
                     />
                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -1492,7 +1640,20 @@ export default function AdminClassesPage() {
                         <button
                           key={num}
                           type="button"
-                          onClick={() => setClassForm({ ...classForm, soBuoiHoc: num })}
+                          onClick={() => {
+                            if (classForm.ngayBatDau) {
+                              const currentDiff = calculateDaysDifference(classForm.ngayBatDau, classForm.ngayKetThuc);
+                              if (!classForm.ngayKetThuc || currentDiff < num) {
+                                setClassForm({
+                                  ...classForm,
+                                  soBuoiHoc: num,
+                                  ngayKetThuc: suggestEndDate(classForm.ngayBatDau, num),
+                                });
+                                return;
+                              }
+                            }
+                            setClassForm({ ...classForm, soBuoiHoc: num });
+                          }}
                           className={`px-2 py-1 rounded-md text-[11px] font-bold border transition cursor-pointer ${classForm.soBuoiHoc === num
                             ? 'bg-teal-600 text-white border-teal-600'
                             : 'bg-white dark:bg-slate-800 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-700 hover:bg-teal-100 dark:hover:bg-teal-900/50'
@@ -1615,6 +1776,53 @@ export default function AdminClassesPage() {
                     />
                   </div>
                 </div>
+
+                {/* Cảnh báo và gợi ý khoảng cách thời gian khi chỉnh sửa lớp */}
+                {editingClass && editClassForm.ngayBatDau && editClassForm.ngayKetThuc && (() => {
+                  const sessionCount = editingClass.buoiHoc?.length || (editingClass as any)._count?.buoiHoc || 0;
+                  const diff = calculateDaysDifference(editClassForm.ngayBatDau, editClassForm.ngayKetThuc);
+                  const isAfter = new Date(editClassForm.ngayKetThuc) > new Date(editClassForm.ngayBatDau);
+                  const isInvalid = !isAfter || (sessionCount > 0 && diff < sessionCount);
+
+                  if (isInvalid) {
+                    return (
+                      <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs flex items-start gap-2.5 animate-fadeIn">
+                        <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
+                        <div className="space-y-1">
+                          <p className="font-bold">Lịch học không hợp lệ:</p>
+                          <p>
+                            {!isAfter
+                              ? 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày.'
+                              : `Lớp có ${sessionCount} buổi học giáo trình nhưng khoảng cách chỉ có ${diff} ngày. Cần tối thiểu ${sessionCount} ngày để bố trí các buổi học.`}
+                          </p>
+                          {sessionCount > 0 && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setEditClassForm((prev) => ({
+                                  ...prev,
+                                  ngayKetThuc: suggestEndDate(prev.ngayBatDau, sessionCount),
+                                }))
+                              }
+                              className="text-teal-600 dark:text-teal-400 font-bold underline hover:opacity-80 inline-flex items-center gap-1 cursor-pointer pt-0.5"
+                            >
+                              ✨ Tự động điều chỉnh ngày kết thúc hợp lệ ({suggestEndDate(editClassForm.ngayBatDau, sessionCount)})
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="p-2.5 rounded-xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200/60 dark:border-teal-800/40 text-teal-700 dark:text-teal-300 text-[11px] flex items-center justify-between">
+                      <span className="flex items-center gap-1.5 font-medium">
+                        <Check className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" />
+                        Thời gian đào tạo: <strong>{diff} ngày</strong> ({sessionCount} buổi học)
+                      </span>
+                    </div>
+                  );
+                })()}
 
                 <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
                   <button

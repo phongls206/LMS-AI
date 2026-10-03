@@ -95,6 +95,24 @@ export class EnrollmentsService {
       );
     }
 
+    // Kiểm tra tính hợp lệ của thời gian đào tạo lớp học
+    if (classRecord.ngayBatDau && classRecord.ngayKetThuc) {
+      const start = new Date(classRecord.ngayBatDau);
+      const end = new Date(classRecord.ngayKetThuc);
+      if (end <= start) {
+        throw new BadRequestException('Lớp học này có ngày kết thúc không hợp lệ, không thể tiếp nhận đăng ký.');
+      }
+      const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      const buoiHocCount = await this.prisma.buoiHoc.count({
+        where: { lopHocId: BigInt(dto.lopHocId) },
+      });
+      if (buoiHocCount > 0 && diffDays < buoiHocCount) {
+        throw new BadRequestException(
+          `Lớp học này có thời gian đào tạo không hợp lệ (${buoiHocCount} buổi trong ${diffDays} ngày). Vui lòng liên hệ trung tâm để điều chỉnh thời khóa biểu trước khi đăng ký.`,
+        );
+      }
+    }
+
     // 2. Kiểm tra Học viên tồn tại & chưa đăng ký lớp này
     const student = await this.prisma.hoSoHocVien.findUnique({
       where: { id: BigInt(dto.hocVienId) },

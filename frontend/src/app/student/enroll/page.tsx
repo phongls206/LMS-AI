@@ -145,22 +145,35 @@ export default function StudentEnrollPage() {
       return;
     }
 
+    const targetCls = classes.find((c) => Number(c.id) === Number(classId));
+    if (targetCls) {
+      const st = getClassStatus(targetCls);
+      if (!st.canEnroll) {
+        toast.error(st.reason || 'Không thể đăng ký lớp học này.');
+        return;
+      }
+    }
+
     setEnrollingId(classId);
     setMessage(null);
 
     try {
       await enrollmentsService.enroll(user.hoSoHocVien.id, classId);
+      const successMsg = 'Đăng ký lớp học thành công! Hệ thống đã tự động lập Hóa đơn học phí.';
       setMessage({
         type: 'success',
-        text: 'Đăng ký lớp học thành công! Hệ thống đã tự động lập Hóa đơn học phí.',
+        text: successMsg,
       });
+      toast.success(successMsg);
       setConfirmEnrollClass(null);
       await fetchData();
     } catch (err: any) {
+      const errMsg = err.response?.data?.message || 'Đăng ký không thành công.';
       setMessage({
         type: 'error',
-        text: err.response?.data?.message || 'Đăng ký không thành công.',
+        text: errMsg,
       });
+      toast.error(errMsg);
     } finally {
       setEnrollingId(null);
     }
@@ -277,6 +290,25 @@ export default function StudentEnrollPage() {
     const isCefrIneligible = studentRank < courseRank;
     const conflictMsg = checkScheduleConflict(c.lichHoc || []);
 
+    const buoiHocCount = c.buoiHoc?.length || (c as any)._count?.buoiHoc || 0;
+    const startDate = c.ngayBatDau ? new Date(c.ngayBatDau) : null;
+    const endDate = c.ngayKetThuc ? new Date(c.ngayKetThuc) : null;
+    let isInvalidDuration = false;
+    let invalidDurationReason = '';
+
+    if (startDate && endDate) {
+      if (endDate <= startDate) {
+        isInvalidDuration = true;
+        invalidDurationReason = 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày.';
+      } else {
+        const diffDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+        if (buoiHocCount > 0 && diffDays < buoiHocCount) {
+          isInvalidDuration = true;
+          invalidDurationReason = `Thời gian đào tạo không hợp lệ (${buoiHocCount} buổi trong ${diffDays} ngày). Vui lòng liên hệ trung tâm hoặc chọn lớp khác!`;
+        }
+      }
+    }
+
     let canEnroll = true;
     let statusText = 'Xác Nhận Đăng Ký Lớp';
     let reason = '';
@@ -285,6 +317,10 @@ export default function StudentEnrollPage() {
       canEnroll = false;
       statusText = 'Chương Trình Ngừng Hoạt Động';
       reason = 'Khóa học này hiện đang ngừng hoạt động';
+    } else if (isInvalidDuration) {
+      canEnroll = false;
+      statusText = 'Lịch Đào Tạo Chưa Hợp Lệ';
+      reason = invalidDurationReason;
     } else if (isEnrolled) {
       canEnroll = false;
       statusText = isFullyPaid
@@ -320,6 +356,9 @@ export default function StudentEnrollPage() {
       isCourseSuspended,
       isCefrIneligible,
       conflictMsg,
+      isInvalidDuration,
+      invalidDurationReason,
+      buoiHocCount,
       canEnroll,
       statusText,
       reason,
@@ -547,6 +586,8 @@ export default function StudentEnrollPage() {
                     className={`group p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#111928] border shadow-xs flex flex-col justify-between transition-all duration-200 ${
                       st.isEnrolled
                         ? 'border-blue-300 dark:border-blue-800/70 bg-blue-50/20 dark:bg-blue-950/15 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/5 hover:-translate-y-1'
+                        : st.isInvalidDuration
+                        ? 'border-rose-300 dark:border-rose-900/60 bg-rose-50/10 hover:border-rose-400 dark:hover:border-rose-600 hover:shadow-lg hover:shadow-rose-500/5 hover:-translate-y-1'
                         : st.isCefrIneligible
                         ? 'border-slate-200/90 dark:border-[#1e2d45] hover:border-amber-400/80 dark:hover:border-amber-500/70 hover:shadow-lg hover:shadow-amber-500/5 hover:-translate-y-1'
                         : 'border-slate-200/90 dark:border-[#1e2d45] hover:border-teal-400 dark:hover:border-teal-500/80 hover:shadow-lg hover:shadow-teal-500/5 hover:-translate-y-1'
@@ -576,6 +617,11 @@ export default function StudentEnrollPage() {
                               <span>Chờ Nộp Học Phí</span>
                             </span>
                           )
+                        ) : st.isInvalidDuration ? (
+                          <span className="text-xs px-2.5 py-0.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 font-bold border border-rose-200 dark:border-rose-800 flex items-center gap-1 shrink-0">
+                            <AlertTriangle className="w-3 h-3 text-rose-500 shrink-0" />
+                            <span>Lịch Đào Tạo Chưa Hợp Lệ</span>
+                          </span>
                         ) : st.isCefrIneligible ? (
                           <span className="text-xs px-2.5 py-0.5 rounded-lg bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 font-bold border border-amber-200 dark:border-amber-800/60 flex items-center gap-1 shrink-0">
                             <AlertTriangle className="w-3 h-3 text-amber-500 shrink-0" />
@@ -725,14 +771,22 @@ export default function StudentEnrollPage() {
                       <button
                         type="button"
                         onClick={() => {
+                          if (st.isInvalidDuration) {
+                            toast.error(st.reason || 'Lớp học có lịch đào tạo không hợp lệ, không thể đăng ký.');
+                            return;
+                          }
                           if (st.canEnroll) {
                             setConfirmEnrollClass(c);
+                          } else if (st.reason) {
+                            toast.warning(st.reason);
                           }
                         }}
-                        disabled={!st.canEnroll || enrollingId === c.id}
+                        disabled={(!st.canEnroll && !st.isInvalidDuration) || enrollingId === c.id}
                         className={`w-full min-h-[44px] py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer text-center leading-tight mt-auto ${
                           st.isCourseSuspended
                             ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 cursor-not-allowed'
+                            : st.isInvalidDuration
+                            ? 'bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900/30'
                             : st.isCefrIneligible
                             ? 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-800 cursor-not-allowed'
                             : st.conflictMsg
@@ -742,7 +796,9 @@ export default function StudentEnrollPage() {
                             : 'bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white shadow-md shadow-teal-600/20'
                         }`}
                       >
-                        {st.isCefrIneligible ? (
+                        {st.isInvalidDuration ? (
+                          <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+                        ) : st.isCefrIneligible ? (
                           <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                         ) : st.conflictMsg ? (
                           <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
@@ -1072,6 +1128,23 @@ export default function StudentEnrollPage() {
                 </div>
               </div>
 
+              {/* Duration Warning if invalid */}
+              {(() => {
+                const modalSt = getClassStatus(confirmEnrollClass);
+                if (modalSt.isInvalidDuration) {
+                  return (
+                    <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs flex items-start gap-2 animate-fadeIn">
+                      <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
+                      <div>
+                        <strong className="font-bold">Không thể đăng ký: </strong>
+                        <span>{modalSt.reason}</span>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
               {/* Note / Terms */}
               <div className="p-3 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/70 dark:border-blue-800/40 text-blue-900 dark:text-blue-300 text-[11px] leading-relaxed flex items-start space-x-2">
                 <AlertCircle className="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400 mt-0.5" />
@@ -1093,8 +1166,8 @@ export default function StudentEnrollPage() {
                 <button
                   type="button"
                   onClick={() => handleEnroll(confirmEnrollClass.id)}
-                  disabled={enrollingId === confirmEnrollClass.id}
-                  className="w-full sm:w-auto px-5 py-2.5 min-h-[42px] rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold transition shadow-sm flex items-center justify-center space-x-1.5 cursor-pointer"
+                  disabled={enrollingId === confirmEnrollClass.id || !getClassStatus(confirmEnrollClass).canEnroll}
+                  className="w-full sm:w-auto px-5 py-2.5 min-h-[42px] rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 hover:opacity-95 text-white text-xs font-bold transition shadow-sm flex items-center justify-center space-x-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {enrollingId === confirmEnrollClass.id ? (
                     <span className="flex items-center gap-1.5">

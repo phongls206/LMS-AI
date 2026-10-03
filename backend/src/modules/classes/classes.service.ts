@@ -232,8 +232,21 @@ export class ClassesService {
     });
     if (existing) throw new ConflictException('Mã lớp học đã tồn tại.');
 
-    if (new Date(dto.ngayKetThuc) <= new Date(dto.ngayBatDau)) {
-      throw new BadRequestException('Ngày kết thúc phải sau ngày bắt đầu.');
+    const start = new Date(dto.ngayBatDau);
+    const end = new Date(dto.ngayKetThuc);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+      throw new BadRequestException('Ngày bắt đầu hoặc ngày kết thúc không hợp lệ.');
+    }
+    if (end <= start) {
+      throw new BadRequestException('Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày.');
+    }
+
+    const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const soBuoi = dto.soBuoiHoc && dto.soBuoiHoc > 0 ? dto.soBuoiHoc : 12;
+    if (diffDays < soBuoi) {
+      throw new BadRequestException(
+        `Thời gian khóa học không hợp lệ! Khoảng cách giữa Ngày bắt đầu và Ngày kết thúc (${diffDays} ngày) phải lớn hơn hoặc bằng số buổi học dự kiến (${soBuoi} buổi).`,
+      );
     }
 
     const newClass = await this.prisma.lopHoc.create({
@@ -251,7 +264,6 @@ export class ClassesService {
     });
 
     // Tự động sinh danh sách buổi học giáo trình cho lớp học mới
-    const soBuoi = dto.soBuoiHoc && dto.soBuoiHoc > 0 ? dto.soBuoiHoc : 12;
     const defaultSyllabus = [
       'Orientation, Placement Test & Study Guide',
       'Unit 1: Pronunciation & Core Vocabulary',
@@ -899,6 +911,29 @@ export class ClassesService {
     if (dto.ngayKetThuc && dto.ngayKetThuc.trim() !== '') {
       const d = new Date(dto.ngayKetThuc);
       if (!isNaN(d.getTime())) updateData.ngayKetThuc = d;
+    }
+
+    // Kiểm tra tính hợp lệ của thời gian học
+    const finalStart = updateData.ngayBatDau || classRecord.ngayBatDau;
+    const finalEnd = updateData.ngayKetThuc || classRecord.ngayKetThuc;
+    if (finalStart && finalEnd) {
+      const startDate = new Date(finalStart);
+      const endDate = new Date(finalEnd);
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new BadRequestException('Ngày bắt đầu hoặc ngày kết thúc không hợp lệ.');
+      }
+      if (endDate <= startDate) {
+        throw new BadRequestException('Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 ngày.');
+      }
+      const diffDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      const buoiHocCount = await this.prisma.buoiHoc.count({
+        where: { lopHocId: BigInt(id) },
+      });
+      if (buoiHocCount > 0 && diffDays < buoiHocCount) {
+        throw new BadRequestException(
+          `Thời gian lớp học không hợp lệ! Lớp có ${buoiHocCount} buổi học, khoảng cách giữa Ngày bắt đầu và Ngày kết thúc (${diffDays} ngày) không đủ để bố trí các buổi học.`,
+        );
+      }
     }
 
     const updated = await this.prisma.lopHoc.update({
