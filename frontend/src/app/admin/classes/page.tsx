@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, coursesService, usersService, attendancesService } from '../../../services/api';
 import { toast } from '../../../components/Toast';
+import { showConfirm } from '../../../components/ConfirmDialog';
 import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
 import {
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
@@ -477,6 +478,15 @@ export default function AdminClassesPage() {
   };
 
   const handleClearAllSchedules = async (classId: number) => {
+    const confirmed = await showConfirm({
+      title: 'Xóa Toàn Bộ Lịch Học',
+      message: 'Bạn có chắc chắn muốn xóa toàn bộ lịch học của lớp này? Toàn bộ các ca học trong tuần sẽ bị xóa sạch.',
+      confirmText: 'Xác Nhận Xóa',
+      cancelText: 'Hủy Bỏ',
+      type: 'danger',
+    });
+    if (!confirmed) return;
+
     setClearingAllSchedules(true);
     setScheduleModalError(null);
     try {
@@ -718,12 +728,15 @@ export default function AdminClassesPage() {
       );
       return;
     }
-    if (
-      !confirm(
-        `Bạn có chắc muốn xóa Buổi ${soThuTu}? Sau khi xóa, các buổi học phía sau sẽ tự động được dồn lại số thứ tự (Buổi ${soThuTu + 1} sẽ trở thành Buổi ${soThuTu}).`
-      )
-    )
-      return;
+
+    const confirmed = await showConfirm({
+      title: `Xác Nhận Xóa Buổi ${soThuTu}`,
+      message: `Bạn có chắc muốn xóa Buổi ${soThuTu}? Sau khi xóa, các buổi học phía sau sẽ tự động được dồn lại số thứ tự (Buổi ${soThuTu + 1} sẽ trở thành Buổi ${soThuTu}).`,
+      confirmText: 'Xác Nhận Xóa',
+      cancelText: 'Hủy Bỏ',
+      type: 'danger',
+    });
+    if (!confirmed) return;
 
     try {
       const res = await attendancesService.deleteSession(sessionId);

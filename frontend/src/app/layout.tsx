@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ToastContainer } from "../components/Toast";
+import { ConfirmDialogContainer } from "../components/ConfirmDialog";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -57,6 +58,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-[#0a0e1a] text-slate-100 dark:bg-[#0a0e1a] dark:text-slate-100">
         {children}
         <ToastContainer />
+        <ConfirmDialogContainer />
         <Analytics />
       </body>
     </html>

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { aiService } from '../../services/api';
 import { toast } from '../Toast';
+import { showConfirm } from '../ConfirmDialog';
 
 interface ExerciseHistoryModalProps {
   isOpen: boolean;
@@ -56,13 +57,15 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
   };
 
   const handleDeleteItem = async (id: number, chuDe: string) => {
-    if (
-      !window.confirm(
-        `Bạn có chắc chắn muốn xóa đề "${chuDe || 'Bài luyện tập'}" khỏi lịch sử? Thao tác này sẽ giúp làm nhẹ hệ thống và không thể hoàn tác.`,
-      )
-    ) {
-      return;
-    }
+    const confirmed = await showConfirm({
+      title: 'Xóa Đề Bài Luyện Tập',
+      message: `Bạn có chắc chắn muốn xóa đề "${chuDe || 'Bài luyện tập'}" khỏi lịch sử? Thao tác này sẽ giúp làm nhẹ hệ thống và không thể hoàn tác.`,
+      confirmText: 'Xác Nhận Xóa',
+      cancelText: 'Hủy Bỏ',
+      type: 'danger',
+    });
+    if (!confirmed) return;
+
     setDeletingId(id);
     try {
       await aiService.deleteExerciseHistoryItem(id);
@@ -77,13 +80,15 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
 
   const handleClearAll = async () => {
     if (history.length === 0) return;
-    if (
-      !window.confirm(
-        `Bạn có chắc chắn muốn xóa TOÀN BỘ ${history.length} đề bài tập trong lịch sử? Toàn bộ các đề đã tạo sẽ bị xóa vĩnh viễn để làm sạch lịch sử.`,
-      )
-    ) {
-      return;
-    }
+    const confirmed = await showConfirm({
+      title: 'Xóa Toàn Bộ Lịch Sử',
+      message: `Bạn có chắc chắn muốn xóa TOÀN BỘ ${history.length} đề bài tập trong lịch sử? Toàn bộ các đề đã tạo sẽ bị xóa vĩnh viễn để làm sạch lịch sử.`,
+      confirmText: 'Xóa Toàn Bộ',
+      cancelText: 'Hủy Bỏ',
+      type: 'danger',
+    });
+    if (!confirmed) return;
+
     setClearingAll(true);
     try {
       await aiService.clearExerciseHistory();
