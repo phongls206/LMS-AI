@@ -305,11 +305,7 @@ export default function StudentAiConsultPage() {
                   <Bot className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                   <span>{isStaff ? 'Top Lớp Học Phù Hợp Để Tư Vấn Cho Học Viên' : 'Top Lớp Học Được AI Đề Xuất Dành Riêng Cho Bạn'}</span>
                 </h3>
-                {mucTieu && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2 sm:line-clamp-1">
-                    Được tính toán dựa trên mục tiêu: &ldquo;{mucTieu}&rdquo;
-                  </p>
-                )}
+
               </div>
               <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
                 <span
