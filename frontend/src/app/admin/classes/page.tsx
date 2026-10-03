@@ -2297,15 +2297,16 @@ export default function AdminClassesPage() {
                     </div>
 
                     {/* Toolbar Buttons */}
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 p-3 bg-slate-50 dark:bg-[#0f172a] rounded-xl border border-slate-200/80 dark:border-[#1e2d45]">
-                      <button
-                        onClick={() => setShowAddSessionForm(!showAddSessionForm)}
-                        className="w-full sm:w-auto px-3 py-1.5 rounded-xl bg-white dark:bg-[#162032] hover:bg-teal-50 dark:hover:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-300 dark:border-teal-700 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs shrink-0"
-                      >
-                        <Plus className="w-3.5 h-3.5" />
-                        <span>{showAddSessionForm ? 'Đóng Form' : 'Thêm 1 Buổi Học'}</span>
-                      </button>
-                    </div>
+                    {/* <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 p-3 bg-slate-50 dark:bg-[#0f172a] rounded-xl border border-slate-200/80 dark:border-[#1e2d45]">
+                    
+                    </div> */}
+                    <button
+                      onClick={() => setShowAddSessionForm(!showAddSessionForm)}
+                      className="ml-auto w-full  sm:w-auto px-3 py-1.5 rounded-xl bg-white dark:bg-[#162032] hover:bg-teal-50 dark:hover:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-300 dark:border-teal-700 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>{showAddSessionForm ? 'Đóng Form' : 'Thêm 1 Buổi Học'}</span>
+                    </button>
 
                     {/* Single Add Form */}
                     {showAddSessionForm && (
