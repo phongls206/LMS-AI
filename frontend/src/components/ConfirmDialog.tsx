@@ -122,7 +122,7 @@ export function ConfirmDialogContainer() {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[9999] bg-slate-950/75 backdrop-blur-xs flex items-start justify-center pt-[10vh] p-4 animate-in fade-in duration-200"
       onClick={handleCancel}
       role="dialog"
       aria-modal="true"
