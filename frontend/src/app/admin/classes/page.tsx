@@ -313,10 +313,10 @@ export default function AdminClassesPage() {
     const defaultTeacherId = currentTeacherId
       ? Number(currentTeacherId)
       : activeTeacher
-      ? Number(activeTeacher.id)
-      : teachers[0]?.id
-      ? Number(teachers[0].id)
-      : 1;
+        ? Number(activeTeacher.id)
+        : teachers[0]?.id
+          ? Number(teachers[0].id)
+          : 1;
 
     setAssignForm({
       giaoVienId: defaultTeacherId,
@@ -2210,8 +2210,8 @@ export default function AdminClassesPage() {
                           const statusText = isAvailable
                             ? `🟢 ${workloadText}`
                             : t.trangThai === 'TAM_NGHI'
-                            ? '🟡 Tạm nghỉ (Không thể gán)'
-                            : '🔴 Đã nghỉ việc (Không thể gán)';
+                              ? '🟡 Tạm nghỉ (Không thể gán)'
+                              : '🔴 Đã nghỉ việc (Không thể gán)';
                           return (
                             <option key={t.id} value={t.id} disabled={!isAvailable}>
                               [{t.maGiaoVien}] {t.hoTen} — {t.chuyenMon} ({statusText})
@@ -2298,21 +2298,6 @@ export default function AdminClassesPage() {
 
                     {/* Toolbar Buttons */}
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 p-3 bg-slate-50 dark:bg-[#0f172a] rounded-xl border border-slate-200/80 dark:border-[#1e2d45]">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="text-xs font-bold text-slate-700 dark:text-slate-300 mr-1">Tự động sinh:</span>
-                        {[10, 12, 16, 24].map((cnt) => (
-                          <button
-                            key={cnt}
-                            disabled={generatingSessions}
-                            onClick={() => handleGenerateSessions(Number(targetClass?.id), cnt)}
-                            className="px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-600 text-teal-700 hover:text-white border border-teal-200 hover:border-teal-600 text-xs font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50"
-                          >
-                            <Sparkles className="w-3 h-3" />
-                            <span>+{cnt} Buổi Chuẩn</span>
-                          </button>
-                        ))}
-                      </div>
-
                       <button
                         onClick={() => setShowAddSessionForm(!showAddSessionForm)}
                         className="w-full sm:w-auto px-3 py-1.5 rounded-xl bg-white dark:bg-[#162032] hover:bg-teal-50 dark:hover:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-300 dark:border-teal-700 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs shrink-0"
