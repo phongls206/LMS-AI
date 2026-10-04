@@ -26,9 +26,13 @@ import {
   FileSpreadsheet,
   TrendingUp,
 } from 'lucide-react';
-import { classesService, gradesService } from '../services/api';
+import { classesService, gradesService, attendancesService } from '../services/api';
 import { formatStatus, formatCSVDate } from '../utils/formatters';
-import { exportClassGradeBookExcel } from '../utils/excel-exporter';
+import {
+  exportClassGradeBookExcel,
+  exportClassAttendanceExcel,
+  exportFullClassPackageExcel,
+} from '../utils/excel-exporter';
 
 interface ClassStudentsModalProps {
   classId: number | null;
@@ -50,6 +54,8 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
   const [gradesList, setGradesList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [exportingMatrix, setExportingMatrix] = useState(false);
+  const [exportingPackage, setExportingPackage] = useState(false);
 
   // Student List Filter
   const [searchQuery, setSearchQuery] = useState('');
@@ -117,6 +123,47 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
   const enrollments: any[] = useMemo(() => {
     return classDetail?.dangKyHoc || [];
   }, [classDetail]);
+
+  // Handler xuất ma trận điểm danh toàn khóa
+  const handleExportAttendanceMatrix = async () => {
+    if (!classId || !classDetail) return;
+    try {
+      setExportingMatrix(true);
+      let matrix = null;
+      try {
+        matrix = await attendancesService.getClassAttendanceMatrix(classId);
+      } catch {}
+      exportClassAttendanceExcel({
+        classDetail,
+        sessions: classDetail.buoiHoc || [],
+        matrixData: matrix,
+        teacherName: classDetail?.phanCong?.[0]?.giaoVien?.hoTen,
+      });
+    } finally {
+      setExportingMatrix(false);
+    }
+  };
+
+  // Handler xuất trọn bộ hồ sơ lớp học (Bảng điểm + Điểm danh + Danh sách)
+  const handleExportFullPackage = async () => {
+    if (!classId || !classDetail) return;
+    try {
+      setExportingPackage(true);
+      let matrix = null;
+      try {
+        matrix = await attendancesService.getClassAttendanceMatrix(classId);
+      } catch {}
+      exportFullClassPackageExcel({
+        classDetail,
+        gradesMap,
+        sessions: classDetail.buoiHoc || [],
+        matrixData: matrix,
+        teacherName: classDetail?.phanCong?.[0]?.giaoVien?.hoTen,
+      });
+    } finally {
+      setExportingPackage(false);
+    }
+  };
 
   // Helper tính điểm
   const calculateFinal = (cc: any, gk: any, ck: any) => {
@@ -685,11 +732,23 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
                 type="button"
                 onClick={handleExportCSV}
                 disabled={enrollments.length === 0}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold text-xs shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
-                title="Xuất bảng danh sách học viên định dạng CSV / Excel"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-600 hover:bg-slate-700 active:scale-95 text-white font-bold text-xs shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
+                title="Xuất bảng danh sách học viên định dạng CSV"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Xuất CSV</span>
+              </button>
+
+              {/* Nút Xuất Ma Trận Điểm Danh */}
+              <button
+                type="button"
+                onClick={handleExportAttendanceMatrix}
+                disabled={enrollments.length === 0 || exportingMatrix}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
+                title="Xuất bảng ma trận điểm danh toàn khóa học ra file Excel .xlsx"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{exportingMatrix ? 'Đang xuất...' : 'Ma Trận Điểm Danh'}</span>
               </button>
             </div>
           </div>
@@ -765,7 +824,7 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
                 </button>
               </div>
 
-              {/* Nút Xuất Excel */}
+              {/* Nút Xuất Bảng Điểm */}
               <button
                 type="button"
                 onClick={() =>
@@ -780,7 +839,19 @@ export const ClassStudentsModal: React.FC<ClassStudentsModalProps> = ({
                 title="Xuất bảng điểm chi tiết ra file Excel .xlsx"
               >
                 <FileSpreadsheet className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Xuất Excel</span>
+                <span className="hidden sm:inline">Xuất Bảng Điểm</span>
+              </button>
+
+              {/* Nút Xuất Trọn Bộ Hồ Sơ Lớp */}
+              <button
+                type="button"
+                onClick={handleExportFullPackage}
+                disabled={enrollments.length === 0 || exportingPackage}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold text-xs shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
+                title="Xuất trọn bộ hồ sơ lớp học (Bảng điểm + Ma trận điểm danh + Danh sách lớp) ra file Excel 3 Sheet"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{exportingPackage ? 'Đang xuất...' : 'Trọn Bộ Hồ Sơ'}</span>
               </button>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { ToastContainer } from "../components/Toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -44,9 +45,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                     document.documentElement.classList.remove('dark');
                   } else {
                     document.documentElement.classList.add('dark');
-                    if (!saved) {
-                      localStorage.setItem('etc_theme', 'dark');
-                    }
                   }
                 } catch (e) {
                   document.documentElement.classList.add('dark');
@@ -58,8 +56,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col bg-[#0a0e1a] text-slate-100 dark:bg-[#0a0e1a] dark:text-slate-100">
         {children}
+        <ToastContainer />
         <Analytics />
       </body>
     </html>
   );
 }
+

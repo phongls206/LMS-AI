@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService } from '../../../services/api';
+import { toast } from '../../../components/Toast';
 import { TrinhDoCEFR } from '../../../types';
 import { UserPlus, CheckCircle, ArrowRight, RefreshCw, AlertTriangle, AlertCircle, ExternalLink, Sparkles, X } from 'lucide-react';
 import Link from 'next/link';
@@ -102,7 +103,7 @@ export default function StaffNewStudentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (hasDuplicate) {
-      alert('Vui lòng điều chỉnh các trường thông tin đang bị trùng lặp trước khi tiếp nhận!');
+      toast.warning('Vui lòng điều chỉnh các trường thông tin đang bị trùng lặp trước khi tiếp nhận!');
       return;
     }
 
@@ -110,8 +111,9 @@ export default function StaffNewStudentPage() {
     try {
       const res = await usersService.createStudent(formData);
       setCreatedStudent(res);
+      toast.success(`Tiếp nhận học viên ${formData.hoTen} thành công!`);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi tạo học viên.');
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi tạo học viên.');
     } finally {
       setLoading(false);
     }

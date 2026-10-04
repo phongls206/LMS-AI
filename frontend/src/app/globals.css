@@ -631,3 +631,12 @@ html.dark .bg-white.border {
     border-color: #cbd5e1 !important;
   }
 }
+
+@keyframes toastProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}

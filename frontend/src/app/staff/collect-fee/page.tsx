@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService, classesService, enrollmentsService } from '../../../services/api';
+import { toast } from '../../../components/Toast';
 import { HocVien, LopHoc, HoaDon } from '../../../types';
 import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck, Calendar, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Printer, X, FileText, Eye, XCircle, AlertTriangle, RefreshCw, ArrowLeft, History, Sparkles } from 'lucide-react';
 import { formatTrangThaiHoaDon, formatTrangThaiLopHoc, docSoThanhChu, formatReceiptDate, formatCSVDate } from '../../../utils/formatters';
@@ -230,7 +231,7 @@ export default function StaffCollectFeePage() {
 
   const handleOpenPayment = (inv: HoaDon) => {
     if (inv.trangThai === 'DA_HUY' || inv.dangKyHoc?.trangThai === 'DA_HUY') {
-      alert('Không thể thu tiền cho hóa đơn hoặc đơn đăng ký đã bị hủy!');
+      toast.warning('Không thể thu tiền cho hóa đơn hoặc đơn đăng ký đã bị hủy!');
       return;
     }
     setSelectedInvoice(inv);
@@ -269,7 +270,7 @@ export default function StaffCollectFeePage() {
     const numAmount = Number(paymentAmount) || 0;
     if (!selectedInvoice || submittingPayment) return;
     if (numAmount < 1000) {
-      alert('Số tiền thu tối thiểu là 1.000 đ.');
+      toast.warning('Số tiền thu tối thiểu là 1.000 đ.');
       return;
     }
 
@@ -309,13 +310,15 @@ export default function StaffCollectFeePage() {
 
       setSelectedInvoice(null);
       setNote('');
+      const successText = `Thu thành công ${numAmount.toLocaleString()} đ cho hóa đơn ${selectedInvoice.maHoaDon}! Đã xuất phiếu thu số ${soPhieu}.`;
       setMessage({
         type: 'success',
-        text: `Thu thành công ${numAmount.toLocaleString()} đ cho hóa đơn ${selectedInvoice.maHoaDon}! Đã xuất phiếu thu số ${soPhieu}.`,
+        text: successText,
       });
+      toast.success(successText);
       fetchData();
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi thu tiền.');
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi thu tiền.');
     } finally {
       setSubmittingPayment(false);
     }

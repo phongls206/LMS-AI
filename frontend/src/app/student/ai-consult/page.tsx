@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService, authService } from '../../../services/api';
 import { validateAiPrompt } from '../../../utils/ai-validator';
+import { toast } from '../../../components/Toast';
 import {
   Bot,
   ArrowRight,
@@ -112,7 +113,7 @@ export default function StudentAiConsultPage() {
     if (mucTieu && mucTieu.trim().length > 0) {
       const validation = validateAiPrompt(mucTieu, 'GOAL');
       if (!validation.isValid) {
-        alert(validation.errorMessage);
+        toast.warning(validation.errorMessage || 'Mục tiêu học tập không hợp lệ.');
         return;
       }
     }
@@ -149,12 +150,13 @@ export default function StudentAiConsultPage() {
         );
       } catch (e) { }
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi gọi AI tư vấn.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi gọi AI tư vấn.');
     } finally {
       setLoading(false);
       setCooldown(5); // 5s cooldown chống spam
     }
   };
+
 
   return (
     <AppLayout
@@ -233,8 +235,8 @@ export default function StudentAiConsultPage() {
                         type="button"
                         onClick={() => handleToggleDay(day)}
                         className={`px-3 py-2 min-h-[38px] rounded-xl font-bold text-xs transition cursor-pointer flex items-center justify-center ${isSelected
-                            ? 'bg-teal-600 text-white shadow-sm'
-                            : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                          ? 'bg-teal-600 text-white shadow-sm'
+                          : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                           }`}
                       >
                         {day === 8 ? 'Chủ Nhật' : `Thứ ${day}`}
@@ -303,15 +305,17 @@ export default function StudentAiConsultPage() {
                   <Bot className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                   <span>{isStaff ? 'Top Lớp Học Phù Hợp Để Tư Vấn Cho Học Viên' : 'Top Lớp Học Được AI Đề Xuất Dành Riêng Cho Bạn'}</span>
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2 sm:line-clamp-1">
-                  Được tính toán dựa trên mục tiêu: &ldquo;{mucTieu}&rdquo;
-                </p>
+                {mucTieu && (
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2 sm:line-clamp-1">
+                    Được tính toán dựa trên mục tiêu: &ldquo;{mucTieu}&rdquo;
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-2 shrink-0 self-start sm:self-center">
                 <span
                   className={`inline-flex items-center h-8 text-[11px] font-bold px-3 rounded-lg border whitespace-nowrap ${mode === 'AI_GEMINI' || mode === 'GEMINI_AI'
-                      ? 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800'
-                      : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                    ? 'bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800'
+                    : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800'
                     }`}
                 >
                   {mode === 'AI_GEMINI' || mode === 'GEMINI_AI' ? '✨ Trí Tuệ Nhân Tạo (AI)' : '📋 Hệ Thống Quy Tắc (Rule-Based)'}

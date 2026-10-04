@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
-import { classesService, gradesService, authStorage } from '../../../services/api';
+import { classesService, gradesService, attendancesService, authStorage } from '../../../services/api';
 import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download, Award, Lock, X, ShieldAlert } from 'lucide-react';
-import { exportClassGradeBookExcel } from '../../../utils/excel-exporter';
+import { exportClassGradeBookExcel, exportFullClassPackageExcel } from '../../../utils/excel-exporter';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
 
 export default function TeacherGradesPage() {
@@ -16,6 +16,7 @@ export default function TeacherGradesPage() {
   >({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [exportingPackage, setExportingPackage] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -208,6 +209,27 @@ export default function TeacherGradesPage() {
     },
   });
 
+  // Handler xuất trọn bộ hồ sơ lớp học (Bảng điểm + Điểm danh + Danh sách)
+  const handleExportFullPackage = async () => {
+    if (!classDetail || !selectedClassId) return;
+    try {
+      setExportingPackage(true);
+      let matrix = null;
+      try {
+        matrix = await attendancesService.getClassAttendanceMatrix(selectedClassId);
+      } catch {}
+      exportFullClassPackageExcel({
+        classDetail,
+        gradesMap,
+        sessions: classDetail.buoiHoc || [],
+        matrixData: matrix,
+        teacherName: currentUser?.hoTen,
+      });
+    } finally {
+      setExportingPackage(false);
+    }
+  };
+
   return (
     <AppLayout
       allowedRoles={['GIAO_VIEN', 'QUAN_LY']}
@@ -290,6 +312,7 @@ export default function TeacherGradesPage() {
                         gradesMap,
                         calculateFinal,
                         isPass,
+                        teacherName: currentUser?.hoTen,
                       })
                     }
                     disabled={!selectedClassId || !classDetail?.dangKyHoc?.length}
@@ -298,6 +321,17 @@ export default function TeacherGradesPage() {
                   >
                     <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                     <span>Xuất Bảng Điểm Excel</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleExportFullPackage}
+                    disabled={!selectedClassId || !classDetail?.dangKyHoc?.length || exportingPackage}
+                    className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/50 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-800 dark:text-teal-300 border border-teal-300 dark:border-teal-800 text-xs font-bold transition flex items-center space-x-1.5 shadow-xs cursor-pointer disabled:opacity-50"
+                    title="Xuất trọn bộ hồ sơ lớp học (Bảng điểm + Ma trận điểm danh + Danh sách lớp) ra file Excel 3 Sheet"
+                  >
+                    <FileSpreadsheet className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                    <span>{exportingPackage ? 'Đang xuất...' : 'Xuất Trọn Bộ Hồ Sơ'}</span>
                   </button>
 
                   {isManager ? null : isLockedForTeacher ? (

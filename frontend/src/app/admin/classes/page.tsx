@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, coursesService, usersService, attendancesService } from '../../../services/api';
+import { toast } from '../../../components/Toast';
 import { LopHoc, KhoaHoc, GiaoVien } from '../../../types';
 import {
   GraduationCap, Plus, Calendar, UserCheck, AlertCircle, CheckCircle,
@@ -285,6 +286,24 @@ export default function AdminClassesPage() {
     }
   };
 
+  const handleOpenAssignTeacher = (classId: number) => {
+    setShowAssignTeacher(classId);
+    const targetCls = classes.find((c) => Number(c.id) === Number(classId));
+    const currentTeacherId = targetCls?.phanCong?.[0]?.giaoVien?.id;
+    const activeTeacher = teachers.find((t) => t.trangThai === 'DANG_LAM_VIEC');
+    const defaultTeacherId = currentTeacherId
+      ? Number(currentTeacherId)
+      : activeTeacher
+      ? Number(activeTeacher.id)
+      : teachers[0]?.id
+      ? Number(teachers[0].id)
+      : 1;
+
+    setAssignForm({
+      giaoVienId: defaultTeacherId,
+    });
+  };
+
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async (isManual = false) => {
@@ -436,6 +455,11 @@ export default function AdminClassesPage() {
   const handleAssignTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!showAssignTeacher) return;
+    const selectedTeacher = teachers.find((t) => Number(t.id) === Number(assignForm.giaoVienId));
+    if (selectedTeacher && selectedTeacher.trangThai !== 'DANG_LAM_VIEC') {
+      setMessage({ type: 'error', text: 'Không thể phân công giáo viên đang tạm nghỉ hoặc đã nghỉ việc.' });
+      return;
+    }
     try {
       await classesService.assignTeacher(showAssignTeacher, assignForm);
       setMessage({ type: 'success', text: 'Phân công giáo viên thành công (Đã qua kiểm tra chống trùng giờ dạy)!' });
@@ -489,7 +513,7 @@ export default function AdminClassesPage() {
       });
     } catch (err) {
       console.error(err);
-      alert('Không thể tải danh sách buổi học.');
+      toast.error('Không thể tải danh sách buổi học.');
     } finally {
       setLoadingSessions(false);
     }
@@ -499,16 +523,18 @@ export default function AdminClassesPage() {
     setGeneratingSessions(true);
     try {
       await attendancesService.generateSessions(classId, { soBuoiHoc: count });
+      const successText = `Đã tự động khởi tạo ${count} buổi học theo lịch trình lớp thành công!`;
       setMessage({
         type: 'success',
-        text: `Đã tự động khởi tạo ${count} buổi học theo lịch trình lớp thành công!`,
+        text: successText,
       });
+      toast.success(successText);
       const data = await attendancesService.getClassSessions(classId);
       setClassSessions(data || []);
       fetchData();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi tự động sinh buổi học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi tự động sinh buổi học.');
     } finally {
       setGeneratingSessions(false);
     }
@@ -520,6 +546,7 @@ export default function AdminClassesPage() {
     try {
       await attendancesService.createSession(showSessionsClassId, newSessionForm);
       setMessage({ type: 'success', text: 'Thêm buổi học mới thành công!' });
+      toast.success('Thêm buổi học mới thành công!');
       setShowAddSessionForm(false);
       const data = await attendancesService.getClassSessions(showSessionsClassId);
       setClassSessions(data || []);
@@ -535,7 +562,7 @@ export default function AdminClassesPage() {
       fetchData();
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi tạo buổi học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi tạo buổi học.');
     }
   };
 
@@ -560,7 +587,7 @@ export default function AdminClassesPage() {
 
   const handleSaveSession = async (sessionId: number) => {
     if (!editSessionForm.chuDe.trim()) {
-      alert('Vui lòng nhập tiêu đề buổi học.');
+      toast.warning('Vui lòng nhập tiêu đề buổi học.');
       return;
     }
     setSavingEditSession(true);
@@ -572,9 +599,10 @@ export default function AdminClassesPage() {
       }
       setEditingSessionId(null);
       setMessage({ type: 'success', text: 'Cập nhật ngày học, khung giờ, phòng học và tiêu đề thành công!' });
+      toast.success('Cập nhật buổi học thành công!');
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi cập nhật buổi học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi cập nhật buổi học.');
     } finally {
       setSavingEditSession(false);
     }
@@ -597,12 +625,14 @@ export default function AdminClassesPage() {
     setSavingEditClass(true);
     try {
       await classesService.update(editingClass.id, editClassForm);
-      setMessage({ type: 'success', text: `Cập nhật thông tin và phòng học lớp ${editingClass.maLopHoc} thành công!` });
+      const successText = `Cập nhật thông tin và phòng học lớp ${editingClass.maLopHoc} thành công!`;
+      setMessage({ type: 'success', text: successText });
+      toast.success(successText);
       setEditingClass(null);
       fetchData();
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi cập nhật lớp học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi cập nhật lớp học.');
     } finally {
       setSavingEditClass(false);
     }
@@ -610,7 +640,7 @@ export default function AdminClassesPage() {
 
   const handleDeleteSession = async (sessionId: number, soThuTu: number, isCompleted: boolean) => {
     if (isCompleted) {
-      alert(
+      toast.warning(
         `Buổi ${soThuTu} đã hoàn thành hoặc có dữ liệu điểm danh, không thể xóa để bảo toàn dữ liệu tính điểm và chuyên cần!`
       );
       return;
@@ -628,14 +658,16 @@ export default function AdminClassesPage() {
         const data = await attendancesService.getClassSessions(showSessionsClassId);
         setClassSessions(data || []);
       }
+      const successMsg = res?.message || `Đã xóa Buổi ${soThuTu} và tự động dồn số thứ tự các buổi tiếp theo!`;
       setMessage({
         type: 'success',
-        text: res?.message || `Đã xóa Buổi ${soThuTu} và tự động dồn số thứ tự các buổi tiếp theo!`,
+        text: successMsg,
       });
+      toast.success(successMsg);
       fetchData();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi khi xóa buổi học.');
+      toast.error(err.response?.data?.message || 'Có lỗi khi xóa buổi học.');
     }
   };
 
@@ -983,7 +1015,7 @@ export default function AdminClassesPage() {
                                 {/* 3. Gán giáo viên */}
                                 <div className="relative group/tip">
                                   <button
-                                    onClick={() => setShowAssignTeacher(c.id)}
+                                    onClick={() => handleOpenAssignTeacher(c.id)}
                                     className="w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200 hover:border-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800 flex items-center justify-center transition shadow-xs cursor-pointer"
                                     title="Phân công giáo viên phụ trách"
                                     aria-label="Phân công giáo viên phụ trách"
@@ -1209,7 +1241,7 @@ export default function AdminClassesPage() {
 
                         <button
                           type="button"
-                          onClick={() => setShowAssignTeacher(c.id)}
+                          onClick={() => handleOpenAssignTeacher(c.id)}
                           className="h-11 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800 flex flex-col items-center justify-center transition cursor-pointer shadow-xs"
                         >
                           <UserPlus className="w-3.5 h-3.5" />
@@ -1934,6 +1966,8 @@ export default function AdminClassesPage() {
               {(() => {
                 const targetClass = classes.find((c) => c.id === showAssignTeacher);
                 const currentTeacher = targetClass?.phanCong?.[0]?.giaoVien;
+                const selectedTeacher = teachers.find((t) => Number(t.id) === Number(assignForm.giaoVienId));
+                const isSelectedTeacherValid = selectedTeacher ? selectedTeacher.trangThai === 'DANG_LAM_VIEC' : false;
 
                 return (
                   <form onSubmit={handleAssignTeacher} className="space-y-3.5 text-xs">
@@ -1962,20 +1996,28 @@ export default function AdminClassesPage() {
                         className="w-full bg-slate-50 dark:bg-[#0f172a] border border-slate-200 dark:border-[#1e2d45] rounded-xl px-3 py-2.5 text-slate-900 dark:text-white font-medium focus:outline-none focus:border-teal-500 text-xs sm:text-sm"
                       >
                         {teachers.map((t) => {
+                          const isAvailable = t.trangThai === 'DANG_LAM_VIEC';
                           const activeClasses = t.phanCong?.length || 0;
                           const workloadText = activeClasses > 0 ? `Đang dạy ${activeClasses} lớp` : 'Chưa có lớp';
-                          const statusText =
-                            t.trangThai === 'DANG_LAM_VIEC'
-                              ? `🟢 ${workloadText}`
-                              : '🟡 Tạm nghỉ';
+                          const statusText = isAvailable
+                            ? `🟢 ${workloadText}`
+                            : t.trangThai === 'TAM_NGHI'
+                            ? '🟡 Tạm nghỉ (Không thể gán)'
+                            : '🔴 Đã nghỉ việc (Không thể gán)';
                           return (
-                            <option key={t.id} value={t.id}>
+                            <option key={t.id} value={t.id} disabled={!isAvailable}>
                               [{t.maGiaoVien}] {t.hoTen} — {t.chuyenMon} ({statusText})
                             </option>
                           );
                         })}
                       </select>
                     </div>
+
+                    {!isSelectedTeacherValid && selectedTeacher && (
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-medium">
+                        ⚠️ Giáo viên đã chọn đang ở trạng thái {selectedTeacher.trangThai === 'TAM_NGHI' ? 'Tạm nghỉ' : 'Đã nghỉ việc'}. Chỉ có thể phân công giáo viên đang làm việc.
+                      </div>
+                    )}
 
                     <div className="p-3 rounded-xl bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300 space-y-1 text-[11px] leading-relaxed">
                       <p className="text-teal-900 dark:text-teal-200 font-bold">ℹ️ Quy chế phân công &amp; Chống trùng lịch:</p>
@@ -1994,7 +2036,8 @@ export default function AdminClassesPage() {
                       </button>
                       <button
                         type="submit"
-                        className="w-full sm:w-auto h-10 min-h-[40px] px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold transition shadow-sm cursor-pointer flex items-center justify-center"
+                        disabled={!isSelectedTeacherValid}
+                        className="w-full sm:w-auto h-10 min-h-[40px] px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold transition shadow-sm cursor-pointer flex items-center justify-center"
                       >
                         Xác Nhận Phân Công
                       </button>

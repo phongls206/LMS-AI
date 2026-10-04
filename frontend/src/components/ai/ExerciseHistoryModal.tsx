@@ -16,6 +16,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { aiService } from '../../services/api';
+import { toast } from '../Toast';
 
 interface ExerciseHistoryModalProps {
   isOpen: boolean;
@@ -66,8 +67,9 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
     try {
       await aiService.deleteExerciseHistoryItem(id);
       setHistory((prev) => prev.filter((item) => item.id !== id));
+      toast.success('Đã xóa đề bài tập khỏi lịch sử.');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi xóa đề bài tập.');
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi xóa đề bài tập.');
     } finally {
       setDeletingId(null);
     }
@@ -86,8 +88,9 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
     try {
       await aiService.clearExerciseHistory();
       setHistory([]);
+      toast.success('Đã xóa toàn bộ lịch sử đề bài tập.');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Có lỗi xảy ra khi xóa toàn bộ lịch sử.');
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi xóa toàn bộ lịch sử.');
     } finally {
       setClearingAll(false);
     }
@@ -129,7 +132,7 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
             </div>
             <div>
               <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center space-x-2">
-                <span>Lịch Sử Đề Bài Tập Đã Tạo (AI)</span>
+                <span>Lịch Sử Đề Bài Tập Đã Tạo</span>
                 <span className="text-[11px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800 dark:bg-teal-900/60 dark:text-teal-300">
                   {filteredHistory.length} đề
                 </span>
@@ -219,9 +222,8 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
               return (
                 <div
                   key={item.id}
-                  className={`p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-teal-300 dark:hover:border-teal-800/80 bg-white dark:bg-slate-800/40 transition shadow-2xs space-y-3 ${
-                    isDeleting ? 'opacity-50 pointer-events-none' : ''
-                  }`}
+                  className={`p-3 sm:p-4 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-teal-300 dark:hover:border-teal-800/80 bg-white dark:bg-slate-800/40 transition shadow-2xs space-y-3 ${isDeleting ? 'opacity-50 pointer-events-none' : ''
+                    }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
                     <div className="space-y-1 flex-1">
@@ -233,15 +235,18 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
                           {item.soCau} câu hỏi
                         </span>
                         <span
-                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${
-                            item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
-                              : item.mode === 'AI_COMMUNITY_CACHE'
-                              ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800'
-                              : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
-                          }`}
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${item.mode === 'CURRICULUM_BANK' || item.nguonDe === 'KHO_MAU'
+                              ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800'
+                              : item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
+                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800'
+                                : item.mode === 'AI_COMMUNITY_CACHE'
+                                  ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-800'
+                                  : 'bg-slate-50 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700'
+                            }`}
                         >
-                          {item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
+                          {item.mode === 'CURRICULUM_BANK' || item.nguonDe === 'KHO_MAU'
+                            ? '📚 Ngân Hàng Đề Mẫu'
+                            : item.mode === 'AI_GEMINI' || item.mode === 'GEMINI_AI'
                             ? '✨ Trí Tuệ Nhân Tạo'
                             : item.mode === 'AI_COMMUNITY_CACHE'
                             ? '⚡ Đề Tương Thích (Kho AI)'
@@ -331,11 +336,11 @@ export const ExerciseHistoryModal: React.FC<ExerciseHistoryModalProps> = ({
                             <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium mt-1">
                               Đáp án: [{Array.isArray(q.dapAnDung) ? q.dapAnDung.join(', ') : q.dapAnDung}]
                               {q.giaiThich ? ` — ${q.giaiThich}` : ''}
-                            </p>
-                          </div>
-                        ))}
+                        </p>
                       </div>
+                        ))}
                     </div>
+                  </div>
                   )}
                 </div>
               );

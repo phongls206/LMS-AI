@@ -45,6 +45,16 @@ export class GenerateExercisesDto {
   @IsOptional()
   @IsString()
   loaiCauHoi?: string;
+
+  @ApiPropertyOptional({ example: 'AI', description: 'Nguồn tạo đề: AI (Trí tuệ nhân tạo) hoặc KHO_MAU (Kho đề mẫu giáo trình)' })
+  @IsOptional()
+  @IsString()
+  nguonDe?: 'AI' | 'KHO_MAU';
+
+  @ApiPropertyOptional({ example: 1, description: 'Số thứ tự bộ đề (1 - 10) trong ngân hàng đề mẫu' })
+  @IsOptional()
+  @IsNumber()
+  boDe?: number;
 }
 
 export class SummarizeProgressDto {

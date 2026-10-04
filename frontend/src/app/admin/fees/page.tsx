@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { enrollmentsService, usersService, classesService } from '../../../services/api';
+import { toast } from '../../../components/Toast';
 import { HoaDon, HocVien, LopHoc } from '../../../types';
 import {
   Receipt,
@@ -208,7 +209,7 @@ export default function AdminFeesPage() {
 
   const handleOpenPayment = (inv: HoaDon) => {
     if (inv.trangThai === 'DA_HUY' || inv.dangKyHoc?.trangThai === 'DA_HUY') {
-      alert('Không thể thu tiền cho hóa đơn hoặc đơn đăng ký đã bị hủy!');
+      toast.warning('Không thể thu tiền cho hóa đơn hoặc đơn đăng ký đã bị hủy!');
       return;
     }
     setSelectedInvoice(inv);
