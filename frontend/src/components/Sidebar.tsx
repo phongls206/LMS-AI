@@ -127,9 +127,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={`
-        fixed inset-y-0 left-0 z-50 md:static md:h-screen
-        bg-white text-slate-700 h-screen flex flex-col border-r border-slate-200/90 shrink-0
-        transition-all duration-300 ease-in-out shadow-xl md:shadow-none
+        fixed inset-y-0 left-0 z-50 md:static
+        bg-white text-slate-700 h-[100dvh] max-h-[100dvh] md:h-screen flex flex-col border-r border-slate-200/90 shrink-0
+        transition-all duration-300 ease-in-out shadow-xl md:shadow-none overflow-hidden
         ${mobileOpen ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0'}
         ${isCollapsed ? 'md:w-20' : 'md:w-64'}
       `}
@@ -186,7 +186,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
       {/* Navigation Links */}
-      <nav className="flex-1 px-3 py-3 space-y-1 overflow-y-auto overflow-x-hidden">
+      <nav className="flex-1 min-h-0 px-3 py-2.5 space-y-1 overflow-y-auto overflow-x-hidden overscroll-contain">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -220,10 +220,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Pinned Bottom Footer: Logout Only */}
-      <div className="border-t border-slate-200/90 p-3 bg-slate-50/80 shrink-0 mt-auto">
+      <div className="border-t border-slate-200/90 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-slate-50/95 dark:bg-slate-900/95 shrink-0 mt-auto">
         <button
           onClick={handleLogout}
-          className={`w-full flex items-center justify-center rounded-xl text-xs font-bold text-rose-600 bg-white hover:bg-rose-600 hover:text-white border border-rose-200 hover:border-rose-600 transition-all duration-200 cursor-pointer shadow-sm group ${!showFull ? 'p-2.5' : 'space-x-2 py-2.5 px-3'
+          className={`w-full flex items-center justify-center rounded-xl text-xs font-bold text-rose-600 bg-white dark:bg-slate-800 hover:bg-rose-600 hover:text-white dark:hover:bg-rose-600 dark:hover:text-white border border-rose-200 dark:border-rose-900/60 hover:border-rose-600 transition-all duration-200 cursor-pointer shadow-sm group min-h-[42px] ${!showFull ? 'p-2' : 'space-x-2 py-2.5 px-3'
             }`}
           title="Đăng xuất khỏi hệ thống"
         >

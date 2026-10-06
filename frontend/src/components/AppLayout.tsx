@@ -23,8 +23,10 @@ import {
   MapPin,
   CreditCard,
   Briefcase,
+  LogOut,
 } from 'lucide-react';
 import Link from 'next/link';
+import { showConfirm } from './ConfirmDialog';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -155,6 +157,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     }
   }, [loading, user]);
 
+  const handleHeaderLogout = async () => {
+    setShowProfileModal(false);
+    setMobileOpen(false);
+    const confirmed = await showConfirm({
+      title: 'Xác Nhận Đăng Xuất',
+      message: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống ETC English không?',
+      confirmText: 'Đăng Xuất',
+      cancelText: 'Hủy Bỏ',
+      type: 'danger',
+      icon: LogOut,
+    });
+    if (!confirmed) return;
+    await authService.logout();
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center space-y-4">
@@ -275,6 +292,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <p className="text-xs font-bold text-slate-800 truncate">{displayName}</p>
                 <p className="text-[10px] text-teal-600 font-medium truncate">{user.tenDangNhap}</p>
               </div>
+            </button>
+
+            {/* Quick Logout Button on Mobile Header */}
+            <button
+              onClick={handleHeaderLogout}
+              className="p-2 rounded-xl bg-rose-50/90 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 border border-rose-200/80 dark:border-rose-900/60 transition cursor-pointer text-rose-600 dark:text-rose-400 flex items-center justify-center md:hidden focus:outline-none shadow-sm"
+              title="Đăng xuất khỏi hệ thống"
+              aria-label="Đăng xuất"
+            >
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </header>
@@ -462,7 +489,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex space-x-3">
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row gap-2">
               <Link
                 href="/change-password"
                 onClick={() => setShowProfileModal(false)}
@@ -472,8 +499,15 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <span>Đổi Mật Khẩu</span>
               </Link>
               <button
+                onClick={handleHeaderLogout}
+                className="flex-1 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-300 dark:hover:bg-rose-900/50 border border-rose-200 dark:border-rose-800/80 font-semibold text-xs flex items-center justify-center space-x-1.5 transition cursor-pointer shadow-sm"
+              >
+                <LogOut className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                <span>Đăng Xuất</span>
+              </button>
+              <button
                 onClick={() => setShowProfileModal(false)}
-                className="flex-1 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs transition shadow-sm cursor-pointer"
+                className="sm:px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs transition shadow-sm cursor-pointer"
               >
                 Đóng
               </button>
