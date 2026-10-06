@@ -147,7 +147,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       if (loginToastName) {
         sessionStorage.removeItem('etc_toast_login');
         toast.success(
-          `Đăng nhập thành công! Chào mừng ${loginToastName} quay trở lại hệ thống.`,
+          `Chào mừng ${loginToastName} quay trở lại hệ thống.`,
           'Đăng Nhập Thành Công',
           2200
         );
