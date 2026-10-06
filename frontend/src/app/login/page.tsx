@@ -56,7 +56,7 @@ export default function LoginPage() {
       if (isLogoutParam || isLogoutSession) {
         sessionStorage.removeItem('etc_toast_logout');
         toast.error(
-          'Bạn đã đăng xuất an toàn khỏi hệ thống ETC English.',
+          'Bạn đã đăng xuất Thành công.',
           'Đã Đăng Xuất',
           2200,
           LogOut
