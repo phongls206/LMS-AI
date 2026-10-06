@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { authService } from '../../services/api';
 import { Footer } from '../../components/Footer';
 import { EtcLogo } from '../../components/EtcLogo';
-import { Sparkles, Lock, User, AlertCircle, AlertTriangle, ArrowRight, Sun, Moon, Mail, Copy, Check, X, ExternalLink, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, Lock, User, AlertCircle, AlertTriangle, ArrowRight, Sun, Moon, Mail, Copy, Check, X, ExternalLink, Eye, EyeOff, LogOut } from 'lucide-react';
 import { toast } from '../../components/Toast';
 
 export default function LoginPage() {
@@ -55,10 +55,11 @@ export default function LoginPage() {
 
       if (isLogoutParam || isLogoutSession) {
         sessionStorage.removeItem('etc_toast_logout');
-        toast.success(
+        toast.error(
           'Bạn đã đăng xuất an toàn khỏi hệ thống ETC English.',
-          'Đăng Xuất Thành Công',
-          3500
+          'Đã Đăng Xuất',
+          2200,
+          LogOut
         );
         if (isLogoutParam) {
           window.history.replaceState({}, '', window.location.pathname);
@@ -100,14 +101,10 @@ export default function LoginPage() {
       const role = res.user?.vaiTro;
       const displayName = res.user?.hoTen || res.user?.tenDangNhap || 'bạn';
 
-      toast.success(
-        `Đăng nhập thành công! Chào mừng ${displayName} quay trở lại hệ thống.`,
-        'Đăng Nhập Thành Công',
-        3500
-      );
-
-      // Nghỉ nhẹ 450ms để hiệu ứng thông báo mượt mà trước khi điều hướng
-      await new Promise((r) => setTimeout(r, 450));
+      // Lưu tên người dùng để hiển thị popup khi dashboard đã render xong (tránh hiện lúc đang loading)
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('etc_toast_login', displayName);
+      }
 
       switch (role) {
         case 'QUAN_LY': router.push('/admin/dashboard'); break;

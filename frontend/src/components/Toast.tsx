@@ -17,6 +17,7 @@ export interface ToastItem {
   message: string;
   title?: string;
   duration?: number;
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
 type ToastListener = (toasts: ToastItem[]) => void;
@@ -37,9 +38,15 @@ class ToastManager {
     this.listeners.forEach((listener) => listener([...this.toasts]));
   }
 
-  show(type: ToastType, message: string, title?: string, duration: number = 4000) {
+  show(
+    type: ToastType,
+    message: string,
+    title?: string,
+    duration: number = 2200,
+    icon?: React.ComponentType<{ className?: string }>
+  ) {
     const id = Math.random().toString(36).substring(2, 9) + Date.now();
-    const newToast: ToastItem = { id, type, message, title, duration };
+    const newToast: ToastItem = { id, type, message, title, duration, icon };
     this.toasts = [newToast, ...this.toasts].slice(0, 5); // Tối đa 5 toast cùng lúc
     this.notify();
 
@@ -65,14 +72,30 @@ class ToastManager {
 export const toastManager = new ToastManager();
 
 export const toast = {
-  success: (message: string, title: string = 'Thành công', duration: number = 3500) =>
-    toastManager.show('success', message, title, duration),
-  error: (message: string, title: string = 'Lỗi', duration: number = 5000) =>
-    toastManager.show('error', message, title, duration),
-  warning: (message: string, title: string = 'Thông báo', duration: number = 4500) =>
-    toastManager.show('warning', message, title, duration),
-  info: (message: string, title: string = 'Thông tin', duration: number = 3500) =>
-    toastManager.show('info', message, title, duration),
+  success: (
+    message: string,
+    title: string = 'Thành công',
+    duration: number = 2200,
+    icon?: React.ComponentType<{ className?: string }>
+  ) => toastManager.show('success', message, title, duration, icon),
+  error: (
+    message: string,
+    title: string = 'Lỗi',
+    duration: number = 2200,
+    icon?: React.ComponentType<{ className?: string }>
+  ) => toastManager.show('error', message, title, duration, icon),
+  warning: (
+    message: string,
+    title: string = 'Thông báo',
+    duration: number = 2500,
+    icon?: React.ComponentType<{ className?: string }>
+  ) => toastManager.show('warning', message, title, duration, icon),
+  info: (
+    message: string,
+    title: string = 'Thông tin',
+    duration: number = 2200,
+    icon?: React.ComponentType<{ className?: string }>
+  ) => toastManager.show('info', message, title, duration, icon),
   dismiss: (id: string) => toastManager.dismiss(id),
 };
 
@@ -135,7 +158,7 @@ export function ToastContainer() {
     >
       {toasts.map((t) => {
         const config = TYPE_CONFIG[t.type] || TYPE_CONFIG.info;
-        const IconComponent = config.icon;
+        const IconComponent = t.icon || config.icon;
 
         return (
           <div

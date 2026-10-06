@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from './Sidebar';
+import { toast } from './Toast';
 import { authService, authStorage } from '../services/api';
 import { VaiTro } from '../types';
 import {
@@ -138,6 +139,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       document.removeEventListener('visibilitychange', handleVisibility);
     };
   }, [router, allowedRoles]);
+
+  // Hiển thị thông báo đăng nhập thành công sau khi Dashboard đã tải xong giao diện
+  useEffect(() => {
+    if (!loading && user && typeof window !== 'undefined') {
+      const loginToastName = sessionStorage.getItem('etc_toast_login');
+      if (loginToastName) {
+        sessionStorage.removeItem('etc_toast_login');
+        toast.success(
+          `Đăng nhập thành công! Chào mừng ${loginToastName} quay trở lại hệ thống.`,
+          'Đăng Nhập Thành Công',
+          2200
+        );
+      }
+    }
+  }, [loading, user]);
 
   if (loading) {
     return (
