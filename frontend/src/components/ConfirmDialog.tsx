@@ -9,6 +9,7 @@ export interface ConfirmOptions {
   confirmText?: string;
   cancelText?: string;
   type?: 'danger' | 'warning' | 'info';
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
 interface ConfirmState extends ConfirmOptions {
@@ -78,6 +79,7 @@ export const showConfirm = (options: ConfirmOptions | string): Promise<boolean> 
     cancelText: options.cancelText || 'Hủy Bỏ',
     type: options.type || 'warning',
     message: options.message,
+    icon: options.icon,
   });
 };
 
@@ -141,7 +143,9 @@ export function ConfirmDialogContainer() {
                 : 'bg-teal-50 dark:bg-teal-950/50 text-teal-600 dark:text-teal-400 border border-teal-200 dark:border-teal-800/60'
             }`}
           >
-            {isDanger ? (
+            {confirmState.icon ? (
+              <confirmState.icon className="w-5 h-5" />
+            ) : isDanger ? (
               <Trash2 className="w-5 h-5" />
             ) : isWarning ? (
               <AlertTriangle className="w-5 h-5" />

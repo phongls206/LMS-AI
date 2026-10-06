@@ -65,14 +65,14 @@ class ToastManager {
 export const toastManager = new ToastManager();
 
 export const toast = {
-  success: (message: string, title: string = 'Thành công') =>
-    toastManager.show('success', message, title),
-  error: (message: string, title: string = 'Lỗi') =>
-    toastManager.show('error', message, title, 5000),
-  warning: (message: string, title: string = 'Thông báo') =>
-    toastManager.show('warning', message, title, 4500),
-  info: (message: string, title: string = 'Thông tin') =>
-    toastManager.show('info', message, title),
+  success: (message: string, title: string = 'Thành công', duration: number = 3500) =>
+    toastManager.show('success', message, title, duration),
+  error: (message: string, title: string = 'Lỗi', duration: number = 5000) =>
+    toastManager.show('error', message, title, duration),
+  warning: (message: string, title: string = 'Thông báo', duration: number = 4500) =>
+    toastManager.show('warning', message, title, duration),
+  info: (message: string, title: string = 'Thông tin', duration: number = 3500) =>
+    toastManager.show('info', message, title, duration),
   dismiss: (id: string) => toastManager.dismiss(id),
 };
 
@@ -131,7 +131,7 @@ export function ToastContainer() {
   return (
     <aside
       aria-label="Thông báo hệ thống"
-      className="fixed top-4 right-4 z-[99999] flex flex-col gap-2.5 max-w-sm w-full pointer-events-none px-3 sm:px-0"
+      className="fixed top-4 right-4 left-4 sm:left-auto z-[99999] flex flex-col gap-2.5 sm:max-w-sm pointer-events-none"
     >
       {toasts.map((t) => {
         const config = TYPE_CONFIG[t.type] || TYPE_CONFIG.info;

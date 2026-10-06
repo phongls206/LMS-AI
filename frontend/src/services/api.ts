@@ -138,7 +138,10 @@ export const authService = {
       await api.post('/auth/logout');
     } catch (e) {}
     authStorage.clearAuth();
-    window.location.href = '/login';
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('etc_toast_logout', '1');
+      window.location.href = '/login?logout=1';
+    }
   },
 };
 
