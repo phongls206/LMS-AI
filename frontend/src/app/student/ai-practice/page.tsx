@@ -791,15 +791,6 @@ export default function StudentAiPracticePage() {
                   <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:space-x-2 w-full sm:w-auto justify-between sm:justify-end">
                     <button
                       type="button"
-                      onClick={() => setPrintExamData(result.data)}
-                      className="flex-1 sm:flex-none justify-center px-3.5 py-2 min-h-[40px] bg-white dark:bg-[#162032] hover:bg-slate-50 dark:hover:bg-[#1e2d45] text-teal-800 dark:text-teal-300 text-xs font-bold rounded-xl flex items-center space-x-1.5 border border-teal-200 dark:border-teal-800 transition cursor-pointer shadow-xs"
-                      title="In phiếu bài tập này ra giấy A4 hoặc lưu PDF"
-                    >
-                      <Printer className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                      <span>In Phiếu Bài Tập</span>
-                    </button>
-                    <button
-                      type="button"
                       onClick={() => {
                         setSubmitted(false);
                         setUserAnswers({});

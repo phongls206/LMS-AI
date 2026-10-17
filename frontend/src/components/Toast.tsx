@@ -154,7 +154,7 @@ export function ToastContainer() {
   return (
     <aside
       aria-label="Thông báo hệ thống"
-      className="fixed top-4 right-4 left-4 sm:left-auto z-[99999] flex flex-col gap-2.5 sm:max-w-sm pointer-events-none"
+      className="fixed bottom-4 right-4 left-4 sm:left-auto z-[99999] flex flex-col-reverse gap-2.5 sm:max-w-sm pointer-events-none"
     >
       {toasts.map((t) => {
         const config = TYPE_CONFIG[t.type] || TYPE_CONFIG.info;
@@ -164,7 +164,7 @@ export function ToastContainer() {
           <div
             key={t.id}
             role="status"
-            className={`pointer-events-auto relative overflow-hidden rounded-xl bg-white/95 dark:bg-[#111827]/95 backdrop-blur-md border ${config.border} ${config.glow} p-3.5 shadow-xl transition-all duration-300 animate-in slide-in-from-top-2 fade-in`}
+            className={`pointer-events-auto relative overflow-hidden rounded-xl bg-white/95 dark:bg-[#111827]/95 backdrop-blur-md border ${config.border} ${config.glow} p-3.5 shadow-xl transition-all duration-300 animate-in slide-in-from-bottom-2 fade-in`}
           >
             <div className="flex items-start gap-3">
               <div
