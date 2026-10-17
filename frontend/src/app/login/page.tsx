@@ -167,10 +167,7 @@ export default function LoginPage() {
                 <EtcLogo size="lg" />
               </div>
               <p className="text-sm text-teal-600 dark:text-teal-400 font-bold flex items-center justify-center space-x-2 mt-2 animate-subtitle-reveal select-none">
-                <Sparkles
-                  className="w-4 h-4 text-teal-500 group-hover/card:animate-spin group-hover/brand:scale-110 shrink-0 origin-center transition-transform duration-300"
-                  style={{ animationDuration: '4s' }}
-                />
+
                 <span className="tracking-wide group-hover/brand:text-teal-500 transition-colors">
                   Hệ Thống LMS Tích Hợp AI
                 </span>

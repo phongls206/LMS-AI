@@ -505,12 +505,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <LogOut className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                 <span>Đăng Xuất</span>
               </button>
-              <button
-                onClick={() => setShowProfileModal(false)}
-                className="sm:px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold text-xs transition shadow-sm cursor-pointer"
-              >
-                Đóng
-              </button>
+
             </div>
           </div>
         </div>
