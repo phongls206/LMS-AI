@@ -202,22 +202,19 @@ export function validateAiPrompt(
       };
     }
 
-    // D. Tiếng Anh đơn lẻ dài >= 10 ký tự: Phải có hậu tố ngữ pháp hợp lệ
-    if (words.length === 1 && cleanWord.length >= 10 && !word.includes('-') && !hasVietnameseAccent) {
-      const hasValidEnglishSuffix = /(?:tion|sion|ment|ness|able|ible|ships|ship|less|hood|wise|tives|tive|ance|ence|tures|ture|ologies|ology|logy|ated|ting|icals|ical|ally|ular|ities|ity|isms|ism|ists|ist|als|al|ings|ing|ed|ies)$/i.test(cleanWord);
-      if (!hasValidEnglishSuffix) {
-        return {
-          isValid: false,
-          errorMessage: `Phát hiện từ không rõ nghĩa hoặc gõ phím ngẫu nhiên: "${word}". Vui lòng nhập nội dung học tiếng Anh cụ thể.`,
-        };
-      }
+    // D. Chặn từ quá dài không có dấu gạch nối (>= 16 ký tự)
+    if (cleanWord.length >= 16 && !word.includes('-')) {
+      return {
+        isValid: false,
+        errorMessage: `Phát hiện chuỗi ký tự dính liền quá dài hoặc gõ loạn phím ("${word}"). Vui lòng nhập từ ngữ có nghĩa.`,
+      };
     }
 
     // E. Cụm phụ âm liên tiếp >= 4 (trừ cụm chuẩn tiếng Anh như str, spl, scr, spr, ngth)
     if (ABNORMAL_LETTER_CLUSTERS.test(cleanWord) && !allowedClusters.test(cleanWord)) {
       return {
         isValid: false,
-        errorMessage: `Phát hiện từ chứa chuỗi phụ âm bất thường: "${word}". Vui lòng nhập từ ngữ học tập hợp lệ.`,
+        errorMessage: `Phát hiện từ chứa chuỗi phụ âm bất thường ("${word}"). Vui lòng nhập từ ngữ có nghĩa.`,
       };
     }
 
@@ -227,31 +224,19 @@ export function validateAiPrompt(
       if (!hasVowels) {
         return {
           isValid: false,
-          errorMessage: `Phát hiện từ không có nghĩa: "${word}". Vui lòng nhập nội dung hợp lệ.`,
+          errorMessage: `Phát hiện chuỗi vô nghĩa không có nguyên âm ("${word}"). Vui lòng nhập từ ngữ có nghĩa.`,
         };
       }
     }
   }
 
-  // 12. Kiểm tra độ phù hợp ngữ cảnh (Relevance & Semantic check)
+  // 12. Kiểm tra ngữ cảnh: Chỉ nhắc nhở với mục tiêu quá ngắn nếu là GOAL
   if (type === 'GOAL') {
-    // Với mục tiêu học tập: Nếu nhập câu quá ngắn (< 25 ký tự hoặc <= 3 từ),
-    // bắt buộc phải chứa ít nhất 1 từ khóa liên quan đến tiếng Anh, học tập, lịch học hoặc kỹ năng.
-    const isShortGoal = text.length < 25 || words.length <= 3;
+    const isShortGoal = text.length < 15 || words.length <= 2;
     if (isShortGoal && !LEARNING_KEYWORDS.test(text)) {
       return {
         isValid: false,
-        errorMessage: 'Mục tiêu học tập chưa rõ ràng hoặc không liên quan đến tiếng Anh. Vui lòng mô tả mong muốn của bạn (Ví dụ: Muốn học giao tiếp, Luyện thi IELTS 6.5, Học vào các buổi tối...).',
-      };
-    }
-  } else if (type === 'TOPIC') {
-    // Với chủ đề bài tập: Nếu nhập quá ngắn (< 15 ký tự hoặc <= 2 từ),
-    // bắt buộc phải khớp với các khái niệm ngữ pháp, chủ đề hoặc từ vựng tiếng Anh.
-    const isShortTopic = text.length < 15 || words.length <= 2;
-    if (isShortTopic && !TOPIC_KEYWORDS.test(text)) {
-      return {
-        isValid: false,
-        errorMessage: 'Chủ đề bài tập không phù hợp. Vui lòng nhập chủ đề tiếng Anh cụ thể (Ví dụ: Thì hiện tại hoàn thành, Mệnh đề quan hệ, Từ vựng du lịch, Job interview...).',
+        errorMessage: 'Mục tiêu học tập quá ngắn. Vui lòng mô tả chi tiết hơn (Ví dụ: Muốn học giao tiếp, Luyện thi IELTS 6.5, Đi du học...).',
       };
     }
   }

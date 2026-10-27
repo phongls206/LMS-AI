@@ -16,6 +16,13 @@ export const BUSINESS_ENGLISH_BANK: CurriculumTopicBank = {
     'đàm phán',
     'hợp đồng',
     'meeting',
+    'mua sắm',
+    'mua sam',
+    'shopping',
+    'bán hàng',
+    'cửa hàng',
+    'thanh toán',
+    'sales',
   ],
   questions: [
     // === 15 SINGLE CHOICE ===

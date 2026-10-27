@@ -504,7 +504,10 @@ export default function StudentAiPracticePage() {
                       }`}
                   >
                     {loading ? (
-                      <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                      <>
+                        <BrainCircuit className="w-3.5 h-3.5 shrink-0 opacity-70" />
+                        <span className="truncate">Đang Sinh Đề...</span>
+                      </>
                     ) : cooldown > 0 ? (
                       <span className="flex items-center space-x-1.5 text-amber-900 dark:text-amber-200 text-xs font-bold">
                         <Clock className="w-3.5 h-3.5 text-amber-700 dark:text-amber-400 animate-spin" />
@@ -589,7 +592,13 @@ export default function StudentAiPracticePage() {
             <div className="p-3.5 sm:p-4 rounded-xl bg-teal-50 dark:bg-[#13222e] border border-teal-200 dark:border-teal-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs text-teal-900 dark:text-teal-200 font-bold">
-                  Bài tập: <strong>{result.data.chuDe}</strong> — Trình độ: <strong>CEFR {result.data.trinhDo}</strong> ({result.data.cauHoi.length} câu)
+                  Bài tập: <strong>{result.data.chuDe}</strong>
+                  {result.data.tenChuDeGoc && result.data.tenChuDeGoc !== result.data.chuDe && (
+                    <span className="text-teal-700/80 dark:text-teal-400/80 font-normal ml-1">
+                      (AI liên kết: <em>{result.data.tenChuDeGoc}</em>)
+                    </span>
+                  )}
+                  {' '}— Trình độ: <strong>CEFR {result.data.trinhDo}</strong> ({result.data.cauHoi.length} câu)
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
@@ -604,7 +613,9 @@ export default function StudentAiPracticePage() {
                     }`}
                 >
                   {result.mode === 'CURRICULUM_BANK'
-                    ? 'Ngân Hàng Đề Mẫu ETC'
+                    ? (result.data.tenChuDeGoc && result.data.tenChuDeGoc !== result.data.chuDe
+                        ? 'Ngân Hàng Đề (AI Khớp)'
+                        : 'Ngân Hàng Đề Mẫu ETC')
                     : result.mode === 'AI_COMMUNITY_CACHE'
                       ? 'Đề Tương Thích (Kho AI)'
                       : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
