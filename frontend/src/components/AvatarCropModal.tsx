@@ -11,7 +11,7 @@ import {
   Check,
   Trash2,
   AlertCircle,
-  Sparkles,
+  Scissors,
 } from 'lucide-react';
 
 interface AvatarCropModalProps {
@@ -236,7 +236,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
         <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-600 dark:text-teal-400">
-              <Sparkles className="w-4 h-4" />
+              <Scissors className="w-4 h-4" />
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900 dark:text-white">
