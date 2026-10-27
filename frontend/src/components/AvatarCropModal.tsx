@@ -40,12 +40,17 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [previewDataUrl, setPreviewDataUrl] = useState<string | null>(null);
 
+  const CROP_SIZE = 260; // Kích thước khung hiển thị chỉnh sửa trên UI
+  const OUTPUT_SIZE = 256; // Kích thước chuẩn Web tối ưu (256x256 px)
+
+  const [imageDims, setImageDims] = useState<{ width: number; height: number }>({
+    width: CROP_SIZE,
+    height: CROP_SIZE,
+  });
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const CROP_SIZE = 260; // Kích thước khung hiển thị chỉnh sửa trên UI
-  const OUTPUT_SIZE = 256; // Kích thước chuẩn Web tối ưu (256x256 px)
 
   // Khởi tạo trạng thái khi mở modal
   useEffect(() => {
@@ -56,8 +61,28 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
       setPosition({ x: 0, y: 0 });
       setErrorMessage(null);
       setPreviewDataUrl(null);
+      setImageDims({ width: CROP_SIZE, height: CROP_SIZE });
     }
   }, [isOpen]);
+
+  // Xử lý khi ảnh load xong trên DOM để xác định chính xác tỉ lệ
+  const handleImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const img = e.currentTarget;
+    const naturalWidth = img.naturalWidth || CROP_SIZE;
+    const naturalHeight = img.naturalHeight || CROP_SIZE;
+    const aspect = naturalWidth / naturalHeight;
+
+    let w = CROP_SIZE;
+    let h = CROP_SIZE;
+    if (aspect >= 1) {
+      w = CROP_SIZE * aspect;
+      h = CROP_SIZE;
+    } else {
+      w = CROP_SIZE;
+      h = CROP_SIZE / aspect;
+    }
+    setImageDims({ width: w, height: h });
+  };
 
   // Xử lý chọn tệp từ máy tính
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,10 +106,26 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
 
     const reader = new FileReader();
     reader.onload = () => {
-      setImageSrc(reader.result as string);
-      setZoom(1);
-      setRotation(0);
-      setPosition({ x: 0, y: 0 });
+      const dataUrl = reader.result as string;
+      const testImg = new Image();
+      testImg.onload = () => {
+        const aspect = (testImg.naturalWidth || CROP_SIZE) / (testImg.naturalHeight || CROP_SIZE);
+        let w = CROP_SIZE;
+        let h = CROP_SIZE;
+        if (aspect >= 1) {
+          w = CROP_SIZE * aspect;
+          h = CROP_SIZE;
+        } else {
+          w = CROP_SIZE;
+          h = CROP_SIZE / aspect;
+        }
+        setImageDims({ width: w, height: h });
+        setImageSrc(dataUrl);
+        setZoom(1);
+        setRotation(0);
+        setPosition({ x: 0, y: 0 });
+      };
+      testImg.src = dataUrl;
     };
     reader.readAsDataURL(file);
 
@@ -111,6 +152,49 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
     setIsDragging(false);
   };
 
+  // Lắng nghe chuột & cảm ứng ở cấp window để thao tác kéo rê mượt mà không bị ngắt khi trỏ chuột ra ngoài vòng tròn
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleWindowMouseMove = (e: MouseEvent) => {
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      });
+    };
+
+    const handleWindowMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    const handleWindowTouchMove = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        setPosition({
+          x: e.touches[0].clientX - dragStart.x,
+          y: e.touches[0].clientY - dragStart.y,
+        });
+      }
+    };
+
+    const handleWindowTouchEnd = () => {
+      setIsDragging(false);
+    };
+
+    window.addEventListener('mousemove', handleWindowMouseMove);
+    window.addEventListener('mouseup', handleWindowMouseUp);
+    window.addEventListener('touchmove', handleWindowTouchMove, { passive: true });
+    window.addEventListener('touchend', handleWindowTouchEnd);
+    window.addEventListener('touchcancel', handleWindowTouchEnd);
+
+    return () => {
+      window.removeEventListener('mousemove', handleWindowMouseMove);
+      window.removeEventListener('mouseup', handleWindowMouseUp);
+      window.removeEventListener('touchmove', handleWindowTouchMove);
+      window.removeEventListener('touchend', handleWindowTouchEnd);
+      window.removeEventListener('touchcancel', handleWindowTouchEnd);
+    };
+  }, [isDragging, dragStart]);
+
   // Touch controls for mobile
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!imageSrc || e.touches.length !== 1) return;
@@ -129,11 +213,13 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
     });
   };
 
-  // Tạo ảnh Base64 nén chuẩn Web từ Canvas
+  // Tạo ảnh Base64 nén chuẩn Web từ Canvas - Khớp 100% tọa độ hiển thị trên UI
   const generateCroppedImage = useCallback((): string | null => {
     if (!imageSrc || !imageRef.current) return null;
 
     const img = imageRef.current;
+    if (!img.complete || img.naturalWidth === 0) return null;
+
     const canvas = document.createElement('canvas');
     canvas.width = OUTPUT_SIZE;
     canvas.height = OUTPUT_SIZE;
@@ -143,58 +229,68 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = 'high';
 
-    // Xóa nền
+    // Xóa nền sạch
     ctx.clearRect(0, 0, OUTPUT_SIZE, OUTPUT_SIZE);
 
-    // Tỉ lệ scale giữa hiển thị UI và canvas xuất ra
-    const scaleFactor = OUTPUT_SIZE / CROP_SIZE;
+    // Tỉ lệ scale giữa hiển thị UI (CROP_SIZE = 260) và canvas xuất ra (OUTPUT_SIZE = 256)
+    const s = OUTPUT_SIZE / CROP_SIZE;
 
-    ctx.save();
-    // Di chuyển tới tâm canvas
-    ctx.translate(OUTPUT_SIZE / 2, OUTPUT_SIZE / 2);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.scale(zoom, zoom);
+    // Kích thước cơ sở của ảnh (khớp 1:1 với baseWidth và baseHeight của <img> trong DOM)
+    const naturalWidth = img.naturalWidth || CROP_SIZE;
+    const naturalHeight = img.naturalHeight || CROP_SIZE;
+    const aspect = naturalWidth / naturalHeight;
 
-    // Tính kích thước vẽ ảnh tỉ lệ thuận với khung CROP_SIZE
-    const aspect = img.naturalWidth / img.naturalHeight;
-    let drawWidth = CROP_SIZE;
-    let drawHeight = CROP_SIZE;
-
-    if (aspect > 1) {
-      drawWidth = CROP_SIZE * aspect;
-    } else {
-      drawHeight = CROP_SIZE / aspect;
+    let baseW = imageDims.width;
+    let baseH = imageDims.height;
+    if (!baseW || !baseH || (baseW === CROP_SIZE && baseH === CROP_SIZE && aspect !== 1)) {
+      if (aspect >= 1) {
+        baseW = CROP_SIZE * aspect;
+        baseH = CROP_SIZE;
+      } else {
+        baseW = CROP_SIZE;
+        baseH = CROP_SIZE / aspect;
+      }
     }
 
-    // Vẽ ảnh với offset pan
-    ctx.drawImage(
-      img,
-      (-drawWidth / 2 + position.x) * scaleFactor,
-      (-drawHeight / 2 + position.y) * scaleFactor,
-      drawWidth * scaleFactor,
-      drawHeight * scaleFactor,
-    );
+    ctx.save();
+
+    // 1. Dời gốc tọa độ về tâm của canvas (tương ứng với tâm container CROP_SIZE trong UI)
+    ctx.translate(OUTPUT_SIZE / 2, OUTPUT_SIZE / 2);
+
+    // 2. Dịch chuyển pan theo vị trí kéo rê (nhân tỉ lệ s để khớp kích thước canvas)
+    ctx.translate(position.x * s, position.y * s);
+
+    // 3. Xoay quanh tâm
+    ctx.rotate((rotation * Math.PI) / 180);
+
+    // 4. Phóng to / thu nhỏ quanh tâm
+    ctx.scale(zoom, zoom);
+
+    // 5. Vẽ ảnh căn giữa tâm (0, 0)
+    const drawW = baseW * s;
+    const drawH = baseH * s;
+    ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
 
     ctx.restore();
 
-    // Xuất định dạng WebP với quality 0.85 (dung lượng chỉ ~15KB - 40KB, siêu nhẹ)
+    // Xuất định dạng WebP với quality 0.90 (dung lượng chỉ ~20KB - 50KB, siêu nét)
     try {
-      return canvas.toDataURL('image/webp', 0.85);
+      return canvas.toDataURL('image/webp', 0.9);
     } catch {
-      return canvas.toDataURL('image/jpeg', 0.85);
+      return canvas.toDataURL('image/png');
     }
-  }, [imageSrc, zoom, rotation, position]);
+  }, [imageSrc, zoom, rotation, position, imageDims]);
 
-  // Cập nhật live preview khi zoom, xoay, kéo
+  // Cập nhật live preview khi zoom, xoay, kéo hoặc kích thước ảnh thay đổi
   useEffect(() => {
     if (imageSrc) {
       const timer = setTimeout(() => {
         const preview = generateCroppedImage();
         if (preview) setPreviewDataUrl(preview);
-      }, 50);
+      }, 30);
       return () => clearTimeout(timer);
     }
-  }, [imageSrc, zoom, rotation, position, generateCroppedImage]);
+  }, [imageSrc, zoom, rotation, position, imageDims, generateCroppedImage]);
 
   // Lưu avatar
   const handleSave = async () => {
@@ -297,13 +393,20 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                   src={imageSrc}
                   alt="Avatar Edit"
                   draggable={false}
+                  onLoad={handleImageLoad}
                   style={{
-                    transform: `translate(${position.x}px, ${position.y}px) rotate(${rotation}deg) scale(${zoom})`,
-                    transformOrigin: 'center center',
+                    width: `${imageDims.width}px`,
+                    height: `${imageDims.height}px`,
+                    minWidth: `${imageDims.width}px`,
+                    minHeight: `${imageDims.height}px`,
                     maxWidth: 'none',
                     maxHeight: 'none',
+                    transform: `translate(${position.x}px, ${position.y}px) rotate(${rotation}deg) scale(${zoom})`,
+                    transformOrigin: 'center center',
                   }}
-                  className="transition-transform duration-75 select-none pointer-events-none"
+                  className={`select-none pointer-events-none shrink-0 ${
+                    isDragging ? '' : 'transition-transform duration-100'
+                  }`}
                 />
 
                 {/* Tâm ngắm căn chỉnh */}
@@ -382,8 +485,8 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={previewDataUrl}
-                            alt="32px"
-                            className="w-8 h-8 rounded-lg object-cover border border-teal-500 mx-auto shadow-xs"
+                            alt="Header preview"
+                            className="w-8 h-8 rounded-lg object-cover border border-teal-500 mx-auto shadow-xs bg-slate-100 dark:bg-slate-800"
                           />
                           <span className="text-[9px] text-slate-400">Header</span>
                         </div>
@@ -391,8 +494,8 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={previewDataUrl}
-                            alt="48px"
-                            className="w-12 h-12 rounded-2xl object-cover border-2 border-teal-500 mx-auto shadow-sm"
+                            alt="Hồ sơ preview"
+                            className="w-12 h-12 rounded-2xl object-cover border-2 border-teal-500 mx-auto shadow-sm bg-slate-100 dark:bg-slate-800"
                           />
                           <span className="text-[9px] text-slate-400">Hồ sơ</span>
                         </div>
