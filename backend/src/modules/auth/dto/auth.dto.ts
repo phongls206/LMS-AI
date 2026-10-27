@@ -31,3 +31,11 @@ export class ChangePasswordDto {
   @Matches(/^\S+$/, { message: 'Mật khẩu mới không được chứa khoảng trắng.' })
   matKhauMoi: string;
 }
+
+export class UpdateAvatarDto {
+  @ApiProperty({ description: 'Ảnh đại diện dạng Base64 Data URL hoặc link ảnh', required: false, nullable: true })
+  @IsOptional()
+  @IsString({ message: 'Avatar phải là chuỗi ký tự hợp lệ.' })
+  avatar?: string | null;
+}
+

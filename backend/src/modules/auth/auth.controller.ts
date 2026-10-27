@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Put,
   Body,
   UseGuards,
   HttpCode,
@@ -9,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LoginDto, ChangePasswordDto } from './dto/auth.dto';
+import { LoginDto, ChangePasswordDto, UpdateAvatarDto } from './dto/auth.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
@@ -64,5 +65,20 @@ export class AuthController {
   @ApiOperation({ summary: 'Đăng xuất và thu hồi phiên làm việc trên máy chủ' })
   logout(@CurrentUser() user: any) {
     return this.authService.logout(user.id);
+  }
+
+  /**
+   * PUT /api/v1/auth/avatar — Cập nhật ảnh đại diện người dùng
+   */
+  @Put('avatar')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cập nhật ảnh đại diện người dùng hiện tại' })
+  updateAvatar(
+    @CurrentUser() user: any,
+    @Body() dto: UpdateAvatarDto,
+  ) {
+    return this.authService.updateAvatar(user.id, dto.avatar ?? null);
   }
 }

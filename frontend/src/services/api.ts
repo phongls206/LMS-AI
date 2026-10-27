@@ -79,6 +79,15 @@ export const authStorage = {
       localStorage.removeItem('etc_user_session');
     }
   },
+
+  updateUser: (partialUser: any) => {
+    if (typeof window === 'undefined') return null;
+    const current = authStorage.getUser() || {};
+    const updated = { ...current, ...partialUser };
+    sessionStorage.setItem('etc_user_session', JSON.stringify(updated));
+    localStorage.setItem('etc_user_session', JSON.stringify(updated));
+    return updated;
+  },
 };
 
 // Gắn JWT Bearer Token tự động vào mọi request từ authStorage của tab
@@ -130,7 +139,30 @@ export const authService = {
     }
     return res.data;
   },
-  getMe: async () => (await api.get('/auth/me')).data,
+  getMe: async () => {
+    const res = await api.get('/auth/me');
+    if (res.data) {
+      authStorage.updateUser({
+        avatar: res.data.avatar,
+        hoTen: res.data.hoTen,
+        email: res.data.email,
+        soDienThoai: res.data.soDienThoai,
+      });
+    }
+    return res.data;
+  },
+  updateAvatar: async (avatar: string | null) => {
+    const res = await api.put('/auth/avatar', { avatar });
+    if (res.data?.success) {
+      authStorage.updateUser({ avatar: res.data.avatar });
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('user-avatar-updated', { detail: { avatar: res.data.avatar } })
+        );
+      }
+    }
+    return res.data;
+  },
   changePassword: async (matKhauCu: string, matKhauMoi: string) =>
     (await api.post('/auth/change-password', { matKhauCu, matKhauMoi })).data,
   logout: async () => {

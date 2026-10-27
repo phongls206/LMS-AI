@@ -112,6 +112,11 @@ export class UpdateStudentDto {
   @IsEnum(TrangThaiHocVien)
   trangThai?: TrangThaiHocVien;
 
+  @ApiPropertyOptional({ description: 'Ảnh đại diện dạng Base64 Data URL' })
+  @IsOptional()
+  @IsString()
+  avatar?: string;
+
   @ApiPropertyOptional({ description: 'Mật khẩu mới nếu muốn reset (tối thiểu 6 ký tự, không chứa khoảng trắng)' })
   @IsOptional()
   @IsString()
@@ -192,6 +197,11 @@ export class UpdateTeacherDto {
   @IsOptional()
   @IsEnum(TrangThaiGiaoVien)
   trangThai?: TrangThaiGiaoVien;
+
+  @ApiPropertyOptional({ description: 'Ảnh đại diện dạng Base64 Data URL' })
+  @IsOptional()
+  @IsString()
+  avatar?: string;
 
   @ApiPropertyOptional({ description: 'Mật khẩu mới nếu muốn reset (tối thiểu 6 ký tự, không chứa khoảng trắng)' })
   @IsOptional()

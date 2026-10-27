@@ -33,8 +33,10 @@ import {
   AlertCircle,
   Zap,
   CheckCircle2,
+  Camera,
 } from 'lucide-react';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
+import { AvatarCropModal } from '../../../components/AvatarCropModal';
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<HocVien[]>([]);
@@ -44,6 +46,7 @@ export default function AdminStudentsPage() {
   const [cefrFilter, setCefrFilter] = useState<string>('');
   const [message, setMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [cropStudentTarget, setCropStudentTarget] = useState<any | null>(null);
 
   // Debounce tìm kiếm 300ms
   useEffect(() => {
@@ -1200,8 +1203,28 @@ export default function AdminStudentsPage() {
               {/* Header */}
               <div className="flex justify-between items-start pb-4 border-b border-slate-100">
                 <div className="flex items-center space-x-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-500 flex items-center justify-center text-white text-xl font-black shadow-md shadow-teal-500/20">
-                    {detailStudent.hoTen?.charAt(0) || 'H'}
+                  <div className="relative group shrink-0">
+                    {detailStudent.nguoiDung?.avatar ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={detailStudent.nguoiDung.avatar}
+                        alt={detailStudent.hoTen}
+                        className="w-14 h-14 rounded-2xl object-cover shadow-md shadow-teal-500/20 border-2 border-teal-500/40"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-500 flex items-center justify-center text-white text-xl font-black shadow-md shadow-teal-500/20">
+                        {detailStudent.hoTen?.charAt(0) || 'H'}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setCropStudentTarget(detailStudent)}
+                      className="absolute inset-0 bg-slate-900/60 rounded-2xl flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-[1px]"
+                      title="Cập nhật avatar học viên"
+                    >
+                      <Camera className="w-4 h-4 text-teal-300" />
+                      <span className="text-[8px] font-bold mt-0.5">Đổi ảnh</span>
+                    </button>
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
@@ -1399,6 +1422,38 @@ export default function AdminStudentsPage() {
             </div>
           </div>
         )}
+
+        {/* Modal Chỉnh Sửa & Cắt Ảnh Đại Diện cho Học Viên */}
+        <AvatarCropModal
+          isOpen={!!cropStudentTarget}
+          onClose={() => setCropStudentTarget(null)}
+          currentAvatar={cropStudentTarget?.nguoiDung?.avatar}
+          userName={cropStudentTarget?.hoTen}
+          onSave={async (newAvatar) => {
+            if (!cropStudentTarget) return;
+            await usersService.updateStudent(cropStudentTarget.id, { avatar: newAvatar });
+            setStudents((prev) =>
+              prev.map((item) =>
+                item.id === cropStudentTarget.id
+                  ? ({
+                      ...item,
+                      nguoiDung: item.nguoiDung
+                        ? { ...item.nguoiDung, avatar: newAvatar }
+                        : { avatar: newAvatar },
+                    } as HocVien)
+                  : item
+              )
+            );
+            if (detailStudent && detailStudent.id === cropStudentTarget.id) {
+              setDetailStudent((prev: any) =>
+                prev
+                  ? { ...prev, nguoiDung: { ...prev.nguoiDung, avatar: newAvatar } }
+                  : prev
+              );
+            }
+            toast.success(newAvatar ? 'Cập nhật avatar học viên thành công!' : 'Đã xóa avatar học viên về mặc định.');
+          }}
+        />
       </div>
     </AppLayout>
   );

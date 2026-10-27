@@ -13,6 +13,7 @@ export interface UserSession {
   vaiTro: VaiTro;
   accessToken: string;
   hoTen?: string;
+  avatar?: string | null;
   maTuVanVien?: string;
   hoSoHocVien?: {
     id: number;
@@ -105,9 +106,10 @@ export interface HocVien {
   nguoiDung?: {
     id?: number;
     tenDangNhap?: string;
-    email: string;
+    email?: string;
     soDienThoai?: string;
     hoTen?: string;
+    avatar?: string | null;
     dangHoatDong?: boolean;
   };
 }
@@ -122,9 +124,10 @@ export interface GiaoVien {
   nguoiDung?: {
     id?: number;
     tenDangNhap?: string;
-    email: string;
+    email?: string;
     soDienThoai?: string;
     hoTen?: string;
+    avatar?: string | null;
     dangHoatDong?: boolean;
   };
   phanCong?: Array<{
