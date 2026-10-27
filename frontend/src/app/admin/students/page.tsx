@@ -40,9 +40,18 @@ export default function AdminStudentsPage() {
   const [students, setStudents] = useState<HocVien[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [cefrFilter, setCefrFilter] = useState<string>('');
   const [message, setMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Debounce tìm kiếm 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   // Dedicated Reset Password Modal State
   const [resetPasswordTarget, setResetPasswordTarget] = useState<any | null>(null);
@@ -112,7 +121,12 @@ export default function AdminStudentsPage() {
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const res = await usersService.getStudents(page, limit, search || undefined, cefrFilter || undefined);
+      const res = await usersService.getStudents(
+        page,
+        limit,
+        debouncedSearch.trim() || undefined,
+        cefrFilter || undefined,
+      );
       const studentList = Array.isArray(res) ? res : res.data || [];
       setStudents(studentList);
 
@@ -129,7 +143,7 @@ export default function AdminStudentsPage() {
 
   useEffect(() => {
     fetchStudents();
-  }, [page, limit, search, cefrFilter]);
+  }, [page, limit, debouncedSearch, cefrFilter]);
 
   // Duplicate check states cho modal thêm học viên
   const [createDuplicateErrors, setCreateDuplicateErrors] = useState<Record<string, string>>({});

@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { usersService, classesService, enrollmentsService } from '../../../services/api';
 import { toast } from '../../../components/Toast';
 import { HocVien, LopHoc, HoaDon } from '../../../types';
 import { Receipt, DollarSign, CheckCircle, AlertCircle, Plus, CreditCard, UserCheck, Calendar, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Download, Printer, X, FileText, Eye, XCircle, AlertTriangle, RefreshCw, ArrowLeft, History, Sparkles } from 'lucide-react';
 import { formatTrangThaiHoaDon, formatTrangThaiLopHoc, docSoThanhChu, formatReceiptDate, formatCSVDate } from '../../../utils/formatters';
+import { SearchableSelect } from '../../../components/SearchableSelect';
 
 export default function StaffCollectFeePage() {
   const [students, setStudents] = useState<HocVien[]>([]);
@@ -19,6 +20,13 @@ export default function StaffCollectFeePage() {
   const [submitting, setSubmitting] = useState(false);
   const [submittingPayment, setSubmittingPayment] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  // Search state cho combobox học viên và lớp học
+  const [searchingStudents, setSearchingStudents] = useState(false);
+  const [searchingClasses, setSearchingClasses] = useState(false);
+  const searchStudentTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const searchClassTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const searchInvoiceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Search & Pagination cho Invoices
   const [searchInvoice, setSearchInvoice] = useState('');
@@ -61,6 +69,24 @@ export default function StaffCollectFeePage() {
 
   useEffect(() => {
     setPage(1);
+    if (searchInvoiceTimerRef.current) clearTimeout(searchInvoiceTimerRef.current);
+    if (searchInvoice.trim().length >= 2) {
+      searchInvoiceTimerRef.current = setTimeout(async () => {
+        try {
+          const invRes = await enrollmentsService.getInvoices(undefined, undefined, searchInvoice.trim());
+          if (invRes && Array.isArray(invRes)) {
+            setInvoices((prev) => {
+              const map = new Map<number, HoaDon>();
+              prev.forEach((inv) => map.set(Number(inv.id), inv));
+              invRes.forEach((inv: HoaDon) => map.set(Number(inv.id), inv));
+              return Array.from(map.values());
+            });
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }, 300);
+    }
   }, [searchInvoice]);
 
   const fetchData = async (isManual = false) => {
@@ -142,6 +168,79 @@ export default function StaffCollectFeePage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Tìm kiếm học viên trên BE khi gõ trong SearchableSelect
+  const handleSearchStudentBE = (term: string) => {
+    if (searchStudentTimerRef.current) clearTimeout(searchStudentTimerRef.current);
+    if (!term || !term.trim()) return;
+    searchStudentTimerRef.current = setTimeout(async () => {
+      try {
+        setSearchingStudents(true);
+        const res = await usersService.getStudents(1, 50, undefined, term.trim());
+        if (res && res.data) {
+          setStudents((prev) => {
+            const map = new Map<number, HocVien>();
+            prev.forEach((s) => map.set(Number(s.id), s));
+            res.data.forEach((s: HocVien) => map.set(Number(s.id), s));
+            return Array.from(map.values());
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setSearchingStudents(false);
+      }
+    }, 300);
+  };
+
+  // Tìm kiếm lớp học trên BE khi gõ trong SearchableSelect
+  const handleSearchClassBE = (term: string) => {
+    if (searchClassTimerRef.current) clearTimeout(searchClassTimerRef.current);
+    if (!term || !term.trim()) return;
+    searchClassTimerRef.current = setTimeout(async () => {
+      try {
+        setSearchingClasses(true);
+        const classList = await classesService.getAll(undefined, undefined, term.trim());
+        const rawClasses = Array.isArray(classList) ? classList : classList?.data || [];
+        const enrollable = rawClasses.filter(
+          (c: LopHoc) =>
+            c.trangThai !== 'DA_HUY' &&
+            c.trangThai !== 'DA_KET_THUC' &&
+            Number(c.siSoHienTai) < Number(c.siSoToiDa) &&
+            c.khoaHoc?.trangThai !== 'NGUNG_HOAT_DONG',
+        );
+        setClasses((prev) => {
+          const map = new Map<number, LopHoc>();
+          prev.forEach((c) => map.set(Number(c.id), c));
+          enrollable.forEach((c: LopHoc) => map.set(Number(c.id), c));
+          return Array.from(map.values());
+        });
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setSearchingClasses(false);
+      }
+    }, 300);
+  };
+
+  // Chuyển danh sách sang dạng options cho SearchableSelect
+  const studentOptions = useMemo(() => {
+    return students.map((s) => ({
+      value: Number(s.id),
+      badge: s.maHocVien,
+      label: s.hoTen,
+      subLabel: `— CEFR ${s.trinhDoCEFR}${s.nguoiDung?.soDienThoai ? ` (${s.nguoiDung.soDienThoai})` : ''}`,
+    }));
+  }, [students]);
+
+  const classOptions = useMemo(() => {
+    return classes.map((c) => ({
+      value: Number(c.id),
+      badge: c.maLopHoc,
+      label: c.tenLopHoc,
+      subLabel: `${c.khoaHoc?.trinhDoYeuCau ? `(Chuẩn CEFR ${c.khoaHoc.trinhDoYeuCau}) ` : ''}— ${formatTrangThaiLopHoc(c.trangThai)} (${c.siSoHienTai}/${c.siSoToiDa} HV)`,
+    }));
+  }, [classes]);
 
   // ─── Xuất CSV Hóa Đơn Học Phí ────────────────────────────────────────────────
   const exportInvoicesCSV = () => {
@@ -388,52 +487,46 @@ export default function StaffCollectFeePage() {
         )}
 
         {/* 1. Form Ghi danh lớp học */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-sm space-y-4">
-          <div className="flex items-center space-x-2 pb-3 border-b border-slate-100">
-            <UserCheck className="w-5 h-5 text-teal-600" />
-            <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+        <div className="bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+          <div className="flex items-center space-x-2 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <UserCheck className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
               1. Ghi Danh Học Viên Vào Lớp Học
             </h3>
           </div>
 
           <form onSubmit={handleEnrollAndInvoice} className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
             <div>
-              <label className="block text-slate-700 font-bold mb-1.5 uppercase tracking-wider">
+              <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1.5 uppercase tracking-wider">
                 Chọn Học Viên
               </label>
-              <select
+              <SearchableSelect
                 value={selectedStudentId}
-                onChange={(e) => setSelectedStudentId(+e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-teal-500 cursor-pointer"
-              >
-                {students.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    [{s.maHocVien}] {s.hoTen} — CEFR {s.trinhDoCEFR}
-                  </option>
-                ))}
-              </select>
+                onChange={(val) => setSelectedStudentId(Number(val))}
+                options={studentOptions}
+                placeholder="Chọn học viên..."
+                searchPlaceholder="Tìm theo mã HV, họ tên, SĐT..."
+                loading={searchingStudents}
+                onSearchChange={handleSearchStudentBE}
+                emptyText="Không tìm thấy học viên nào phù hợp"
+              />
             </div>
 
             <div>
-              <label className="block text-slate-700 font-bold mb-1.5 uppercase tracking-wider">
+              <label className="block text-slate-700 dark:text-slate-300 font-bold mb-1.5 uppercase tracking-wider">
                 Chọn Lớp Học Cần Ghi Danh
               </label>
-              <select
+              <SearchableSelect
                 value={selectedClassId}
-                onChange={(e) => setSelectedClassId(+e.target.value)}
+                onChange={(val) => setSelectedClassId(Number(val))}
+                options={classOptions}
                 disabled={classes.length === 0}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-slate-900 font-bold focus:outline-none focus:border-teal-500 cursor-pointer disabled:opacity-60"
-              >
-                {classes.length === 0 ? (
-                  <option value={0}>Không có lớp nào đang mở tuyển sinh</option>
-                ) : (
-                  classes.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      [{c.maLopHoc}] {c.tenLopHoc} {c.khoaHoc?.trinhDoYeuCau ? `(Chuẩn CEFR ${c.khoaHoc.trinhDoYeuCau})` : ''} — {formatTrangThaiLopHoc(c.trangThai)} ({c.siSoHienTai}/{c.siSoToiDa} HV)
-                    </option>
-                  ))
-                )}
-              </select>
+                placeholder={classes.length === 0 ? 'Không có lớp nào đang mở tuyển sinh' : 'Chọn lớp học...'}
+                searchPlaceholder="Tìm theo mã lớp, tên lớp, khóa học..."
+                loading={searchingClasses}
+                onSearchChange={handleSearchClassBE}
+                emptyText="Không tìm thấy lớp học nào phù hợp"
+              />
             </div>
 
             <div className="flex items-end">
@@ -553,7 +646,7 @@ export default function StaffCollectFeePage() {
                     <th className="px-4 py-3 whitespace-nowrap">Đã Thu</th>
                     <th className="px-4 py-3 whitespace-nowrap">Còn Nợ</th>
                     <th className="px-4 py-3 whitespace-nowrap text-center min-w-[140px]">Trạng Thái</th>
-                    <th className="px-4 py-3 whitespace-nowrap text-right min-w-[110px]">Thao Tác</th>
+                    <th className="px-4 py-3 whitespace-nowrap text-right min-w-[145px]">Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -612,36 +705,38 @@ export default function StaffCollectFeePage() {
                               {isCancelled ? 'Đã Hủy Đăng Ký' : formatTrangThaiHoaDon(inv.trangThai)}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-right whitespace-nowrap space-x-1.5 min-w-[120px]">
-                            <button
-                              onClick={() => handleOpenReceipt(inv)}
-                              className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-slate-700 text-slate-600 dark:text-teal-400 hover:text-teal-600 border border-slate-200 dark:border-slate-700 transition cursor-pointer shadow-sm inline-flex items-center justify-center"
-                              title="Xem chi tiết hóa đơn & in phiếu thu"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            {isCancelled ? (
-                              <span className="text-slate-400 dark:text-slate-500 font-medium text-[11px] italic inline-flex items-center justify-end whitespace-nowrap px-1">
-                                Khóa thu tiền
-                              </span>
-                            ) : remaining > 0 ? (
+                          <td className="px-4 py-3 text-right whitespace-nowrap min-w-[145px]">
+                            <div className="inline-flex items-center justify-end space-x-2">
                               <button
-                                onClick={() => handleOpenPayment(inv)}
-                                className="px-2.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition text-xs inline-flex items-center space-x-1 shadow-sm cursor-pointer whitespace-nowrap"
+                                onClick={() => handleOpenReceipt(inv)}
+                                className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-slate-700 text-slate-600 dark:text-teal-400 hover:text-teal-600 border border-slate-200 dark:border-slate-700 transition cursor-pointer shadow-sm inline-flex items-center justify-center shrink-0"
+                                title="Xem chi tiết hóa đơn & in phiếu thu"
                               >
-                                <DollarSign className="w-3.5 h-3.5" />
-                                <span>Thu Tiền</span>
+                                <Eye className="w-4 h-4" />
                               </button>
-                            ) : remaining === 0 && Number(inv.soTienDaTra) > 0 ? (
-                              <span className="text-emerald-700 dark:text-emerald-400 font-bold text-xs inline-flex items-center justify-end whitespace-nowrap">
-                                <CheckCircle className="w-3.5 h-3.5 mr-1" />
-                                Hoàn Tất
-                              </span>
-                            ) : (
-                              <span className="text-slate-400 font-bold text-xs inline-flex items-center justify-end whitespace-nowrap">
-                                Miễn Phí
-                              </span>
-                            )}
+                              {isCancelled ? (
+                                <span className="w-24 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 font-semibold text-[11px] border border-slate-200 dark:border-slate-700 inline-flex items-center justify-center whitespace-nowrap shrink-0">
+                                  Đã Hủy
+                                </span>
+                              ) : remaining > 0 ? (
+                                <button
+                                  onClick={() => handleOpenPayment(inv)}
+                                  className="w-24 h-8 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition text-xs inline-flex items-center justify-center space-x-1 shadow-sm cursor-pointer whitespace-nowrap shrink-0"
+                                >
+                                  <DollarSign className="w-3.5 h-3.5" />
+                                  <span>Thu Tiền</span>
+                                </button>
+                              ) : remaining === 0 && Number(inv.soTienDaTra) > 0 ? (
+                                <span className="w-24 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold text-xs border border-emerald-200 dark:border-emerald-800/80 inline-flex items-center justify-center space-x-1 whitespace-nowrap shrink-0 shadow-2xs">
+                                  <CheckCircle className="w-3.5 h-3.5" />
+                                  <span>Hoàn Tất</span>
+                                </span>
+                              ) : (
+                                <span className="w-24 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 font-semibold text-[11px] border border-slate-200 dark:border-slate-700 inline-flex items-center justify-center whitespace-nowrap shrink-0">
+                                  Miễn Phí
+                                </span>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       );

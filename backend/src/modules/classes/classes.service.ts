@@ -20,6 +20,7 @@ import {
   TrangThaiDangKy,
   TrangThaiHoaDon,
   TrangThaiGiaoVien,
+  TrinhDoCEFR,
 } from '@prisma/client';
 
 @Injectable()
@@ -114,10 +115,23 @@ export class ClassesService {
   /**
    * UC004 — Lấy danh sách lớp học
    */
-  async findAll(khoaHocId?: number, trangThai?: TrangThaiLopHoc) {
+  async findAll(khoaHocId?: number, trangThai?: TrangThaiLopHoc, search?: string, trinhDoCEFR?: TrinhDoCEFR) {
     const where: any = {};
     if (khoaHocId) where.khoaHocId = BigInt(khoaHocId);
     if (trangThai) where.trangThai = trangThai;
+    if (trinhDoCEFR) {
+      where.khoaHoc = { ...(where.khoaHoc || {}), trinhDoYeuCau: trinhDoCEFR };
+    }
+
+    if (search && search.trim()) {
+      const q = search.trim();
+      where.OR = [
+        { tenLopHoc: { contains: q, mode: 'insensitive' } },
+        { maLopHoc: { contains: q, mode: 'insensitive' } },
+        { khoaHoc: { tenKhoaHoc: { contains: q, mode: 'insensitive' } } },
+        { khoaHoc: { maKhoaHoc: { contains: q, mode: 'insensitive' } } },
+      ];
+    }
 
     const classes = await this.prisma.lopHoc.findMany({
       where,

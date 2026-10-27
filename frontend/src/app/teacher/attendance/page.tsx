@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, attendancesService, authStorage } from '../../../services/api';
+import { SearchableSelect, SearchableSelectOption } from '../../../components/SearchableSelect';
 import { toast } from '../../../components/Toast';
 import { TrangThaiDiemDanh } from '../../../types';
 import {
@@ -123,6 +124,41 @@ export default function TeacherAttendancePage() {
 
     fetchClassDetailAndSessions();
   }, [selectedClassId]);
+
+  // Chuyển đổi danh sách lớp học sang options cho SearchableSelect
+  const classOptions: SearchableSelectOption[] = useMemo(() => {
+    return classes.map((c: any) => {
+      const maLop = c.maLopHoc || `LH${c.id}`;
+      const tenLop = c.tenLopHoc || 'Lớp học';
+      const siSo = c.siSoHienTai || 0;
+      const cefr = c.trinhDoCEFR || c.khoaHoc?.trinhDoCEFR;
+      const tenKhoa = c.khoaHoc?.tenKhoaHoc;
+      return {
+        value: Number(c.id),
+        label: `[${maLop}] ${tenLop} (${siSo} HV)`,
+        subLabel: tenKhoa,
+        badge: cefr ? `CEFR ${cefr}` : undefined,
+      };
+    });
+  }, [classes]);
+
+  // Chuyển đổi danh sách buổi học sang options cho SearchableSelect
+  const sessionOptions: SearchableSelectOption[] = useMemo(() => {
+    return sessions.map((s: any) => {
+      const cleanTopic = (s.chuDe || 'Bài học').replace(/^Buổi\s+\d+\s*:\s*/i, '');
+      const ngay = s.ngayHoc ? new Date(s.ngayHoc).toLocaleDateString('vi-VN') : '';
+      const isDone = s.trangThai === 'DA_KET_THUC';
+      return {
+        value: Number(s.id),
+        label: `Buổi ${s.soThuTu}: ${cleanTopic}`,
+        subLabel: ngay ? `Ngày học: ${ngay}` : undefined,
+        badge: isDone ? '✓ Đã điểm danh' : 'Chưa điểm danh',
+        badgeColor: isDone
+          ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+          : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800',
+      };
+    });
+  }, [sessions]);
 
   // 3. Tải danh sách điểm danh khi chọn buổi học
   useEffect(() => {
@@ -372,17 +408,15 @@ export default function TeacherAttendancePage() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:space-x-2 w-full sm:w-auto">
                   <label className="text-xs font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">Lớp Học:</label>
                   {classes.length > 0 ? (
-                    <select
-                      value={selectedClassId || ''}
-                      onChange={(e) => setSelectedClassId(+e.target.value)}
-                      className="h-10 min-h-[40px] w-full sm:w-auto max-w-full sm:max-w-[280px] xl:max-w-[320px] bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold truncate cursor-pointer transition-colors"
-                    >
-                      {classes.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          [{c.maLopHoc}] {c.tenLopHoc} ({c.siSoHienTai || 0} HV)
-                        </option>
-                      ))}
-                    </select>
+                    <SearchableSelect
+                      value={selectedClassId ?? ''}
+                      onChange={(val) => setSelectedClassId(Number(val))}
+                      options={classOptions}
+                      placeholder="Chọn lớp học..."
+                      searchPlaceholder="Tìm mã lớp, tên lớp, CEFR..."
+                      emptyText="Không tìm thấy lớp học"
+                      className="w-full sm:w-72 xl:w-80"
+                    />
                   ) : (
                     <span className="text-xs text-amber-600 font-medium italic">Chưa có lớp nào</span>
                   )}
@@ -391,20 +425,15 @@ export default function TeacherAttendancePage() {
                 {activeTab === 'take_attendance' && sessions.length > 0 ? (
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:space-x-2 w-full sm:w-auto">
                     <label className="text-xs font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">Buổi Điểm Danh:</label>
-                    <select
-                      value={selectedSessionId || ''}
-                      onChange={(e) => setSelectedSessionId(+e.target.value)}
-                      className="h-10 min-h-[40px] w-full sm:w-auto max-w-full sm:max-w-[280px] xl:max-w-[320px] bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold truncate cursor-pointer transition-colors"
-                    >
-                      {sessions.map((s) => {
-                        const cleanTopic = (s.chuDe || 'Bài học').replace(/^Buổi\s+\d+\s*:\s*/i, '');
-                        return (
-                          <option key={s.id} value={s.id}>
-                            Buổi {s.soThuTu}: {cleanTopic} — {s.ngayHoc ? new Date(s.ngayHoc).toLocaleDateString('vi-VN') : ''} ({s.trangThai === 'DA_KET_THUC' ? '✓ Đã điểm danh' : 'Chưa điểm danh'})
-                          </option>
-                        );
-                      })}
-                    </select>
+                    <SearchableSelect
+                      value={selectedSessionId ?? ''}
+                      onChange={(val) => setSelectedSessionId(Number(val))}
+                      options={sessionOptions}
+                      placeholder="Chọn buổi điểm danh..."
+                      searchPlaceholder="Tìm buổi học, ngày học..."
+                      emptyText="Không tìm thấy buổi học"
+                      className="w-full sm:w-72 xl:w-80"
+                    />
                   </div>
                 ) : activeTab === 'take_attendance' && (
                   <div className="flex items-center gap-2 w-full sm:w-auto">

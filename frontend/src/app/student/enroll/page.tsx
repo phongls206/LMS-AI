@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, enrollmentsService, authService, gradesService } from '../../../services/api';
@@ -32,6 +32,11 @@ import {
   CreditCard,
   MapPin,
   UserCheck,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Loader2,
 } from 'lucide-react';
 
 const CEFR_RANKS: Record<string, number> = {
@@ -106,6 +111,12 @@ export default function StudentEnrollPage() {
   const [search, setSearch] = useState('');
   const [selectedCefr, setSelectedCefr] = useState<string>('');
 
+  // Pagination & Debounced Search states
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(6);
+  const [searchingBE, setSearchingBE] = useState(false);
+  const searchDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
   const fetchData = async () => {
     try {
       const [list, me, studentEnrollments] = await Promise.all([
@@ -138,6 +149,39 @@ export default function StudentEnrollPage() {
       }
     }
   }, []);
+
+  // Lọc chuẩn FE & BE: Debounce 300ms gọi API BE khi tìm kiếm hoặc đổi CEFR
+  useEffect(() => {
+    setPage(1);
+    if (searchDebounceTimerRef.current) clearTimeout(searchDebounceTimerRef.current);
+    searchDebounceTimerRef.current = setTimeout(async () => {
+      try {
+        setSearchingBE(true);
+        const list = await classesService.getAll(
+          undefined,
+          'DANG_MO_DANG_KY',
+          search.trim() || undefined,
+          selectedCefr || undefined,
+        );
+        const rawList = Array.isArray(list) ? list : list?.data || [];
+        const openClasses = rawList.filter(
+          (c: LopHoc) =>
+            c.trangThai === 'DANG_MO_DANG_KY' &&
+            c.khoaHoc?.trangThai !== 'NGUNG_HOAT_DONG',
+        );
+        setClasses(openClasses);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setSearchingBE(false);
+      }
+    }, 300);
+  }, [search, selectedCefr]);
+
+  const handleTabChange = (tab: 'all' | 'enrolled') => {
+    setActiveTab(tab);
+    setPage(1);
+  };
 
   const handleEnroll = async (classId: number) => {
     if (!user?.hoSoHocVien?.id) {
@@ -403,6 +447,26 @@ export default function StudentEnrollPage() {
     });
   }, [activeEnrollments, search, selectedCefr]);
 
+  // Phân trang: Tính toán danh sách lớp theo trang
+  const totalOpenItems = displayedOpenClasses.length;
+  const totalOpenPages = Math.max(1, Math.ceil(totalOpenItems / (limit === 9999 ? totalOpenItems || 1 : limit)));
+  const paginatedOpenClasses = useMemo(() => {
+    if (limit >= 9999) return displayedOpenClasses;
+    return displayedOpenClasses.slice((page - 1) * limit, page * limit);
+  }, [displayedOpenClasses, page, limit]);
+
+  const totalEnrolledItems = displayedEnrolledClasses.length;
+  const totalEnrolledPages = Math.max(1, Math.ceil(totalEnrolledItems / (limit === 9999 ? totalEnrolledItems || 1 : limit)));
+  const paginatedEnrolledClasses = useMemo(() => {
+    if (limit >= 9999) return displayedEnrolledClasses;
+    return displayedEnrolledClasses.slice((page - 1) * limit, page * limit);
+  }, [displayedEnrolledClasses, page, limit]);
+
+  const currentTotalItems = activeTab === 'all' ? totalOpenItems : totalEnrolledItems;
+  const currentTotalPages = activeTab === 'all' ? totalOpenPages : totalEnrolledPages;
+  const startIndex = currentTotalItems === 0 ? 0 : (page - 1) * limit + 1;
+  const endIndex = limit >= 9999 ? currentTotalItems : Math.min(page * limit, currentTotalItems);
+
   return (
     <AppLayout
       allowedRoles={['HOC_VIEN']}
@@ -469,7 +533,7 @@ export default function StudentEnrollPage() {
           <div className="flex items-center gap-1.5 overflow-x-auto pb-2 lg:pb-0 -mx-1 px-1 sm:mx-0 sm:px-0 flex-nowrap sm:flex-wrap border-b lg:border-b-0 border-slate-100 dark:border-[#1e2d45] scrollbar-none">
             <button
               type="button"
-              onClick={() => setActiveTab('all')}
+              onClick={() => handleTabChange('all')}
               className={`px-3 sm:px-3.5 py-2 min-h-[38px] rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'all'
                   ? 'bg-teal-600 text-white shadow-sm'
@@ -485,13 +549,13 @@ export default function StudentEnrollPage() {
                     : 'bg-slate-200 dark:bg-[#22324e] text-slate-700 dark:text-slate-300'
                 }`}
               >
-                {classes.length}
+                {totalOpenItems}
               </span>
             </button>
 
             <button
               type="button"
-              onClick={() => setActiveTab('enrolled')}
+              onClick={() => handleTabChange('enrolled')}
               className={`px-3 sm:px-3.5 py-2 min-h-[38px] rounded-xl text-xs font-bold transition flex items-center space-x-1.5 cursor-pointer whitespace-nowrap shrink-0 ${
                 activeTab === 'enrolled'
                   ? 'bg-teal-600 text-white shadow-sm'
@@ -507,7 +571,7 @@ export default function StudentEnrollPage() {
                     : 'bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300'
                 }`}
               >
-                {enrolledCount}
+                {totalEnrolledItems}
               </span>
             </button>
           </div>
@@ -521,13 +585,34 @@ export default function StudentEnrollPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Tìm mã lớp, tên lớp..."
-                className="w-full h-10 bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 pl-9 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500 transition-colors"
+                className="w-full h-10 bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 pl-9 pr-8 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-teal-500 transition-colors"
               />
+              {searchingBE && (
+                <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-teal-600" />
+                </div>
+              )}
+              {search && !searchingBE && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('');
+                    setPage(1);
+                  }}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 cursor-pointer"
+                  title="Xóa tìm kiếm"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
 
             <select
               value={selectedCefr}
-              onChange={(e) => setSelectedCefr(e.target.value)}
+              onChange={(e) => {
+                setSelectedCefr(e.target.value);
+                setPage(1);
+              }}
               className="h-10 w-full sm:w-auto bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-medium cursor-pointer transition-colors"
             >
               <option value="">Tất cả CEFR</option>
@@ -577,7 +662,7 @@ export default function StudentEnrollPage() {
                 </p>
               </div>
             ) : (
-              displayedOpenClasses.map((c) => {
+              paginatedOpenClasses.map((c) => {
                 const st = getClassStatus(c);
 
                 return (
@@ -836,7 +921,7 @@ export default function StudentEnrollPage() {
                   <button
                     type="button"
                     onClick={() => {
-                      setActiveTab('all');
+                      handleTabChange('all');
                       setSearch('');
                       setSelectedCefr('');
                     }}
@@ -847,7 +932,7 @@ export default function StudentEnrollPage() {
                 </div>
               </div>
             ) : (
-              displayedEnrolledClasses.map((enr: any) => {
+              paginatedEnrolledClasses.map((enr: any) => {
                 const c = enr.lopHoc;
                 const paidAmount = Number(enr.hoaDon?.soTienDaTra || 0);
                 const tuitionFee = Number(enr.hoaDon?.soTienPhaiTra || c.khoaHoc?.hocPhi || 0);
@@ -1047,6 +1132,105 @@ export default function StudentEnrollPage() {
                   </div>
                 );
               })
+            )}
+          </div>
+        )}
+
+        {/* Phân Trang Cho Danh Sách Lớp Học */}
+        {currentTotalItems > 0 && (
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 p-4 rounded-2xl bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm text-xs mt-6">
+            <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+              <span className="text-slate-600 dark:text-slate-400">
+                Hiển thị <strong>{startIndex}</strong> - <strong>{endIndex}</strong> trong tổng số{' '}
+                <strong>{currentTotalItems}</strong> lớp học
+              </span>
+              <div className="flex items-center space-x-1.5">
+                <span className="text-slate-500 dark:text-slate-400 text-[11px]">Số lượng:</span>
+                <select
+                  value={limit}
+                  onChange={(e) => {
+                    setLimit(Number(e.target.value));
+                    setPage(1);
+                  }}
+                  className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                >
+                  <option value={6}>6 / trang</option>
+                  <option value={12}>12 / trang</option>
+                  <option value={24}>24 / trang</option>
+                  <option value={9999}>Tất cả</option>
+                </select>
+              </div>
+            </div>
+
+            {currentTotalPages > 1 && (
+              <div className="flex items-center space-x-1.5 overflow-x-auto max-w-full py-1">
+                <button
+                  type="button"
+                  onClick={() => setPage(1)}
+                  disabled={page === 1}
+                  title="Trang đầu"
+                  className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronsLeft className="w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  title="Trang trước"
+                  className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <div className="flex items-center space-x-1 px-1">
+                  {Array.from({ length: currentTotalPages }, (_, i) => i + 1)
+                    .filter((p) => {
+                      if (currentTotalPages <= 5) return true;
+                      if (p === 1 || p === currentTotalPages) return true;
+                      return Math.abs(p - page) <= 1;
+                    })
+                    .map((p, idx, arr) => (
+                      <React.Fragment key={p}>
+                        {idx > 0 && arr[idx - 1] !== p - 1 && (
+                          <span className="px-1 text-slate-400 text-[11px]">...</span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setPage(p)}
+                          className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
+                            page === p
+                              ? 'bg-teal-600 text-white shadow-sm'
+                              : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      </React.Fragment>
+                    ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(currentTotalPages, p + 1))}
+                  disabled={page >= currentTotalPages}
+                  title="Trang sau"
+                  className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setPage(currentTotalPages)}
+                  disabled={page >= currentTotalPages}
+                  title="Trang cuối"
+                  className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronsRight className="w-4 h-4" />
+                </button>
+              </div>
             )}
           </div>
         )}

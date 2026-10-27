@@ -20,12 +20,73 @@ export class CoursesService {
   }
 
   /**
-   * UC003 — Lấy danh mục tất cả khóa học
+   * UC003 — Lấy danh mục khóa học (hỗ trợ phân trang, tìm kiếm và thống kê trạng thái)
    */
-  async findAll(trinhDo?: TrinhDoCEFR, trangThai?: TrangThaiKhoaHoc) {
-    const where: any = {};
-    if (trinhDo) where.trinhDoYeuCau = trinhDo;
-    if (trangThai) where.trangThai = trangThai;
+  async findAll(
+    trinhDo?: TrinhDoCEFR,
+    trangThai?: TrangThaiKhoaHoc,
+    search?: string,
+    page?: number,
+    limit?: number,
+  ) {
+    const baseWhere: any = {};
+    if (trinhDo && (trinhDo as any) !== 'ALL') {
+      baseWhere.trinhDoYeuCau = trinhDo;
+    }
+
+    if (search && search.trim()) {
+      const q = search.trim();
+      baseWhere.OR = [
+        { tenKhoaHoc: { contains: q, mode: 'insensitive' } },
+        { maKhoaHoc: { contains: q, mode: 'insensitive' } },
+        { moTa: { contains: q, mode: 'insensitive' } },
+      ];
+    }
+
+    const where: any = { ...baseWhere };
+    if (trangThai && (trangThai as any) !== 'ALL') {
+      where.trangThai = trangThai;
+    }
+
+    if (page !== undefined) {
+      const pageSize = limit && limit > 0 ? limit : 6;
+      const skip = (page - 1) * pageSize;
+
+      const [total, totalActive, totalInactive, courses] = await Promise.all([
+        this.prisma.khoaHoc.count({ where }),
+        this.prisma.khoaHoc.count({
+          where: { ...baseWhere, trangThai: TrangThaiKhoaHoc.HOAT_DONG },
+        }),
+        this.prisma.khoaHoc.count({
+          where: { ...baseWhere, trangThai: TrangThaiKhoaHoc.NGUNG_HOAT_DONG },
+        }),
+        this.prisma.khoaHoc.findMany({
+          where,
+          skip,
+          take: pageSize,
+          include: {
+            _count: { select: { lopHoc: true } },
+          },
+          orderBy: [
+            { trangThai: 'asc' },
+            { id: 'asc' },
+          ],
+        }),
+      ]);
+
+      return {
+        total,
+        page,
+        limit: pageSize,
+        totalPages: Math.ceil(total / pageSize),
+        data: this.serializeBigInt(courses),
+        counts: {
+          all: totalActive + totalInactive,
+          active: totalActive,
+          inactive: totalInactive,
+        },
+      };
+    }
 
     const courses = await this.prisma.khoaHoc.findMany({
       where,

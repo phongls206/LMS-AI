@@ -94,13 +94,16 @@ export class EnrollmentsController {
   @ApiOperation({ summary: 'Danh mục hóa đơn & công nợ học phí' })
   @ApiQuery({ name: 'trangThai', enum: TrangThaiHoaDon, required: false })
   @ApiQuery({ name: 'hocVienId', required: false })
+  @ApiQuery({ name: 'search', required: false })
   findAllInvoices(
     @Query('trangThai') trangThai?: TrangThaiHoaDon,
     @Query('hocVienId') hocVienId?: number,
+    @Query('search') search?: string,
   ) {
     return this.enrollmentsService.findAllInvoices(
       trangThai,
       hocVienId ? +hocVienId : undefined,
+      search,
     );
   }
 

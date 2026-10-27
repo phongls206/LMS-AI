@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { AppLayout } from '../../../components/AppLayout';
 import { aiService, authService, gradesService, classesService } from '../../../services/api';
+import { SearchableSelect, SearchableSelectOption } from '../../../components/SearchableSelect';
 import {
   Sparkles,
   Award,
@@ -147,6 +148,61 @@ export default function StudentAiProgressPage() {
     }
   };
 
+  const [searchingClasses, setSearchingClasses] = useState(false);
+  const handleSearchClassBE = useCallback(
+    async (query: string) => {
+      if (role !== 'QUAN_LY') return;
+      setSearchingClasses(true);
+      try {
+        const all = await classesService.getAll(undefined, undefined, query || undefined);
+        const list = all.data || all;
+        if (Array.isArray(list)) {
+          setClasses(list);
+        }
+      } catch (err) {
+        console.error('Lỗi tìm kiếm lớp học phía BE:', err);
+      } finally {
+        setSearchingClasses(false);
+      }
+    },
+    [role],
+  );
+
+  // Chuyển đổi danh sách lớp học sang options cho SearchableSelect
+  const classOptions: SearchableSelectOption[] = useMemo(() => {
+    return classes.map((c: any) => {
+      const classObj = c.lopHoc || c;
+      const cId = Number(c.lopHocId || c.lopHoc?.id || c.id);
+      const maLop = classObj.maLopHoc || `LH${cId}`;
+      const tenLop = classObj.tenLopHoc || 'Lớp học';
+      const cefr = classObj.trinhDoCEFR || classObj.khoaHoc?.trinhDoCEFR;
+      const tenKhoa = classObj.khoaHoc?.tenKhoaHoc;
+      return {
+        value: cId,
+        label: `[${maLop}] ${tenLop}`,
+        subLabel: tenKhoa,
+        badge: cefr ? `CEFR ${cefr}` : undefined,
+      };
+    });
+  }, [classes]);
+
+  // Chuyển đổi danh sách học viên sang options cho SearchableSelect
+  const studentOptions: SearchableSelectOption[] = useMemo(() => {
+    return studentsInClass.map((st: any) => {
+      const studentId = Number(st.id || st.hocVienId || st.hocVien?.id);
+      const maHV = st.maHocVien || st.hocVien?.maHocVien || 'HV';
+      const hoTen = st.hoTen || st.hocVien?.hoTen || 'Học viên';
+      const cefr = st.trinhDoCEFR || st.hocVien?.trinhDoCEFR;
+      const email = st.email || st.hocVien?.email || st.soDienThoai || st.hocVien?.soDienThoai;
+      return {
+        value: studentId,
+        label: `[${maHV}] ${hoTen}`,
+        subLabel: email,
+        badge: cefr ? `CEFR ${cefr}` : undefined,
+      };
+    });
+  }, [studentsInClass]);
+
   const handleGenerateSummary = async (forceRefresh = false) => {
     if (!selectedClassId || !selectedStudentId) {
       setErrorMsg('Vui lòng chọn đầy đủ Lớp học và Học viên.');
@@ -189,66 +245,54 @@ export default function StudentAiProgressPage() {
         {/* Bộ lọc chọn Lớp và Học viên */}
         <div className="bg-white dark:bg-[#111827] p-4 sm:p-5 rounded-2xl border border-slate-200/90 dark:border-[#1e2d45] shadow-sm flex flex-col md:flex-row items-center justify-between gap-4 print:hidden">
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 w-full md:w-auto">
-            {/* Dropdown Lớp Học */}
-            <div className="flex flex-col space-y-1 w-full sm:w-auto">
+            {/* Dropdown Lớp Học (có ô tìm kiếm cả FE & BE) */}
+            <div className="flex flex-col space-y-1 w-full sm:w-72 md:w-80">
               <label className="text-[11px] font-bold text-teal-800 dark:text-teal-400 uppercase tracking-wider flex items-center space-x-1">
                 <GraduationCap className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                 <span>{role === 'HOC_VIEN' ? 'Lớp Đang Theo Học:' : 'Chọn Lớp Học:'}</span>
               </label>
-              <select
-                value={selectedClassId || ''}
-                onChange={(e) => handleClassChange(Number(e.target.value))}
-                className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold w-full sm:w-auto sm:min-w-[220px] cursor-pointer"
-              >
-                {classes.length === 0 ? (
-                  <option value="">
-                    {role === 'GIAO_VIEN' ? '(Chưa được phân công giảng dạy)' : '(Chưa có lớp học nào)'}
-                  </option>
-                ) : (
-                  classes.map((c: any) => {
-                    const classObj = c.lopHoc || c;
-                    const cId = c.lopHocId || c.lopHoc?.id || c.id;
-                    return (
-                      <option key={cId} value={cId}>
-                        [{classObj.maLopHoc}] {classObj.tenLopHoc}
-                      </option>
-                    );
-                  })
-                )}
-              </select>
+              <SearchableSelect
+                value={selectedClassId ?? ''}
+                onChange={(val) => handleClassChange(Number(val))}
+                options={classOptions}
+                placeholder={
+                  classes.length === 0
+                    ? role === 'GIAO_VIEN'
+                      ? '(Chưa được phân công giảng dạy)'
+                      : '(Chưa có lớp học nào)'
+                    : 'Chọn lớp học...'
+                }
+                searchPlaceholder="Tìm theo mã lớp, tên lớp, CEFR..."
+                loading={searchingClasses}
+                onSearchChange={role === 'QUAN_LY' ? handleSearchClassBE : undefined}
+                emptyText="Không tìm thấy lớp học phù hợp"
+                disabled={classes.length === 0}
+              />
             </div>
 
-            {/* Dropdown Học Viên (Dành cho Giáo viên & Quản lý) */}
+            {/* Dropdown Học Viên (Dành cho Giáo viên & Quản lý - có ô tìm kiếm) */}
             {role !== 'HOC_VIEN' && (
-              <div className="flex flex-col space-y-1 w-full sm:w-auto">
+              <div className="flex flex-col space-y-1 w-full sm:w-72 md:w-80">
                 <label className="text-[11px] font-bold text-teal-800 dark:text-teal-400 uppercase tracking-wider flex items-center space-x-1">
                   <User className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   <span>Chọn Học Viên:</span>
                 </label>
-                <select
-                  value={selectedStudentId || ''}
-                  onChange={(e) => {
-                    setSelectedStudentId(Number(e.target.value));
+                <SearchableSelect
+                  value={selectedStudentId ?? ''}
+                  onChange={(val) => {
+                    setSelectedStudentId(Number(val));
                     setSummary(null);
                   }}
-                  className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-xl px-3.5 py-2 text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 font-bold w-full sm:w-auto sm:min-w-[220px] cursor-pointer"
-                >
-                  {studentsInClass.length === 0 ? (
-                    <option value="">(Lớp chưa có danh sách học viên)</option>
-                  ) : (
-                    studentsInClass.map((st: any) => {
-                      const studentId = st.id || st.hocVienId || st.hocVien?.id;
-                      const maHV = st.maHocVien || st.hocVien?.maHocVien || 'HV';
-                      const hoTen = st.hoTen || st.hocVien?.hoTen || 'Học viên';
-                      const cefr = st.trinhDoCEFR || st.hocVien?.trinhDoCEFR;
-                      return (
-                        <option key={studentId} value={studentId}>
-                          [{maHV}] {hoTen} {cefr ? `(CEFR ${cefr})` : ''}
-                        </option>
-                      );
-                    })
-                  )}
-                </select>
+                  options={studentOptions}
+                  placeholder={
+                    studentsInClass.length === 0
+                      ? '(Lớp chưa có danh sách học viên)'
+                      : 'Chọn học viên...'
+                  }
+                  searchPlaceholder="Tìm mã HV, họ tên, email, CEFR..."
+                  emptyText="Không tìm thấy học viên phù hợp"
+                  disabled={studentsInClass.length === 0}
+                />
               </div>
             )}
           </div>

@@ -130,9 +130,23 @@ export class UsersController {
    */
   @Get('teachers')
   @Roles(VaiTro.QUAN_LY, VaiTro.TU_VAN_VIEN)
-  @ApiOperation({ summary: 'Danh sách giáo viên & chuyên môn' })
-  findAllTeachers() {
-    return this.usersService.findAllTeachers();
+  @ApiOperation({ summary: 'Danh sách giáo viên & chuyên môn (hỗ trợ phân trang, tìm kiếm)' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 10 })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'trangThai', required: false })
+  findAllTeachers(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('trangThai') trangThai?: string,
+  ) {
+    return this.usersService.findAllTeachers(
+      page !== undefined && page !== '' ? +page : undefined,
+      limit !== undefined && limit !== '' ? +limit : undefined,
+      search,
+      trangThai,
+    );
   }
 
   /**

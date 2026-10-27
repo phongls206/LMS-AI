@@ -29,12 +29,19 @@ export class AiController {
    */
   @Get('exercises/history')
   @Roles(VaiTro.GIAO_VIEN, VaiTro.HOC_VIEN, VaiTro.QUAN_LY)
-  @ApiOperation({ summary: 'Lấy lịch sử các bộ đề luyện tập đã sinh trước đó của người dùng' })
+  @ApiOperation({ summary: 'Lấy lịch sử các bộ đề luyện tập đã sinh trước đó của người dùng (phân trang 10 đề)' })
   getExerciseHistory(
     @CurrentUser() user: any,
+    @Query('page') page?: number,
     @Query('limit') limit?: number,
+    @Query('search') search?: string,
   ) {
-    return this.aiService.getExerciseHistory(user.id, limit ? +limit : 30);
+    return this.aiService.getExerciseHistory(
+      user.id,
+      page ? +page : 1,
+      limit ? +limit : 10,
+      search,
+    );
   }
 
   /**

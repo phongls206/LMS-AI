@@ -7,7 +7,7 @@ import { KhoaHoc, TrinhDoCEFR } from '../../../types';
 import { 
   BookOpen, Plus, Clock, DollarSign, Award, CheckCircle, 
   Eye, Edit, Users, School, AlertCircle, X, ChevronRight, Check,
-  Search, RotateCcw
+  Search, RotateCcw, ChevronLeft, ChevronsLeft, ChevronsRight
 } from 'lucide-react';
 import Link from 'next/link';
 import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
@@ -53,15 +53,56 @@ export default function AdminCoursesPage() {
   const [savingEdit, setSavingEdit] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Bộ lọc danh mục & Tìm kiếm
+  // Bộ lọc danh mục & Tìm kiếm & Phân trang (mặc định 6 khóa/trang theo dạng Card)
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'HOAT_DONG' | 'NGUNG_HOAT_DONG'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [cefrFilter, setCefrFilter] = useState<string>('ALL');
+
+  // Phân trang 6 chương trình / trang
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(6);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [tabCounts, setTabCounts] = useState({ all: 0, active: 0, inactive: 0 });
+
+  // Debounce tìm kiếm 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const fetchCourses = async () => {
     try {
-      const data = await coursesService.getAll();
-      setCourses(data);
+      setLoading(true);
+      const res = await coursesService.getAll({
+        page,
+        limit,
+        search: debouncedSearchQuery.trim() || undefined,
+        trangThai: statusFilter !== 'ALL' ? statusFilter : undefined,
+        trinhDo: cefrFilter !== 'ALL' ? cefrFilter : undefined,
+      });
+
+      if (res && res.data) {
+        setCourses(res.data);
+        const totalCount = res.total ?? res.data.length;
+        setTotal(totalCount);
+        setTotalPages(res.totalPages ?? Math.max(1, Math.ceil(totalCount / limit)));
+        if (res.counts) {
+          setTabCounts(res.counts);
+        }
+      } else if (Array.isArray(res)) {
+        setCourses(res);
+        setTotal(res.length);
+        setTotalPages(Math.max(1, Math.ceil(res.length / limit)));
+        setTabCounts({
+          all: res.length,
+          active: res.filter((c: any) => c.trangThai === 'HOAT_DONG' || c.trangThai === 'DANG_MO').length,
+          inactive: res.filter((c: any) => c.trangThai === 'NGUNG_HOAT_DONG').length,
+        });
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -71,7 +112,7 @@ export default function AdminCoursesPage() {
 
   useEffect(() => {
     fetchCourses();
-  }, []);
+  }, [page, limit, debouncedSearchQuery, statusFilter, cefrFilter]);
 
   const handleOpenDetail = async (courseId: number) => {
     setShowDetailModal(true);
@@ -182,32 +223,19 @@ export default function AdminCoursesPage() {
     }
   };
 
-  // Đếm số lượng theo trạng thái
-  const countActive = courses.filter((c) => c.trangThai === 'HOAT_DONG' || (c as any).trangThai === 'DANG_MO').length;
-  const countInactive = courses.filter((c) => c.trangThai === 'NGUNG_HOAT_DONG').length;
+  // Đếm số lượng theo trạng thái lấy từ backend
+  const countActive = tabCounts.active;
+  const countInactive = tabCounts.inactive;
+  const countTotal = tabCounts.all || total;
 
-  // Lọc và Sắp xếp: Khóa Đang Hoạt Động lên đầu, Ngừng Hoạt Động đẩy xuống cuối
-  const filteredAndSortedCourses = courses
-    .filter((course) => {
-      const isInactive = course.trangThai === 'NGUNG_HOAT_DONG';
-      if (statusFilter === 'HOAT_DONG' && isInactive) return false;
-      if (statusFilter === 'NGUNG_HOAT_DONG' && !isInactive) return false;
-      if (cefrFilter !== 'ALL' && course.trinhDoYeuCau !== cefrFilter) return false;
-      if (searchQuery.trim()) {
-        const q = searchQuery.toLowerCase().trim();
-        const matchName = course.tenKhoaHoc?.toLowerCase().includes(q);
-        const matchCode = course.maKhoaHoc?.toLowerCase().includes(q);
-        if (!matchName && !matchCode) return false;
-      }
-      return true;
-    })
-    .sort((a, b) => {
-      const isAInactive = a.trangThai === 'NGUNG_HOAT_DONG';
-      const isBInactive = b.trangThai === 'NGUNG_HOAT_DONG';
-      if (!isAInactive && isBInactive) return -1;
-      if (isAInactive && !isBInactive) return 1;
-      return Number(a.id) - Number(b.id);
-    });
+  // Sắp xếp: Khóa Đang Hoạt Động lên đầu, Ngừng Hoạt Động đẩy xuống cuối
+  const filteredAndSortedCourses = [...courses].sort((a, b) => {
+    const isAInactive = a.trangThai === 'NGUNG_HOAT_DONG';
+    const isBInactive = b.trangThai === 'NGUNG_HOAT_DONG';
+    if (!isAInactive && isBInactive) return -1;
+    if (isAInactive && !isBInactive) return 1;
+    return Number(a.id) - Number(b.id);
+  });
 
   return (
     <AppLayout
@@ -221,7 +249,7 @@ export default function AdminCoursesPage() {
           <div>
             <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-teal-600" />
-              Tổng số {courses.length} chương trình đào tạo
+              Tổng số {countTotal} chương trình đào tạo
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">Bấm vào từng khóa học để xem các lớp học liên kết hoặc chỉnh sửa</p>
           </div>
@@ -239,7 +267,10 @@ export default function AdminCoursesPage() {
           {/* Status Tabs */}
           <div className="flex items-center gap-1.5 p-1 bg-slate-100/90 dark:bg-slate-800/80 rounded-xl overflow-x-auto scrollbar-none">
             <button
-              onClick={() => setStatusFilter('ALL')}
+              onClick={() => {
+                setStatusFilter('ALL');
+                setPage(1);
+              }}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                 statusFilter === 'ALL'
                   ? 'bg-white dark:bg-slate-900 text-teal-700 dark:text-teal-400 shadow-xs'
@@ -252,12 +283,15 @@ export default function AdminCoursesPage() {
                   ? 'bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-300'
                   : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
               }`}>
-                {courses.length}
+                {countTotal}
               </span>
             </button>
 
             <button
-              onClick={() => setStatusFilter('HOAT_DONG')}
+              onClick={() => {
+                setStatusFilter('HOAT_DONG');
+                setPage(1);
+              }}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                 statusFilter === 'HOAT_DONG'
                   ? 'bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-xs'
@@ -276,7 +310,10 @@ export default function AdminCoursesPage() {
             </button>
 
             <button
-              onClick={() => setStatusFilter('NGUNG_HOAT_DONG')}
+              onClick={() => {
+                setStatusFilter('NGUNG_HOAT_DONG');
+                setPage(1);
+              }}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                 statusFilter === 'NGUNG_HOAT_DONG'
                   ? 'bg-white dark:bg-slate-900 text-rose-700 dark:text-rose-400 shadow-xs'
@@ -304,12 +341,18 @@ export default function AdminCoursesPage() {
                 type="text"
                 placeholder="Tìm mã hoặc tên khóa học..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setPage(1);
+                }}
                 className="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-800 dark:text-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition"
               />
               {searchQuery && (
                 <button
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => {
+                    setSearchQuery('');
+                    setPage(1);
+                  }}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 cursor-pointer"
                 >
                   <X className="w-3.5 h-3.5" />
@@ -320,7 +363,10 @@ export default function AdminCoursesPage() {
             {/* CEFR Dropdown */}
             <select
               value={cefrFilter}
-              onChange={(e) => setCefrFilter(e.target.value)}
+              onChange={(e) => {
+                setCefrFilter(e.target.value);
+                setPage(1);
+              }}
               className="py-2 px-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition cursor-pointer"
             >
               <option value="ALL">Tất cả CEFR</option>
@@ -380,6 +426,7 @@ export default function AdminCoursesPage() {
                   setStatusFilter('ALL');
                   setCefrFilter('ALL');
                   setSearchQuery('');
+                  setPage(1);
                 }}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold hover:bg-teal-100 dark:hover:bg-teal-900 transition cursor-pointer"
               >
@@ -472,6 +519,104 @@ export default function AdminCoursesPage() {
               </div>
             );
           })}
+          </div>
+        )}
+
+        {/* Phân trang danh mục khóa học (Mặc định 6 khóa/trang theo dạng card) */}
+        {!loading && total > 0 && (
+          <div className="px-4 sm:px-5 py-3.5 sm:py-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-slate-600 dark:text-slate-400">
+              <span>Hiển thị</span>
+              <span className="font-bold text-slate-900 dark:text-white">
+                {(page - 1) * limit + 1} - {Math.min(page * limit, total)}
+              </span>
+              <span>trên tổng số</span>
+              <span className="font-bold text-teal-700 dark:text-teal-400">{total}</span>
+              <span>chương trình đào tạo</span>
+
+              <span className="text-slate-300 dark:text-slate-700">|</span>
+
+              <div className="flex items-center gap-1.5">
+                <span className="text-slate-600 dark:text-slate-400">Số lượng:</span>
+                <select
+                  value={limit}
+                  onChange={(e) => {
+                    setLimit(Number(e.target.value));
+                    setPage(1);
+                  }}
+                  className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                >
+                  <option value={6}>6 / trang</option>
+                  <option value={12}>12 / trang</option>
+                  <option value={18}>18 / trang</option>
+                  <option value={9999}>Tất cả</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-1.5 overflow-x-auto max-w-full py-1">
+              <button
+                onClick={() => setPage(1)}
+                disabled={page === 1}
+                title="Trang đầu"
+                className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                <ChevronsLeft className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+                title="Trang trước"
+                className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center space-x-1 px-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter((p) => {
+                    if (totalPages <= 5) return true;
+                    if (p === 1 || p === totalPages) return true;
+                    return Math.abs(p - page) <= 1;
+                  })
+                  .map((p, idx, arr) => (
+                    <React.Fragment key={p}>
+                      {idx > 0 && arr[idx - 1] !== p - 1 && (
+                        <span className="px-1 text-slate-400 text-[11px]">...</span>
+                      )}
+                      <button
+                        onClick={() => setPage(p)}
+                        className={`min-w-[28px] h-7 px-2 rounded-lg text-xs font-bold transition cursor-pointer ${
+                          page === p
+                            ? 'bg-teal-600 text-white shadow-sm'
+                            : 'bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    </React.Fragment>
+                  ))}
+              </div>
+
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+                title="Trang sau"
+                className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={() => setPage(totalPages)}
+                disabled={page >= totalPages}
+                title="Trang cuối"
+                className="p-1.5 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+              >
+                <ChevronsRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         )}
 
