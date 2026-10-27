@@ -12,6 +12,7 @@ import {
   Trash2,
   AlertCircle,
   Scissors,
+  Eye,
 } from 'lucide-react';
 
 interface AvatarCropModalProps {
@@ -38,6 +39,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [previewDataUrl, setPreviewDataUrl] = useState<string | null>(null);
+  const [showDetailPreview, setShowDetailPreview] = useState<boolean>(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -55,6 +57,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
       setPosition({ x: 0, y: 0 });
       setErrorMessage(null);
       setPreviewDataUrl(null);
+      setShowDetailPreview(false);
     }
   }, [isOpen]);
 
@@ -423,14 +426,28 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
               </div>
 
               {currentAvatar && (
-                <div className="pt-2 text-center">
-                  <p className="text-[11px] text-slate-400 mb-1.5">Ảnh hiện tại:</p>
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowDetailPreview(true);
+                  }}
+                  className="pt-2 text-center group/current cursor-pointer"
+                  title="Nhấn để xem chi tiết ảnh"
+                >
+                  <p className="text-[11px] text-slate-400 group-hover/current:text-teal-600 dark:group-hover/current:text-teal-400 mb-1.5 transition">
+                    Ảnh hiện tại (nhấn để xem chi tiết):
+                  </p>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={currentAvatar}
-                    alt={userName}
-                    className="w-14 h-14 rounded-2xl object-cover border-2 border-teal-500 mx-auto shadow-md"
-                  />
+                  <div className="relative inline-block">
+                    <img
+                      src={currentAvatar}
+                      alt={userName}
+                      className="w-14 h-14 rounded-2xl object-cover border-2 border-teal-500 mx-auto shadow-md group-hover/current:scale-105 transition-transform"
+                    />
+                    <div className="absolute inset-0 bg-black/30 rounded-2xl opacity-0 group-hover/current:opacity-100 flex items-center justify-center transition-opacity">
+                      <Eye className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -445,46 +462,108 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
           />
         </div>
 
-        {/* Footer Buttons */}
-        <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-          {currentAvatar ? (
-            <button
-              type="button"
-              onClick={handleRemoveAvatar}
-              disabled={loading}
-              className="px-3 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
-            >
-              <Trash2 className="w-3.5 h-3.5 text-rose-600" />
-              <span>Xóa avatar</span>
-            </button>
-          ) : (
-            <div></div>
-          )}
+        {/* Footer Buttons: Chỉ hiển thị khi có ảnh đang cắt hoặc đã có ảnh đại diện */}
+        {(imageSrc || currentAvatar) && (
+          <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+            {imageSrc ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setImageSrc(null)}
+                  disabled={loading}
+                  className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition cursor-pointer"
+                >
+                  Hủy cắt
+                </button>
 
-          <div className="flex items-center space-x-2">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={loading}
-              className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition cursor-pointer"
-            >
-              Hủy
-            </button>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  disabled={loading}
+                  className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-teal-600/20 transition cursor-pointer disabled:opacity-50"
+                >
+                  <Check className="w-4 h-4" />
+                  <span>{loading ? 'Đang lưu...' : 'Áp Dụng Avatar'}</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={handleRemoveAvatar}
+                  disabled={loading}
+                  className="px-3 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+                  <span>Xóa avatar</span>
+                </button>
 
-            {imageSrc && (
-              <button
-                type="button"
-                onClick={handleSave}
-                disabled={loading}
-                className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-teal-600/20 transition cursor-pointer disabled:opacity-50"
-              >
-                <Check className="w-4 h-4" />
-                <span>{loading ? 'Đang lưu...' : 'Áp Dụng Avatar'}</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDetailPreview(true)}
+                  className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer ml-auto"
+                >
+                  <Eye className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  <span>Xem chi tiết ảnh hiện tại</span>
+                </button>
+              </>
             )}
           </div>
-        </div>
+        )}
       </div>
+
+      {/* Modal Lightbox Xem Chi Tiết Ảnh Đại Diện Hiện Tại */}
+      {showDetailPreview && currentAvatar && (
+        <div
+          className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 z-[60] animate-fadeIn"
+          onClick={() => setShowDetailPreview(false)}
+        >
+          <div
+            className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-3xl w-full max-w-sm sm:max-w-md p-5 shadow-2xl space-y-4 text-slate-800 dark:text-slate-100"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center space-x-2">
+                <Eye className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Chi Tiết Ảnh Đại Diện Hiện Tại
+                </h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowDetailPreview(false)}
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-col items-center justify-center p-3 bg-slate-50 dark:bg-[#0f172a] rounded-2xl border border-slate-100 dark:border-slate-800">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={currentAvatar}
+                alt={userName}
+                className="max-h-[60vh] max-w-full rounded-2xl object-contain shadow-lg border border-slate-200/60 dark:border-slate-700"
+              />
+              {userName && (
+                <p className="mt-3 text-xs font-semibold text-slate-600 dark:text-slate-300 text-center">
+                  {userName}
+                </p>
+              )}
+            </div>
+
+            <div className="flex justify-end pt-1">
+              <button
+                type="button"
+                onClick={() => setShowDetailPreview(false)}
+                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition cursor-pointer"
+              >
+                Đóng
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
