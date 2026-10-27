@@ -85,9 +85,10 @@ Chi tiết quy trình phối hợp và hợp đồng chuyển giao xem tại: [`
 - **Pre-execution Check:** Luôn đọc và kiểm tra tài liệu requirement/design liên quan trước khi sinh code.
 - **Scope Restriction:** Không tự ý thay đổi kiến trúc hệ thống, schema database hoặc API contracts đã chốt.
 - **Backend Authority:** Toàn bộ business logic trọng yếu, validation và authorization bắt buộc phải xử lý tại Backend.
-- **Security First:** Không hardcode API key, connection string, password hay bất kỳ credential/secret nào vào source code. Sử dụng biến môi trường (`.env` / `appsettings.json` local).
-- **KISS & Clean Code:** Không thêm thư viện, công nghệ hoặc pattern phức tạp ngoài phạm vi; ưu tiên code đơn giản, rõ ràng, dễ bảo trì.
-
+- **Frontend Boundary (Thin Client):** Frontend chỉ đảm nhận hiển thị (Presentation), validate form sơ bộ và đồng bộ trạng thái từ API; tuyệt đối không tự tính toán ngầm công thức nghiệp vụ (học phí, công nợ, điểm số, chuyên cần) hoặc hardcode dữ liệu giả (mock data) trái với API contract.
+- **UI/UX & Multi-device Standard:** Mọi màn hình phải xử lý đầy đủ 4 trạng thái (`Loading`, `Error`, `Empty`, `Success`), ẩn/khóa thao tác theo đúng phân quyền (RBAC UI), tương thích hoàn toàn Responsive (Mobile/Desktop) và đảm bảo chuẩn bố cục in ấn A4 cho các biểu mẫu/báo cáo.
+- **Security First:** Không hardcode API key, DB connection string, JWT secret hay bất kỳ credential nào vào source code. Quản lý cấu hình qua biến môi trường (`.env` / `.env.local`); tuyệt đối không lộ secret qua tiền tố `NEXT_PUBLIC_` và không gọi trực tiếp Gemini API từ phía Client.
+- **KISS & Clean Code:** Không thêm thư viện, công nghệ hoặc pattern phức tạp ngoài phạm vi; ưu tiên code đơn giản, rõ ràng, dễ bảo trì và đảm bảo strict TypeScript type-safety (không lạm dụng `any`).
 ---
 
 ## 6. Change & Conflict Management
