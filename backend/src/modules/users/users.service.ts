@@ -67,6 +67,7 @@ export class UsersService {
               soDienThoai: true,
               dangHoatDong: true,
               hoTen: true,
+              avatar: true,
             },
           },
           dangKyHoc: {
@@ -128,6 +129,7 @@ export class UsersService {
             soDienThoai: true,
             dangHoatDong: true,
             hoTen: true,
+            avatar: true,
           },
         },
         dangKyHoc: {
@@ -424,6 +426,7 @@ export class UsersService {
     const updated = await this.prisma.$transaction(async (tx) => {
       const userUpdateData: any = {};
       if (dto.soDienThoai !== undefined) userUpdateData.soDienThoai = dto.soDienThoai?.trim() || null;
+      if (dto.avatar !== undefined) userUpdateData.avatar = dto.avatar?.trim() || null;
       if (dto.matKhauMoi) {
         if (dto.matKhauMoi.length < 6) {
           throw new BadRequestException('Mật khẩu mới phải có ít nhất 6 ký tự.');
@@ -542,6 +545,7 @@ export class UsersService {
                 soDienThoai: true,
                 dangHoatDong: true,
                 hoTen: true,
+                avatar: true,
               },
             },
             phanCong: {
@@ -575,6 +579,7 @@ export class UsersService {
             soDienThoai: true,
             dangHoatDong: true,
             hoTen: true,
+            avatar: true,
           },
         },
         phanCong: {
@@ -605,6 +610,7 @@ export class UsersService {
             soDienThoai: true,
             dangHoatDong: true,
             hoTen: true,
+            avatar: true,
           },
         },
         phanCong: {
@@ -840,6 +846,7 @@ export class UsersService {
       const userUpdateData: any = {};
       if (dto.soDienThoai !== undefined) userUpdateData.soDienThoai = dto.soDienThoai?.trim() || null;
       if (dto.hoTen !== undefined) userUpdateData.hoTen = dto.hoTen?.trim();
+      if (dto.avatar !== undefined) userUpdateData.avatar = dto.avatar?.trim() || null;
       if (dto.matKhauMoi) {
         if (dto.matKhauMoi.length < 6) {
           throw new BadRequestException('Mật khẩu mới phải có ít nhất 6 ký tự.');

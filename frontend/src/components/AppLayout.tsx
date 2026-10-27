@@ -24,9 +24,11 @@ import {
   CreditCard,
   Briefcase,
   LogOut,
+  Camera,
 } from 'lucide-react';
 import Link from 'next/link';
 import { showConfirm } from './ConfirmDialog';
+import { AvatarCropModal } from './AvatarCropModal';
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -47,7 +49,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showAvatarCropModal, setShowAvatarCropModal] = useState(false);
   const [isDark, setIsDark] = useState(true);
+
+  // Lắng nghe sự kiện cập nhật avatar từ bất kỳ đâu trong ứng dụng
+  useEffect(() => {
+    const handleAvatarUpdate = (e: any) => {
+      if (e.detail?.avatar !== undefined) {
+        setUser((prev: any) => (prev ? { ...prev, avatar: e.detail.avatar } : prev));
+      }
+    };
+    window.addEventListener('user-avatar-updated', handleAvatarUpdate);
+    return () => window.removeEventListener('user-avatar-updated', handleAvatarUpdate);
+  }, []);
 
   // Đọc theme từ localStorage khi khởi tạo (mặc định là Dark Theme)
   useEffect(() => {
@@ -283,11 +297,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             <button
               onClick={() => setShowProfileModal(true)}
               className="flex items-center space-x-2 p-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-slate-50 hover:bg-teal-50 border border-slate-200/80 hover:border-teal-300 transition cursor-pointer text-left focus:outline-none"
-              title="Xem thông tin tài khoản"
+              title="Xem thông tin tài khoản & thay đổi avatar"
             >
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-bold text-xs text-white uppercase shadow-sm shrink-0">
-                {user.tenDangNhap?.slice(0, 2) || 'AD'}
-              </div>
+              {user.avatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={user.avatar}
+                  alt={displayName}
+                  className="w-8 h-8 rounded-lg object-cover border border-teal-500/40 shadow-xs shrink-0"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-bold text-xs text-white uppercase shadow-sm shrink-0">
+                  {user.tenDangNhap?.slice(0, 2) || 'AD'}
+                </div>
+              )}
               <div className="hidden lg:block text-left max-w-[150px]">
                 <p className="text-xs font-bold text-slate-800 truncate">{displayName}</p>
                 <p className="text-[10px] text-teal-600 font-medium truncate">{user.tenDangNhap}</p>
@@ -330,11 +353,43 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </div>
 
             <div className="flex items-center space-x-4 p-4 rounded-xl bg-slate-50 dark:bg-[#0f172a] border border-slate-200/80 dark:border-[#1e2d45]">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-black text-xl text-white uppercase shadow-md shadow-teal-500/20 shrink-0">
-                {user.tenDangNhap?.slice(0, 2) || 'AD'}
+              <div className="relative group shrink-0">
+                {user.avatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={user.avatar}
+                    alt={displayName}
+                    className="w-16 h-16 rounded-2xl object-cover shadow-md shadow-teal-500/20 border-2 border-teal-500/40"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-black text-2xl text-white uppercase shadow-md shadow-teal-500/20">
+                    {user.tenDangNhap?.slice(0, 2) || 'AD'}
+                  </div>
+                )}
+                {/* Nút overlay đổi ảnh đại diện */}
+                <button
+                  type="button"
+                  onClick={() => setShowAvatarCropModal(true)}
+                  className="absolute inset-0 bg-slate-900/60 rounded-2xl flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-[1px]"
+                  title="Thay đổi ảnh đại diện"
+                >
+                  <Camera className="w-5 h-5 text-teal-300" />
+                  <span className="text-[9px] font-bold mt-0.5">Đổi ảnh</span>
+                </button>
               </div>
-              <div className="space-y-1 overflow-hidden">
-                <h4 className="font-bold text-slate-900 dark:text-white text-base truncate">{displayName}</h4>
+
+              <div className="space-y-1 overflow-hidden flex-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-slate-900 dark:text-white text-base truncate">{displayName}</h4>
+                  <button
+                    type="button"
+                    onClick={() => setShowAvatarCropModal(true)}
+                    className="text-xs text-teal-600 dark:text-teal-400 hover:underline font-bold flex items-center space-x-1 cursor-pointer shrink-0 ml-2"
+                  >
+                    <Camera className="w-3.5 h-3.5" />
+                    <span>Đổi avatar</span>
+                  </button>
+                </div>
                 <div>{getRoleBadge(user.vaiTro)}</div>
               </div>
             </div>
@@ -510,6 +565,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
         </div>
       )}
+
+      {/* Modal Chỉnh Sửa & Cắt Ảnh Đại Diện Chuẩn Dung Lượng */}
+      <AvatarCropModal
+        isOpen={showAvatarCropModal}
+        onClose={() => setShowAvatarCropModal(false)}
+        currentAvatar={user?.avatar}
+        userName={displayName}
+        onSave={async (newAvatar) => {
+          await authService.updateAvatar(newAvatar);
+          setUser((prev: any) => ({ ...prev, avatar: newAvatar }));
+          toast.success(newAvatar ? 'Cập nhật ảnh đại diện thành công!' : 'Đã xóa ảnh đại diện về mặc định.');
+        }}
+      />
     </div>
   );
 };

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
+import { toast } from '../../../components/Toast';
 import { usersService } from '../../../services/api';
 import { GiaoVien } from '../../../types';
 import {
@@ -32,8 +33,10 @@ import {
   AlertCircle,
   Zap,
   CheckCircle2,
+  Camera,
 } from 'lucide-react';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
+import { AvatarCropModal } from '../../../components/AvatarCropModal';
 
 export default function AdminTeachersPage() {
   const [teachers, setTeachers] = useState<GiaoVien[]>([]);
@@ -42,6 +45,7 @@ export default function AdminTeachersPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
+  const [cropTeacherTarget, setCropTeacherTarget] = useState<any | null>(null);
 
   // Pagination & Search
   const [page, setPage] = useState(1);
@@ -470,23 +474,16 @@ export default function AdminTeachersPage() {
                         </td>
 
                         <td className="px-3.5 py-3 align-middle min-w-0">
-                          <div className="flex items-center space-x-2.5 min-w-0">
-                            <div className="w-7 h-7 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center font-bold text-teal-700 text-xs shrink-0">
-                              {t.hoTen?.split(' ').slice(-1)[0][0] || 'G'}
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <button
-                                onClick={() => setDetailTeacher(t)}
-                                className="font-bold text-slate-900 hover:text-teal-600 text-left transition block truncate w-full cursor-pointer"
-                                title={`Bấm để xem hồ sơ: ${t.hoTen}`}
-                              >
-                                {t.hoTen}
-                              </button>
-                              <p className="text-[11px] text-teal-700 truncate font-medium mt-0.5" title={t.chuyenMon}>
-                                {t.chuyenMon || 'Giảng viên'}
-                              </p>
-                            </div>
-                          </div>
+                          <button
+                            onClick={() => setDetailTeacher(t)}
+                            className="font-bold text-slate-900 dark:text-white hover:text-teal-600 dark:hover:text-teal-400 text-left transition block truncate w-full cursor-pointer"
+                            title={`Bấm để xem hồ sơ: ${t.hoTen}`}
+                          >
+                            {t.hoTen}
+                          </button>
+                          <p className="text-[11px] text-teal-700 dark:text-teal-400 truncate font-medium mt-0.5" title={t.chuyenMon}>
+                            {t.chuyenMon || 'Giảng viên'}
+                          </p>
                         </td>
 
                         <td className="px-3.5 py-3 align-middle min-w-0">
@@ -661,8 +658,28 @@ export default function AdminTeachersPage() {
               {/* Header */}
               <div className="flex justify-between items-start pb-4 border-b border-slate-100">
                 <div className="flex items-center space-x-4">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-500 flex items-center justify-center text-white text-xl font-black shadow-md shadow-teal-500/20">
-                    {detailTeacher.hoTen?.charAt(0) || 'G'}
+                  <div className="relative group shrink-0">
+                    {detailTeacher.nguoiDung?.avatar ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={detailTeacher.nguoiDung.avatar}
+                        alt={detailTeacher.hoTen}
+                        className="w-14 h-14 rounded-2xl object-cover shadow-md shadow-teal-500/20 border-2 border-teal-500/40"
+                      />
+                    ) : (
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-600 to-cyan-500 flex items-center justify-center text-white text-xl font-black shadow-md shadow-teal-500/20">
+                        {detailTeacher.hoTen?.charAt(0) || 'G'}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setCropTeacherTarget(detailTeacher)}
+                      className="absolute inset-0 bg-slate-900/60 rounded-2xl flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-[1px]"
+                      title="Cập nhật avatar giáo viên"
+                    >
+                      <Camera className="w-4 h-4 text-teal-300" />
+                      <span className="text-[8px] font-bold mt-0.5">Đổi ảnh</span>
+                    </button>
                   </div>
                   <div>
                     <div className="flex items-center space-x-2">
@@ -1172,6 +1189,38 @@ export default function AdminTeachersPage() {
             </div>
           </div>
         )}
+
+        {/* Modal Chỉnh Sửa & Cắt Ảnh Đại Diện cho Giáo Viên */}
+        <AvatarCropModal
+          isOpen={!!cropTeacherTarget}
+          onClose={() => setCropTeacherTarget(null)}
+          currentAvatar={cropTeacherTarget?.nguoiDung?.avatar}
+          userName={cropTeacherTarget?.hoTen}
+          onSave={async (newAvatar) => {
+            if (!cropTeacherTarget) return;
+            await usersService.updateTeacher(cropTeacherTarget.id, { avatar: newAvatar });
+            setTeachers((prev) =>
+              prev.map((item) =>
+                item.id === cropTeacherTarget.id
+                  ? ({
+                      ...item,
+                      nguoiDung: item.nguoiDung
+                        ? { ...item.nguoiDung, avatar: newAvatar }
+                        : { avatar: newAvatar },
+                    } as GiaoVien)
+                  : item
+              )
+            );
+            if (detailTeacher && detailTeacher.id === cropTeacherTarget.id) {
+              setDetailTeacher((prev: any) =>
+                prev
+                  ? { ...prev, nguoiDung: { ...prev.nguoiDung, avatar: newAvatar } }
+                  : prev
+              );
+            }
+            toast.success(newAvatar ? 'Cập nhật avatar giáo viên thành công!' : 'Đã xóa avatar giáo viên về mặc định.');
+          }}
+        />
       </div>
     </AppLayout>
   );

@@ -90,6 +90,7 @@ export class AuthService {
         email: user.email,
         vaiTro: user.vaiTro,
         hoTen: user.hoTen,
+        avatar: user.avatar,
         maTuVanVien,
       },
     };
@@ -117,6 +118,7 @@ export class AuthService {
         vaiTro: true,
         dangHoatDong: true,
         hoTen: true,
+        avatar: true,
         hoSoHocVien: {
           select: {
             id: true,
@@ -238,5 +240,30 @@ export class AuthService {
   async logout(userId: number) {
     this.sessionManager.revokeSession(userId);
     return { message: 'Đăng xuất thành công. Phiên làm việc đã được giải phóng.' };
+  }
+
+  /**
+   * Cập nhật ảnh đại diện người dùng
+   */
+  async updateAvatar(userId: number, avatar: string | null) {
+    if (avatar && avatar.length > 4 * 1024 * 1024) {
+      throw new BadRequestException('Dung lượng ảnh đại diện quá lớn (tối đa 3MB).');
+    }
+
+    const updated = await this.prisma.nguoiDung.update({
+      where: { id: BigInt(userId) },
+      data: { avatar: avatar || null },
+      select: {
+        id: true,
+        tenDangNhap: true,
+        avatar: true,
+      },
+    });
+
+    return {
+      success: true,
+      message: avatar ? 'Cập nhật ảnh đại diện thành công.' : 'Đã xóa ảnh đại diện.',
+      avatar: updated.avatar,
+    };
   }
 }
