@@ -435,7 +435,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                   title="Nhấn để xem chi tiết ảnh"
                 >
                   <p className="text-[11px] text-slate-400 group-hover/current:text-teal-600 dark:group-hover/current:text-teal-400 mb-1.5 transition">
-                    Ảnh hiện tại (nhấn để xem chi tiết):
+                    Ảnh hiện tại:
                   </p>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <div className="relative inline-block">
@@ -473,7 +473,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                   disabled={loading}
                   className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition cursor-pointer"
                 >
-                  Hủy cắt
+                  Hủy
                 </button>
 
                 <button
@@ -483,7 +483,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                   className="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-teal-600/20 transition cursor-pointer disabled:opacity-50"
                 >
                   <Check className="w-4 h-4" />
-                  <span>{loading ? 'Đang lưu...' : 'Áp Dụng Avatar'}</span>
+                  <span>{loading ? 'Đang lưu...' : 'Áp Dụng'}</span>
                 </button>
               </>
             ) : (
@@ -504,7 +504,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                   className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer ml-auto"
                 >
                   <Eye className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                  <span>Xem chi tiết ảnh hiện tại</span>
+                  <span>Xem chi tiết </span>
                 </button>
               </>
             )}
