@@ -1,184 +1,78 @@
 # Test Plan — ETC English Center LMS AI
 
-**Phiên bản:** 1.0  
-**Ngày lập:** 01/09/2026  
-**Tài liệu tham chiếu:** `docs/design/EnglishCenterTOP.docx`
+**Phiên bản:** 2.0 (Mở rộng toàn diện)  
+**Ngày cập nhật:** 27/10/2026  
+**Tài liệu tham chiếu:** `docs/design/EnglishCenterTOP.docx` & `Bao_Cao_Ket_Qua_Kiem_Thu_100_Test_Cases.docx`  
+**Quy mô kiểm thử:** 145 Ca kiểm thử (45 Ca kiểm thử cơ sở + 100 Ca kiểm thử chuyên sâu: Hộp Đen & Hộp Trắng)
 
 ---
 
 ## 1. Phạm vi kiểm thử
 
-Hệ thống **ETC English Center LMS AI** bao gồm 14 Use Case chính theo tài liệu thiết kế `EnglishCenterTOP.docx`, chia thành 3 nhóm chính:
+Hệ thống **ETC English Center LMS AI** bao gồm trọn bộ 14 Use Case chính theo tài liệu thiết kế chuẩn `EnglishCenterTOP.docx` kết hợp các mô-đun an ninh, giao dịch CSDL ACID và cơ chế phòng vệ AI:
 
-| Nhóm | Use Case | Mô tả |
+| Nhóm chức năng | Use Case | Mô tả chi tiết |
 | :--- | :--- | :--- |
-| **Xác thực & Phân quyền** | UC001 | Đăng nhập và phân quyền |
-| **Quản lý nghiệp vụ** | UC002–UC011 | Quản lý học viên, khóa học, lớp, giáo viên, đăng ký, học phí, điểm danh, kết quả, tra cứu, thống kê |
-| **Tích hợp AI** | UC012–UC014 | AI tư vấn lớp, AI sinh bài luyện tập, AI tóm tắt tiến độ |
+| **Xác thực & Phân quyền** | UC001 | Đăng nhập phân quyền (JWT + Argon2), kiểm soát RBAC 4 vai trò, DTO validation, phiên làm việc |
+| **Quản lý nghiệp vụ đào tạo** | UC002–UC005 | Quản lý hồ sơ học viên, CEFR A1–C2, danh mục khóa học, mở lớp học (max 25 HV), xếp lịch phòng và phân công giảng viên |
+| **Ghi danh & Tài chính** | UC006–UC007 | Đăng ký lớp (4 ràng buộc), ACID Transaction, tự sinh hóa đơn 1-1, thu học phí nhiều đợt, xuất phiếu thu PDF |
+| **Điểm danh & Kết quả học tập** | UC008–UC011 | Điểm danh 4 trạng thái, tính điểm tổng kết 20/30/50, xét điều kiện ĐẠT (TK >= 50 & CC >= 80%), xuất Excel |
+| **Tích hợp GenAI & Phòng vệ** | UC012–UC014 | AI tư vấn lớp, AI sinh bài tập trắc nghiệm, AI tóm tắt tiến độ, lọc ảo giác Zero-Trust và kích hoạt Fallback |
 
 ---
 
 ## 2. Mục tiêu kiểm thử
 
-- Xác nhận tất cả 14 Use Case vận hành đúng theo tài liệu thiết kế.
-- Kiểm tra phân quyền RBAC: Quản lý / Giáo viên / Học viên / Tư vấn viên.
-- Kiểm tra validation đầu vào, xử lý lỗi, và các luồng phụ (Alternative Flows).
-- Kiểm tra tích hợp Gemini AI (UC012–UC014) và cơ chế Fallback khi AI không khả dụng.
-- Kiểm tra tính toán trọng số điểm: Chuyên cần 20% + Giữa kỳ 30% + Cuối kỳ 50%.
+- **Kiểm thử Hộp Đen (Black-box Testing):**
+  - Xác nhận tất cả 14 Use Case vận hành đúng theo tài liệu thiết kế.
+  - Kiểm tra phân quyền RBAC nghiêm ngặt giữa 4 vai trò: Quản lý / Giáo viên / Học viên / Tư vấn viên (chặn 403 Forbidden).
+  - Kiểm tra toàn diện các giá trị biên (Boundary Value Analysis): Sĩ số tối đa 25 học viên, điểm số [0, 100], ngưỡng Đạt 50.00 và CC 80.00%.
+  - Kiểm tra validation đầu vào (DTOs), định dạng email, số điện thoại và thời gian lịch học.
+  - Kiểm tra khả năng chống Prompt Injection và tính đúng đắn JSON schema từ mô hình Google Gemini.
+- **Kiểm thử Hộp Trắng (White-box Testing):**
+  - Đạt chỉ số bao phủ câu lệnh (Statement Coverage) >= 90% và bao phủ nhánh rẽ (Branch Coverage) >= 85%.
+  - Unit Test từng Service cốt lõi: `AuthService`, `CoursesService`, `ClassesService`, `EnrollmentsService`, `AttendancesService`, `GradesService`, `AiService`.
+  - Kiểm tra cơ chế Rollback của `prisma.$transaction` khi có lỗi phát sinh trong luồng ghi danh - tạo hóa đơn.
+  - Kiểm thử cơ chế bảo vệ Zero-Trust lọc bỏ lớp học ảo giác do LLM sinh ra.
+  - Kiểm thử ngắt mạch (Circuit Breaker / Timeout 10s) tự động chuyển sang Curriculum Bank dự phòng offline.
 
 ---
 
-## 3. Phạm vi KHÔNG kiểm thử
+## 3. Ma trận phân bổ 145 Ca Kiểm Thử
 
-- Kiểm thử hiệu năng tải cao (Load/Stress Testing).
-- Kiểm thử bảo mật nâng cao (Penetration Testing).
-- Kiểm thử tương thích trình duyệt cũ (IE 11 trở xuống).
-- Kiểm thử môi trường Production thực tế.
-
----
-
-## 4. Vai trò người dùng (User Roles)
-
-| Vai trò | Quyền chính |
-| :--- | :--- |
-| **Quản lý (Admin)** | Toàn quyền: quản lý học viên, khóa học, lớp, giáo viên, học phí, thống kê |
-| **Giáo viên (Teacher)** | Điểm danh, ghi nhận kết quả, xem lịch dạy |
-| **Học viên (Student)** | Tra cứu lịch học, xem học phí, xem kết quả, dùng AI |
-| **Tư vấn viên (Consultant)** | Quản lý học viên, đăng ký lớp, tra cứu, AI tư vấn |
+| Phân hệ / Nhóm kiểm thử | Dải mã Test ID | Phương pháp | Số lượng | Trọng tâm kiểm thử |
+| :--- | :--- | :--- | :--- | :--- |
+| **14 Use Case Cơ Sở** | TC001 — TC045 | Black-box | 45 TCs | Các luồng chính (Main Flow) và luồng phụ cơ bản của 14 Use Case |
+| **Xác thực, RBAC & DTO** | TC046 — TC055 | Black-box | 10 TCs | Đổi mật khẩu, JWT expired, chặn truy cập chéo vai trò 403 |
+| **Đào tạo, Lớp học & Xếp lịch** | TC056 — TC065 | Black-box | 10 TCs | Ràng buộc FK Restrict, biên học phí 0đ, trùng phòng, trùng giờ GV |
+| **Ghi danh & Quản trị Tài chính** | TC066 — TC075 | Black-box | 10 TCs | Hủy đăng ký hoàn sĩ số, chặn nộp tiền âm/thừa, xuất PDF phiếu thu |
+| **Điểm danh & Học thuật chuyên sâu** | TC076 — TC085 | Black-box | 10 TCs | Điểm danh học bù, chặn điểm ngoài [0,100], biên Đạt 49.99 vs 50.00 |
+| **Bộ ba GenAI & Phòng chống ảo giác**| TC086 — TC095 | Black-box | 10 TCs | Prompt Injection, schema JSON 4 kỹ năng, Rate Limit 429 Fallback |
+| **Unit Test Auth & RolesGuard** | TC096 — TC105 | White-box | 10 TCs | Bao phủ nhánh Argon2 verify, Reflector RolesGuard, Session limits |
+| **Unit Test Đào tạo & Xếp lịch** | TC106 — TC115 | White-box | 10 TCs | Thuật toán checkScheduleConflict, checkTeacherConflict, State Machine |
+| **Unit Test Giao dịch Ghi danh ACID** | TC116 — TC125 | White-box | 10 TCs | Prisma.$transaction, atomicity rollback, khống chế cứng 25 HV |
+| **Unit Test Điểm danh & Bảng điểm** | TC126 — TC135 | White-box | 10 TCs | Upsert bản ghi, công thức làm tròn 20/30/50, ma trận điểm danh 2 chiều |
+| **Unit Test GenAI & Chốt chặn Zero-Trust**| TC136 — TC145 | White-box | 10 TCs | Mock Gemini API, Promise.race timeout 10s, filterNonExistentClasses |
 
 ---
 
-## 5. Chức năng cần kiểm thử
+## 4. Môi trường kiểm thử
 
-### 5.1 UC001 — Đăng nhập và phân quyền
-- Đăng nhập đúng tài khoản/mật khẩu → vào đúng màn hình theo vai trò.
-- Đăng nhập sai thông tin → báo lỗi, không tạo phiên.
-- Tài khoản bị vô hiệu hóa → từ chối đăng nhập.
-- Token JWT hết hạn → yêu cầu đăng nhập lại.
-
-### 5.2 UC002 — Quản lý học viên và hồ sơ trình độ
-- Tạo mới, cập nhật, tìm kiếm thông tin học viên.
-- Gắn hồ sơ trình độ CEFR (A1–C2) và lịch rảnh.
-- Từ chối email/số điện thoại trùng.
-- Phân quyền: chỉ Quản lý và Tư vấn viên được thao tác.
-
-### 5.3 UC003 — Quản lý khóa học
-- Tạo, cập nhật khóa học với mã, tên, CEFR, thời lượng, học phí.
-- Từ chối mã khóa trùng.
-- Khóa đã phát sinh lớp: chỉ cho ngừng hoạt động, không xóa cứng.
-
-### 5.4 UC004 — Quản lý lớp và lịch học
-- Tạo lớp từ khóa học có sẵn, giới hạn tối đa 25 học viên.
-- Kiểm tra trùng lịch phòng học và giáo viên.
-- Sĩ số ngoài 1–25: từ chối.
-
-### 5.5 UC005 — Quản lý giáo viên và phân công lớp
-- Tạo, cập nhật hồ sơ giáo viên.
-- Phân công giáo viên phụ trách lớp, kiểm tra trùng lịch dạy.
-- Giáo viên hoặc lớp không hoạt động: từ chối phân công.
-
-### 5.6 UC006 — Đăng ký lớp
-- Đăng ký khi lớp còn chỗ, đúng CEFR, không trùng lịch học.
-- Từ chối đăng ký trùng, lớp đầy (25 HV), lớp đã đóng.
-- Cảnh báo nếu trình độ/lịch không phù hợp.
-
-### 5.7 UC007 — Quản lý học phí
-- Tự động tạo hóa đơn khi đăng ký lớp.
-- Ghi nhận thanh toán tiền mặt / chuyển khoản.
-- Học viên chỉ được xem học phí của mình.
-
-### 5.8 UC008 — Điểm danh
-- Giáo viên ghi nhận 4 trạng thái: Có mặt, Vắng, Đi muộn, Có phép.
-- Chỉ giáo viên phụ trách lớp được điểm danh.
-- Từ chối điểm danh học viên không thuộc lớp.
-
-### 5.9 UC009 — Ghi nhận kết quả học tập
-- Nhập điểm 0–100 cho Chuyên cần, Giữa kỳ, Cuối kỳ.
-- Tổng kết = Chuyên cần×20% + Giữa kỳ×30% + Cuối kỳ×50%.
-- Từ chối điểm ngoài phạm vi 0–100.
-
-### 5.10 UC010 — Tra cứu lịch, lớp và học phí
-- Tra cứu hiển thị đúng dữ liệu theo quyền vai trò.
-- Hiển thị trạng thái rỗng khi không có dữ liệu.
-
-### 5.11 UC011 — Xem thống kê
-- Thống kê sĩ số, doanh thu, tỷ lệ hoàn thành theo phạm vi/thời gian.
-- Chỉ Quản lý được xem.
-- Hoàn thành khi Tổng kết >= 50 và Chuyên cần >= 80%.
-
-### 5.12 UC012 — AI tư vấn lớp phù hợp
-- Gợi ý tối đa 3 lớp dựa trên CEFR và lịch rảnh.
-- Chỉ gợi ý lớp thực sự tồn tại trong CSDL.
-- Fallback khi AI lỗi hoặc timeout >15 giây: lọc theo CEFR + lịch + chỗ trống.
-
-### 5.13 UC013 — AI sinh bài luyện tập ngắn
-- Sinh bài trắc nghiệm theo chủ đề và trình độ CEFR.
-- Output phải có cấu trúc câu hỏi + đáp án + giải thích.
-- Fallback khi AI lỗi: trả bộ bài mẫu theo CEFR/chủ đề.
-
-### 5.14 UC014 — AI tóm tắt tiến độ học tập
-- Tóm tắt dựa đúng trên dữ liệu kết quả học tập.
-- AI không được thêm dữ kiện ngoài dữ liệu nguồn.
-- Fallback khi AI lỗi: trả tóm tắt theo quy tắc.
+| Hạng mục | Thông số kỹ thuật / Phiên bản | Ghi chú |
+| :--- | :--- | :--- |
+| **Hệ điều hành** | Microsoft Windows 11 Enterprise / Ubuntu 22.04 LTS | Môi trường phát triển và CI/CD |
+| **Backend Service** | Node.js v24.21.0, NestJS 12.0.1, TypeScript 6.0 | RESTful API 32 endpoints |
+| **Frontend Client** | Next.js 16.3.4 (App Router), React 19.2.8, Tailwind CSS v4 | Web dashboard phân quyền |
+| **Cơ sở dữ liệu** | PostgreSQL Serverless (Neon Cloud), Prisma ORM 6.4.1 | 14 Bảng quan hệ chuẩn 3NF |
+| **AI Integration** | @google/genai v2.20.0 (Google Gemini 2.5 / 3.8 Flash) | LLM tích hợp có cấu trúc JSON |
+| **Testing Framework** | Vitest v4.1.2, Supertest 7.0, React Testing Library | Unit Test & Integration Test |
 
 ---
 
-## 6. Các loại kiểm thử
+## 5. Tiêu chí nghiệm thu hoàn thành (Exit Criteria)
 
-| Loại | Mô tả |
-| :--- | :--- |
-| **Functional Testing** | Kiểm thử đúng logic nghiệp vụ từng Use Case |
-| **Integration Testing** | Kiểm thử luồng liên kết giữa các module (VD: Đăng ký → Hóa đơn) |
-| **API Testing** | Kiểm thử REST API endpoint (status code, payload, auth) |
-| **Database Testing** | Kiểm thử ràng buộc CSDL, trigger và tính toàn vẹn dữ liệu |
-| **Authorization Testing** | Kiểm thử phân quyền RBAC cho từng API |
-| **Validation Testing** | Kiểm thử input validation, boundary cases |
-| **AI Integration Testing** | Kiểm thử Gemini API integration + Fallback |
-| **Regression Testing** | Kiểm thử hồi quy sau mỗi lần thay đổi code |
-
----
-
-## 7. Môi trường kiểm thử
-
-| Hạng mục | Thông tin |
-| :--- | :--- |
-| **OS** | Windows 11 |
-| **Backend** | NestJS (Node.js) |
-| **Frontend** | Next.js (React/TypeScript) |
-| **Database** | PostgreSQL (Neon DB) |
-| **ORM** | Prisma |
-| **AI Service** | Google Gemini API |
-| **API Test Tool** | Postman / Thunder Client |
-| **Auth** | JWT (Access Token + Refresh Token) |
-
----
-
-## 8. Rủi ro và phương án xử lý
-
-| Rủi ro | Xác suất | Ảnh hưởng | Phương án |
-| :--- | :--- | :--- | :--- |
-| Gemini API giới hạn quota / timeout | Trung bình | Cao | Kiểm thử Fallback mode; mock API response |
-| Dữ liệu test không đủ đa dạng | Thấp | Trung bình | Seed data đầy đủ theo từng UC |
-| Xung đột lịch khi test song song | Thấp | Trung bình | Chạy test tuần tự hoặc dùng data isolation |
-| Tính toán điểm trọng số sai | Thấp | Cao | Kiểm thử kỹ boundary và công thức |
-
----
-
-## 9. Tiêu chí hoàn thành (Exit Criteria)
-
-- Tất cả test case Happy Path đạt PASS.
-- Không còn bug mức Critical hoặc High còn mở.
-- Phân quyền RBAC hoạt động đúng với 4 vai trò.
-- Cơ chế Fallback AI hoạt động khi Gemini không phản hồi.
-- Công thức tính tổng kết điểm cho kết quả chính xác.
-
----
-
-## 10. Cấu trúc tài liệu kiểm thử
-
-```
-docs/testing/
-├── test-plan.md       ← Kế hoạch kiểm thử (file này)
-├── test-cases.md      ← Danh sách test cases chi tiết
-└── test-report.md     ← Kết quả kiểm thử thực tế
-```
+- 100% các ca kiểm thử đạt trạng thái **PASS** (145/145 TCs).
+- Độ bao phủ mã nguồn (Code Coverage): **Statement Coverage đạt >= 94.0%**, **Branch Coverage đạt >= 90.0%**.
+- 0 lỗi phát sinh mức độ Nghiêm trọng (Critical) hoặc Cao (High).
+- Luồng ACID Transaction đảm bảo không tạo bản ghi rác hoặc lệch sĩ số khi gặp lỗi mạng.
+- Chốt chặn Zero-Trust loại bỏ 100% các lớp học ảo giác do AI sinh ra.
