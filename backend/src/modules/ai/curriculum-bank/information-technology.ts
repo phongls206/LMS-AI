@@ -25,7 +25,6 @@ export const INFORMATION_TECHNOLOGY_BANK: CurriculumTopicBank = {
     'computer',
     'máy tính',
     'may tinh',
-    'ai',
     'artificial intelligence',
     'machine learning',
     'trí tuệ nhân tạo',

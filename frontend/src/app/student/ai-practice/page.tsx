@@ -51,7 +51,6 @@ export default function StudentAiPracticePage() {
   const [loaiCauHoi, setLoaiCauHoi] = useState('MIXED');
   const [nguonDe, setNguonDe] = useState<'AI' | 'KHO_MAU'>('AI');
   const [boDe, setBoDe] = useState<number>(0); // 0 = ngẫu nhiên (1-10)
-  const [bankNotFoundMsg, setBankNotFoundMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [userAnswers, setUserAnswers] = useState<Record<number, string | string[]>>({});
@@ -138,14 +137,12 @@ export default function StudentAiPracticePage() {
     setResult(null);
     setUserAnswers({});
     setSubmitted(false);
-    setBankNotFoundMsg(null);
   };
 
   const activeTopic = selectedTopic === 'CUSTOM' ? customTopic.trim() : selectedTopic;
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setBankNotFoundMsg(null);
 
     // Kiểm tra chủ đề rác / vô nghĩa ngay tại Frontend
     if (selectedTopic === 'CUSTOM') {
@@ -178,7 +175,7 @@ export default function StudentAiPracticePage() {
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Có lỗi khi tạo bài tập.';
       if (err.response?.status === 404 && nguonDe === 'KHO_MAU') {
-        setBankNotFoundMsg(msg);
+        toast.warning(msg);
       } else {
         toast.error(msg);
       }
@@ -384,7 +381,6 @@ export default function StudentAiPracticePage() {
                     disabled={isExamInProgress || loading}
                     onChange={(e) => {
                       setNguonDe(e.target.value as 'AI' | 'KHO_MAU');
-                      setBankNotFoundMsg(null);
                     }}
                     title={
                       nguonDe === 'AI'
@@ -550,26 +546,6 @@ export default function StudentAiPracticePage() {
                 />
               </div>
             )}
-
-            {/* Thông báo khi không tìm thấy trong ngân hàng đề mẫu */}
-            {bankNotFoundMsg && (
-              <div className="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-                <div>
-                  <div className="font-bold">Chưa có bài tập trong ngân hàng đề cho chủ đề này</div>
-                  <div className="mt-0.5 text-amber-800 dark:text-amber-300">{bankNotFoundMsg}</div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setNguonDe('AI');
-                    setBankNotFoundMsg(null);
-                  }}
-                  className="px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white font-bold transition whitespace-nowrap cursor-pointer shadow-xs"
-                >
-                  Chuyển sang Sinh Bằng AI
-                </button>
-              </div>
-            )}
           </form>
         </div>
 
@@ -592,13 +568,7 @@ export default function StudentAiPracticePage() {
             <div className="p-3.5 sm:p-4 rounded-xl bg-teal-50 dark:bg-[#13222e] border border-teal-200 dark:border-teal-800/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs text-teal-900 dark:text-teal-200 font-bold">
-                  Bài tập: <strong>{result.data.chuDe}</strong>
-                  {result.data.tenChuDeGoc && result.data.tenChuDeGoc !== result.data.chuDe && (
-                    <span className="text-teal-700/80 dark:text-teal-400/80 font-normal ml-1">
-                      (AI liên kết: <em>{result.data.tenChuDeGoc}</em>)
-                    </span>
-                  )}
-                  {' '}— Trình độ: <strong>CEFR {result.data.trinhDo}</strong> ({result.data.cauHoi.length} câu)
+                  Bài tập: <strong>{result.data.chuDe}</strong> — Trình độ: <strong>CEFR {result.data.trinhDo}</strong> ({result.data.cauHoi.length} câu)
                 </span>
               </div>
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
@@ -613,14 +583,12 @@ export default function StudentAiPracticePage() {
                     }`}
                 >
                   {result.mode === 'CURRICULUM_BANK'
-                    ? (result.data.tenChuDeGoc && result.data.tenChuDeGoc !== result.data.chuDe
-                        ? 'Ngân Hàng Đề (AI Khớp)'
-                        : 'Ngân Hàng Đề Mẫu ETC')
+                    ? 'Ngân Hàng Đề Mẫu'
                     : result.mode === 'AI_COMMUNITY_CACHE'
-                      ? 'Đề Tương Thích (Kho AI)'
+                      ? 'Kho Đề AI'
                       : result.mode === 'AI_GEMINI' || result.mode === 'GEMINI_AI'
                         ? 'Trí Tuệ Nhân Tạo'
-                        : 'Mẫu Dự Phòng (Fallback)'}
+                        : 'Mẫu Dự Phòng'}
                 </span>
                 <button
                   type="button"

@@ -364,7 +364,10 @@ export class AiService {
     const apiCallPromise = this.ai.models.generateContent({
       model,
       contents: prompt,
-      ...(isJson ? { config: { responseMimeType: 'application/json' } } : {}),
+      config: {
+        ...(isJson ? { responseMimeType: 'application/json' } : {}),
+        temperature: 0.35,
+      },
     });
 
     const response = await Promise.race([apiCallPromise, timeoutPromise]);
@@ -650,11 +653,11 @@ Trả về định dạng JSON:
 
     // NẾU NGƯỜI DÙNG CHỦ ĐỘNG CHỌN NGUỒN ĐỀ MẪU TỪ GIÁO TRÌNH TRUNG TÂM
     if (dto.nguonDe === 'KHO_MAU') {
-      const matchedBankKey = await this.matchCurriculumBankKey(dto.chuDe);
+      const matchedBankKey = matchTopicByKeywords(dto.chuDe);
 
       if (!matchedBankKey) {
         throw new NotFoundException(
-          `Kho đề mẫu giáo trình hiện chưa có bài tập cho chủ đề "${dto.chuDe}". Bạn có thể chọn các chủ đề có sẵn trong danh mục giáo trình hoặc chuyển sang chế độ "Sinh đề bằng AI" để tự động tạo đề tức thì.`,
+          `Kho đề mẫu giáo trình hiện chưa có bài tập cho chủ đề "${dto.chuDe}". Vui lòng chọn các chủ đề có sẵn trong danh mục giáo trình hoặc chuyển sang nguồn "Trí Tuệ Nhân Tạo".`,
         );
       }
 
@@ -741,7 +744,7 @@ RÀNG BUỘC NGHIÊM NGẶT:
 - Các câu hỏi phải sáng tạo, câu từ và ngữ cảnh mới mẻ, bám sát chủ đề "${dto.chuDe}".
 - BẮT BUỘC CHỈ SINH CHÍNH XÁC ĐÚNG ${count} CÂU HỎI (không nhiều hơn dù chỉ 1 câu, không ít hơn). Mảng "cauHoi" trong JSON phải có đúng ${count} phần tử.
 - Đúng ${count} câu hỏi được đánh số id tuần tự từ 1 đến ${count}.
-- Bắt buộc có đáp án đúng ("dapAnDung") và giải thích ngắn gọn ("giaiThich") bằng tiếng Việt.
+- Bắt buộc có đáp án đúng ("dapAnDung") và giải thích cực kỳ ngắn gọn súc tích trong đúng 1 câu ("giaiThich") bằng tiếng Việt để tối ưu tốc độ sinh đề.
 - Trả về JSON hợp lệ:
 {
   "chuDe": "${dto.chuDe}",

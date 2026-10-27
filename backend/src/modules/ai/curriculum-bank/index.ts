@@ -55,14 +55,22 @@ export function matchTopicByKeywords(userTopic: string): string | null {
   const raw = userTopic.trim();
   const lower = raw.toLowerCase();
 
+  // Chặn ngay các câu chửi bới, cảm xúc cá nhân hoặc thô tục không thuộc học tập
+  if (/\b(ghét|chán|ngu|mày|tao|địt|cặc|lồn|buồi|đụ|cút|biến|điên|khùng|vớ vẩn|nhảm)\b/i.test(lower)) {
+    return null;
+  }
+
   // 1. Kiểm tra trực tiếp key danh mục
   if (CURRICULUM_BANKS[raw.toUpperCase()]) {
     return raw.toUpperCase();
   }
 
-  // 2. Kiểm tra từ viết tắt đặc thù công nghệ (IT, CNTT, AI, Tech) với Word Boundary
+  // 2. Kiểm tra từ viết tắt đặc thù công nghệ với điều kiện chặt chẽ
   if (
-    /\b(it|cntt|tech|technology|coding|code|developer|programmer|software|hardware|devops|backend|frontend|database|csdl|an ninh mạng|cybersecurity)\b/i.test(
+    lower === 'it' ||
+    lower === 'cntt' ||
+    /\b(ngành it|dân it|học it|chuyên ngành it|dân cntt)\b/i.test(lower) ||
+    /\b(tech|technology|coding|developer|programmer|software|hardware|devops|backend|frontend|cybersecurity)\b/i.test(
       lower,
     ) ||
     lower.includes('công nghệ thông tin') ||
@@ -75,14 +83,15 @@ export function matchTopicByKeywords(userTopic: string): string | null {
     return 'INFORMATION_TECHNOLOGY';
   }
 
+  const words = lower.split(/\s+/);
+
   // 3. Quét lần lượt qua 15 bộ đề giáo trình
   for (const bank of Object.values(CURRICULUM_BANKS)) {
-    // Khớp tiêu đề chính xác
+    // Khớp tiêu đề chính xác hoặc tiêu đề chứa cụm từ
     if (lower === bank.tenChuDe.toLowerCase()) {
       return bank.key;
     }
 
-    // Khớp nếu tiêu đề chứa chủ đề hoặc ngược lại
     if (bank.tenChuDe.toLowerCase().includes(lower) || lower.includes(bank.key.toLowerCase().replace(/_/g, ' '))) {
       return bank.key;
     }
@@ -90,12 +99,14 @@ export function matchTopicByKeywords(userTopic: string): string | null {
     // Khớp qua danh sách aliases
     for (const alias of bank.aliases) {
       const aliasLower = alias.toLowerCase();
+      if (lower === aliasLower) {
+        return bank.key;
+      }
       if (aliasLower.length <= 3) {
-        const regex = new RegExp(`\\b${aliasLower}\\b`, 'i');
-        if (regex.test(lower)) {
+        if (words.length <= 2 && new RegExp(`\\b${aliasLower}\\b`, 'i').test(lower)) {
           return bank.key;
         }
-      } else if (lower.includes(aliasLower)) {
+      } else if (new RegExp(`\\b${aliasLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(lower)) {
         return bank.key;
       }
     }
