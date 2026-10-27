@@ -14,6 +14,7 @@ import {
   Scissors,
   Eye,
 } from 'lucide-react';
+import { showConfirm } from './ConfirmDialog';
 
 interface AvatarCropModalProps {
   isOpen: boolean;
@@ -218,7 +219,15 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
 
   // Xóa avatar về mặc định
   const handleRemoveAvatar = async () => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa ảnh đại diện và quay về chữ cái mặc định?')) return;
+    const confirmed = await showConfirm({
+      title: 'Xóa Ảnh Đại Diện',
+      message: 'Bạn có chắc chắn muốn xóa ảnh đại diện và quay về chữ cái mặc định?',
+      confirmText: 'Xóa avatar',
+      cancelText: 'Hủy bỏ',
+      type: 'danger',
+    });
+    if (!confirmed) return;
+
     try {
       setLoading(true);
       await onSave(null);
@@ -426,28 +435,16 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
               </div>
 
               {currentAvatar && (
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowDetailPreview(true);
-                  }}
-                  className="pt-2 text-center group/current cursor-pointer"
-                  title="Nhấn để xem chi tiết ảnh"
-                >
-                  <p className="text-[11px] text-slate-400 group-hover/current:text-teal-600 dark:group-hover/current:text-teal-400 mb-1.5 transition">
+                <div className="pt-2 text-center pointer-events-none">
+                  <p className="text-[11px] text-slate-400 mb-1.5">
                     Ảnh hiện tại:
                   </p>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <div className="relative inline-block">
-                    <img
-                      src={currentAvatar}
-                      alt={userName}
-                      className="w-14 h-14 rounded-2xl object-cover border-2 border-teal-500 mx-auto shadow-md group-hover/current:scale-105 transition-transform"
-                    />
-                    <div className="absolute inset-0 bg-black/30 rounded-2xl opacity-0 group-hover/current:opacity-100 flex items-center justify-center transition-opacity">
-                      <Eye className="w-4 h-4 text-white" />
-                    </div>
-                  </div>
+                  <img
+                    src={currentAvatar}
+                    alt={userName}
+                    className="w-14 h-14 rounded-2xl object-cover border-2 border-teal-500 mx-auto shadow-md"
+                  />
                 </div>
               )}
             </div>
@@ -512,54 +509,42 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
         )}
       </div>
 
-      {/* Modal Lightbox Xem Chi Tiết Ảnh Đại Diện Hiện Tại */}
+      {/* Modal Lightbox Xem Chi Tiết Ảnh Đại Diện */}
       {showDetailPreview && currentAvatar && (
         <div
-          className="fixed inset-0 bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 z-[60] animate-fadeIn"
+          className="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 z-[1000] animate-fadeIn"
           onClick={() => setShowDetailPreview(false)}
         >
           <div
-            className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-3xl w-full max-w-sm sm:max-w-md p-5 shadow-2xl space-y-4 text-slate-800 dark:text-slate-100"
+            className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-3xl max-w-[95vw] sm:max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-800 dark:text-slate-100 overflow-hidden animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center pb-3 border-b border-slate-100 dark:border-slate-800">
+            {/* Header: Chỉ có tiêu đề và nút X */}
+            <div className="flex justify-between items-center px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-100 dark:border-slate-800 shrink-0">
               <div className="flex items-center space-x-2">
                 <Eye className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                 <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                  Chi Tiết Ảnh Đại Diện Hiện Tại
+                  Chi Tiết Ảnh Đại Diện
                 </h4>
               </div>
               <button
                 type="button"
                 onClick={() => setShowDetailPreview(false)}
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+                title="Đóng (X)"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="flex flex-col items-center justify-center p-3 bg-slate-50 dark:bg-[#0f172a] rounded-2xl border border-slate-100 dark:border-slate-800">
+            {/* Hiển thị ảnh ở kích thước chuẩn của file, rõ nét, không thông tin khác */}
+            <div className="p-3 sm:p-5 flex items-center justify-center overflow-auto bg-slate-50/60 dark:bg-[#0a0f1d]/60">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={currentAvatar}
-                alt={userName}
-                className="max-h-[60vh] max-w-full rounded-2xl object-contain shadow-lg border border-slate-200/60 dark:border-slate-700"
+                alt="Chi tiết ảnh đại diện"
+                className="max-h-[75vh] max-w-full rounded-2xl object-contain shadow-md"
               />
-              {userName && (
-                <p className="mt-3 text-xs font-semibold text-slate-600 dark:text-slate-300 text-center">
-                  {userName}
-                </p>
-              )}
-            </div>
-
-            <div className="flex justify-end pt-1">
-              <button
-                type="button"
-                onClick={() => setShowDetailPreview(false)}
-                className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition cursor-pointer"
-              >
-                Đóng
-              </button>
             </div>
           </div>
         </div>
