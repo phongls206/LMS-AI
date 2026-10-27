@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
 import { classesService, gradesService, authStorage } from '../../../services/api';
+import { SearchableSelect, SearchableSelectOption } from '../../../components/SearchableSelect';
 import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download, Award, Lock, X, ShieldAlert } from 'lucide-react';
 import { exportClassGradeBookExcel } from '../../../utils/excel-exporter';
 import { useTableSort, SortIndicator } from '../../../utils/useTableSort';
@@ -76,6 +77,26 @@ export default function TeacherGradesPage() {
     };
     fetchAssignedClasses();
   }, []);
+
+  // Chuyển đổi danh sách lớp học sang options cho SearchableSelect
+  const classOptions: SearchableSelectOption[] = useMemo(() => {
+    return classes.map((c: any) => {
+      const maLop = c.maLopHoc || `LH${c.id}`;
+      const tenLop = c.tenLopHoc || 'Lớp học';
+      const isFinished = c.trangThai === 'DA_KET_THUC';
+      const cefr = c.trinhDoCEFR || c.khoaHoc?.trinhDoCEFR;
+      const tenKhoa = c.khoaHoc?.tenKhoaHoc;
+      return {
+        value: Number(c.id),
+        label: `[${maLop}] ${tenLop} ${isFinished ? '• (Đã kết thúc)' : ''}`,
+        subLabel: tenKhoa,
+        badge: isFinished ? 'Đã kết thúc' : cefr ? `CEFR ${cefr}` : undefined,
+        badgeColor: isFinished
+          ? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700'
+          : undefined,
+      };
+    });
+  }, [classes]);
 
   useEffect(() => {
     if (!selectedClassId) {
@@ -260,24 +281,19 @@ export default function TeacherGradesPage() {
                   <div className="w-9 h-9 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0">
                     <BookOpen className="w-5 h-5" />
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">
-                        {isManager ? 'Chọn Lớp Học' : 'Lớp Phụ Trách'}
-                      </label>
-
-                    </div>
-                    <select
-                      value={selectedClassId || ''}
-                      onChange={(e) => setSelectedClassId(+e.target.value)}
-                      className="mt-0.5 bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-lg px-3 py-1.5 text-xs font-bold text-teal-900 dark:text-teal-400 focus:outline-none focus:border-teal-500"
-                    >
-                      {classes.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          [{c.maLopHoc}] {c.tenLopHoc} {c.trangThai === 'DA_KET_THUC' ? '• (Đã kết thúc)' : ''}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="w-full sm:w-72 xl:w-80">
+                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">
+                      {isManager ? 'Chọn Lớp Học' : 'Lớp Phụ Trách'}
+                    </label>
+                    <SearchableSelect
+                      value={selectedClassId ?? ''}
+                      onChange={(val) => setSelectedClassId(Number(val))}
+                      options={classOptions}
+                      placeholder={classes.length === 0 ? 'Chưa có lớp nào' : 'Chọn lớp phụ trách...'}
+                      searchPlaceholder="Tìm mã lớp, tên lớp, CEFR..."
+                      emptyText="Không tìm thấy lớp học"
+                      disabled={classes.length === 0}
+                    />
                   </div>
                 </div>
 

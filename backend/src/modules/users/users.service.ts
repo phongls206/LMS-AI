@@ -37,10 +37,14 @@ export class UsersService {
     const skip = (page - 1) * limit;
     const where: any = {};
 
-    if (search) {
+    if (search && search.trim()) {
+      const q = search.trim();
       where.OR = [
-        { hoTen: { contains: search, mode: 'insensitive' } },
-        { maHocVien: { contains: search, mode: 'insensitive' } },
+        { hoTen: { contains: q, mode: 'insensitive' } },
+        { maHocVien: { contains: q, mode: 'insensitive' } },
+        { nguoiDung: { email: { contains: q, mode: 'insensitive' } } },
+        { nguoiDung: { soDienThoai: { contains: q, mode: 'insensitive' } } },
+        { nguoiDung: { tenDangNhap: { contains: q, mode: 'insensitive' } } },
       ];
     }
 
@@ -492,10 +496,76 @@ export class UsersService {
   // ============================================================================
 
   /**
-   * UC005 — Danh sách giáo viên
+   * UC005 — Danh sách giáo viên (hỗ trợ phân trang, tìm kiếm)
    */
-  async findAllTeachers() {
+  async findAllTeachers(
+    page?: number,
+    limit?: number,
+    search?: string,
+    trangThai?: string,
+  ) {
+    const where: any = {};
+
+    if (trangThai && trangThai !== 'ALL') {
+      where.trangThai = trangThai as any;
+    }
+
+    if (search && search.trim()) {
+      const q = search.trim();
+      where.OR = [
+        { hoTen: { contains: q, mode: 'insensitive' } },
+        { maGiaoVien: { contains: q, mode: 'insensitive' } },
+        { chuyenMon: { contains: q, mode: 'insensitive' } },
+        { bangCap: { contains: q, mode: 'insensitive' } },
+        { nguoiDung: { email: { contains: q, mode: 'insensitive' } } },
+        { nguoiDung: { soDienThoai: { contains: q, mode: 'insensitive' } } },
+        { nguoiDung: { tenDangNhap: { contains: q, mode: 'insensitive' } } },
+      ];
+    }
+
+    if (page !== undefined) {
+      const take = limit && limit > 0 ? limit : 10;
+      const skip = (page - 1) * take;
+
+      const [total, teachers] = await Promise.all([
+        this.prisma.hoSoGiaoVien.count({ where }),
+        this.prisma.hoSoGiaoVien.findMany({
+          where,
+          skip,
+          take,
+          include: {
+            nguoiDung: {
+              select: {
+                id: true,
+                tenDangNhap: true,
+                email: true,
+                soDienThoai: true,
+                dangHoatDong: true,
+                hoTen: true,
+              },
+            },
+            phanCong: {
+              where: { trangThai: 'DANG_PHU_TRACH' },
+              include: {
+                lopHoc: { select: { id: true, maLopHoc: true, tenLopHoc: true } },
+              },
+            },
+          },
+          orderBy: { id: 'asc' },
+        }),
+      ]);
+
+      return {
+        total,
+        page,
+        limit: take,
+        totalPages: Math.ceil(total / take),
+        data: this.serializeBigInt(teachers),
+      };
+    }
+
     const teachers = await this.prisma.hoSoGiaoVien.findMany({
+      where,
       include: {
         nguoiDung: {
           select: {

@@ -334,11 +334,13 @@ export default function AdminClassesPage() {
         coursesService.getAll(),
         usersService.getTeachers(),
       ]);
+      const actualCourses = Array.isArray(courseList) ? courseList : courseList?.data || [];
+      const actualTeachers = Array.isArray(teacherList) ? teacherList : teacherList?.data || [];
       setClasses(classList);
-      setCourses(courseList);
-      setTeachers(teacherList);
-      if (courseList.length > 0) setClassForm((prev) => ({ ...prev, khoaHocId: courseList[0].id }));
-      if (teacherList.length > 0) setAssignForm({ giaoVienId: teacherList[0].id });
+      setCourses(actualCourses);
+      setTeachers(actualTeachers);
+      if (actualCourses.length > 0) setClassForm((prev) => ({ ...prev, khoaHocId: actualCourses[0].id }));
+      if (actualTeachers.length > 0) setAssignForm({ giaoVienId: actualTeachers[0].id });
     } catch (err) {
       console.error(err);
     } finally {

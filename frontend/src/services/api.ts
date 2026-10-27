@@ -146,16 +146,23 @@ export const authService = {
 };
 
 export const coursesService = {
-  getAll: async (trinhDo?: string, trangThai?: string) =>
-    (await api.get('/courses', { params: { trinhDo, trangThai } })).data,
+  getAll: async (
+    params?: { page?: number; limit?: number; search?: string; trinhDo?: string; trangThai?: string } | string,
+    trangThai?: string,
+  ) => {
+    if (typeof params === 'string' || (!params && trangThai)) {
+      return (await api.get('/courses', { params: { trinhDo: params, trangThai } })).data;
+    }
+    return (await api.get('/courses', { params })).data;
+  },
   getById: async (id: number) => (await api.get(`/courses/${id}`)).data,
   create: async (data: any) => (await api.post('/courses', data)).data,
   update: async (id: number, data: any) => (await api.put(`/courses/${id}`, data)).data,
 };
 
 export const classesService = {
-  getAll: async (khoaHocId?: number, trangThai?: string) =>
-    (await api.get('/classes', { params: { khoaHocId, trangThai } })).data,
+  getAll: async (khoaHocId?: number, trangThai?: string, search?: string, trinhDoCEFR?: string) =>
+    (await api.get('/classes', { params: { khoaHocId, trangThai, search, trinhDoCEFR } })).data,
   getById: async (id: number) => (await api.get(`/classes/${id}`)).data,
   create: async (data: any) => (await api.post('/classes', data)).data,
   update: async (id: number, data: any) => (await api.put(`/classes/${id}`, data)).data,
@@ -187,7 +194,8 @@ export const usersService = {
   createStudent: async (data: any) => (await api.post('/students', data)).data,
   updateStudent: async (id: number, data: any) => (await api.put(`/students/${id}`, data)).data,
   deleteStudent: async (id: number) => (await api.delete(`/students/${id}`)).data,
-  getTeachers: async () => (await api.get('/teachers')).data,
+  getTeachers: async (params?: { page?: number; limit?: number; search?: string; trangThai?: string }) =>
+    (await api.get('/teachers', { params })).data,
   getTeacherById: async (id: number) => (await api.get(`/teachers/${id}`)).data,
   getNextTeacherCode: async () => (await api.get('/teachers/next-code')).data,
   checkTeacherDuplicate: async (params: {
@@ -208,8 +216,8 @@ export const enrollmentsService = {
     (await api.post('/enrollments/cancel', { hocVienId, lopHocId })).data,
   getAll: async (lopHocId?: number, hocVienId?: number) =>
     (await api.get('/enrollments', { params: { lopHocId, hocVienId } })).data,
-  getInvoices: async (trangThai?: string, hocVienId?: number) =>
-    (await api.get('/invoices', { params: { trangThai, hocVienId } })).data,
+  getInvoices: async (trangThai?: string, hocVienId?: number, search?: string) =>
+    (await api.get('/invoices', { params: { trangThai, hocVienId, search } })).data,
   createPayment: async (invoiceId: number, data: { soTien: number; phuongThuc: string; ghiChu?: string }) =>
     (await api.post(`/invoices/${invoiceId}/payments`, data)).data,
   getPayments: async (nguoiThuId?: number, hoaDonId?: number) =>
@@ -259,8 +267,8 @@ export const aiService = {
     (await api.post('/ai/generate-exercises', { chuDe, trinhDo, soLuong, loaiCauHoi, nguonDe, boDe })).data,
   summarizeProgress: async (hocVienId: number, lopHocId: number, forceRefresh?: boolean) =>
     (await api.post('/ai/summarize-progress', { hocVienId, lopHocId, forceRefresh })).data,
-  getExerciseHistory: async (limit?: number) =>
-    (await api.get('/ai/exercises/history', { params: { limit } })).data,
+  getExerciseHistory: async (page: number = 1, limit: number = 10, search?: string) =>
+    (await api.get('/ai/exercises/history', { params: { page, limit, search: search?.trim() || undefined } })).data,
   deleteExerciseHistoryItem: async (id: number) =>
     (await api.delete(`/ai/exercises/history/${id}`)).data,
   clearExerciseHistory: async () =>

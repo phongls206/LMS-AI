@@ -441,10 +441,21 @@ export class EnrollmentsService {
   /**
    * UC007 — Danh mục hóa đơn & công nợ học phí
    */
-  async findAllInvoices(trangThai?: TrangThaiHoaDon, hocVienId?: number) {
+  async findAllInvoices(trangThai?: TrangThaiHoaDon, hocVienId?: number, search?: string) {
     const where: any = {};
     if (trangThai) where.trangThai = trangThai;
     if (hocVienId) where.hocVienId = BigInt(hocVienId);
+
+    if (search && search.trim()) {
+      const q = search.trim();
+      where.OR = [
+        { maHoaDon: { contains: q, mode: 'insensitive' } },
+        { hocVien: { hoTen: { contains: q, mode: 'insensitive' } } },
+        { hocVien: { maHocVien: { contains: q, mode: 'insensitive' } } },
+        { dangKyHoc: { lopHoc: { tenLopHoc: { contains: q, mode: 'insensitive' } } } },
+        { dangKyHoc: { lopHoc: { maLopHoc: { contains: q, mode: 'insensitive' } } } },
+      ];
+    }
 
     const invoices = await this.prisma.hoaDon.findMany({
       where,

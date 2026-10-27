@@ -375,7 +375,7 @@ export default function StudentSchedulePage() {
             {/* CỘT TRÁI (COL 5): THỜI KHÓA BIỂU TUẦN & LỊCH HỌC HÔM NAY       */}
             {/* ============================================================ */}
             <div
-              className={`space-y-4 lg:col-span-5 xl:col-span-5 ${
+              className={`space-y-4 lg:col-span-5 xl:col-span-5 lg:sticky lg:top-4 ${
                 mobileTab === 'timetable' ? 'block' : 'hidden lg:block'
               }`}
             >
@@ -662,8 +662,8 @@ export default function StudentSchedulePage() {
                 </div>
               </div>
 
-              {/* Danh sách thẻ lớp học */}
-              <div className="space-y-4">
+              {/* Danh sách thẻ lớp học có scroll khi nhiều lớp để cân bằng 2 bên left & right */}
+              <div className="space-y-4 lg:max-h-[690px] xl:max-h-[720px] lg:overflow-y-auto lg:pr-2 scrollbar-thin">
                 {displayEnrollments.length > 0 ? (
                   displayEnrollments.map((enr) => {
                     const lop = enr.lopHoc;

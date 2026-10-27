@@ -28,14 +28,26 @@ export class CoursesController {
    * GET /api/v1/courses — UC003 (Tất cả vai trò đã đăng nhập)
    */
   @Get()
-  @ApiOperation({ summary: 'Danh mục tất cả các khóa học' })
+  @ApiOperation({ summary: 'Danh mục tất cả các khóa học (hỗ trợ phân trang, tìm kiếm)' })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 6 })
+  @ApiQuery({ name: 'search', required: false })
   @ApiQuery({ name: 'trinhDo', enum: TrinhDoCEFR, required: false })
   @ApiQuery({ name: 'trangThai', enum: TrangThaiKhoaHoc, required: false })
   findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
     @Query('trinhDo') trinhDo?: TrinhDoCEFR,
     @Query('trangThai') trangThai?: TrangThaiKhoaHoc,
   ) {
-    return this.coursesService.findAll(trinhDo, trangThai);
+    return this.coursesService.findAll(
+      trinhDo,
+      trangThai,
+      search,
+      page !== undefined && page !== '' ? +page : undefined,
+      limit !== undefined && limit !== '' ? +limit : undefined,
+    );
   }
 
   /**

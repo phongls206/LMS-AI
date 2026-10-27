@@ -971,28 +971,50 @@ RÀNG BUỘC NGHIÊM NGẶT:
   }
 
   /**
-   * UC013 — Lấy lịch sử các bộ đề luyện tập đã sinh của người dùng
+   * UC013 — Lấy lịch sử các bộ đề luyện tập đã sinh của người dùng (Hỗ trợ phân trang 10 đề/lần và tìm kiếm)
    */
-  async getExerciseHistory(userId: number, limit: number = 30) {
-    const records = await this.prisma.yeuCauAI.findMany({
-      where: {
-        nguoiDungId: BigInt(userId),
-        loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
-        trangThai: {
-          in: [TrangThaiYeuCauAI.THANH_CONG, TrangThaiYeuCauAI.FALLBACK_APPLIED],
+  async getExerciseHistory(
+    userId: number,
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+  ) {
+    const pageNum = Math.max(1, Number(page) || 1);
+    const limitNum = Math.max(1, Math.min(50, Number(limit) || 10));
+    const skip = (pageNum - 1) * limitNum;
+
+    const where: any = {
+      nguoiDungId: BigInt(userId),
+      loaiChucNang: LoaiChucNangAI.SINH_BAI_TAP,
+      trangThai: {
+        in: [TrangThaiYeuCauAI.THANH_CONG, TrangThaiYeuCauAI.FALLBACK_APPLIED],
+      },
+    };
+
+    if (search && search.trim()) {
+      where.promptInput = {
+        contains: search.trim(),
+        mode: 'insensitive',
+      };
+    }
+
+    const [total, records] = await Promise.all([
+      this.prisma.yeuCauAI.count({ where }),
+      this.prisma.yeuCauAI.findMany({
+        where,
+        orderBy: { thoiGianGoi: 'desc' },
+        skip,
+        take: limitNum,
+        select: {
+          id: true,
+          thoiGianGoi: true,
+          thoiGianXuLyMs: true,
+          trangThai: true,
+          promptInput: true,
+          validatedOutputJson: true,
         },
-      },
-      orderBy: { thoiGianGoi: 'desc' },
-      take: limit,
-      select: {
-        id: true,
-        thoiGianGoi: true,
-        thoiGianXuLyMs: true,
-        trangThai: true,
-        promptInput: true,
-        validatedOutputJson: true,
-      },
-    });
+      }),
+    ]);
 
     const history = records
       .filter((r) => r.validatedOutputJson && typeof r.validatedOutputJson === 'object')
@@ -1028,7 +1050,13 @@ RÀNG BUỘC NGHIÊM NGẶT:
         };
       });
 
-    return history;
+    return {
+      data: history,
+      total,
+      page: pageNum,
+      limit: limitNum,
+      hasMore: skip + records.length < total,
+    };
   }
 
   /**

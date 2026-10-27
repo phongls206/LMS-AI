@@ -43,9 +43,20 @@ export default function AdminTeachersPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('');
 
-  // Pagination
+  // Pagination & Search
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [totalTeachers, setTotalTeachers] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Debounce tìm kiếm 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   // Modals
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -82,8 +93,23 @@ export default function AdminTeachersPage() {
   const fetchTeachers = async () => {
     try {
       setLoading(true);
-      const list = await usersService.getTeachers();
-      setTeachers(list || []);
+      const res = await usersService.getTeachers({
+        page,
+        limit,
+        search: debouncedSearch.trim() || undefined,
+        trangThai: statusFilter || undefined,
+      });
+
+      if (res && res.data) {
+        setTeachers(res.data);
+        const total = res.total ?? res.data.length;
+        setTotalTeachers(total);
+        setTotalPages(res.totalPages ?? Math.max(1, Math.ceil(total / limit)));
+      } else if (Array.isArray(res)) {
+        setTeachers(res);
+        setTotalTeachers(res.length);
+        setTotalPages(Math.max(1, Math.ceil(res.length / limit)));
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -93,39 +119,20 @@ export default function AdminTeachersPage() {
 
   useEffect(() => {
     fetchTeachers();
-  }, []);
-
-  // Filtered & Paginated list
-  const filteredTeachers = teachers.filter((t: any) => {
-    const q = search.toLowerCase();
-    const matchQuery =
-      t.hoTen.toLowerCase().includes(q) ||
-      t.maGiaoVien.toLowerCase().includes(q) ||
-      (t.chuyenMon && t.chuyenMon.toLowerCase().includes(q)) ||
-      (t.nguoiDung?.email && t.nguoiDung.email.toLowerCase().includes(q)) ||
-      (t.nguoiDung?.tenDangNhap && t.nguoiDung.tenDangNhap.toLowerCase().includes(q));
-
-    const matchStatus = !statusFilter || (t.trangThai || 'DANG_LAM_VIEC') === statusFilter;
-
-    return matchQuery && matchStatus;
-  });
+  }, [page, limit, debouncedSearch, statusFilter]);
 
   const {
     sortKey,
     sortOrder,
     toggleSort,
-    sortedData: sortedFilteredTeachers,
-  } = useTableSort(filteredTeachers, null, null, {
+    sortedData: displayedTeachers,
+  } = useTableSort(teachers, null, null, {
     maGiaoVien: (t: any) => t.maGiaoVien,
     hoTen: (t: any) => t.hoTen,
     classes: (t: any) => (t.phanCong || []).length,
     email: (t: any) => t.nguoiDung?.email || '',
     trangThai: (t: any) => t.trangThai || 'DANG_LAM_VIEC',
   });
-
-  const totalTeachers = sortedFilteredTeachers.length;
-  const totalPages = Math.max(1, Math.ceil(totalTeachers / limit));
-  const displayedTeachers = sortedFilteredTeachers.slice((page - 1) * limit, page * limit);
 
   // Duplicate check states cho modal thêm giáo viên
   const [createDuplicateErrors, setCreateDuplicateErrors] = useState<Record<string, string>>({});
@@ -328,7 +335,10 @@ export default function AdminTeachersPage() {
               <input
                 type="text"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
                 placeholder="Tìm họ tên, mã GV, chuyên môn..."
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 h-10 min-h-[40px] pl-9 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-teal-500"
               />
@@ -336,7 +346,10 @@ export default function AdminTeachersPage() {
 
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
               className="bg-slate-50 border border-slate-200 rounded-xl px-3 h-10 min-h-[40px] text-xs text-slate-900 focus:outline-none focus:border-teal-500 cursor-pointer"
             >
               <option value="">Tất cả trạng thái</option>

@@ -17,7 +17,7 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { VaiTro, TrangThaiLopHoc } from '@prisma/client';
+import { VaiTro, TrangThaiLopHoc, TrinhDoCEFR } from '@prisma/client';
 
 @ApiTags('Classes & Schedules')
 @Controller()
@@ -30,14 +30,18 @@ export class ClassesController {
    * GET /api/v1/classes — UC004 (Tất cả vai trò)
    */
   @Get('classes')
-  @ApiOperation({ summary: 'Danh sách lớp học (lọc theo khóa học, trạng thái)' })
+  @ApiOperation({ summary: 'Danh sách lớp học (lọc theo khóa học, trạng thái, tìm kiếm, chuẩn CEFR)' })
   @ApiQuery({ name: 'khoaHocId', required: false })
   @ApiQuery({ name: 'trangThai', enum: TrangThaiLopHoc, required: false })
+  @ApiQuery({ name: 'search', required: false })
+  @ApiQuery({ name: 'trinhDoCEFR', enum: TrinhDoCEFR, required: false })
   findAll(
     @Query('khoaHocId') khoaHocId?: number,
     @Query('trangThai') trangThai?: TrangThaiLopHoc,
+    @Query('search') search?: string,
+    @Query('trinhDoCEFR') trinhDoCEFR?: TrinhDoCEFR,
   ) {
-    return this.classesService.findAll(khoaHocId ? +khoaHocId : undefined, trangThai);
+    return this.classesService.findAll(khoaHocId ? +khoaHocId : undefined, trangThai, search, trinhDoCEFR);
   }
 
   /**
