@@ -275,6 +275,13 @@ export default function AdminStudentsPage() {
     setShowPasswordText(false);
   };
 
+  const handleCloseResetModal = () => {
+    setResetPasswordTarget(null);
+    setNewPasswordInput('');
+    setResetModalError(null);
+    setShowPasswordText(false);
+  };
+
   const handleConfirmResetPassword = async () => {
     if (!resetPasswordTarget) return;
     const finalPass = newPasswordInput.trim();
@@ -299,8 +306,7 @@ export default function AdminStudentsPage() {
         matKhauMoi: finalPass,
       });
       setMessage(`Đã đặt lại mật khẩu cho học viên ${resetPasswordTarget.hoTen} (${resetPasswordTarget.maHocVien}) thành công!`);
-      setResetPasswordTarget(null);
-      setNewPasswordInput('');
+      handleCloseResetModal();
       fetchStudents();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
@@ -337,7 +343,15 @@ export default function AdminStudentsPage() {
             <div className="relative flex-1 sm:w-64">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
               <input
-                type="text"
+                type="search"
+                name="student-search-query"
+                id="student-search-query"
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck="false"
+                role="searchbox"
+                aria-autocomplete="none"
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
@@ -860,6 +874,9 @@ export default function AdminStudentsPage() {
                     <label className="block text-slate-700 font-bold mb-1">Mật Khẩu Khởi Tạo</label>
                     <input
                       type="password"
+                      name="create-student-initial-password"
+                      id="create-student-initial-password"
+                      autoComplete="new-password"
                       required
                       value={createFormData.matKhau}
                       onChange={(e) => setCreateFormData({ ...createFormData, matKhau: e.target.value.replace(/\s/g, '') })}
@@ -1132,109 +1149,126 @@ export default function AdminStudentsPage() {
         {/* Modal Đặt Lại Mật Khẩu Tùy Chỉnh (Admin Linh Hoạt) */}
         {resetPasswordTarget && (
           <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 z-[70] animate-fadeIn">
-            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl space-y-4 text-slate-800">
-              {/* Header */}
-              <div className="flex justify-between items-start pb-3 border-b border-slate-100">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center shrink-0">
-                    <KeyRound className="w-5 h-5" />
+            <div className="bg-white border border-slate-200 rounded-2xl w-full max-w-md p-5 sm:p-6 shadow-2xl text-slate-800">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleConfirmResetPassword();
+                }}
+                autoComplete="off"
+                className="space-y-4"
+              >
+                {/* Dummy inputs to prevent browser autofill heuristics from hijacking other inputs */}
+                <input type="text" name="fake-username-prevent-autofill" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+                <input type="password" name="fake-password-prevent-autofill" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
+
+                {/* Header */}
+                <div className="flex justify-between items-start pb-3 border-b border-slate-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center shrink-0">
+                      <KeyRound className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-slate-900">
+                        Đặt Lại Mật Khẩu
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Học viên: <span className="font-semibold text-slate-800">{resetPasswordTarget.hoTen}</span> ({resetPasswordTarget.maHocVien})
+                      </p>
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={handleCloseResetModal}
+                    className="text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                {/* Body */}
+                <div className="space-y-3 text-xs">
                   <div>
-                    <h3 className="text-base font-bold text-slate-900">
-                      Đặt Lại Mật Khẩu
-                    </h3>
-                    <p className="text-xs text-slate-500">
-                      Học viên: <span className="font-semibold text-slate-800">{resetPasswordTarget.hoTen}</span> ({resetPasswordTarget.maHocVien})
+                    <label className="block text-slate-700 font-bold mb-1.5">
+                      Mật Khẩu Mới Tùy Chỉnh <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPasswordText ? 'text' : 'password'}
+                        name="new-student-password"
+                        id="new-student-password"
+                        autoComplete="new-password"
+                        data-lpignore="true"
+                        data-form-type="other"
+                        autoFocus
+                        value={newPasswordInput}
+                        onChange={(e) => {
+                          setNewPasswordInput(e.target.value.replace(/\s/g, ''));
+                          setResetModalError(null);
+                        }}
+                        placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..."
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 pr-10 text-xs text-slate-900 font-mono focus:outline-none focus:border-amber-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPasswordText(!showPasswordText)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                      >
+                        {showPasswordText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Nhập mật khẩu tùy ý theo yêu cầu quản trị (tối thiểu 6 ký tự, không chứa khoảng trắng).
+                    </p>
+                  </div>
+
+                  {resetModalError && (
+                    <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center space-x-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
+                      <span>{resetModalError}</span>
+                    </div>
+                  )}
+
+                  <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] space-y-1">
+                    <p className="font-semibold flex items-center gap-1.5">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-600" />
+                      <span>Xác nhận hành động quản trị:</span>
+                    </p>
+                    <p>
+                      Mật khẩu sẽ được cập nhật trực tiếp vào hệ thống. Học viên sẽ sử dụng mật khẩu mới này cho lần đăng nhập tiếp theo.
                     </p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setResetPasswordTarget(null)}
-                  className="text-slate-400 hover:text-slate-700 p-1 cursor-pointer transition"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
 
-              {/* Body */}
-              <div className="space-y-3 text-xs">
-                <div>
-                  <label className="block text-slate-700 font-bold mb-1.5">
-                    Mật Khẩu Mới Tùy Chỉnh <span className="text-rose-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPasswordText ? 'text' : 'password'}
-                      autoFocus
-                      value={newPasswordInput}
-                      onChange={(e) => {
-                        setNewPasswordInput(e.target.value.replace(/\s/g, ''));
-                        setResetModalError(null);
-                      }}
-                      placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 pr-10 text-xs text-slate-900 font-mono focus:outline-none focus:border-amber-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPasswordText(!showPasswordText)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-                    >
-                      {showPasswordText ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                  <p className="text-[11px] text-slate-500 mt-1">
-                    Nhập mật khẩu tùy ý theo yêu cầu quản trị (tối thiểu 6 ký tự, không chứa khoảng trắng).
-                  </p>
+                {/* Footer */}
+                <div className="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={handleCloseResetModal}
+                    disabled={resettingPassword}
+                    className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
+                  >
+                    Hủy
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={resettingPassword || !newPasswordInput.trim()}
+                    className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shadow-sm cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+                  >
+                    {resettingPassword ? (
+                      <>
+                        <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Đang Xử Lý...</span>
+                      </>
+                    ) : (
+                      <>
+                        <KeyRound className="w-3.5 h-3.5" />
+                        <span>Xác Nhận Đặt Lại</span>
+                      </>
+                    )}
+                  </button>
                 </div>
-
-                {resetModalError && (
-                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center space-x-2">
-                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
-                    <span>{resetModalError}</span>
-                  </div>
-                )}
-
-                <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-[11px] space-y-1">
-                  <p className="font-semibold flex items-center gap-1.5">
-                    <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-amber-600" />
-                    <span>Xác nhận hành động quản trị:</span>
-                  </p>
-                  <p>
-                    Mật khẩu sẽ được cập nhật trực tiếp vào hệ thống. Học viên sẽ sử dụng mật khẩu mới này cho lần đăng nhập tiếp theo.
-                  </p>
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div className="flex items-center justify-end space-x-2.5 pt-3 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setResetPasswordTarget(null)}
-                  disabled={resettingPassword}
-                  className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer"
-                >
-                  Hủy
-                </button>
-                <button
-                  type="button"
-                  onClick={handleConfirmResetPassword}
-                  disabled={resettingPassword || !newPasswordInput.trim()}
-                  className="px-5 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition shadow-sm cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
-                >
-                  {resettingPassword ? (
-                    <>
-                      <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Đang Xử Lý...</span>
-                    </>
-                  ) : (
-                    <>
-                      <KeyRound className="w-3.5 h-3.5" />
-                      <span>Xác Nhận Đặt Lại</span>
-                    </>
-                  )}
-                </button>
-              </div>
+              </form>
             </div>
           </div>
         )}

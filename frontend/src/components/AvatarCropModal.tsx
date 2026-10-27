@@ -12,7 +12,6 @@ import {
   Trash2,
   AlertCircle,
   Scissors,
-  Eye,
 } from 'lucide-react';
 import { showConfirm } from './ConfirmDialog';
 
@@ -40,7 +39,6 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [previewDataUrl, setPreviewDataUrl] = useState<string | null>(null);
-  const [showDetailPreview, setShowDetailPreview] = useState<boolean>(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -58,7 +56,6 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
       setPosition({ x: 0, y: 0 });
       setErrorMessage(null);
       setPreviewDataUrl(null);
-      setShowDetailPreview(false);
     }
   }, [isOpen]);
 
@@ -416,8 +413,23 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                 Chọn ảnh khác từ máy tính
               </button>
             </div>
+          ) : currentAvatar ? (
+            /* Khi đã có ảnh đại diện và chưa chọn ảnh mới: Hiển thị ảnh hiện tại ở giữa, không thao tác được */
+            <div className="w-full rounded-3xl p-6 sm:p-8 flex flex-col items-center justify-center space-y-3 bg-slate-50/60 dark:bg-[#0f172a]/60 border border-slate-200/80 dark:border-[#1e2d45] select-none">
+              <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={currentAvatar}
+                  alt={userName || 'Ảnh đại diện hiện tại'}
+                  className="w-48 h-48 sm:w-56 sm:h-56 rounded-3xl object-cover border-4 border-teal-500/40 shadow-xl pointer-events-none select-none"
+                />
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                Ảnh đại diện hiện tại
+              </p>
+            </div>
           ) : (
-            /* Khi chưa chọn ảnh: Khung Dropzone */
+            /* Khi chưa có ảnh đại diện: Khung Dropzone tải ảnh */
             <div
               onClick={() => fileInputRef.current?.click()}
               className="w-full border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-teal-500 dark:hover:border-teal-400 rounded-3xl p-8 flex flex-col items-center justify-center space-y-3 cursor-pointer bg-slate-50/60 dark:bg-[#0f172a]/60 hover:bg-teal-50/20 transition group"
@@ -433,20 +445,6 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                   Hỗ trợ JPG, PNG, WebP, SVG (Dung lượng tối đa 5MB)
                 </p>
               </div>
-
-              {currentAvatar && (
-                <div className="pt-2 text-center pointer-events-none">
-                  <p className="text-[11px] text-slate-400 mb-1.5">
-                    Ảnh hiện tại:
-                  </p>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={currentAvatar}
-                    alt={userName}
-                    className="w-14 h-14 rounded-2xl object-cover border-2 border-teal-500 mx-auto shadow-md"
-                  />
-                </div>
-              )}
             </div>
           )}
 
@@ -489,7 +487,7 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
                   type="button"
                   onClick={handleRemoveAvatar}
                   disabled={loading}
-                  className="px-3 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
+                  className="px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900/60 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer disabled:opacity-50"
                 >
                   <Trash2 className="w-3.5 h-3.5 text-rose-600" />
                   <span>Xóa avatar</span>
@@ -497,58 +495,18 @@ export const AvatarCropModal: React.FC<AvatarCropModalProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => setShowDetailPreview(true)}
-                  className="px-3.5 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/60 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800 text-xs font-bold flex items-center space-x-1.5 transition cursor-pointer ml-auto"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={loading}
+                  className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold flex items-center space-x-1.5 shadow-md shadow-teal-600/20 transition cursor-pointer ml-auto"
                 >
-                  <Eye className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-                  <span>Xem chi tiết </span>
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Tải lên</span>
                 </button>
               </>
             )}
           </div>
         )}
       </div>
-
-      {/* Modal Lightbox Xem Chi Tiết Ảnh Đại Diện */}
-      {showDetailPreview && currentAvatar && (
-        <div
-          className="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 z-[1000] animate-fadeIn"
-          onClick={() => setShowDetailPreview(false)}
-        >
-          <div
-            className="bg-white dark:bg-[#141c2e] border border-slate-200 dark:border-[#1e2d45] rounded-3xl max-w-[95vw] sm:max-w-2xl max-h-[92vh] flex flex-col shadow-2xl text-slate-800 dark:text-slate-100 overflow-hidden animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header: Chỉ có tiêu đề và nút X */}
-            <div className="flex justify-between items-center px-4 py-3 sm:px-5 sm:py-3.5 border-b border-slate-100 dark:border-slate-800 shrink-0">
-              <div className="flex items-center space-x-2">
-                <Eye className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                  Chi Tiết Ảnh Đại Diện
-                </h4>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowDetailPreview(false)}
-                className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
-                title="Đóng (X)"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            {/* Hiển thị ảnh ở kích thước chuẩn của file, rõ nét, không thông tin khác */}
-            <div className="p-3 sm:p-5 flex items-center justify-center overflow-auto bg-slate-50/60 dark:bg-[#0a0f1d]/60">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={currentAvatar}
-                alt="Chi tiết ảnh đại diện"
-                className="max-h-[75vh] max-w-full rounded-2xl object-contain shadow-md"
-              />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
