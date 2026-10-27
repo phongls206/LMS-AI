@@ -573,7 +573,7 @@ export default function StudentAiPracticePage() {
               </div>
               <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
                 <span
-                  className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${result.mode === 'CURRICULUM_BANK'
+                  className={`text-xs font-bold px-3 py-1.5 min-h-[34px] flex items-center rounded-lg border shadow-xs ${result.mode === 'CURRICULUM_BANK'
                       ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800'
                       : result.mode === 'AI_COMMUNITY_CACHE'
                         ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800'
@@ -593,7 +593,7 @@ export default function StudentAiPracticePage() {
                 <button
                   type="button"
                   onClick={() => setPrintExamData(result.data)}
-                  className="px-2.5 py-1 min-h-[34px] rounded-lg bg-white dark:bg-[#162032] hover:bg-slate-50 dark:hover:bg-[#1e2d45] text-teal-800 dark:text-teal-300 text-[11px] font-bold flex items-center space-x-1 border border-teal-200 dark:border-teal-800 transition cursor-pointer shadow-xs"
+                  className="px-3 py-1.5 min-h-[34px] rounded-lg bg-white dark:bg-[#162032] hover:bg-slate-50 dark:hover:bg-[#1e2d45] text-teal-800 dark:text-teal-300 text-xs font-bold flex items-center space-x-1.5 border border-teal-200 dark:border-teal-800 transition cursor-pointer shadow-xs"
                   title="In phiếu bài tập ra giấy A4 hoặc lưu file PDF để tự ôn luyện"
                 >
                   <Printer className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />

@@ -592,7 +592,7 @@ export default function TeacherAiExercisesPage() {
                   <span className="sm:hidden">{teacherViewKey ? 'Ẩn Đáp Án' : 'Xem Đáp Án'}</span>
                 </button>
                 <span
-                  className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${result.mode === 'CURRICULUM_BANK'
+                  className={`text-xs font-bold px-3 py-1.5 min-h-[34px] flex items-center rounded-lg border shadow-xs ${result.mode === 'CURRICULUM_BANK'
                       ? 'bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border-blue-300 dark:border-blue-800'
                       : result.mode === 'AI_CACHE' || result.mode === 'AI_COMMUNITY_CACHE'
                         ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800'

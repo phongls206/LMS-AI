@@ -4,502 +4,1439 @@ export const RELATIVE_CLAUSES_BANK: CurriculumTopicBank = {
   key: 'RELATIVE_CLAUSES',
   tenChuDe: 'Mệnh Đề Quan Hệ (Relative Clauses)',
   aliases: [
-    'mệnh đề quan hệ',
-    'menh de quan he',
-    'relative clause',
-    'relative clauses',
-    'who',
-    'whom',
-    'which',
-    'that',
-    'whose',
-    'mđqh',
-  ],
+    "mệnh đề quan hệ",
+    "menh de quan he",
+    "relative clause",
+    "relative clauses",
+    "who",
+    "whom",
+    "whose",
+    "which",
+    "that",
+    "where",
+    "when",
+    "mệnh đề quan hệ rút gọn"
+],
   questions: [
-    // === 15 SINGLE CHOICE ===
     {
-      id: 1,
-      noiDung: 'The teacher __________ conducts the IELTS Masterclass at ETC Center has over ten years of expertise.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'A2',
-      luaChon: { A: 'who', B: 'which', C: 'whom', D: 'whose' },
-      dapAnDung: 'A',
-      giaiThich: '"Who" làm chủ ngữ thay thế cho danh từ chỉ người ("The teacher").',
+        "id": 1,
+        "noiDung": "The boy __________ sits next to me in class is very friendly.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "who",
+            "B": "which",
+            "C": "where",
+            "D": "whose"
+        },
+        "dapAnDung": "who",
+        "giaiThich": "Dùng \"who\" làm đại từ quan hệ thay thế cho người (\"the boy\")."
     },
     {
-      id: 2,
-      noiDung: 'The academic textbook __________ I borrowed from the central library contains comprehensive grammar exercises.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'A2',
-      luaChon: { A: 'who', B: 'which', C: 'whom', D: 'whose' },
-      dapAnDung: 'B',
-      giaiThich: '"Which" thay thế cho danh từ chỉ vật ("The academic textbook").',
+        "id": 2,
+        "noiDung": "I bought a new book __________ has a bright blue cover.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "which",
+            "B": "who",
+            "C": "where",
+            "D": "whom"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "Dùng \"which\" làm đại từ quan hệ thay thế cho đồ vật (\"a new book\")."
     },
     {
-      id: 3,
-      noiDung: 'That is the diligent student __________ research paper was published in an international journal.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'who', B: 'whom', C: 'whose', D: 'that' },
-      dapAnDung: 'C',
-      giaiThich: '"Whose" chỉ quan hệ sở hữu đối với danh từ đứng sau ("whose research paper" = the student\'s research paper).',
+        "id": 3,
+        "noiDung": "The girl __________ won the singing competition is my sister.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "who",
+            "B": "which",
+            "C": "where",
+            "D": "when"
+        },
+        "dapAnDung": "who",
+        "giaiThich": "\"Who\" thay thế cho danh từ chỉ người đóng vai trò chủ ngữ."
     },
     {
-      id: 4,
-      noiDung: 'The technology company __________ my brother works as a senior architect provides excellent perks.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'where', B: 'which', C: 'that', D: 'when' },
-      dapAnDung: 'A',
-      giaiThich: '"Where" là trạng từ quan hệ thay thế cho nơi chốn (= at which / in which).',
+        "id": 4,
+        "noiDung": "This is the cat __________ lives in our garden.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "which",
+            "B": "who",
+            "C": "whom",
+            "D": "where"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "Dùng \"which\" thay thế cho động vật (\"the cat\")."
     },
     {
-      id: 5,
-      noiDung: 'Mr. David, __________ you met at the educational exhibition yesterday, is our academic director.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'whom', B: 'which', C: 'whose', D: 'that' },
-      dapAnDung: 'A',
-      giaiThich: '"Whom" làm tân ngữ chỉ người trong mệnh đề quan hệ không xác định (sau dấu phẩy không dùng "that").',
+        "id": 5,
+        "noiDung": "The doctor __________ helped my grandmother was very gentle.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "who",
+            "B": "which",
+            "C": "whose",
+            "D": "where"
+        },
+        "dapAnDung": "who",
+        "giaiThich": "\"Who\" thay thế cho \"the doctor\" (người)."
     },
     {
-      id: 6,
-      noiDung: '2020 was the unforgettable year __________ the global pandemic disrupted educational institutions worldwide.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'when', B: 'where', C: 'which', D: 'why' },
-      dapAnDung: 'A',
-      giaiThich: '"When" là trạng từ quan hệ thay thế cho từ chỉ thời gian ("the unforgettable year").',
+        "id": 6,
+        "noiDung": "Look at the red car __________ is parked in front of our house.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "which",
+            "B": "who",
+            "C": "where",
+            "D": "whose"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"Which\" thay thế cho phương tiện/đồ vật (\"the red car\")."
     },
     {
-      id: 7,
-      noiDung: 'The reason __________ he decided to withdraw from the competition remains confidential.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'why', B: 'where', C: 'when', D: 'which' },
-      dapAnDung: 'A',
-      giaiThich: '"Why" là trạng từ quan hệ chỉ lý do, thường đi liền sau "the reason".',
+        "id": 7,
+        "noiDung": "The teacher __________ teaches us English comes from Canada.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "who",
+            "B": "which",
+            "C": "where",
+            "D": "whom"
+        },
+        "dapAnDung": "who",
+        "giaiThich": "\"Who\" làm chủ ngữ chỉ người (\"The teacher\")."
     },
     {
-      id: 8,
-      noiDung: 'All students __________ have registered for the mock test must arrive 15 minutes before start time.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'A2',
-      luaChon: { A: 'who', B: 'which', C: 'whose', D: 'whom' },
-      dapAnDung: 'A',
-      giaiThich: '"Who" làm chủ ngữ chỉ người cho "All students".',
+        "id": 8,
+        "noiDung": "We visited a small museum __________ displays ancient coins.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "which",
+            "B": "who",
+            "C": "where",
+            "D": "whom"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"Which\" thay cho đồ vật/bảo tàng làm chủ ngữ cho động từ displays."
     },
     {
-      id: 9,
-      noiDung: 'The presentation, __________ lasted nearly two hours, was extremely informative.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'which', B: 'that', C: 'what', D: 'who' },
-      dapAnDung: 'A',
-      giaiThich: 'Trong mệnh đề quan hệ không xác định (có dấu phẩy), chỉ dùng "which", tuyệt đối không dùng "that".',
+        "id": 9,
+        "noiDung": "The children __________ are playing in the schoolyard look happy.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "who",
+            "B": "which",
+            "C": "where",
+            "D": "whose"
+        },
+        "dapAnDung": "who",
+        "giaiThich": "\"Who\" chỉ người số nhiều (\"The children\")."
     },
     {
-      id: 10,
-      noiDung: 'The candidate with __________ I had an interview this morning demonstrated remarkable analytical skills.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B2',
-      luaChon: { A: 'whom', B: 'who', C: 'that', D: 'which' },
-      dapAnDung: 'A',
-      giaiThich: 'Sau giới từ ("with"), đại từ quan hệ chỉ người bắt buộc phải là "whom", không được dùng "who" hay "that".',
+        "id": 10,
+        "noiDung": "I lost the pencil case __________ my mother gave me yesterday.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "which",
+            "B": "who",
+            "C": "where",
+            "D": "whom"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"Which\" thay cho đồ vật (\"the pencil case\")."
     },
     {
-      id: 11,
-      noiDung: 'The building in __________ our language department is situated was erected in 1985.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B2',
-      luaChon: { A: 'which', B: 'where', C: 'that', D: 'whose' },
-      dapAnDung: 'A',
-      giaiThich: 'Sau giới từ ("in"), đại từ quan hệ chỉ vật bắt buộc là "which" ("in which" = where).',
+        "id": 11,
+        "noiDung": "The relative pronoun \"who\" is used to refer to people.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"Who\" dùng để thay thế cho danh từ chỉ người."
     },
     {
-      id: 12,
-      noiDung: 'She has two daughters, both of __________ have achieved master degrees in applied linguistics.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B2',
-      luaChon: { A: 'whom', B: 'who', C: 'them', D: 'which' },
-      dapAnDung: 'A',
-      giaiThich: 'Cấu trúc lượng từ đi với mệnh đề quan hệ: "both of whom", "all of whom", "neither of whom".',
+        "id": 12,
+        "noiDung": "The relative pronoun \"which\" is used to refer to people in standard English.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. \"Which\" chỉ dùng cho đồ vật hoặc con vật, không dùng cho người."
     },
     {
-      id: 13,
-      noiDung: 'The boy __________ injured in the bicycle accident was promptly rushed to the emergency room.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'who was', B: 'whom was', C: 'which was', D: 'whose was' },
-      dapAnDung: 'A',
-      giaiThich: '"who was injured" là mệnh đề quan hệ đầy đủ ở dạng bị động chỉ người.',
+        "id": 13,
+        "noiDung": "In basic English, \"that\" can often replace \"who\" or \"which\" in defining relative clauses.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"That\" có thể thay thế cho cả người và vật trong mệnh đề xác định."
     },
     {
-      id: 14,
-      noiDung: 'He failed his driving test three consecutive times, __________ surprised none of his close friends.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B2',
-      luaChon: { A: 'which', B: 'that', C: 'what', D: 'who' },
-      dapAnDung: 'A',
-      giaiThich: '"Which" đứng sau dấu phẩy có thể thay thế cho toàn bộ nội dung của mệnh đề đứng trước nó.',
+        "id": 14,
+        "noiDung": "The word \"where\" is used as a relative adverb to refer to a place.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"Where\" thay thế cho danh từ chỉ nơi chốn."
     },
     {
-      id: 15,
-      noiDung: 'Is that the best documentary __________ you have ever watched about ocean ecosystems?',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'that', B: 'which', C: 'what', D: 'who' },
-      dapAnDung: 'A',
-      giaiThich: 'Sau dạng so sánh nhất ("the best documentary"), ta ưu tiên dùng "that" làm đại từ quan hệ.',
-    },
-
-    // === 15 TRUE / FALSE ===
-    {
-      id: 16,
-      noiDung: 'In non-defining relative clauses (separated by commas), the relative pronoun "that" cannot be used.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. "That" không bao giờ được đứng sau dấu phẩy trong mệnh đề quan hệ không xác định.',
+        "id": 15,
+        "noiDung": "We must use \"which\" when referring to a doctor or a teacher.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Bác sĩ và giáo viên là người nên phải dùng \"who\" hoặc \"that\"."
     },
     {
-      id: 17,
-      noiDung: 'When a relative pronoun functions as the object of a defining relative clause, it can be safely omitted.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Đại từ quan hệ làm tân ngữ trong mệnh đề xác định có thể lược bỏ (vd: The book [which] I bought).',
+        "id": 16,
+        "noiDung": "Relative clauses give additional information about a preceding noun.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Mệnh đề quan hệ bổ nghĩa và làm rõ nghĩa cho danh từ đứng trước."
     },
     {
-      id: 18,
-      noiDung: 'A preposition can be placed directly before the relative pronoun "that" (e.g., "the house in that I live").',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. Tuyệt đối không đặt giới từ trước "that" (phải dùng "in which", hoặc để giới từ ở cuối: "that I live in").',
+        "id": 17,
+        "noiDung": "Select all sentences where \"who\" is used correctly for people: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "The boy who won the race is my friend.",
+            "B": "The woman who lives next door is kind.",
+            "C": "The book who I bought is cheap.",
+            "D": "The doctor who treated me was skilled."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D dùng \"who\" cho người. C sai vì sách là đồ vật."
     },
     {
-      id: 19,
-      noiDung: '"Whose" can be used to indicate possession for both people and inanimate objects/organizations.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. "Whose" có thể chỉ sở hữu cho người (whose son) lẫn vật/tổ chức (a company whose products...).',
+        "id": 18,
+        "noiDung": "Which sentences correctly use \"which\" for things or animals? (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "The phone which is on the table is mine.",
+            "B": "The dog which barked at night was loud.",
+            "C": "The movie which we saw was exciting.",
+            "D": "The man which called you is outside."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "A, B, C đúng. D sai vì \"the man\" là người."
     },
     {
-      id: 20,
-      noiDung: 'Non-defining relative clauses provide essential information needed to identify the noun being referred to.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. Mệnh đề KHÔNG xác định (non-defining) chỉ cung cấp thông tin phụ bổ sung, lược bỏ đi câu vẫn đủ nghĩa.',
+        "id": 19,
+        "noiDung": "Select all relative pronouns used in English: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "who",
+            "B": "which",
+            "C": "where",
+            "D": "because"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "Who, which, where là đại từ/trạng từ quan hệ. Because là liên từ chỉ nguyên nhân."
     },
     {
-      id: 21,
-      noiDung: 'The relative pronoun "which" can refer back to an entire preceding clause or sentence.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Sau dấu phẩy, "which" có thể thay thế cho toàn bộ sự việc nêu ở mệnh đề trước đó.',
+        "id": 20,
+        "noiDung": "Identify all sentences with grammatically correct basic relative clauses: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "The student who answered first got a gift.",
+            "B": "The watch which I wear is waterproof.",
+            "C": "The girl which sang well won the prize.",
+            "D": "The bicycle which he rides is green."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D đúng. C sai khi dùng \"which\" cho \"the girl\"."
     },
     {
-      id: 22,
-      noiDung: 'Reduced relative clauses using present participles (-ing) can only replace passive verb forms.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. V-ing dùng rút gọn mệnh đề mang nghĩa CHỦ ĐỘNG (vd: the man sitting there = who is sitting there). Bị động dùng V3/ed.',
+        "id": 21,
+        "noiDung": "This is the restaurant __________ we had our anniversary dinner last month.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "where",
+            "B": "which",
+            "C": "who",
+            "D": "whose"
+        },
+        "dapAnDung": "where",
+        "giaiThich": "\"Where\" thay thế cho nơi chốn (tại nhà hàng đó)."
     },
     {
-      id: 23,
-      noiDung: 'The adverb "where" is equivalent to preposition + "which" (e.g., "the city where I was born" = "the city in which I was born").',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'A2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. "Where" tương đương với "in/at/on which" chỉ nơi chốn.',
+        "id": 22,
+        "noiDung": "I will always remember the sunny day __________ we first arrived in Paris.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "when",
+            "B": "where",
+            "C": "which",
+            "D": "who"
+        },
+        "dapAnDung": "when",
+        "giaiThich": "\"When\" làm trạng từ quan hệ chỉ thời gian."
     },
     {
-      id: 24,
-      noiDung: 'The sentence "He is the man who I talked to him yesterday" is grammatically redundant and incorrect.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Lỗi thừa tân ngữ "him" (vì "who" đã thay thế cho "the man"). Câu đúng: "He is the man who I talked to yesterday".',
+        "id": 23,
+        "noiDung": "The student __________ backpack was left on the bus came to retrieve it.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "whose",
+            "B": "who",
+            "C": "whom",
+            "D": "which"
+        },
+        "dapAnDung": "whose",
+        "giaiThich": "\"Whose\" chỉ sở hữu (\"chiếc ba lô của học sinh đó\")."
     },
     {
-      id: 25,
-      noiDung: '"What" can be used as a standard relative pronoun with an explicit antecedent noun (e.g., "The movie what I saw").',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. "What" mang nghĩa "the thing that", không đi sau danh từ tiền ngữ xác định (không nói "The movie what I saw").',
+        "id": 24,
+        "noiDung": "The laptop __________ I bought online has a very long battery life.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "which",
+            "B": "who",
+            "C": "where",
+            "D": "whose"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"Which\" làm tân ngữ thay cho \"The laptop\"."
     },
     {
-      id: 26,
-      noiDung: 'After superlative adjectives (the most, the best), "that" is preferred over "which".',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Sau cấu trúc so sánh nhất hoặc các từ all, everything, nothing..., người ta ưu tiên dùng "that".',
+        "id": 25,
+        "noiDung": "Do you know the woman __________ is talking to our principal right now?",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "who",
+            "B": "whom",
+            "C": "which",
+            "D": "whose"
+        },
+        "dapAnDung": "who",
+        "giaiThich": "\"Who\" làm chủ ngữ chỉ người cho động từ \"is talking\"."
     },
     {
-      id: 27,
-      noiDung: 'In "The student who won first prize received a trophy", "who won first prize" is a defining relative clause.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'A2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Mệnh đề này không có dấu phẩy và làm rõ đối tượng học sinh nào nên là mệnh đề quan hệ xác định.',
+        "id": 26,
+        "noiDung": "We stayed at a cozy hotel __________ had an indoor heated pool.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "which",
+            "B": "where",
+            "C": "who",
+            "D": "when"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"Which\" làm chủ ngữ thay cho \"hotel\" (chú ý: sau đó là động từ \"had\")."
     },
     {
-      id: 28,
-      noiDung: 'Relative pronouns when acting as subject can be omitted freely in standard English.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'A2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. Đại từ quan hệ làm CHỦ NGỮ không được lược bỏ (chỉ được rút gọn thành cụm V-ing hoặc V3/ed).',
+        "id": 27,
+        "noiDung": "Summer is the season __________ tourists flock to the coastal beaches.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "when",
+            "B": "where",
+            "C": "which",
+            "D": "who"
+        },
+        "dapAnDung": "when",
+        "giaiThich": "\"When\" thay thế cho thời điểm mùa hè."
     },
     {
-      id: 29,
-      noiDung: 'Expressions of quantity such as "many of which", "none of whom" are frequently used in non-defining clauses.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Các cụm lượng từ kết hợp đại từ quan hệ (some of which, all of whom) rất phổ biến trong văn phong học thuật.',
+        "id": 28,
+        "noiDung": "The architect __________ designed this modern library won an award.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "who",
+            "B": "which",
+            "C": "where",
+            "D": "whose"
+        },
+        "dapAnDung": "who",
+        "giaiThich": "\"Who\" thay thế cho \"The architect\" (người)."
     },
     {
-      id: 30,
-      noiDung: 'The word "whose" must be immediately followed by a noun without an article (e.g., "whose book", not "whose a book").',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Sau "whose" là danh từ không kèm mạo từ a/an/the.',
-    },
-
-    // === 15 MULTIPLE CHOICE ===
-    {
-      id: 31,
-      noiDung: 'In which of the following sentences can the relative pronoun be safely omitted? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'The smartphone which I purchased last week is defective.',
-        B: 'The professor who delivered the keynote speech is famous.',
-        C: 'The documentary that we watched last night won an award.',
-        D: 'The girl who lives next door plays the piano.',
-      },
-      dapAnDung: ['A', 'C'],
-      giaiThich: 'Ở câu A và C, đại từ quan hệ đóng vai trò tân ngữ (I purchased, we watched) nên có thể lược bỏ. Ở B và D làm chủ ngữ nên không được bỏ.',
+        "id": 29,
+        "noiDung": "This is the town __________ famous singer Taylor Swift was born.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "where",
+            "B": "which",
+            "C": "who",
+            "D": "whose"
+        },
+        "dapAnDung": "where",
+        "giaiThich": "\"Where\" chỉ nơi chốn sinh ra."
     },
     {
-      id: 32,
-      noiDung: 'Which of the following sentences use non-defining relative clauses correctly with punctuation? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'My father, who is a retired civil engineer, loves gardening.',
-        B: 'Paris, which is the capital of France, attracts millions of tourists.',
-        C: 'My father that is a retired engineer loves gardening.',
-        D: 'London which is situated on the River Thames is very old.',
-      },
-      dapAnDung: ['A', 'B'],
-      giaiThich: 'A và B dùng dấu phẩy và đại từ (who, which) chuẩn. C sai vì dùng "that" cho tên riêng/danh từ xác định. D sai vì thiếu dấu phẩy quanh "London".',
+        "id": 30,
+        "noiDung": "The musician __________ guitar was damaged received a replacement.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "whose",
+            "B": "who",
+            "C": "whom",
+            "D": "which"
+        },
+        "dapAnDung": "whose",
+        "giaiThich": "\"Whose\" chỉ sở hữu cây đàn của nhạc công."
     },
     {
-      id: 33,
-      noiDung: 'Select all grammatically correct sentences that use prepositions with relative pronouns: (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'The topic about which they argued was rather trivial.',
-        B: 'The client to whom she sent the proposal responded promptly.',
-        C: 'The topic about that they argued was rather trivial.',
-        D: 'The girl who I was speaking to is my cousin.',
-      },
-      dapAnDung: ['A', 'B', 'D'],
-      giaiThich: 'A (about which), B (to whom), D (who... to) đều chuẩn. C sai vì không bao giờ đặt giới từ trước "that".',
+        "id": 31,
+        "noiDung": "\"Where\" cannot be used when the relative pronoun is the subject of the clause (e.g., \"the hotel which has a pool\").",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Nếu phía sau là động từ trực tiếp thì phải dùng \"which/that\", không dùng \"where\"."
     },
     {
-      id: 34,
-      noiDung: 'Which relative pronouns can refer exclusively to persons? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'A2',
-      luaChon: {
-        A: 'Who',
-        B: 'Whom',
-        C: 'Which',
-        D: 'Where',
-      },
-      dapAnDung: ['A', 'B'],
-      giaiThich: '"Who" và "Whom" chỉ dùng cho người. "Which" dùng cho vật, "Where" dùng cho nơi chốn.',
+        "id": 32,
+        "noiDung": "\"Whose\" is used only for people and can never be used for organizations or countries.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Trong tiếng Anh, \"whose\" có thể dùng chỉ sở hữu cho cả tổ chức, công ty và quốc gia."
     },
     {
-      id: 35,
-      noiDung: 'Which of the following sentences demonstrate correct participle reduction of relative clauses? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'The boy sitting in the front row is very attentive. (= who is sitting)',
-        B: 'The scientific article published yesterday created a buzz. (= which was published)',
-        C: 'The car stolen last night was found abandoned.',
-        D: 'The girl worn a red dress sang beautifully.',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'A (chủ động -> V-ing), B và C (bị động -> V3/ed) đều rút gọn chính xác. D sai vì chủ động phải dùng "wearing", không dùng "worn".',
+        "id": 33,
+        "noiDung": "In defining relative clauses, the relative pronoun can be omitted when it functions as an object.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Khi đại từ quan hệ làm tân ngữ (the book [that] I read), có thể lược bỏ đại từ."
     },
     {
-      id: 36,
-      noiDung: 'Identify all sentences containing a grammatical mistake: (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'The woman whom dog barked all night apologized to us.',
-        B: 'The company whose headquarters is in Tokyo is expanding.',
-        C: 'The house where I lived in was demolished.',
-        D: 'He is the author whose novel became a global bestseller.',
-      },
-      dapAnDung: ['A', 'C'],
-      giaiThich: 'A sai vì phải dùng từ chỉ sở hữu "whose dog", không dùng "whom". C sai lỗi thừa giới từ "in" khi đã có "where" (phải là "where I lived" hoặc "which I lived in").',
+        "id": 34,
+        "noiDung": "\"When\" is used to refer to a time or date in relative clauses.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"When\" thay thế cho danh từ chỉ thời gian."
     },
     {
-      id: 37,
-      noiDung: 'Which of the following phrases typically prompt the use of "that" rather than "which"? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'All that glitters is not gold.',
-        B: 'Everything that he stated was true.',
-        C: 'The first person that arrived got a reward.',
-        D: 'My sister, that lives in Sydney, is a nurse.',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'Sau All, Everything, The first... ưu tiên dùng "that". D sai vì sau dấu phẩy không dùng "that".',
+        "id": 35,
+        "noiDung": "A comma is always required before \"that\" in a defining relative clause.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Tuyệt đối không dùng dấu phẩy trước \"that\" trong mệnh đề quan hệ xác định."
     },
     {
-      id: 38,
-      noiDung: 'Which relative adverbs replace prepositional phrases? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'Where (= in/at which)',
-        B: 'When (= on/in which)',
-        C: 'Why (= for which)',
-        D: 'Who (= of which)',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'Where, When, Why là 3 trạng từ quan hệ tương đương với các cụm giới từ chỉ nơi chốn, thời gian, lý do.',
+        "id": 36,
+        "noiDung": "\"Whose\" is followed immediately by a noun without an article.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Sau \"whose\" là danh từ không có mạo từ (whose car, whose father)."
     },
     {
-      id: 39,
-      noiDung: 'Select all sentences where "which" correctly refers to the entire main clause: (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'He always arrives twenty minutes late, which irritates his colleagues.',
-        B: 'She passed the difficult medical exam on her first attempt, which made her parents proud.',
-        C: 'The laptop which is black belongs to Peter.',
-        D: 'The flights were all cancelled due to snow, which created complete airport chaos.',
-      },
-      dapAnDung: ['A', 'B', 'D'],
-      giaiThich: 'A, B, D dùng "which" sau dấu phẩy để bổ nghĩa cho toàn bộ sự việc ở vế trước. C là mệnh đề hạn định bổ nghĩa cho danh từ "laptop".',
+        "id": 37,
+        "noiDung": "Select all sentences where the relative pronoun can be omitted: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "The movie that we watched was great. (Object)",
+            "B": "The email which you sent arrived safely. (Object)",
+            "C": "The man who lives next door is loud. (Subject)",
+            "D": "The guitar which he plays belongs to his father. (Object)"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D làm tân ngữ nên có thể lược bỏ. C làm chủ ngữ không thể bỏ."
     },
     {
-      id: 40,
-      noiDung: 'Which sentences show correct usage of quantity expressions in relative clauses? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'We interviewed twenty candidates, none of whom had relevant experience.',
-        B: 'She bought five vintage dresses, all of which were made of silk.',
-        C: 'They tested two prototypes, both of them failed the stress test.',
-        D: 'He presented three proposals, neither of which was accepted.',
-      },
-      dapAnDung: ['A', 'B'],
-      giaiThich: 'A (none of whom) và B (all of which) nối 2 mệnh đề chuẩn. C sai lỗi run-on sentence (phải dùng "both of which", không dùng "both of them" nối bằng dấu phẩy). D sai vì "neither" chỉ dùng cho 2 đối tượng, không dùng cho 3 (phải là "none of which").',
+        "id": 38,
+        "noiDung": "Which sentences correctly use \"whose\" to express possession? (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "The girl whose phone was stolen called the police.",
+            "B": "A widow is a woman whose husband has passed away.",
+            "C": "We visited a castle whose walls were built in 1200.",
+            "D": "The man whose is standing there is my uncle."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "A, B, C đúng. D sai ngữ pháp vì sau whose phải là danh từ, không phải động từ \"is\"."
     },
     {
-      id: 41,
-      noiDung: 'Which sentences correctly reduce a relative clause with to-infinitive? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'Neil Armstrong was the first man to walk on the moon. (= who walked)',
-        B: 'She is the youngest athlete to win an Olympic medal.',
-        C: 'Here is an application form for you to fill in.',
-        D: 'The man to drive that sports car is my uncle.',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'Sau "the first", "the youngest" hoặc để chỉ mục đích, mệnh đề quan hệ rút gọn bằng to-V (A, B, C). D diễn đạt không tự nhiên.',
+        "id": 39,
+        "noiDung": "Select all sentences correctly using \"where\" for location: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "The cafe where we met was quiet.",
+            "B": "This is the school where my father studied.",
+            "C": "The building where was destroyed has been rebuilt.",
+            "D": "The park where children play is safe."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D đúng. C sai vì sau \"where\" phải là một mệnh đề (S + V), nếu là động từ \"was\" thì phải dùng \"which\"."
     },
     {
-      id: 42,
-      noiDung: 'Select all defining relative clauses where "that" can replace "who" or "which": (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'A2',
-      luaChon: {
-        A: 'The technician who repaired my computer is very skilled. -> ...technician that repaired...',
-        B: 'The book which is lying on the shelf belongs to Anna. -> ...book that is lying...',
-        C: 'Dr. John, who is a surgeon, works at City Hospital. -> Dr. John, that is a surgeon...',
-        D: 'The company which produces solar panels won an eco award. -> ...company that produces...',
-      },
-      dapAnDung: ['A', 'B', 'D'],
-      giaiThich: 'Trong mệnh đề quan hệ xác định, "that" có thể thay thế cho cả "who" và "which" (A, B, D). C là mệnh đề không xác định có dấu phẩy nên không được thay bằng "that".',
+        "id": 40,
+        "noiDung": "Identify all grammatically sound relative clauses: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "1969 was the year when humans first walked on the Moon.",
+            "B": "The author whose novels I love is visiting our city.",
+            "C": "The hotel that we stayed had no heating.",
+            "D": "The hotel where we stayed was luxurious."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D đúng. C thiếu giới từ \"in\" (stayed at/in) hoặc phải dùng \"where\"."
     },
     {
-      id: 43,
-      noiDung: 'Which sentences contain a contact clause (relative clause with the pronoun omitted)? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'The delicious meal we prepared yesterday received great compliments.',
-        B: 'The girl sitting over there looks very familiar.',
-        C: 'This is the exact hotel they recommended to us.',
-        D: 'The song that she sang went viral on social media.',
-      },
-      dapAnDung: ['A', 'C'],
-      giaiThich: 'A (meal [which] we prepared) và C (hotel [that] they recommended) là các contact clause có đại từ quan hệ được lược bỏ.',
+        "id": 41,
+        "noiDung": "Dr. Henderson, __________ research paper won international acclaim, will speak at our seminar.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "whose",
+            "B": "who",
+            "C": "whom",
+            "D": "which"
+        },
+        "dapAnDung": "whose",
+        "giaiThich": "\"Whose\" chỉ quan hệ sở hữu đối với bài nghiên cứu của Dr. Henderson."
     },
     {
-      id: 44,
-      noiDung: 'Select all sentences correctly demonstrating "whose" indicating possession: (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'I spoke with a woman whose luggage had been misplaced at the terminal.',
-        B: 'We visited an ancient castle whose walls were built in the 12th century.',
-        C: 'Who\'s laptop is left in the conference room?',
-        D: 'The author whose biography was published last month is visiting our town.',
-      },
-      dapAnDung: ['A', 'B', 'D'],
-      giaiThich: 'A, B, D dùng "whose" chỉ sở hữu chuẩn. C sai vì "Who\'s" là viết tắt của "Who is" hoặc "Who has", không phải tính từ sở hữu.',
+        "id": 42,
+        "noiDung": "Mr. Davis, __________ you interviewed yesterday afternoon, has accepted our employment offer.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "whom",
+            "B": "which",
+            "C": "whose",
+            "D": "where"
+        },
+        "dapAnDung": "whom",
+        "giaiThich": "\"Whom\" làm tân ngữ chỉ người trong mệnh đề không xác định trang trọng."
     },
     {
-      id: 45,
-      noiDung: 'Which of the following demonstrate correct subject-verb agreement inside a relative clause? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'She is one of those talented writers who create unforgettable stories.',
-        B: 'He is the only one of the applicants who has passed the technical test.',
-        C: 'The students who was absent yesterday must submit their doctor notes.',
-        D: 'The equipment that were imported from Germany functions reliably.',
-      },
-      dapAnDung: ['A', 'B'],
-      giaiThich: 'A đúng ("those writers who create"). B đúng ("the only one... who has passed"). C sai ("students who was" -> were). D sai ("equipment" không đếm được -> was imported).',
+        "id": 43,
+        "noiDung": "The Nile River, __________ flows through northeastern Africa, is one of the world's longest rivers.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "which",
+            "B": "that",
+            "C": "where",
+            "D": "who"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "Mệnh đề quan hệ không xác định (có dấu phẩy) chỉ dùng \"which\", không dùng \"that\"."
     },
-  ],
+    {
+        "id": 44,
+        "noiDung": "My elder brother, __________ works as a civil engineer in Tokyo, is visiting us next weekend.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "who",
+            "B": "that",
+            "C": "whom",
+            "D": "which"
+        },
+        "dapAnDung": "who",
+        "giaiThich": "Mệnh đề không xác định chỉ người có dấu phẩy dùng \"who\" (không dùng \"that\")."
+    },
+    {
+        "id": 45,
+        "noiDung": "The university from __________ she graduated has a stellar international reputation.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "which",
+            "B": "that",
+            "C": "where",
+            "D": "whom"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "Sau giới từ (\"from\") chỉ vật bắt buộc dùng \"which\", không dùng \"that\"."
+    },
+    {
+        "id": 46,
+        "noiDung": "The candidate to __________ the committee awarded the scholarship expressed deep gratitude.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "whom",
+            "B": "who",
+            "C": "that",
+            "D": "whose"
+        },
+        "dapAnDung": "whom",
+        "giaiThich": "Sau giới từ (\"to\") chỉ người bắt buộc dùng \"whom\"."
+    },
+    {
+        "id": 47,
+        "noiDung": "She showed us her newly renovated apartment, __________ balcony overlooked the scenic central park.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "whose",
+            "B": "which",
+            "C": "that",
+            "D": "where"
+        },
+        "dapAnDung": "whose",
+        "giaiThich": "\"Whose balcony\" chỉ ban công của căn hộ."
+    },
+    {
+        "id": 48,
+        "noiDung": "We visited Stratford-upon-Avon, __________ William Shakespeare was born and raised.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "where",
+            "B": "which",
+            "C": "that",
+            "D": "when"
+        },
+        "dapAnDung": "where",
+        "giaiThich": "\"Where\" làm trạng từ quan hệ trong mệnh đề không xác định chỉ nơi chốn."
+    },
+    {
+        "id": 49,
+        "noiDung": "The historic painting, __________ had been restored diligently, was put on public display.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "which",
+            "B": "that",
+            "C": "what",
+            "D": "whose"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "Mệnh đề không xác định giữa 2 dấu phẩy thay cho bức tranh: dùng \"which\"."
+    },
+    {
+        "id": 50,
+        "noiDung": "The team manager with __________ I communicated confirmed all logistics.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "whom",
+            "B": "who",
+            "C": "which",
+            "D": "whose"
+        },
+        "dapAnDung": "whom",
+        "giaiThich": "Sau giới từ \"with\" chỉ người dùng \"whom\"."
+    },
+    {
+        "id": 51,
+        "noiDung": "In non-defining relative clauses (separated by commas), \"that\" cannot be used to replace \"which\" or \"who\".",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Tuyệt đối không dùng \"that\" trong mệnh đề không xác định có dấu phẩy."
+    },
+    {
+        "id": 52,
+        "noiDung": "After a preposition (e.g., \"to\", \"with\", \"from\"), we can use \"that\" as a relative pronoun.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Sau giới từ chỉ được dùng \"whom\" (cho người) hoặc \"which\" (cho vật), không dùng \"that\"."
+    },
+    {
+        "id": 53,
+        "noiDung": "Non-defining relative clauses provide essential information without which the sentence loses its core meaning.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Mệnh đề không xác định chỉ cung cấp thông tin bổ sung, lược bỏ đi câu vẫn trọn vẹn nghĩa."
+    },
+    {
+        "id": 54,
+        "noiDung": "\"Whom\" is used primarily as an object pronoun in formal English.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"Whom\" làm tân ngữ chỉ người trong văn phong trang trọng."
+    },
+    {
+        "id": 55,
+        "noiDung": "We can omit the relative pronoun in non-defining relative clauses.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Trong mệnh đề không xác định, không bao giờ được lược bỏ đại từ quan hệ."
+    },
+    {
+        "id": 56,
+        "noiDung": "The preposition can be placed either before the relative pronoun (formal) or at the end of the clause (informal).",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"The man to whom I spoke\" (trang trọng) = \"The man who I spoke to\" (thông tục)."
+    },
+    {
+        "id": 57,
+        "noiDung": "Select all sentences where \"that\" CANNOT be used: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "My mother, who loves gardening, planted roses.",
+            "B": "The house in which I was born is old.",
+            "C": "Paris, which is the capital of France, is romantic.",
+            "D": "The movie that I saw was thrilling."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "A, C là mệnh đề không xác định; B đứng sau giới từ nên không thể dùng \"that\". D là mệnh đề xác định dùng \"that\" được."
+    },
+    {
+        "id": 58,
+        "noiDung": "Which sentences demonstrate correct preposition placement with relative pronouns? (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "The professor to whom I submitted the essay was satisfied.",
+            "B": "The project about which we debated was approved.",
+            "C": "The manager to that I spoke was helpful.",
+            "D": "The colleague with whom she collaborates is talented."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D chuẩn xác. C sai vì \"that\" không đi sau giới từ."
+    },
+    {
+        "id": 59,
+        "noiDung": "Select all sentences containing non-defining relative clauses: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "Mount Everest, which is in the Himalayas, attracts many climbers.",
+            "B": "My brother, whom you met last week, just got promoted.",
+            "C": "Students who study hard get good grades.",
+            "D": "The Louvre Museum, which houses the Mona Lisa, is crowded."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D có dấu phẩy bổ sung thông tin (không xác định). C là mệnh đề xác định."
+    },
+    {
+        "id": 60,
+        "noiDung": "Identify all grammatically correct sentences: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "The author, whose novels have sold millions, gave a lecture.",
+            "B": "The bridge across which the army marched collapsed.",
+            "C": "The girl, that lives in London, is visiting us.",
+            "D": "The hotel in which they stayed was demolished."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D đúng. C sai vì dùng \"that\" trong mệnh đề có dấu phẩy."
+    },
+    {
+        "id": 61,
+        "noiDung": "The proposal __________ by the finance subcommittee was rejected due to excessive expenditure.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "submitted",
+            "B": "submitting",
+            "C": "which submitted",
+            "D": "was submitted"
+        },
+        "dapAnDung": "submitted",
+        "giaiThich": "Mệnh đề quan hệ rút gọn ở thể bị động: \"which was submitted\" rút gọn thành \"submitted\"."
+    },
+    {
+        "id": 62,
+        "noiDung": "Passengers __________ on flight VN214 are requested to proceed to departure gate 12 immediately.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "traveling",
+            "B": "traveled",
+            "C": "were traveling",
+            "D": "are traveling"
+        },
+        "dapAnDung": "traveling",
+        "giaiThich": "Mệnh đề rút gọn thể chủ động dùng V-ing: \"who are traveling\" -> \"traveling\"."
+    },
+    {
+        "id": 63,
+        "noiDung": "He passed all his final examinations with distinction, __________ delighted his parents immensely.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "which",
+            "B": "that",
+            "C": "what",
+            "D": "whose"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"Which\" đứng sau dấu phẩy thay thế cho toàn bộ sự việc ở mệnh đề đứng trước."
+    },
+    {
+        "id": 64,
+        "noiDung": "The company recruited several software engineers, all of __________ hold advanced postgraduate degrees.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "whom",
+            "B": "which",
+            "C": "who",
+            "D": "whose"
+        },
+        "dapAnDung": "whom",
+        "giaiThich": "\"All of whom\" chỉ người sau lượng từ và giới từ."
+    },
+    {
+        "id": 65,
+        "noiDung": "The library houses thousands of ancient manuscripts, many of __________ date back to the medieval era.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "which",
+            "B": "whom",
+            "C": "that",
+            "D": "whose"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"Many of which\" chỉ vật sau lượng từ và giới từ."
+    },
+    {
+        "id": 66,
+        "noiDung": "Anyone __________ to participate in the international symposium must register before Friday.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "wishing",
+            "B": "wished",
+            "C": "is wishing",
+            "D": "wishes"
+        },
+        "dapAnDung": "wishing",
+        "giaiThich": "Mệnh đề rút gọn chủ động: \"who wishes\" rút thành \"wishing\"."
+    },
+    {
+        "id": 67,
+        "noiDung": "The groundbreaking technology, the development of __________ took a decade, is now patented.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "which",
+            "B": "whom",
+            "C": "that",
+            "D": "whose"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"The development of which\" (sự phát triển của công nghệ đó)."
+    },
+    {
+        "id": 68,
+        "noiDung": "The chemical spill caused severe river pollution, __________ led to the closure of local fisheries.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "which",
+            "B": "that",
+            "C": "what",
+            "D": "where"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"Which\" bổ nghĩa cho cả mệnh đề phía trước."
+    },
+    {
+        "id": 69,
+        "noiDung": "We interviewed twelve candidates, none of __________ met our rigorous bilingual requirements.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "whom",
+            "B": "which",
+            "C": "who",
+            "D": "whose"
+        },
+        "dapAnDung": "whom",
+        "giaiThich": "\"None of whom\" chỉ người trong mệnh đề không xác định."
+    },
+    {
+        "id": 70,
+        "noiDung": "The items __________ in the warehouse fire were estimated to be worth over a million dollars.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "destroyed",
+            "B": "destroying",
+            "C": "were destroyed",
+            "D": "which destroyed"
+        },
+        "dapAnDung": "destroyed",
+        "giaiThich": "Rút gọn bị động: \"which were destroyed\" -> \"destroyed\"."
+    },
+    {
+        "id": 71,
+        "noiDung": "In a reduced relative clause, a passive construction (who/which was + V3) can be reduced to just the past participle (V3).",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Rút gọn bị động giữ lại V3/ed (ví dụ: the goods [which were] imported)."
+    },
+    {
+        "id": 72,
+        "noiDung": "A relative clause introduced by \"which\" can refer back to an entire preceding clause, not just a single noun.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"Which\" có thể thay thế cho cả một ý/mệnh đề đứng trước nó."
+    },
+    {
+        "id": 73,
+        "noiDung": "Phrases like \"both of that\" and \"neither of that\" are standard formal English relative expressions.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Phải dùng \"both of which / both of whom\", không bao giờ dùng \"of that\"."
+    },
+    {
+        "id": 74,
+        "noiDung": "An active relative clause can be reduced to a present participle (-ing) regardless of the original tense.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Rút gọn chủ động đều dùng V-ing (ví dụ: the boy who plays/played -> the boy playing)."
+    },
+    {
+        "id": 75,
+        "noiDung": "We can use \"what\" as a standard relative pronoun following an explicit noun antecedent (e.g., \"the book what I bought\").",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. \"What\" không đứng sau danh từ tiền ngữ, \"what\" = the thing which."
+    },
+    {
+        "id": 76,
+        "noiDung": "In quantifier relative structures (e.g., \"many of whom\"), a comma is typically placed before the quantifier phrase.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Đây là dạng mệnh đề không xác định nên luôn có dấu phẩy ngăn cách."
+    },
+    {
+        "id": 77,
+        "noiDung": "Select all sentences with grammatically sound reduced relative clauses: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "The documents signed yesterday are stored in the safe.",
+            "B": "The children playing in the rain got completely wet.",
+            "C": "The bridge built in 1910 is still in use.",
+            "D": "The boy played football is my nephew."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "A, B, C rút gọn chuẩn. D sai vì phải là \"playing football\" (chủ động)."
+    },
+    {
+        "id": 78,
+        "noiDung": "Which sentences correctly use quantifier expressions with relative pronouns? (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "The company hired fifty employees, most of whom were recent graduates.",
+            "B": "We reviewed twenty proposals, three of which were approved.",
+            "C": "She owns five cars, none of that are electric.",
+            "D": "They consulted several experts, two of whom were Nobel laureates."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D đúng chuẩn. C sai vì \"that\" không đi sau \"none of\"."
+    },
+    {
+        "id": 79,
+        "noiDung": "Select all sentences where \"which\" refers to the entire preceding clause: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "He arrived an hour late, which annoyed the client.",
+            "B": "She passed the difficult exam on her first attempt, which surprised everyone.",
+            "C": "She bought a watch which was expensive.",
+            "D": "The factory closed down, which caused massive unemployment."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D \"which\" thay thế cho cả hành động phía trước. C \"which\" chỉ thay cho \"a watch\"."
+    },
+    {
+        "id": 80,
+        "noiDung": "Identify all sentences with correct participle reductions: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "Anyone wanting further information should visit the website.",
+            "B": "Vehicles parked illegally will be towed away.",
+            "C": "The girl worn the red dress is my cousin.",
+            "D": "The funds donated by alumni will build a new laboratory."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D đúng. C sai (phải là \"wearing the red dress\")."
+    },
+    {
+        "id": 81,
+        "noiDung": "The board reached a consensus on the governance restructuring, the details of __________ will remain confidential.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "which",
+            "B": "whose",
+            "C": "that",
+            "D": "whom"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"The details of which\" là cấu trúc sở hữu trang trọng trong văn bản học thuật."
+    },
+    {
+        "id": 82,
+        "noiDung": "He was accused of corporate embezzlement, in consequence of __________ he was forced to step down immediately.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "which",
+            "B": "whom",
+            "C": "what",
+            "D": "that"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"In consequence of which\" (hậu quả của việc đó là...)."
+    },
+    {
+        "id": 83,
+        "noiDung": "The committee deliberated the extent to __________ regulatory sanctions should be enforced against the monopoly.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "which",
+            "B": "that",
+            "C": "what",
+            "D": "whom"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "Cụm thành ngữ học thuật: \"the extent to which\" (mức độ mà...)."
+    },
+    {
+        "id": 84,
+        "noiDung": "There were three contested clauses in the international treaty, __________ of which posed severe sovereignty concerns.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "none",
+            "B": "neither",
+            "C": "no",
+            "D": "not"
+        },
+        "dapAnDung": "none",
+        "giaiThich": "Với ba đối tượng trở lên dùng \"none of which\", \"neither\" chỉ dùng cho 2 đối tượng."
+    },
+    {
+        "id": 85,
+        "noiDung": "We interviewed twelve renowned economists, __________ of whom could foresee the upcoming market collapse.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "none",
+            "B": "neither",
+            "C": "no one",
+            "D": "not"
+        },
+        "dapAnDung": "none",
+        "giaiThich": "Với tập hợp từ 3 người trở lên: \"none of whom\"."
+    },
+    {
+        "id": 86,
+        "noiDung": "The innovative semiconductor architecture, __________ benchmark performance was verified independently, hit the market.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "whose",
+            "B": "the which",
+            "C": "that",
+            "D": "whom"
+        },
+        "dapAnDung": "whose",
+        "giaiThich": "\"Whose benchmark performance\" chỉ thuộc tính hiệu năng của kiến trúc chip."
+    },
+    {
+        "id": 87,
+        "noiDung": "The corporation instituted new safety protocols, adhering to __________ will be compulsory for all contractor personnel.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "which",
+            "B": "whom",
+            "C": "that",
+            "D": "what"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"Adhering to which\" đưa cụm phân từ và giới từ lên đầu mệnh đề quan hệ."
+    },
+    {
+        "id": 88,
+        "noiDung": "She made several contentious assertions during the debate, the veracity of __________ was immediately called into question.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "which",
+            "B": "whom",
+            "C": "that",
+            "D": "whose"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"The veracity of which\" (tính xác thực của các khẳng định đó)."
+    },
+    {
+        "id": 89,
+        "noiDung": "The government enacted antitrust legislation, by virtue of __________ monopolistic mergers can be halted.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "which",
+            "B": "that",
+            "C": "whom",
+            "D": "whose"
+        },
+        "dapAnDung": "which",
+        "giaiThich": "\"By virtue of which\" (nhờ đó / theo đó)."
+    },
+    {
+        "id": 90,
+        "noiDung": "The research team analyzed thirty epidemiological case studies, __________ of which exhibited identical viral mutations.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "all",
+            "B": "every",
+            "C": "each",
+            "D": "whole"
+        },
+        "dapAnDung": "all",
+        "giaiThich": "\"All of which\" kết hợp số nhiều với \"exhibited\"."
+    },
+    {
+        "id": 91,
+        "noiDung": "Phrases such as \"the extent to which\" and \"the degree to which\" are highly formal idiomatic relative constructions.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"The extent/degree to which\" là cấu trúc học thuật rất phổ biến."
+    },
+    {
+        "id": 92,
+        "noiDung": "In formal academic English, \"whom\" cannot be replaced by \"who\" when it is the object of a preposition (e.g., \"to whom\").",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Khi đứng ngay sau giới từ, bắt buộc dùng \"whom\", không được dùng \"who\"."
+    },
+    {
+        "id": 93,
+        "noiDung": "\"Whatever\" and \"whoever\" can function as nominal relative pronouns meaning \"anything that\" and \"anyone who\".",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"Whatever happens\" = anything that happens."
+    },
+    {
+        "id": 94,
+        "noiDung": "A relative clause can never be embedded inside another relative clause.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Trong văn phong phức hợp cao cấp (C1/C2), hoàn toàn có thể lồng ghép mệnh đề quan hệ (nested relative clauses)."
+    },
+    {
+        "id": 95,
+        "noiDung": "\"By virtue of which\" is a formal connective expression meaning \"because of which\" or \"by means of which\".",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. \"By virtue of which\" mang sắc thái pháp lý/học thuật cao."
+    },
+    {
+        "id": 96,
+        "noiDung": "The quantifier expression \"all of that\" is interchangeable with \"all of which\" in non-defining clauses.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Tuyệt đối không dùng \"all of that\" trong mệnh đề không xác định."
+    },
+    {
+        "id": 97,
+        "noiDung": "Select all sophisticated prepositional relative constructions commonly found in academic prose: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "the extent to which socioeconomic factors influence cognitive development",
+            "B": "by virtue of which democratic institutions maintain public trust",
+            "C": "the reason of which he resigned was unknown",
+            "D": "in the absence of which systematic chaos would ensue"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D là các cấu trúc chuẩn mực cao cấp. C sai (chuẩn phải là \"for which\" hoặc \"the reason why\")."
+    },
+    {
+        "id": 98,
+        "noiDung": "Which sentences demonstrate flawless use of quantifier relative structures? (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "The archives contain thousands of historic deeds, many of which are deteriorating.",
+            "B": "The committee questioned five senior executives, neither of whom had kept records.",
+            "C": "The expedition encountered three isolated tribes, all of which spoke unique dialects.",
+            "D": "The university enrolled 500 scholars, none of whom had prior publications."
+        },
+        "dapAnDung": [
+            "A",
+            "C",
+            "D"
+        ],
+        "giaiThich": "A, C, D chuẩn. B sai vì có 5 người nên không dùng \"neither\" (phải dùng \"none of whom\")."
+    },
+    {
+        "id": 99,
+        "noiDung": "Select all sentences where nominal relative pronouns (whoever, whatever, whichever) are employed accurately: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "Whoever authored this anonymous report possesses insider knowledge.",
+            "B": "You may select whichever methodology aligns with your research goals.",
+            "C": "Whatever consequences arise from this decision, we will shoulder the blame.",
+            "D": "Whomever goes to the store must buy milk."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "A, B, C đúng. D sai vì làm chủ ngữ cho \"goes\" phải dùng \"whoever\"."
+    },
+    {
+        "id": 100,
+        "noiDung": "Identify all grammatically impeccable advanced relative sentences: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "The corporate merger, the legality of which remains contested, was finalized yesterday.",
+            "B": "He outlined several hypotheses, in support of which empirical evidence was presented.",
+            "C": "She cited three historical treatises, all of that supported her thesis.",
+            "D": "The treaty stipulates terms, adherence to which is legally binding."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D đúng. C sai vì \"all of that\"."
+    }
+]
 };

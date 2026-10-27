@@ -1,4 +1,4 @@
-import { CurriculumTopicBank, CurriculumQuestionItem, FallbackExerciseSet } from './types';
+import { CurriculumTopicBank, CurriculumQuestionItem, FallbackExerciseSet, QuestionType } from './types';
 import { PRESENT_PERFECT_BANK } from './present-perfect';
 import { CONDITIONALS_BANK } from './conditionals';
 import { RELATIVE_CLAUSES_BANK } from './relative-clauses';
@@ -126,8 +126,57 @@ function rotateArray<T>(arr: T[], offset: number): T[] {
 }
 
 /**
+ * Trích xuất câu hỏi theo dạng và ưu tiên độ khó CEFR theo khoảng cách gần nhất
+ */
+function selectQuestionsByLevelAndType(
+  allQuestions: CurriculumQuestionItem[],
+  targetLevel: string,
+  targetType: QuestionType,
+  neededCount: number,
+  offset: number,
+): CurriculumQuestionItem[] {
+  const CEFR_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1'];
+  const targetIdx = CEFR_ORDER.indexOf(targetLevel) >= 0 ? CEFR_ORDER.indexOf(targetLevel) : 2;
+  const sortedLevels = [...CEFR_ORDER].sort((a, b) => {
+    return Math.abs(CEFR_ORDER.indexOf(a) - targetIdx) - Math.abs(CEFR_ORDER.indexOf(b) - targetIdx);
+  });
+
+  const matchingType = allQuestions.filter((q) => q.loaiCauHoi === targetType);
+  const selected: CurriculumQuestionItem[] = [];
+
+  for (const lvl of sortedLevels) {
+    if (selected.length >= neededCount) break;
+    const lvlQuestions = matchingType.filter((q) => (q.trinhDo || 'B1') === lvl);
+    if (lvlQuestions.length > 0) {
+      const rotated = rotateArray(lvlQuestions, offset);
+      for (const q of rotated) {
+        if (selected.length >= neededCount) break;
+        if (!selected.some((existing) => existing.id === q.id || existing.noiDung === q.noiDung)) {
+          selected.push(q);
+        }
+      }
+    }
+  }
+
+  // Nếu vẫn chưa đủ, lấy thêm từ các câu cùng dạng còn lại
+  if (selected.length < neededCount) {
+    const rotated = rotateArray(matchingType, offset);
+    for (const q of rotated) {
+      if (selected.length >= neededCount) break;
+      if (!selected.some((existing) => existing.id === q.id || existing.noiDung === q.noiDung)) {
+        selected.push(q);
+      }
+    }
+  }
+
+  return selected;
+}
+
+/**
  * Tra cứu và trích xuất bộ đề luyện tập từ Ngân hàng đề mẫu chuẩn giáo trình trung tâm ETC.
- * - Đảm bảo đủ 100% số lượng câu hỏi yêu cầu (5, 10, 15 câu) cho BẤT KỲ dạng câu nào (SINGLE, TRUE_FALSE, MULTIPLE, MIXED).
+ * - Lọc chuẩn xác theo trình độ CEFR (A1, A2, B1, B2, C1/C2) người dùng đã chọn.
+ * - Lọc chuẩn xác theo dạng câu hỏi (SINGLE, TRUE_FALSE, MULTIPLE, MIXED).
+ * - Đảm bảo đủ 100% số lượng câu hỏi yêu cầu (5, 10, 15 câu).
  * - Cung cấp chuẩn 10 Bộ đề độc lập (Bộ đề #1 đến Bộ đề #10) cho mỗi chủ đề.
  */
 export function findCurriculumBankExercise(
@@ -150,26 +199,25 @@ export function findCurriculumBankExercise(
   const bank = CURRICULUM_BANKS[bankKey];
   const allQuestions = bank.questions;
 
+  // Chuẩn hóa CEFR: A1, A2, B1, B2, C1 (C2 gộp vào C1)
+  const normalizedCefr = (cefr || 'B1').toUpperCase().trim();
+  const targetLevel = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(normalizedCefr)
+    ? (normalizedCefr === 'C2' ? 'C1' : normalizedCefr)
+    : 'B1';
+
   // Xác định bộ đề (1..10)
   const setNumber = boDe && boDe >= 1 && boDe <= 10 ? Math.floor(boDe) : Math.floor(Math.random() * 10) + 1;
-  const offset = (setNumber - 1) * 2; // Bước nhảy xoay vòng giữa các bộ đề
-
-  const singles = allQuestions.filter((q) => q.loaiCauHoi === 'SINGLE');
-  const trueFalses = allQuestions.filter((q) => q.loaiCauHoi === 'TRUE_FALSE');
-  const multiples = allQuestions.filter((q) => q.loaiCauHoi === 'MULTIPLE');
+  const offset = (setNumber - 1) * 3; // Bước nhảy xoay vòng giữa các bộ đề
 
   const targetCount = [5, 10, 15].includes(count) ? count : 5;
   let selectedQuestions: CurriculumQuestionItem[] = [];
 
   if (loaiCauHoi === 'SINGLE') {
-    const rotated = rotateArray(singles, offset);
-    selectedQuestions = rotated.slice(0, targetCount);
+    selectedQuestions = selectQuestionsByLevelAndType(allQuestions, targetLevel, 'SINGLE', targetCount, offset);
   } else if (loaiCauHoi === 'TRUE_FALSE') {
-    const rotated = rotateArray(trueFalses, offset);
-    selectedQuestions = rotated.slice(0, targetCount);
+    selectedQuestions = selectQuestionsByLevelAndType(allQuestions, targetLevel, 'TRUE_FALSE', targetCount, offset);
   } else if (loaiCauHoi === 'MULTIPLE') {
-    const rotated = rotateArray(multiples, offset);
-    selectedQuestions = rotated.slice(0, targetCount);
+    selectedQuestions = selectQuestionsByLevelAndType(allQuestions, targetLevel, 'MULTIPLE', targetCount, offset);
   } else {
     // DẠNG MIXED (HỖN HỢP CẢ 3 DẠNG CÂU HỎI)
     let sCount = 2;
@@ -177,20 +225,37 @@ export function findCurriculumBankExercise(
     let mCount = 1;
 
     if (targetCount === 15) {
-      sCount = 5;
+      sCount = 6;
       tfCount = 5;
-      mCount = 5;
+      mCount = 4;
     } else if (targetCount === 10) {
       sCount = 4;
       tfCount = 3;
       mCount = 3;
     }
 
-    const rotatedS = rotateArray(singles, offset).slice(0, sCount);
-    const rotatedTF = rotateArray(trueFalses, offset).slice(0, tfCount);
-    const rotatedM = rotateArray(multiples, offset).slice(0, mCount);
+    const singles = selectQuestionsByLevelAndType(allQuestions, targetLevel, 'SINGLE', sCount, offset);
+    const trueFalses = selectQuestionsByLevelAndType(allQuestions, targetLevel, 'TRUE_FALSE', tfCount, offset);
+    const multiples = selectQuestionsByLevelAndType(allQuestions, targetLevel, 'MULTIPLE', mCount, offset);
 
-    selectedQuestions = [...rotatedS, ...rotatedTF, ...rotatedM];
+    selectedQuestions = [...singles, ...trueFalses, ...multiples];
+  }
+
+  // Đảm bảo đủ 100% số lượng câu yêu cầu
+  if (selectedQuestions.length < targetCount) {
+    const remaining = targetCount - selectedQuestions.length;
+    const remainingCandidates = allQuestions.filter(
+      (q) => !selectedQuestions.some((s) => s.id === q.id || s.noiDung === q.noiDung),
+    );
+    const CEFR_ORDER = ['A1', 'A2', 'B1', 'B2', 'C1'];
+    const targetIdx = CEFR_ORDER.indexOf(targetLevel) >= 0 ? CEFR_ORDER.indexOf(targetLevel) : 2;
+    remainingCandidates.sort((a, b) => {
+      const distA = Math.abs(CEFR_ORDER.indexOf(a.trinhDo || 'B1') - targetIdx);
+      const distB = Math.abs(CEFR_ORDER.indexOf(b.trinhDo || 'B1') - targetIdx);
+      return distA - distB;
+    });
+    const rotated = rotateArray(remainingCandidates, offset);
+    selectedQuestions.push(...rotated.slice(0, remaining));
   }
 
   // Đánh lại số thứ tự ID tuần tự từ 1 đến count cho học viên làm bài
@@ -201,7 +266,7 @@ export function findCurriculumBankExercise(
 
   return {
     chuDe: bank.tenChuDe,
-    trinhDo: cefr || 'B1',
+    trinhDo: cefr || targetLevel,
     cauHoi: formattedQuestions,
     boDe: setNumber,
     tongSoBoDe: 10,

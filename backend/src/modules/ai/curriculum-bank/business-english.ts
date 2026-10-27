@@ -4,511 +4,1443 @@ export const BUSINESS_ENGLISH_BANK: CurriculumTopicBank = {
   key: 'BUSINESS_ENGLISH',
   tenChuDe: 'Từ Vựng Tiếng Anh Công Sở & Giao Tiếp (Business English)',
   aliases: [
-    'công sở',
-    'cong so',
-    'business english',
-    'business',
-    'giao tiếp công sở',
-    'tiếng anh thương mại',
-    'kinh doanh',
-    'doanh nghiệp',
-    'thương mại',
-    'đàm phán',
-    'hợp đồng',
-    'meeting',
-    'mua sắm',
-    'mua sam',
-    'shopping',
-    'bán hàng',
-    'cửa hàng',
-    'thanh toán',
-    'sales',
-  ],
+    "công sở",
+    "cong so",
+    "business english",
+    "business",
+    "giao tiếp công sở",
+    "tiếng anh thương mại",
+    "kinh doanh",
+    "doanh nghiệp",
+    "thương mại",
+    "đàm phán",
+    "hợp đồng",
+    "meeting",
+    "mua sắm",
+    "mua sam",
+    "shopping",
+    "bán hàng",
+    "sales"
+],
   questions: [
-    // === 15 SINGLE CHOICE ===
     {
-      id: 1,
-      noiDung: 'Please review the attached meeting __________ thoroughly prior to our quarterly budget conference.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'agenda', B: 'receipt', C: 'brochure', D: 'syllabus' },
-      dapAnDung: 'A',
-      giaiThich: '"Agenda" là chương trình nghị sự, lịch trình các nội dung cần thảo luận trong cuộc họp.',
+        "id": 1,
+        "noiDung": "Can I help you with your __________ today, sir?",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "order",
+            "B": "meeting",
+            "C": "desk",
+            "D": "email"
+        },
+        "dapAnDung": "order",
+        "giaiThich": "\"Order\" là đơn đặt hàng/món đồ khách mua."
     },
     {
-      id: 2,
-      noiDung: 'After intense negotiation sessions, both corporations successfully reached a mutually beneficial __________.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'compromise', B: 'complaint', C: 'conflict', D: 'competition' },
-      dapAnDung: 'A',
-      giaiThich: '"Reach a compromise" là cụm từ thương mại chỉ việc đạt được thỏa hiệp, đồng thuận.',
+        "id": 2,
+        "noiDung": "Here is my business __________. Please call me if you have any questions.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "card",
+            "B": "book",
+            "C": "paper",
+            "D": "ticket"
+        },
+        "dapAnDung": "card",
+        "giaiThich": "\"Business card\" là danh thiếp."
     },
     {
-      id: 3,
-      noiDung: 'The customer service director presented an innovative strategy to boost long-term client __________.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B2',
-      luaChon: { A: 'retention', B: 'rejection', C: 'reduction', D: 'reaction' },
-      dapAnDung: 'A',
-      giaiThich: '"Client / Customer retention" là thuật ngữ quản trị kinh doanh chỉ việc giữ chân và duy trì khách hàng trung thành.',
+        "id": 3,
+        "noiDung": "Our office __________ at 8:00 AM every weekday morning.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "opens",
+            "B": "closes",
+            "C": "sells",
+            "D": "works"
+        },
+        "dapAnDung": "opens",
+        "giaiThich": "Văn phòng mở cửa lúc 8:00 sáng: opens."
     },
     {
-      id: 4,
-      noiDung: 'All staff members are strictly mandated to abide by the corporation\'s professional code of __________.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'conduct', B: 'action', C: 'affair', D: 'manner' },
-      dapAnDung: 'A',
-      giaiThich: '"Code of conduct" nghĩa là quy tắc ứng xử / chuẩn mực đạo đức nghề nghiệp.',
+        "id": 4,
+        "noiDung": "I need to send an urgent __________ to my manager right now.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "email",
+            "B": "desk",
+            "C": "card",
+            "D": "pen"
+        },
+        "dapAnDung": "email",
+        "giaiThich": "Gửi thư điện tử khẩn: send an email."
     },
     {
-      id: 5,
-      noiDung: 'The enterprise reported a 18% increase in its quarterly net __________ following international market expansion.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'profit', B: 'loss', C: 'debt', D: 'deficit' },
-      dapAnDung: 'A',
-      giaiThich: '"Net profit" nghĩa là lợi nhuận ròng sau khi đã trừ toàn bộ chi phí và thuế.',
+        "id": 5,
+        "noiDung": "How much is the total __________ for these office supplies?",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "price",
+            "B": "money",
+            "C": "salary",
+            "D": "time"
+        },
+        "dapAnDung": "price",
+        "giaiThich": "\"Price\" là giá tiền của sản phẩm."
     },
     {
-      id: 6,
-      noiDung: 'To secure the venture capital funding, the founders delivered a compelling 10-minute investor __________.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B2',
-      luaChon: { A: 'pitch', B: 'catch', C: 'throw', D: 'drop' },
-      dapAnDung: 'A',
-      giaiThich: '"Investor pitch" (bài thuyết trình gọi vốn đầu tư của startup trước các quỹ mạo hiểm).',
+        "id": 6,
+        "noiDung": "My __________ is very kind and always helps new employees.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "boss",
+            "B": "customer",
+            "C": "desk",
+            "D": "order"
+        },
+        "dapAnDung": "boss",
+        "giaiThich": "\"Boss\" là sếp/cấp trên."
     },
     {
-      id: 7,
-      noiDung: 'Due to severe supply chain disruptions, we unfortunately cannot meet the strict project __________.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'A2',
-      luaChon: { A: 'deadline', B: 'headline', C: 'baseline', D: 'guideline' },
-      dapAnDung: 'A',
-      giaiThich: '"Meet the deadline" là cụm từ chỉ việc hoàn thành công việc đúng thời hạn chót.',
+        "id": 7,
+        "noiDung": "We have a short team __________ in the conference room at 9 AM.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "meeting",
+            "B": "party",
+            "C": "holiday",
+            "D": "lunch"
+        },
+        "dapAnDung": "meeting",
+        "giaiThich": "\"Team meeting\" là cuộc họp nhóm."
     },
     {
-      id: 8,
-      noiDung: 'A detailed feasibility study was conducted to evaluate the potential return on __________ (ROI).',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'investment', B: 'invention', C: 'invitation', D: 'inflation' },
-      dapAnDung: 'A',
-      giaiThich: 'ROI là viết tắt của "Return on Investment" (tỷ suất hoàn vốn đầu tư).',
+        "id": 8,
+        "noiDung": "Could you please sign your name at the bottom of the __________?",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "contract",
+            "B": "screen",
+            "C": "phone",
+            "D": "box"
+        },
+        "dapAnDung": "contract",
+        "giaiThich": "\"Contract\" là hợp đồng ký kết."
     },
     {
-      id: 9,
-      noiDung: 'Our company has decided to __________ non-core accounting and payroll functions to a specialized agency.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B2',
-      luaChon: { A: 'outsource', B: 'downsize', C: 'bankrupt', D: 'liquidate' },
-      dapAnDung: 'A',
-      giaiThich: '"Outsource" nghĩa là thuê ngoài các dịch vụ phụ trợ từ đơn vị thứ ba.',
+        "id": 9,
+        "noiDung": "The customer wants to buy three new office __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "chairs",
+            "B": "bosses",
+            "C": "salaries",
+            "D": "prices"
+        },
+        "dapAnDung": "chairs",
+        "giaiThich": "Khách hàng mua 3 chiếc ghế văn phòng."
     },
     {
-      id: 10,
-      noiDung: 'The CEO emphasized that our long-term competitive advantage lies in continuous technological __________.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B2',
-      luaChon: { A: 'innovation', B: 'stagnation', C: 'limitation', D: 'deterioration' },
-      dapAnDung: 'A',
-      giaiThich: '"Innovation" (sự đổi mới sáng tạo) là yếu tố sống còn cho năng lực cạnh tranh doanh nghiệp.',
+        "id": 10,
+        "noiDung": "I work in a modern office in the center of the __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "city",
+            "B": "room",
+            "C": "desk",
+            "D": "card"
+        },
+        "dapAnDung": "city",
+        "giaiThich": "Làm việc tại trung tâm thành phố: center of the city."
     },
     {
-      id: 11,
-      noiDung: 'Key project __________ including department heads and client representatives must attend the kickoff.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B2',
-      luaChon: { A: 'stakeholders', B: 'stockbrokers', C: 'caretakers', D: 'shareholders' },
-      dapAnDung: 'A',
-      giaiThich: '"Stakeholders" (các bên liên quan trực tiếp đến dự án như đối tác, khách hàng, nhân sự).',
+        "id": 11,
+        "noiDung": "A \"business card\" typically contains a person's name, title, and contact details.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Danh thiếp chứa tên, chức danh và thông tin liên lạc."
     },
     {
-      id: 12,
-      noiDung: 'The human resources team conducted an extensive annual employee performance __________.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'appraisal', B: 'approval', C: 'approach', D: 'appeal' },
-      dapAnDung: 'A',
-      giaiThich: '"Performance appraisal" nghĩa là đánh giá hiệu suất công việc định kỳ của nhân viên.',
+        "id": 12,
+        "noiDung": "The word \"boss\" refers to the person in charge of a workplace or team.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Boss là người quản lý, trưởng nhóm."
     },
     {
-      id: 13,
-      noiDung: 'Could you please send me the revised price __________ before we sign the procurement agreement?',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'quotation', B: 'equation', C: 'question', D: 'recitation' },
-      dapAnDung: 'A',
-      giaiThich: '"Price quotation" (bản báo giá chính thức trong giao dịch thương mại).',
+        "id": 13,
+        "noiDung": "In business English, \"order\" can mean requesting goods to be supplied.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Order là đặt hàng."
     },
     {
-      id: 14,
-      noiDung: 'The two pharmaceutical giants merged to achieve greater market __________ and operational efficiency.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'C1',
-      luaChon: { A: 'synergy', B: 'apathy', C: 'discord', D: 'friction' },
-      dapAnDung: 'A',
-      giaiThich: '"Synergy" (sức mạnh cộng hưởng từ việc hợp nhất hai doanh nghiệp).',
+        "id": 14,
+        "noiDung": "An office meeting is always a social party with loud music and dancing.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Cuộc họp công sở là thảo luận công việc nghiêm túc, không phải tiệc khiêu vũ."
     },
     {
-      id: 15,
-      noiDung: 'During the global recession, management had to implement cost-cutting measures to maintain healthy cash __________.',
-      loaiCauHoi: 'SINGLE',
-      trinhDo: 'B1',
-      luaChon: { A: 'flow', B: 'drop', C: 'leak', D: 'tide' },
-      dapAnDung: 'A',
-      giaiThich: '"Cash flow" (dòng tiền của doanh nghiệp).',
-    },
-
-    // === 15 TRUE / FALSE ===
-    {
-      id: 16,
-      noiDung: 'The term "B2B" stands for "Business-to-Business", representing commercial transactions between two companies.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'A2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. B2B (Business-to-Business) chỉ mô hình kinh doanh giữa doanh nghiệp với doanh nghiệp.',
+        "id": 15,
+        "noiDung": "\"Price\" means the amount of money expected in payment for something.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Price là mức giá của hàng hóa/dịch vụ."
     },
     {
-      id: 17,
-      noiDung: 'A Non-Disclosure Agreement (NDA) is an open marketing brochure distributed freely to prospective clients.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. NDA (Non-Disclosure Agreement) là thỏa thuận bảo mật thông tin pháp lý bắt buộc, không phải tờ rơi quảng cáo.',
+        "id": 16,
+        "noiDung": "Employees are paid a salary for the work they perform.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Salary là tiền lương của người lao động."
     },
     {
-      id: 18,
-      noiDung: 'A "brainstorming" session encourages participants to generate a wide variety of ideas without immediate criticism.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'A2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Brainstorming (động não) nhằm khuyến khích mọi ý tưởng tự do và sáng tạo trước khi sàng lọc.',
+        "id": 17,
+        "noiDung": "Select all everyday workplace and office objects: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "desk",
+            "B": "computer",
+            "C": "business card",
+            "D": "swimsuit"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "Bàn làm việc, máy tính, danh thiếp là đồ dùng văn phòng."
     },
     {
-      id: 19,
-      noiDung: '"Cold calling" involves contacting prospective customers who have already expressed clear interest in buying.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. "Cold calling" là gọi điện tiếp thị cho khách hàng tiềm năng chưa từng có tương tác hoặc liên hệ trước đó.',
+        "id": 18,
+        "noiDung": "Which words relate to professional communication at work? (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "email",
+            "B": "phone call",
+            "C": "video game",
+            "D": "meeting"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "Email, gọi điện, họp là phương thức giao tiếp công sở."
     },
     {
-      id: 20,
-      noiDung: 'The phrase "to touch base with someone" means to briefly make contact or update them on a situation.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. "Touch base" là thành ngữ công sở phổ biến nghĩa là liên lạc ngắn gọn để cập nhật thông tin.',
+        "id": 19,
+        "noiDung": "Select all nouns referring to people in a business environment: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "colleague",
+            "B": "customer",
+            "C": "manager",
+            "D": "invoice"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "Colleague (đồng nghiệp), customer (khách hàng), manager (quản lý). Invoice là hóa đơn."
     },
     {
-      id: 21,
-      noiDung: 'Gross revenue refers to total business income before deducting expenses, taxes, and production costs.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Doanh thu gộp (Gross revenue) là tổng thu nhập trước khi trừ chi phí (phân biệt với Net profit).',
+        "id": 20,
+        "noiDung": "Identify all polite phrases used with clients: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A1",
+        "luaChon": {
+            "A": "How may I assist you today?",
+            "B": "Thank you for your business.",
+            "C": "Give me your money.",
+            "D": "Pleasure to meet you."
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D là các câu giao tiếp lịch thiệp với khách hàng."
     },
     {
-      id: 22,
-      noiDung: 'In professional business emails, using aggressive ALL CAPS indicates superior executive leadership and politeness.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'A1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. Viết hoa toàn bộ (ALL CAPS) trong email được coi là hành vi la hét, thiếu lịch sự và thiếu chuyên nghiệp.',
+        "id": 21,
+        "noiDung": "Please send the commercial __________ so our accounting department can process payment.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "invoice",
+            "B": "postcard",
+            "C": "greeting",
+            "D": "timetable"
+        },
+        "dapAnDung": "invoice",
+        "giaiThich": "\"Invoice\" là hóa đơn thương mại yêu cầu thanh toán."
     },
     {
-      id: 23,
-      noiDung: 'A Memorandum of Understanding (MOU) is a formal document outlining bilateral terms between cooperating entities.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. MOU (Biên bản ghi nhớ) xác lập thỏa thuận hợp tác ban đầu giữa các đối tác.',
+        "id": 22,
+        "noiDung": "We need to schedule an appointment with the prospective __________ next Tuesday.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "client",
+            "B": "desk",
+            "C": "salary",
+            "D": "building"
+        },
+        "dapAnDung": "client",
+        "giaiThich": "\"Client\" là khách hàng doanh nghiệp."
     },
     {
-      id: 24,
-      noiDung: 'Corporate Social Responsibility (CSR) refers to a company integrating social and environmental concerns into its business operations.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. CSR là trách nhiệm xã hội của doanh nghiệp đối với cộng đồng và môi trường.',
+        "id": 23,
+        "noiDung": "The human resources department announced a company-wide __________ increase of 5%.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "salary",
+            "B": "client",
+            "C": "office",
+            "D": "order"
+        },
+        "dapAnDung": "salary",
+        "giaiThich": "\"Salary increase\" là việc tăng lương."
     },
     {
-      id: 25,
-      noiDung: '"Benchmarking" is the process of comparing a business\'s processes and performance metrics to industry bests.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Benchmarking là việc so sánh các chỉ số hiệu quả của doanh nghiệp với các đối thủ hàng đầu trong ngành.',
+        "id": 24,
+        "noiDung": "I am writing to __________ receipt of your formal job application.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "acknowledge",
+            "B": "forget",
+            "C": "refuse",
+            "D": "cancel"
+        },
+        "dapAnDung": "acknowledge",
+        "giaiThich": "\"Acknowledge receipt\" là xác nhận đã nhận được thư từ/hồ sơ."
     },
     {
-      id: 26,
-      noiDung: 'The closing sign-off "Yours faithfully" is used when you know the recipient\'s name personally (e.g., Dear Mr. Smith).',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. "Yours faithfully" dùng khi mở đầu thư bằng "Dear Sir/Madam" (không biết tên). Khi biết tên (Dear Mr. Smith), dùng "Yours sincerely".',
+        "id": 25,
+        "noiDung": "The project has a strict __________; we must finish by 5 PM on Friday.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "deadline",
+            "B": "invoice",
+            "C": "agenda",
+            "D": "colleague"
+        },
+        "dapAnDung": "deadline",
+        "giaiThich": "\"Deadline\" là hạn chót hoàn thành công việc."
     },
     {
-      id: 27,
-      noiDung: '"Liquid assets" are assets that can be quickly and easily converted into cash with minimal loss of value.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Tài sản thanh khoản (Liquid assets) là tài sản dễ dàng quy đổi thành tiền mặt (như tiền gửi ngân hàng).',
+        "id": 26,
+        "noiDung": "All employees must arrive on time and respect the company's working __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "hours",
+            "B": "salaries",
+            "C": "invoices",
+            "D": "clients"
+        },
+        "dapAnDung": "hours",
+        "giaiThich": "\"Working hours\" là giờ giấc làm việc."
     },
     {
-      id: 28,
-      noiDung: 'An invoice is a formal commercial document issued by a seller to a buyer relating to a sale transaction, indicating quantities and costs.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'A2',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Hóa đơn (Invoice) là chứng từ yêu cầu thanh toán do người bán phát hành cho người mua.',
+        "id": 27,
+        "noiDung": "She submitted an official __________ to the customer service department regarding the defective unit.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "complaint",
+            "B": "compliment",
+            "C": "contract",
+            "D": "colleague"
+        },
+        "dapAnDung": "complaint",
+        "giaiThich": "\"Complaint\" là khiếu nại của khách hàng."
     },
     {
-      id: 29,
-      noiDung: '"Whistleblowing" refers to an employee reporting illegal, unethical, or dangerous activities occurring inside an organization.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'C1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'A',
-      giaiThich: 'Đúng. Whistleblowing (tố giác sai phạm nội bộ) bảo vệ tính minh bạch và tuân thủ pháp luật.',
+        "id": 28,
+        "noiDung": "Our retail company offers a 10% __________ for bulk wholesale orders.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "discount",
+            "B": "deadline",
+            "C": "salary",
+            "D": "meeting"
+        },
+        "dapAnDung": "discount",
+        "giaiThich": "\"Discount\" là chiết khấu giảm giá."
     },
     {
-      id: 30,
-      noiDung: 'In business idioms, "thinking outside the box" means sticking strictly to traditional conventional rules.',
-      loaiCauHoi: 'TRUE_FALSE',
-      trinhDo: 'B1',
-      luaChon: { A: 'True (Đúng)', B: 'False (Sai)' },
-      dapAnDung: 'B',
-      giaiThich: 'Sai. "Think outside the box" nghĩa là suy nghĩ sáng tạo, phá cách, vượt ra khỏi những lối mòn truyền thống.',
-    },
-
-    // === 15 MULTIPLE CHOICE ===
-    {
-      id: 31,
-      noiDung: 'Which of the following are formal sign-offs in professional business correspondence? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'Best regards',
-        B: 'Sincerely yours',
-        C: 'See ya later buddy',
-        D: 'Yours faithfully',
-      },
-      dapAnDung: ['A', 'B', 'D'],
-      giaiThich: 'Best regards, Sincerely yours, Yours faithfully là lời kết thư trang trọng. C là khẩu ngữ thân mật không dùng trong email công sở.',
+        "id": 29,
+        "noiDung": "The sales team exceeded their quarterly __________ by fifteen percent.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "target",
+            "B": "complaint",
+            "C": "desk",
+            "D": "card"
+        },
+        "dapAnDung": "target",
+        "giaiThich": "\"Sales target\" là chỉ tiêu doanh số bán hàng."
     },
     {
-      id: 32,
-      noiDung: 'Which acronyms represent executive C-level management positions? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'CEO (Chief Executive Officer)',
-        B: 'CFO (Chief Financial Officer)',
-        C: 'CTO (Chief Technology Officer)',
-        D: 'FAQ (Frequently Asked Questions)',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'CEO, CFO, CTO là các chức danh lãnh đạo cấp cao trong hội đồng quản trị công ty.',
+        "id": 30,
+        "noiDung": "Could you please attach the budget spreadsheet to your reply __________?",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "email",
+            "B": "invoice",
+            "C": "salary",
+            "D": "deadline"
+        },
+        "dapAnDung": "email",
+        "giaiThich": "\"Attach to your reply email\" (đính kèm vào email trả lời)."
     },
     {
-      id: 33,
-      noiDung: 'Which terms directly relate to corporate finance and balance sheets? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'Assets (Tài sản)',
-        B: 'Liabilities (Nợ phải trả)',
-        C: 'Equity (Vốn chủ sở hữu)',
-        D: 'Popcorn consumption',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'Assets = Liabilities + Equity là phương trình kế toán cơ bản trong bảng cân đối kế toán.',
+        "id": 31,
+        "noiDung": "An \"invoice\" is a document issued by a seller detailing the products or services provided and the sum owed.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Hóa đơn liệt kê hàng hóa dịch vụ và số tiền phải thanh toán."
     },
     {
-      id: 34,
-      noiDung: 'Which idioms are commonly used in business meetings to describe progress or agreement? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'On the same page (đồng thuận ý kiến)',
-        B: 'In the loop (được cập nhật thông tin liên tục)',
-        C: 'Touch base (trao đổi nhanh)',
-        D: 'Bite the dust (thất bại hoàn toàn)',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'On the same page, In the loop, Touch base là các thành ngữ kinh doanh rất tích cực và phổ biến.',
+        "id": 32,
+        "noiDung": "\"Deadline\" refers to the earliest possible date when a project can begin.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Deadline là hạn chót phải hoàn thành, không phải ngày bắt đầu."
     },
     {
-      id: 35,
-      noiDung: 'Which strategies help maintain professional telephone etiquette in an office? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'A2',
-      luaChon: {
-        A: 'Stating your name and department clearly when answering',
-        B: 'Listening actively without interrupting the caller',
-        C: 'Leaving callers on hold indefinitely without warning',
-        D: 'Summarizing key action items before ending the call',
-      },
-      dapAnDung: ['A', 'B', 'D'],
-      giaiThich: 'A, B, D là chuẩn mực giao tiếp qua điện thoại chuyên nghiệp. Để người gọi chờ vô thời hạn (C) là hành vi thiếu tôn trọng.',
+        "id": 33,
+        "noiDung": "\"Client\" and \"customer\" are often used interchangeably in commercial dialogue.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Client và customer đều chỉ khách hàng."
     },
     {
-      id: 36,
-      noiDung: 'Which documents are formally utilized during a procurement and vendor selection process? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'RFP (Request for Proposal)',
-        B: 'RFQ (Request for Quotation)',
-        C: 'Purchase Order (PO)',
-        D: 'Personal diary',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'RFP, RFQ, PO là các tài liệu mua sắm và đấu thầu thương mại tiêu chuẩn.',
+        "id": 34,
+        "noiDung": "A \"discount\" increases the final purchase price of an item for the buyer.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Discount là giảm giá chiết khấu, giúp giảm số tiền phải trả."
     },
     {
-      id: 37,
-      noiDung: 'Select all essential elements typically included in a formal meeting agenda: (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'Meeting objectives and topics of discussion',
-        B: 'Allocated time per topic and session chairs',
-        C: 'Action items and expected deliverables',
-        D: 'The favorite hobbies of the receptionist',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'Mục tiêu, phân bổ thời gian và đầu việc hành động là cốt lõi của một agenda chuyên nghiệp.',
+        "id": 35,
+        "noiDung": "\"Acknowledge receipt\" is a formal phrase commonly used in professional correspondence.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Đây là mẫu câu thông dụng trong email công việc."
     },
     {
-      id: 38,
-      noiDung: 'Which phrases are polite ways to disagree in a business meeting? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'I see your point, however, we must also consider the budget constraints.',
-        B: 'I am afraid I have a slightly different perspective on this matter.',
-        C: 'You are completely wrong and making no sense at all.',
-        D: 'While I appreciate that idea, my concern revolves around delivery timelines.',
-      },
-      dapAnDung: ['A', 'B', 'D'],
-      giaiThich: 'A, B, D là cách phản biện lịch sự, xây dựng và ngoại giao trong môi trường chuyên nghiệp.',
+        "id": 36,
+        "noiDung": "Sales targets define the volume of sales a representative aims to achieve.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Chỉ tiêu doanh số là mục tiêu bán hàng cần đạt."
     },
     {
-      id: 39,
-      noiDung: 'Which terms describe different marketing channels and promotional methods? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'Search Engine Optimization (SEO)',
-        B: 'Pay-Per-Click (PPC) Advertising',
-        C: 'Content Marketing',
-        D: 'Thermal Insulation Foam',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'SEO, PPC và Content Marketing là các phương thức tiếp thị kỹ thuật số cốt lõi.',
+        "id": 37,
+        "noiDung": "Select all documents commonly exchanged in commercial business transactions: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "commercial invoice",
+            "B": "written contract",
+            "C": "comic book",
+            "D": "purchase order"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "Hóa đơn, hợp đồng, đơn đặt hàng là văn bản thương mại."
     },
     {
-      id: 40,
-      noiDung: 'Select all indicators of positive workplace engagement and corporate culture: (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'Low employee turnover rate',
-        B: 'Open horizontal and vertical communication',
-        C: 'Encouragement of continuous learning and training',
-        D: 'Frequent unpaid compulsory overtime without consent',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'Tỷ lệ nghỉ việc thấp (A), giao tiếp cởi mở (B) và văn hóa học tập (C) là biểu hiện của môi trường làm việc lý tưởng.',
+        "id": 38,
+        "noiDung": "Which terms relate directly to employee compensation and time management: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "monthly salary",
+            "B": "project deadline",
+            "C": "office wallpaper",
+            "D": "working hours"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "Lương tháng, hạn chót dự án, giờ làm việc."
     },
     {
-      id: 41,
-      noiDung: 'Which components are fundamental in a standard business proposal? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B2',
-      luaChon: {
-        A: 'Executive Summary',
-        B: 'Problem statement and proposed solution',
-        C: 'Cost estimate and milestone schedule',
-        D: 'Astrological birth chart of the project manager',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'Tóm tắt điều hành, giải pháp đề xuất và chi phí/tiến độ là 3 phần bắt buộc của bản đề xuất kinh doanh.',
+        "id": 39,
+        "noiDung": "Select all words related to customer relations and sales: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "client satisfaction",
+            "B": "customer complaint",
+            "C": "sales discount",
+            "D": "computer screen"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "Sự hài lòng, khiếu nại, chiết khấu liên quan mật thiết đến khách hàng."
     },
     {
-      id: 42,
-      noiDung: 'Which terms describe modern employment contracts or working arrangements? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'Remote working / Telecommuting',
-        B: 'Hybrid model',
-        C: 'Flexible working hours (Flextime)',
-        D: 'Centrifugal acceleration',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'Làm việc từ xa (A), mô hình kết hợp (B), giờ giấc linh hoạt (C) là các chế độ lao động hiện đại.',
+        "id": 40,
+        "noiDung": "Identify all standard professional email sign-offs: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "A2",
+        "luaChon": {
+            "A": "Best regards,",
+            "B": "Sincerely,",
+            "C": "See ya later bro,",
+            "D": "Kind regards,"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D là lời chào kết thư trang trọng. C quá thân mật, suồng sã."
     },
     {
-      id: 43,
-      noiDung: 'Which verbs are commonly paired with "contract" in business English? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'Sign a contract',
-        B: 'Breach a contract (vi phạm)',
-        C: 'Terminate a contract (chấm dứt)',
-        D: 'Bake a contract',
-      },
-      dapAnDung: ['A', 'B', 'C'],
-      giaiThich: 'Sign, Breach, Terminate là các động từ kết hợp tự nhiên (collocations) với danh từ contract.',
+        "id": 41,
+        "noiDung": "Please review the attached meeting __________ thoroughly prior to our quarterly budget conference.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "agenda",
+            "B": "receipt",
+            "C": "brochure",
+            "D": "syllabus"
+        },
+        "dapAnDung": "agenda",
+        "giaiThich": "\"Agenda\" là chương trình nghị sự cuộc họp."
     },
     {
-      id: 44,
-      noiDung: 'Select all appropriate email greetings for someone whose name is known: (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'A2',
-      luaChon: {
-        A: 'Dear Ms. Johnson,',
-        B: 'Dear Dr. Robinson,',
-        C: 'To whom it may concern,',
-        D: 'Good morning Peter,',
-      },
-      dapAnDung: ['A', 'B', 'D'],
-      giaiThich: 'A, B, D là lời chào khi đã biết danh tính người nhận. C dùng khi không biết cụ thể người nhận là ai.',
+        "id": 42,
+        "noiDung": "After intense negotiation sessions, both corporations successfully reached a mutually beneficial __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "compromise",
+            "B": "complaint",
+            "C": "conflict",
+            "D": "competition"
+        },
+        "dapAnDung": "compromise",
+        "giaiThich": "\"Reach a compromise\" là đạt được thỏa hiệp đồng thuận."
     },
     {
-      id: 45,
-      noiDung: 'Which attributes define an effective professional presentation? (Chọn tất cả đáp án đúng)',
-      loaiCauHoi: 'MULTIPLE',
-      trinhDo: 'B1',
-      luaChon: {
-        A: 'Clear structure with introduction, body, and conclusion',
-        B: 'Visually balanced slides with concise bullet points',
-        C: 'Reading long paragraphs directly from the screen with back turned to the audience',
-        D: 'Engaging eye contact and interactive Q&A session',
-      },
-      dapAnDung: ['A', 'B', 'D'],
-      giaiThich: 'Cấu trúc mạch lạc (A), slide cô đọng (B) và giao lưu ánh mắt/hỏi đáp (D) là các kỹ năng thuyết trình xuất sắc. Quay lưng đọc chữ (C) là lỗi cấm kỵ.',
+        "id": 43,
+        "noiDung": "The customer service director presented an innovative strategy to boost long-term client __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "retention",
+            "B": "rejection",
+            "C": "reduction",
+            "D": "reaction"
+        },
+        "dapAnDung": "retention",
+        "giaiThich": "\"Client retention\" là duy trì và giữ chân khách hàng."
     },
-  ],
+    {
+        "id": 44,
+        "noiDung": "All staff members are strictly mandated to abide by the corporation's professional code of __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "conduct",
+            "B": "communication",
+            "C": "compromise",
+            "D": "competition"
+        },
+        "dapAnDung": "conduct",
+        "giaiThich": "\"Code of conduct\" là quy tắc ứng xử chuẩn mực nghề nghiệp."
+    },
+    {
+        "id": 45,
+        "noiDung": "The management team conducted a comprehensive __________ analysis to identify internal strengths and weaknesses.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "SWOT",
+            "B": "ATM",
+            "C": "CEO",
+            "D": "GPS"
+        },
+        "dapAnDung": "SWOT",
+        "giaiThich": "Phân tích SWOT (Điểm mạnh, yếu, cơ hội, thách thức)."
+    },
+    {
+        "id": 46,
+        "noiDung": "We must negotiate favorable payment __________ with our primary raw material suppliers.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "terms",
+            "B": "words",
+            "C": "clauses",
+            "D": "items"
+        },
+        "dapAnDung": "terms",
+        "giaiThich": "\"Payment terms\" là các điều khoản thanh toán."
+    },
+    {
+        "id": 47,
+        "noiDung": "The new advertising campaign aims to expand our domestic market __________ by five percent.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "share",
+            "B": "part",
+            "C": "piece",
+            "D": "slice"
+        },
+        "dapAnDung": "share",
+        "giaiThich": "\"Market share\" là thị phần trên thị trường."
+    },
+    {
+        "id": 48,
+        "noiDung": "Employees who consistently demonstrate outstanding performance are eligible for annual performance __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "bonuses",
+            "B": "invoices",
+            "C": "agendas",
+            "D": "penalties"
+        },
+        "dapAnDung": "bonuses",
+        "giaiThich": "\"Performance bonuses\" là tiền thưởng theo năng suất."
+    },
+    {
+        "id": 49,
+        "noiDung": "Before entering new foreign markets, companies should conduct thorough market __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "research",
+            "B": "invoice",
+            "C": "complaint",
+            "D": "compromise"
+        },
+        "dapAnDung": "research",
+        "giaiThich": "\"Market research\" là nghiên cứu thị trường."
+    },
+    {
+        "id": 50,
+        "noiDung": "The company will __________ its new product line at the international consumer electronics expo.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "launch",
+            "B": "dismiss",
+            "C": "reject",
+            "D": "cancel"
+        },
+        "dapAnDung": "launch",
+        "giaiThich": "\"Launch a product line\" là tung ra dòng sản phẩm mới."
+    },
+    {
+        "id": 51,
+        "noiDung": "An \"agenda\" lists the specific items of business to be discussed during a formal meeting.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Agenda là danh mục các chủ đề cần thảo luận."
+    },
+    {
+        "id": 52,
+        "noiDung": "\"Customer retention\" measures a company's ability to maintain existing clients over an extended period.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Giữ chân khách hàng là chỉ số đo lường lòng trung thành."
+    },
+    {
+        "id": 53,
+        "noiDung": "A \"compromise\" occurs when both parties stubbornly refuse to make any concessions.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Compromise là sự thỏa hiệp, mỗi bên nhượng bộ một phần để đạt được thỏa thuận."
+    },
+    {
+        "id": 54,
+        "noiDung": "\"Market share\" represents the percentage of an industry's total sales earned by a specific firm.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Thị phần là % doanh số của công ty so với toàn ngành."
+    },
+    {
+        "id": 55,
+        "noiDung": "Payment terms define the timeframe and method by which an invoice must be settled.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Điều khoản thanh toán quy định thời hạn và phương thức trả tiền."
+    },
+    {
+        "id": 56,
+        "noiDung": "SWOT analysis is a strategic planning tool evaluating Strengths, Weaknesses, Opportunities, and Threats.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. SWOT phân tích điểm mạnh, điểm yếu, cơ hội, nguy cơ."
+    },
+    {
+        "id": 57,
+        "noiDung": "Select all strategic business concepts: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "SWOT analysis",
+            "B": "market share expansion",
+            "C": "office coffee break",
+            "D": "client retention rate"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D là các khái niệm chiến lược kinh doanh."
+    },
+    {
+        "id": 58,
+        "noiDung": "Which phrases relate to meeting facilitation and agenda planning: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "adopt the meeting agenda",
+            "B": "reach a compromise",
+            "C": "take meeting minutes",
+            "D": "sell products retail"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "Thông qua chương trình nghị sự, đạt thỏa hiệp, ghi biên bản họp (take minutes)."
+    },
+    {
+        "id": 59,
+        "noiDung": "Select all terms connected to business finance and supplier agreements: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "payment terms",
+            "B": "annual performance bonus",
+            "C": "computer keyboard",
+            "D": "credit terms"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "Điều khoản thanh toán, thưởng hiệu suất, điều khoản tín dụng."
+    },
+    {
+        "id": 60,
+        "noiDung": "Identify all formal verbs used with business initiatives: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B1",
+        "luaChon": {
+            "A": "launch a campaign",
+            "B": "conduct research",
+            "C": "break a chair",
+            "D": "negotiate terms"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "Tung chiến dịch, làm nghiên cứu, đàm phán điều khoản."
+    },
+    {
+        "id": 61,
+        "noiDung": "The board voted unanimously to approve a hostile __________ bid for their rival telecom firm.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "takeover",
+            "B": "retention",
+            "C": "compromise",
+            "D": "agenda"
+        },
+        "dapAnDung": "takeover",
+        "giaiThich": "\"Hostile takeover\" là cuộc thâu tóm thù địch trong kinh doanh."
+    },
+    {
+        "id": 62,
+        "noiDung": "To safeguard against currency depreciation, our treasurer implemented robust financial __________ strategies.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "hedging",
+            "B": "budgeting",
+            "C": "discounting",
+            "D": "launching"
+        },
+        "dapAnDung": "hedging",
+        "giaiThich": "\"Hedging strategies\" là chiến lược phòng ngừa rủi ro tài chính."
+    },
+    {
+        "id": 63,
+        "noiDung": "The corporation reported substantial operational liabilities on its annual consolidated __________ sheet.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "balance",
+            "B": "budget",
+            "C": "profit",
+            "D": "cash"
+        },
+        "dapAnDung": "balance",
+        "giaiThich": "\"Balance sheet\" là bảng cân đối kế toán."
+    },
+    {
+        "id": 64,
+        "noiDung": "All executive officers are bound by a legal __________ responsibility to act in the best interests of shareholders.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "fiduciary",
+            "B": "financial",
+            "C": "fictional",
+            "D": "flexible"
+        },
+        "dapAnDung": "fiduciary",
+        "giaiThich": "\"Fiduciary responsibility\" là trách nhiệm ủy thác pháp lý của ban lãnh đạo."
+    },
+    {
+        "id": 65,
+        "noiDung": "The pharmaceutical company experienced significant equity dilution following a secondary __________ of shares.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "issuance",
+            "B": "retention",
+            "C": "compromise",
+            "D": "complaint"
+        },
+        "dapAnDung": "issuance",
+        "giaiThich": "\"Issuance of shares\" là việc phát hành thêm cổ phiếu."
+    },
+    {
+        "id": 66,
+        "noiDung": "Management introduced key performance __________ (KPIs) to evaluate employee productivity systematically.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "indicators",
+            "B": "invoices",
+            "C": "inspections",
+            "D": "initiatives"
+        },
+        "dapAnDung": "indicators",
+        "giaiThich": "KPIs (Key Performance Indicators) là các chỉ số đo lường hiệu suất then chốt."
+    },
+    {
+        "id": 67,
+        "noiDung": "Before finalizing the multi-billion-dollar merger, both parties conducted rigorous due __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "diligence",
+            "B": "dedication",
+            "C": "discipline",
+            "D": "demand"
+        },
+        "dapAnDung": "diligence",
+        "giaiThich": "\"Due diligence\" là việc thẩm định chi tiết toàn diện trước khi sáp nhập."
+    },
+    {
+        "id": 68,
+        "noiDung": "The central bank's sudden interest rate hike created severe liquidity constraints and market __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "volatility",
+            "B": "retention",
+            "C": "agenda",
+            "D": "conduct"
+        },
+        "dapAnDung": "volatility",
+        "giaiThich": "\"Market volatility\" là sự biến động dữ dội của thị trường."
+    },
+    {
+        "id": 69,
+        "noiDung": "The company decided to __________ non-core business assets to reduce debt.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "divest",
+            "B": "invest",
+            "C": "divert",
+            "D": "launch"
+        },
+        "dapAnDung": "divest",
+        "giaiThich": "\"Divest assets\" là thoái vốn, bán bớt tài sản không cốt lõi."
+    },
+    {
+        "id": 70,
+        "noiDung": "Our startup secured five million dollars in Series A __________ funding from prominent venture capitalists.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "equity",
+            "B": "debt",
+            "C": "agenda",
+            "D": "conduct"
+        },
+        "dapAnDung": "equity",
+        "giaiThich": "\"Equity funding\" là gọi vốn bằng cổ phần."
+    },
+    {
+        "id": 71,
+        "noiDung": "\"Due diligence\" refers to an exhaustive appraisal of a target firm's assets and liabilities prior to a transaction.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Thẩm định chi tiết là bước bắt buộc trước khi mua lại/sáp nhập."
+    },
+    {
+        "id": 72,
+        "noiDung": "A \"balance sheet\" summarizes a company's assets, liabilities, and shareholders' equity at a specific point in time.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Bảng cân đối kế toán thể hiện tài sản, nợ và vốn chủ sở hữu."
+    },
+    {
+        "id": 73,
+        "noiDung": "\"Hedging\" is purely a speculative strategy designed to maximize gambling profits in stock markets.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Hedging là phòng hộ rủi ro, bảo vệ tài sản khỏi biến động giá, không phải đầu cơ cờ bạc."
+    },
+    {
+        "id": 74,
+        "noiDung": "\"Divestiture\" involves selling off an operational subsidiary or non-core business assets.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Thoái vốn là việc bán công ty con hoặc tài sản phụ."
+    },
+    {
+        "id": 75,
+        "noiDung": "\"Fiduciary duty\" implies that directors can prioritize their personal interests over those of stockholders.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Trách nhiệm ủy thác yêu cầu đặt quyền lợi của cổ đông lên trên lợi ích cá nhân."
+    },
+    {
+        "id": 76,
+        "noiDung": "Key Performance Indicators (KPIs) provide quantifiable metrics to gauge operational progress toward strategic goals.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. KPIs là chỉ số định lượng đánh giá hiệu quả chiến lược."
+    },
+    {
+        "id": 77,
+        "noiDung": "Select all core financial accounting statements: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "balance sheet",
+            "B": "income statement",
+            "C": "cash flow statement",
+            "D": "marketing brochure"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "C"
+        ],
+        "giaiThich": "Bảng cân đối, báo cáo kết quả kinh doanh, lưu chuyển tiền tệ là 3 báo cáo tài chính cốt lõi."
+    },
+    {
+        "id": 78,
+        "noiDung": "Which concepts are fundamental to Mergers and Acquisitions (M&A): (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "due diligence investigation",
+            "B": "hostile takeover bid",
+            "C": "office dress code",
+            "D": "asset divestiture"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "Thẩm định chi tiết, thâu tóm thù địch, thoái vốn là các khái niệm M&A."
+    },
+    {
+        "id": 79,
+        "noiDung": "Select all risks associated with macroeconomic financial markets: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "currency volatility",
+            "B": "liquidity constraints",
+            "C": "printing ink shortage",
+            "D": "interest rate fluctuations"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "Biến động tiền tệ, hạn chế thanh khoản, lãi suất thay đổi là rủi ro vĩ mô."
+    },
+    {
+        "id": 80,
+        "noiDung": "Identify all legitimate avenues of corporate capitalization: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "B2",
+        "luaChon": {
+            "A": "venture capital equity investment",
+            "B": "secondary issuance of shares",
+            "C": "petty cash theft",
+            "D": "corporate bond issuance"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "Đầu tư mạo hiểm, phát hành thêm cổ phiếu, phát hành trái phiếu là các kênh huy động vốn."
+    },
+    {
+        "id": 81,
+        "noiDung": "The antitrust tribunal initiated an anti-monopoly probe into the conglomerate's alleged predatory __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "pricing",
+            "B": "retention",
+            "C": "hedging",
+            "D": "divestment"
+        },
+        "dapAnDung": "pricing",
+        "giaiThich": "\"Predatory pricing\" là chính sách định giá mang tính thôn tính nhằm triệt hạ đối thủ."
+    },
+    {
+        "id": 82,
+        "noiDung": "The independent audit firm declined to express an opinion, citing pervasive accounting __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "irregularities",
+            "B": "compromises",
+            "C": "initiatives",
+            "D": "agendas"
+        },
+        "dapAnDung": "irregularities",
+        "giaiThich": "\"Accounting irregularities\" là những điểm bất thường, gian lận kế toán."
+    },
+    {
+        "id": 83,
+        "noiDung": "The enterprise engaged in debt-for-equity __________ to avert imminent insolvency.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "swaps",
+            "B": "takes",
+            "C": "shares",
+            "D": "invoices"
+        },
+        "dapAnDung": "swaps",
+        "giaiThich": "\"Debt-for-equity swap\" là hoán đổi nợ thành cổ phần để cứu doanh nghiệp thoát phá sản."
+    },
+    {
+        "id": 84,
+        "noiDung": "Senior executives exercised their vested stock __________ before the quarterly earnings announcement.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "options",
+            "B": "cards",
+            "C": "conducts",
+            "D": "invoices"
+        },
+        "dapAnDung": "options",
+        "giaiThich": "\"Vested stock options\" là quyền chọn mua cổ phiếu đã đến hạn thực hiện."
+    },
+    {
+        "id": 85,
+        "noiDung": "The firm established a special purpose vehicle (SPV) to keep major project debt off its __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "balance sheet",
+            "B": "income statement",
+            "C": "market share",
+            "D": "agenda"
+        },
+        "dapAnDung": "balance sheet",
+        "giaiThich": "Tạo SPV để đưa khoản nợ ra ngoài bảng cân đối kế toán (off-balance-sheet financing)."
+    },
+    {
+        "id": 86,
+        "noiDung": "The cross-border acquisition triggered intense scrutiny under foreign direct investment (FDI) __________ laws.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "clearance",
+            "B": "complaint",
+            "C": "discount",
+            "D": "conduct"
+        },
+        "dapAnDung": "clearance",
+        "giaiThich": "\"FDI clearance\" là việc phê duyệt vốn đầu tư nước ngoài của cơ quan quản lý."
+    },
+    {
+        "id": 87,
+        "noiDung": "In an era of rapid disruption, agility and digital transformation have become vital strategic __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "imperatives",
+            "B": "invoices",
+            "C": "discounts",
+            "D": "cards"
+        },
+        "dapAnDung": "imperatives",
+        "giaiThich": "\"Strategic imperatives\" là những mệnh lệnh/yêu cầu chiến lược sống còn."
+    },
+    {
+        "id": 88,
+        "noiDung": "The corporate governance committee recommended splitting the roles of CEO and Chairman to reduce conflict of __________.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "interest",
+            "B": "agenda",
+            "C": "balance",
+            "D": "option"
+        },
+        "dapAnDung": "interest",
+        "giaiThich": "\"Conflict of interest\" là xung đột lợi ích."
+    },
+    {
+        "id": 89,
+        "noiDung": "The bank's credit rating was downgraded following severe undercollateralized sovereign __________ exposure.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "debt",
+            "B": "discount",
+            "C": "invoice",
+            "D": "conduct"
+        },
+        "dapAnDung": "debt",
+        "giaiThich": "\"Sovereign debt exposure\" là rủi ro nợ công của chính phủ."
+    },
+    {
+        "id": 90,
+        "noiDung": "Shareholders filed a derivative lawsuit alleging gross breach of fiduciary __________ by the supervisory board.",
+        "loaiCauHoi": "SINGLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "duty",
+            "B": "discount",
+            "C": "agenda",
+            "D": "card"
+        },
+        "dapAnDung": "duty",
+        "giaiThich": "\"Breach of fiduciary duty\" là vi phạm nghĩa vụ ủy thác đối với cổ đông."
+    },
+    {
+        "id": 91,
+        "noiDung": "\"Predatory pricing\" involves setting artificially low prices to drive rivals out of the market and secure a monopoly.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Định giá săn mồi là hành vi độc quyền vi phạm luật cạnh tranh."
+    },
+    {
+        "id": 92,
+        "noiDung": "A \"Special Purpose Vehicle\" (SPV) is a subsidiary created to isolate financial risk and manage specific assets.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. SPV là công ty chuyên dụng quản lý rủi ro độc lập."
+    },
+    {
+        "id": 93,
+        "noiDung": "A \"debt-for-equity swap\" forces a company into liquidation without any renegotiation with creditors.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Hoán đổi nợ - cổ phần là biện pháp tái cấu trúc giúp công ty không bị phá sản."
+    },
+    {
+        "id": 94,
+        "noiDung": "\"Conflict of interest\" occurs when an individual's personal interests compromise their professional judgement.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Xung đột lợi ích làm suy giảm tính khách quan nghề nghiệp."
+    },
+    {
+        "id": 95,
+        "noiDung": "Vested stock options can only be exercised after specific milestone conditions or vesting periods are satisfied.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "A",
+        "giaiThich": "Đúng. Quyền chọn cổ phiếu chỉ được thực hiện khi thỏa mãn điều kiện thời gian hoặc cam kết."
+    },
+    {
+        "id": 96,
+        "noiDung": "Corporate governance refers exclusively to the internal office decoration guidelines adopted by a company.",
+        "loaiCauHoi": "TRUE_FALSE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "True (Đúng)",
+            "B": "False (Sai)"
+        },
+        "dapAnDung": "B",
+        "giaiThich": "Sai. Quản trị doanh nghiệp (Corporate governance) là hệ thống luật lệ, cơ chế kiểm soát và điều hành toàn bộ công ty."
+    },
+    {
+        "id": 97,
+        "noiDung": "Select all corporate governance principles essential for public companies: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "independent board oversight",
+            "B": "mitigation of conflicts of interest",
+            "C": "unrestricted insider trading",
+            "D": "transparent financial disclosure"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D là chuẩn mực quản trị doanh nghiệp. C là hành vi giao dịch nội gián phi pháp."
+    },
+    {
+        "id": 98,
+        "noiDung": "Which complex financial mechanisms are used in corporate debt restructuring: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "debt-for-equity swaps",
+            "B": "covenant waivers and renegotiations",
+            "C": "petty cash disbursements",
+            "D": "personal lottery wins"
+        },
+        "dapAnDung": [
+            "A",
+            "B"
+        ],
+        "giaiThich": "Hoán đổi nợ thành cổ phần và miễn giảm cam kết tài chính (covenant waivers)."
+    },
+    {
+        "id": 99,
+        "noiDung": "Select all practices scrutinized under antitrust and fair competition legislation: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "predatory pricing strategies",
+            "B": "collusive market allocation cartels",
+            "C": "transparent wholesale discounts",
+            "D": "abusive monopoly power"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "Định giá hủy diệt, thông đồng phân chia thị trường, lạm dụng vị thế độc quyền."
+    },
+    {
+        "id": 100,
+        "noiDung": "Identify all formal legal and corporate terms: (Chọn tất cả đáp án đúng)",
+        "loaiCauHoi": "MULTIPLE",
+        "trinhDo": "C1",
+        "luaChon": {
+            "A": "fiduciary duty",
+            "B": "special purpose vehicle (SPV)",
+            "C": "office gossip session",
+            "D": "derivative shareholder litigation"
+        },
+        "dapAnDung": [
+            "A",
+            "B",
+            "D"
+        ],
+        "giaiThich": "A, B, D là thuật ngữ pháp lý doanh nghiệp cao cấp."
+    }
+]
 };
