@@ -512,7 +512,7 @@ export default function AdminFeesPage() {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-left text-xs text-slate-700">
+              <table className="w-full text-left text-xs text-slate-700 min-w-[800px] lg:min-w-0">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
                     <th
@@ -687,7 +687,32 @@ export default function AdminFeesPage() {
               {/* Pagination Controls */}
               {totalInvoices > 0 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between px-4 py-3 bg-slate-50 dark:bg-[#111928] border-t border-slate-200 dark:border-[#1e2d45] gap-3 text-xs">
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-slate-500 dark:text-slate-400 font-medium">
+                  {/* Mobile Info View */}
+                  <div className="flex sm:hidden items-center justify-between w-full text-slate-500 dark:text-slate-400 font-medium gap-2">
+                    <span className="truncate">
+                      Hiển thị <b className="text-slate-800 dark:text-slate-100">{(page - 1) * limit + 1}-{Math.min(page * limit, totalInvoices)}</b> / <b className="text-teal-700 dark:text-teal-400">{totalInvoices}</b>
+                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span>Số dòng:</span>
+                      <select
+                        value={limit}
+                        onChange={(e) => {
+                          setLimit(Number(e.target.value));
+                          setPage(1);
+                        }}
+                        className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                      >
+                        <option value={8}>8 / trang</option>
+                        <option value={15}>15 / trang</option>
+                        <option value={25}>25 / trang</option>
+                        <option value={50}>50 / trang</option>
+                        <option value={9999}>Tất cả</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Desktop Info View - 100% Nguyên bản */}
+                  <div className="hidden sm:flex flex-wrap items-center justify-start gap-2 text-slate-500 dark:text-slate-400 font-medium">
                     <span>
                       Hiển thị <span className="font-bold text-slate-800 dark:text-slate-100">{(page - 1) * limit + 1}</span> đến{' '}
                       <span className="font-bold text-slate-800 dark:text-slate-100">
@@ -717,7 +742,7 @@ export default function AdminFeesPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-1.5">
+                  <div className="flex items-center justify-center sm:justify-end space-x-1.5 w-full sm:w-auto">
                     <button
                       onClick={() => setPage(1)}
                       disabled={page === 1}
@@ -735,7 +760,7 @@ export default function AdminFeesPage() {
                       <ChevronLeft className="w-4 h-4" />
                     </button>
 
-                    <span className="px-3 py-1 font-bold text-slate-700 bg-white border border-slate-200 rounded-lg">
+                    <span className="px-3 py-1 font-bold text-slate-700 bg-white border border-slate-200 rounded-lg min-w-[70px] text-center">
                       {page} / {totalPages}
                     </span>
 

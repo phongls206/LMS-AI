@@ -554,8 +554,32 @@ export default function AdminTeachersPage() {
             </div>
 
             {/* Pagination Controls */}
-            <div className="px-4 sm:px-5 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-slate-600">
+            <div className="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+              {/* Mobile Info View */}
+              <div className="flex sm:hidden items-center justify-between w-full text-slate-600 gap-2">
+                <span className="truncate">
+                  Hiển thị <b className="text-slate-900">{totalTeachers > 0 ? (page - 1) * limit + 1 : 0}-{Math.min(page * limit, totalTeachers)}</b> / <b className="text-teal-700">{totalTeachers}</b>
+                </span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span>Số dòng:</span>
+                  <select
+                    value={limit}
+                    onChange={(e) => {
+                      setLimit(Number(e.target.value));
+                      setPage(1);
+                    }}
+                    className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                  >
+                    <option value={10}>10 / trang</option>
+                    <option value={20}>20 / trang</option>
+                    <option value={50}>50 / trang</option>
+                    <option value={9999}>Tất cả</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Desktop Info View - 100% Nguyên bản */}
+              <div className="hidden sm:flex flex-wrap items-center justify-start gap-2 text-slate-600">
                 <span>Hiển thị</span>
                 <span className="font-bold text-slate-900">
                   {totalTeachers > 0 ? (page - 1) * limit + 1 : 0} - {Math.min(page * limit, totalTeachers)}
@@ -584,7 +608,55 @@ export default function AdminTeachersPage() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-1.5 overflow-x-auto max-w-full py-1">
+              {/* Mobile Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex sm:hidden items-center justify-center space-x-1.5 w-full pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setPage(1)}
+                    disabled={page === 1}
+                    title="Trang đầu"
+                    className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  >
+                    <ChevronsLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    title="Trang trước"
+                    className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+
+                  <span className="px-3 py-1.5 font-bold text-slate-800 bg-white border border-slate-200 rounded-lg text-xs min-w-[70px] text-center">
+                    {page} / {totalPages}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page >= totalPages}
+                    title="Trang kế tiếp"
+                    className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPage(totalPages)}
+                    disabled={page >= totalPages}
+                    title="Trang cuối"
+                    className="p-2 rounded-lg bg-white border border-slate-200 text-slate-600 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                  >
+                    <ChevronsRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
+              {/* Desktop Pagination Controls - 100% Nguyên bản */}
+              <div className="hidden sm:flex items-center space-x-1.5 overflow-x-auto max-w-full py-1">
                 <button
                   onClick={() => setPage(1)}
                   disabled={page === 1}

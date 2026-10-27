@@ -1139,7 +1139,31 @@ export default function StudentEnrollPage() {
         {/* Phân Trang Cho Danh Sách Lớp Học */}
         {currentTotalItems > 0 && (
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 p-4 rounded-2xl bg-white dark:bg-[#111928] border border-slate-200/90 dark:border-[#1e2d45] shadow-sm text-xs mt-6">
-            <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
+            {/* Mobile Info View */}
+            <div className="flex sm:hidden items-center justify-between w-full text-slate-600 dark:text-slate-400 gap-2">
+              <span className="truncate">
+                Hiển thị <strong>{startIndex}</strong>-<strong>{endIndex}</strong> / <strong>{currentTotalItems}</strong>
+              </span>
+              <div className="flex items-center space-x-1.5 shrink-0">
+                <span className="text-slate-500 dark:text-slate-400 text-[11px]">Số lượng:</span>
+                <select
+                  value={limit}
+                  onChange={(e) => {
+                    setLimit(Number(e.target.value));
+                    setPage(1);
+                  }}
+                  className="bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                >
+                  <option value={6}>6 / trang</option>
+                  <option value={12}>12 / trang</option>
+                  <option value={24}>24 / trang</option>
+                  <option value={9999}>Tất cả</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Desktop Info View - 100% Nguyên bản */}
+            <div className="hidden sm:flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-start">
               <span className="text-slate-600 dark:text-slate-400">
                 Hiển thị <strong>{startIndex}</strong> - <strong>{endIndex}</strong> trong tổng số{' '}
                 <strong>{currentTotalItems}</strong> lớp học
@@ -1162,8 +1186,56 @@ export default function StudentEnrollPage() {
               </div>
             </div>
 
+            {/* Mobile Pagination Navigation */}
             {currentTotalPages > 1 && (
-              <div className="flex items-center space-x-1.5 overflow-x-auto max-w-full py-1">
+              <div className="flex sm:hidden items-center justify-center space-x-1.5 w-full pt-1">
+                <button
+                  type="button"
+                  onClick={() => setPage(1)}
+                  disabled={page === 1}
+                  title="Trang đầu"
+                  className="p-2 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronsLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  title="Trang trước"
+                  className="p-2 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <span className="px-3 py-1.5 font-bold text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-[#22324e] rounded-lg text-xs min-w-[70px] text-center">
+                  {page} / {currentTotalPages}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(currentTotalPages, p + 1))}
+                  disabled={page >= currentTotalPages}
+                  title="Trang sau"
+                  className="p-2 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPage(currentTotalPages)}
+                  disabled={page >= currentTotalPages}
+                  title="Trang cuối"
+                  className="p-2 rounded-lg bg-slate-50 dark:bg-[#162032] border border-slate-200 dark:border-[#22324e] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer"
+                >
+                  <ChevronsRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            {/* Desktop Pagination Navigation - 100% Nguyên bản */}
+            {currentTotalPages > 1 && (
+              <div className="hidden sm:flex items-center space-x-1.5 overflow-x-auto max-w-full py-1">
                 <button
                   type="button"
                   onClick={() => setPage(1)}

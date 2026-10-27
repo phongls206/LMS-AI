@@ -289,7 +289,32 @@ export default function StaffDashboardPage() {
               {/* Pagination cho Phiếu Thu */}
               {myPayments.length > 0 && (
                 <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  {/* Mobile Info View */}
+                  <div className="flex sm:hidden items-center justify-between w-full text-slate-600 dark:text-slate-400 gap-2">
+                    <span className="truncate">
+                      Hiển thị <b className="text-slate-900 dark:text-white">{(pagePayments - 1) * limitPayments + 1}-{Math.min(pagePayments * limitPayments, myPayments.length)}</b> / <b className="text-teal-700 dark:text-teal-400">{myPayments.length}</b>
+                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span>Số dòng:</span>
+                      <select
+                        value={limitPayments}
+                        onChange={(e) => {
+                          setLimitPayments(Number(e.target.value));
+                          setPagePayments(1);
+                        }}
+                        className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                      >
+                        <option value={8}>8 / trang</option>
+                        <option value={15}>15 / trang</option>
+                        <option value={25}>25 / trang</option>
+                        <option value={50}>50 / trang</option>
+                        <option value={9999}>Tất cả</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Desktop Info View - 100% Nguyên bản */}
+                  <div className="hidden sm:flex flex-wrap items-center justify-start gap-2">
                     <span>
                       Hiển thị {(pagePayments - 1) * limitPayments + 1} - {Math.min(pagePayments * limitPayments, myPayments.length)} / {myPayments.length} phiếu thu
                     </span>
@@ -313,7 +338,7 @@ export default function StaffDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-1.5">
+                  <div className="flex items-center justify-center sm:justify-end space-x-1.5 w-full sm:w-auto">
                     <button
                       onClick={() => setPagePayments((p) => Math.max(1, p - 1))}
                       disabled={pagePayments === 1}
@@ -321,7 +346,7 @@ export default function StaffDashboardPage() {
                     >
                       <ChevronLeft className="w-3.5 h-3.5" />
                     </button>
-                    <span className="px-2 font-bold text-slate-900 dark:text-white">
+                    <span className="px-3 py-1 font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg min-w-[65px] text-center">
                       {pagePayments} / {totalPaymentsPages}
                     </span>
                     <button
@@ -397,7 +422,32 @@ export default function StaffDashboardPage() {
               {/* Pagination cho Hóa Đơn Chờ Thu */}
               {pendingInvoices.length > 0 && (
                 <div className="px-4 py-3 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  {/* Mobile Info View */}
+                  <div className="flex sm:hidden items-center justify-between w-full text-slate-600 dark:text-slate-400 gap-2">
+                    <span className="truncate">
+                      Hiển thị <b className="text-slate-900 dark:text-white">{(pageInvoices - 1) * limitInvoices + 1}-{Math.min(pageInvoices * limitInvoices, pendingInvoices.length)}</b> / <b className="text-teal-700 dark:text-teal-400">{pendingInvoices.length}</b>
+                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span>Số dòng:</span>
+                      <select
+                        value={limitInvoices}
+                        onChange={(e) => {
+                          setLimitInvoices(Number(e.target.value));
+                          setPageInvoices(1);
+                        }}
+                        className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                      >
+                        <option value={8}>8 / trang</option>
+                        <option value={15}>15 / trang</option>
+                        <option value={25}>25 / trang</option>
+                        <option value={50}>50 / trang</option>
+                        <option value={9999}>Tất cả</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Desktop Info View - 100% Nguyên bản */}
+                  <div className="hidden sm:flex flex-wrap items-center justify-start gap-2">
                     <span>
                       Hiển thị {(pageInvoices - 1) * limitInvoices + 1} - {Math.min(pageInvoices * limitInvoices, pendingInvoices.length)} / {pendingInvoices.length} hóa đơn
                     </span>
@@ -421,7 +471,7 @@ export default function StaffDashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-1.5">
+                  <div className="flex items-center justify-center sm:justify-end space-x-1.5 w-full sm:w-auto">
                     <button
                       onClick={() => setPageInvoices((p) => Math.max(1, p - 1))}
                       disabled={pageInvoices === 1}
@@ -429,7 +479,7 @@ export default function StaffDashboardPage() {
                     >
                       <ChevronLeft className="w-3.5 h-3.5" />
                     </button>
-                    <span className="px-2 font-bold text-slate-900 dark:text-white">
+                    <span className="px-3 py-1 font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg min-w-[65px] text-center">
                       {pageInvoices} / {totalInvoicesPages}
                     </span>
                     <button

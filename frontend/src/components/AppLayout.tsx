@@ -353,42 +353,39 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </div>
 
             <div className="flex items-center space-x-4 p-4 rounded-xl bg-slate-50 dark:bg-[#0f172a] border border-slate-200/80 dark:border-[#1e2d45]">
-              <div className="relative group shrink-0">
+              <div
+                onClick={() => setShowAvatarCropModal(true)}
+                className="relative group shrink-0 cursor-pointer"
+                title="Nhấn vào ảnh để đổi ảnh đại diện"
+              >
                 {user.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={user.avatar}
                     alt={displayName}
-                    className="w-16 h-16 rounded-2xl object-cover shadow-md shadow-teal-500/20 border-2 border-teal-500/40"
+                    className="w-16 h-16 rounded-2xl object-cover shadow-md shadow-teal-500/20 border-2 border-teal-500/40 group-hover:border-teal-500 transition-all"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-black text-2xl text-white uppercase shadow-md shadow-teal-500/20">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-teal-600 to-cyan-500 flex items-center justify-center font-black text-2xl text-white uppercase shadow-md shadow-teal-500/20 group-hover:scale-105 transition-transform">
                     {user.tenDangNhap?.slice(0, 2) || 'AD'}
                   </div>
                 )}
-                {/* Nút overlay đổi ảnh đại diện */}
-                <button
-                  type="button"
-                  onClick={() => setShowAvatarCropModal(true)}
-                  className="absolute inset-0 bg-slate-900/60 rounded-2xl flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer backdrop-blur-[1px]"
-                  title="Thay đổi ảnh đại diện"
+                {/* Nút overlay đổi ảnh đại diện khi hover */}
+                <div
+                  className="absolute inset-0 bg-slate-900/60 rounded-2xl flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[1px]"
                 >
                   <Camera className="w-5 h-5 text-teal-300" />
                   <span className="text-[9px] font-bold mt-0.5">Đổi ảnh</span>
-                </button>
+                </div>
+                {/* Badge camera góc dưới trực quan trên cả mobile & PC */}
+                <div className="absolute -bottom-1 -right-1 bg-teal-600 text-white p-1 rounded-full shadow-md border-2 border-white dark:border-[#0f172a] group-hover:scale-110 transition-transform">
+                  <Camera className="w-3 h-3" />
+                </div>
               </div>
 
               <div className="space-y-1 overflow-hidden flex-1">
-                <div className="flex items-center justify-between">
+                <div>
                   <h4 className="font-bold text-slate-900 dark:text-white text-base truncate">{displayName}</h4>
-                  <button
-                    type="button"
-                    onClick={() => setShowAvatarCropModal(true)}
-                    className="text-xs text-teal-600 dark:text-teal-400 hover:underline font-bold flex items-center space-x-1 cursor-pointer shrink-0 ml-2"
-                  >
-                    <Camera className="w-3.5 h-3.5" />
-                    <span>Đổi avatar</span>
-                  </button>
                 </div>
                 <div>{getRoleBadge(user.vaiTro)}</div>
               </div>

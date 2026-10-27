@@ -17,15 +17,12 @@ import {
   Award,
   UserPlus,
   X,
-  LogOut,
   Bot,
   BrainCircuit,
   TrendingUp,
 } from 'lucide-react';
 import { VaiTro } from '../types';
-import { authService } from '../services/api';
 import { EtcLogo } from './EtcLogo';
-import { showConfirm } from './ConfirmDialog';
 
 interface SidebarProps {
   role?: VaiTro;
@@ -105,24 +102,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const showFull = !isCollapsed || mobileOpen;
 
-  const handleLogout = async () => {
-    const confirmed = await showConfirm({
-      title: 'Xác Nhận Đăng Xuất',
-      message: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống ETC English không?',
-      confirmText: 'Đăng Xuất',
-      cancelText: 'Hủy Bỏ',
-      type: 'danger',
-      icon: LogOut,
-    });
-
-    if (!confirmed) return;
-
-    if (onCloseMobile) {
-      onCloseMobile();
-    }
-
-    await authService.logout();
-  };
 
   return (
     <aside
@@ -219,18 +198,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Pinned Bottom Footer: Logout Only */}
-      <div className="border-t border-slate-200/90 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-slate-50/95 dark:bg-slate-900/95 shrink-0 mt-auto">
-        <button
-          onClick={handleLogout}
-          className={`w-full flex items-center justify-center rounded-xl text-xs font-bold text-rose-600 bg-white dark:bg-slate-800 hover:bg-rose-600 hover:text-white dark:hover:bg-rose-600 dark:hover:text-white border border-rose-200 dark:border-rose-900/60 hover:border-rose-600 transition-all duration-200 cursor-pointer shadow-sm group min-h-[42px] ${!showFull ? 'p-2' : 'space-x-2 py-2.5 px-3'
-            }`}
-          title="Đăng xuất khỏi hệ thống"
-        >
-          <LogOut className="w-4 h-4 text-rose-500 group-hover:text-white transition-colors shrink-0" />
-          {showFull && <span>Đăng Xuất</span>}
-        </button>
-      </div>
+
     </aside>
   );
 };

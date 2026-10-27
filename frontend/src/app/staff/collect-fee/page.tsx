@@ -636,7 +636,7 @@ export default function StaffCollectFeePage() {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-slate-200">
-              <table className="w-full text-left text-xs text-slate-700">
+              <table className="w-full text-left text-xs text-slate-700 min-w-[750px] lg:min-w-0">
                 <thead className="bg-slate-50 text-slate-600 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
                   <tr>
                     <th className="px-4 py-3 whitespace-nowrap">Mã Hóa Đơn</th>
@@ -748,7 +748,32 @@ export default function StaffCollectFeePage() {
               {/* Pagination Controls */}
               {totalInvoices > 0 && (
                 <div className="px-4 py-3 bg-slate-50 dark:bg-[#111928] border-t border-slate-200 dark:border-[#1e2d45] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 dark:text-slate-400">
-                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  {/* Mobile Info View */}
+                  <div className="flex sm:hidden items-center justify-between w-full text-slate-600 dark:text-slate-400 gap-2">
+                    <span className="truncate">
+                      Hiển thị <b className="text-slate-900 dark:text-white">{(page - 1) * limit + 1}-{Math.min(page * limit, totalInvoices)}</b> / <b className="text-teal-700 dark:text-teal-400">{totalInvoices}</b>
+                    </span>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span>Số dòng:</span>
+                      <select
+                        value={limit}
+                        onChange={(e) => {
+                          setLimit(Number(e.target.value));
+                          setPage(1);
+                        }}
+                        className="bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-800 dark:text-slate-200 focus:outline-none focus:border-teal-500 cursor-pointer"
+                      >
+                        <option value={8}>8 / trang</option>
+                        <option value={15}>15 / trang</option>
+                        <option value={25}>25 / trang</option>
+                        <option value={50}>50 / trang</option>
+                        <option value={9999}>Tất cả</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Desktop Info View - 100% Nguyên bản */}
+                  <div className="hidden sm:flex flex-wrap items-center justify-start gap-2">
                     <span>
                       Hiển thị {(page - 1) * limit + 1} - {Math.min(page * limit, totalInvoices)} / {totalInvoices} hóa đơn
                     </span>
@@ -774,7 +799,7 @@ export default function StaffCollectFeePage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center space-x-1.5">
+                  <div className="flex items-center justify-center sm:justify-end space-x-1.5 w-full sm:w-auto">
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
@@ -782,7 +807,7 @@ export default function StaffCollectFeePage() {
                     >
                       <ChevronLeft className="w-3.5 h-3.5" />
                     </button>
-                    <span className="px-2 font-bold text-slate-900 dark:text-white">
+                    <span className="px-3 py-1 font-bold text-slate-900 dark:text-white bg-white dark:bg-[#162032] border border-slate-200 dark:border-slate-700 rounded-lg min-w-[65px] text-center">
                       {page} / {totalPages}
                     </span>
                     <button
