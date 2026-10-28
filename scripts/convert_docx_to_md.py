@@ -20,11 +20,12 @@ def convert_docx_to_md(docx_path, md_path, media_dir):
         if 'image' in rel.target_ref:
             img_name = os.path.basename(rel.target_ref)
             target_path = os.path.join(media_dir, img_name)
-            with open(target_path, 'wb') as f:
-                f.write(rel.target_part.blob)
+            if not os.path.exists(target_path):
+                with open(target_path, 'wb') as f:
+                    f.write(rel.target_part.blob)
             rel_map[rel.rId] = f"media/{img_name}"
             
-    print(f"Extracted {len(rel_map)} images to {media_dir}")
+    print(f"Extracted/Mapped {len(rel_map)} images to {media_dir}")
     
     md_lines = []
     
@@ -32,7 +33,6 @@ def convert_docx_to_md(docx_path, md_path, media_dir):
         text = run.text
         if not text:
             return ""
-        # Check bold, italic
         if run.bold and run.italic:
             return f"***{text}***"
         elif run.bold:
@@ -50,20 +50,37 @@ def convert_docx_to_md(docx_path, md_path, media_dir):
                 if blip in rel_map:
                     images_in_p.append(f"![Hình ảnh]({rel_map[blip]})")
                     
-        # Check runs
         full_text = ""
-        for r in p.runs:
-            full_text += format_run(r)
+        for child in p._element:
+            tag = child.tag.split('}')[-1]
+            if tag == 'r':
+                r = docx.text.run.Run(child, p)
+                full_text += format_run(r)
+            elif tag == 'hyperlink':
+                rId = child.attrib.get('{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id')
+                link_url = ""
+                if rId and rId in doc.part.rels:
+                    link_url = doc.part.rels[rId].target_ref
+                link_text = ""
+                for sub_r in child.findall('{http://schemas.openxmlformats.org/wordprocessingml/2006/main}r'):
+                    r = docx.text.run.Run(sub_r, p)
+                    link_text += format_run(r)
+                if link_url and not link_url.startswith('#'):
+                    full_text += f"[{link_text}]({link_url})"
+                else:
+                    full_text += link_text
             
-        # Clean up double asterisks around spaces
         full_text = full_text.strip()
-        
         return full_text, images_in_p
 
     def format_paragraph(p):
         style_name = p.style.name.lower()
         raw_text = p.text.strip()
         
+        # Skip table of figures paragraphs that are just Word-generated bookmark lines
+        if p.style.name == 'table of figures':
+            return []
+            
         if not raw_text and not p._element.xpath('.//w:drawing'):
             return []
             
@@ -88,13 +105,14 @@ def convert_docx_to_md(docx_path, md_path, media_dir):
             heading_level = 2
         elif re.match(r'^(CHƯƠNG|Chương)\s+([0-9IVXLCDM]+)[\s:]', raw_text):
             heading_level = 1
-        elif any(raw_text.startswith(f"{i}.{j} ") for i in range(1, 10) for j in range(1, 25)) and (p.runs and any(r.bold for r in p.runs[:2])):
-            heading_level = 2
-        elif any(raw_text.startswith(f"{i}.{j}.{k} ") for i in range(1, 10) for j in range(1, 25) for k in range(1, 25)) and (p.runs and any(r.bold for r in p.runs[:2])):
+        elif raw_text in ['MỤC LỤC', 'KẾ HOẠCH CHI TIẾT', 'LỜI GIỚI THIỆU']:
+            heading_level = 1
+        elif re.match(r'^\d+\.\d+\.\d+\.?\s+', raw_text):
             heading_level = 3
+        elif re.match(r'^\d+\.\d+\.?\s+', raw_text):
+            heading_level = 2
 
         if heading_level > 0:
-            # Clean heading text (remove extra bold markdown from heading)
             clean_text = raw_text
             lines.append(f"\n{'#' * heading_level} {clean_text}\n")
         elif 'bullet' in style_name or raw_text.startswith(('•', '–', '- ')):
@@ -116,6 +134,24 @@ def convert_docx_to_md(docx_path, md_path, media_dir):
         if not tbl.rows:
             return lines
             
+        # Check if it's a 1x1 code block table
+        if len(tbl.rows) == 1 and len(tbl.columns) == 1:
+            code_text = tbl.rows[0].cells[0].text.strip()
+            if 'FROM node' in code_text or 'Dockerfile' in code_text:
+                lang = 'dockerfile'
+            elif code_text.startswith('version:') or 'services:' in code_text:
+                lang = 'yaml'
+            elif 'docker compose' in code_text or 'npm run' in code_text or 'npx prisma' in code_text:
+                lang = 'bash'
+            else:
+                lang = 'text'
+            lines.append("")
+            lines.append(f"```{lang}")
+            lines.append(code_text)
+            lines.append("```")
+            lines.append("")
+            return lines
+            
         lines.append("")
         headers = []
         for c in tbl.rows[0].cells:
@@ -130,7 +166,6 @@ def convert_docx_to_md(docx_path, md_path, media_dir):
             for c in r.cells:
                 t = c.text.strip().replace('\r\n', '<br>').replace('\n', '<br>').replace('|', '\\|')
                 row_cells.append(t if t else " ")
-            # Check length matches header
             if len(row_cells) < len(headers):
                 row_cells.extend([" "] * (len(headers) - len(row_cells)))
             elif len(row_cells) > len(headers):
@@ -140,7 +175,6 @@ def convert_docx_to_md(docx_path, md_path, media_dir):
         lines.append("")
         return lines
 
-    # Iterate body children in sequential order
     for element in doc._element.body:
         if isinstance(element, CT_P):
             p = Paragraph(element, doc)
@@ -163,7 +197,7 @@ def convert_docx_to_md(docx_path, md_path, media_dir):
 
 if __name__ == '__main__':
     convert_docx_to_md(
-        docx_path=r"d:\MyProjects\lms-ai\docs\design\EnglishCenterTOP.docx",
-        md_path=r"d:\MyProjects\lms-ai\docs\design\EnglishCenterTOP.md",
-        media_dir=r"d:\MyProjects\lms-ai\docs\design\media"
+        docx_path=r"docs\design\EnglishCenterTOP.docx",
+        md_path=r"docs\design\EnglishCenterTOP.md",
+        media_dir=r"docs\design\media"
     )

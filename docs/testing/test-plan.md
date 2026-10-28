@@ -2,7 +2,7 @@
 
 **Phiên bản:** 2.0 (Mở rộng toàn diện)  
 **Ngày cập nhật:** 27/10/2026  
-**Tài liệu tham chiếu:** `docs/design/EnglishCenterTOP.docx` & `Bao_Cao_Ket_Qua_Kiem_Thu_100_Test_Cases.docx`  
+**Tài liệu tham chiếu:** `docs/design/EnglishCenterTOP.docx` 
 **Quy mô kiểm thử:** 145 Ca kiểm thử (45 Ca kiểm thử cơ sở + 100 Ca kiểm thử chuyên sâu: Hộp Đen & Hộp Trắng)
 
 ---
