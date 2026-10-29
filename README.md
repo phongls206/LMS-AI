@@ -314,12 +314,12 @@ docker exec -i etc_english_db psql -U etc_user etc_english < backup_etc.sql
 
 ## 👥 7. Demo Test Credentials
 
-| Role (Vai trò) | Username | Password | Features / Test Scope (Chức năng kiểm thử) |
+| Role | Username | Password | Features / Test Scope |
 | :--- | :--- | :--- | :--- |
-| **Administrator (Quản lý)** | `admin01` | `Admin@123` | Executive dashboard, course & class provisioning, schedule conflict detection, teacher assignment, center-wide tuition auditing, revenue & completion reports |
-| **Teacher (Giáo viên)** | `teacher01` | `Admin@123` | Assigned classes & weekly timetable, 4-state session attendance matrix, weighted grading ($20\% + 30\% + 50\%$), AI quiz generator |
-| **Student (Học viên)** | `student01` | `Admin@123` | Class schedule, transcripts, self-service enrollment, tuition balance & payment deadlines, AI study advisor & interactive practice |
-| **Academic Staff / Counselor (Tư vấn viên)** | `staff01` | `Admin@123` | Student onboarding & CEFR placement level recording, course counseling, class enrollment, tuition invoice generation & split-payment cash desk |
+| **Administrator** | `admin01` | `Admin@123` | Executive dashboard, course & class provisioning, schedule conflict detection, teacher assignment, center-wide tuition auditing, revenue & completion reports |
+| **Teacher** | `teacher01` | `Admin@123` | Assigned classes & weekly timetable, 4-state session attendance matrix, weighted grading ($20\% + 30\% + 50\%$), AI quiz generator |
+| **Student** | `student01` | `Admin@123` | Class schedule, transcripts, self-service enrollment, tuition balance & payment deadlines, AI study advisor & interactive practice |
+| **Academic Staff / Counselor** | `staff01` | `Admin@123` | Student onboarding & CEFR placement level recording, course counseling, class enrollment, tuition invoice generation & split-payment cash desk |
 
 ---
 
