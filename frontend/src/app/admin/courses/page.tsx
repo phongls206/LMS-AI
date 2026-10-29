@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { ClassStudentsModal } from '../../../components/ClassStudentsModal';
+import { toast } from '../../../components/Toast';
 
 export default function AdminCoursesPage() {
   const [courses, setCourses] = useState<KhoaHoc[]>([]);
@@ -122,6 +123,7 @@ export default function AdminCoursesPage() {
       setSelectedCourseDetail(detail);
     } catch (err) {
       console.error(err);
+      toast.error('Không thể tải thông tin chi tiết khóa học.');
       setErrorMessage('Không thể tải thông tin chi tiết khóa học.');
       setShowDetailModal(false);
       setTimeout(() => setErrorMessage(null), 4000);
@@ -148,6 +150,7 @@ export default function AdminCoursesPage() {
     setSubmitting(true);
     try {
       await coursesService.create(formData);
+      toast.success('Tạo mới chương trình khóa học thành công!');
       setMessage('Tạo mới chương trình khóa học thành công!');
       setShowModal(false);
       setFormData({
@@ -161,7 +164,9 @@ export default function AdminCoursesPage() {
       fetchCourses();
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi tạo khóa học.');
+      const errMsg = err.response?.data?.message || 'Có lỗi xảy ra khi tạo khóa học.';
+      toast.error(errMsg);
+      setErrorMessage(errMsg);
       setTimeout(() => setErrorMessage(null), 4000);
     } finally {
       setSubmitting(false);
@@ -174,6 +179,7 @@ export default function AdminCoursesPage() {
     setSavingEdit(true);
     try {
       await coursesService.update(editingCourse.id, editFormData);
+      toast.success(`Cập nhật khóa học [${editingCourse.maKhoaHoc}] thành công!`);
       setMessage(`Cập nhật khóa học [${editingCourse.maKhoaHoc}] thành công!`);
       setShowEditModal(false);
       setEditingCourse(null);
@@ -184,7 +190,9 @@ export default function AdminCoursesPage() {
       }
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật khóa học.');
+      const errMsg = err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật khóa học.';
+      toast.error(errMsg);
+      setErrorMessage(errMsg);
       setTimeout(() => setErrorMessage(null), 4000);
     } finally {
       setSavingEdit(false);

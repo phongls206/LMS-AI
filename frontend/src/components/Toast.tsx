@@ -42,7 +42,7 @@ class ToastManager {
     type: ToastType,
     message: string,
     title?: string,
-    duration: number = 2200,
+    duration: number = 3000,
     icon?: React.ComponentType<{ className?: string }>
   ) {
     const id = Math.random().toString(36).substring(2, 9) + Date.now();
@@ -75,25 +75,25 @@ export const toast = {
   success: (
     message: string,
     title: string = 'Thành công',
-    duration: number = 2200,
+    duration: number = 3000,
     icon?: React.ComponentType<{ className?: string }>
   ) => toastManager.show('success', message, title, duration, icon),
   error: (
     message: string,
-    title: string = 'Lỗi',
-    duration: number = 2200,
+    title: string = 'Thất bại',
+    duration: number = 3500,
     icon?: React.ComponentType<{ className?: string }>
   ) => toastManager.show('error', message, title, duration, icon),
   warning: (
     message: string,
-    title: string = 'Thông báo',
-    duration: number = 2500,
+    title: string = 'Cảnh báo',
+    duration: number = 3000,
     icon?: React.ComponentType<{ className?: string }>
   ) => toastManager.show('warning', message, title, duration, icon),
   info: (
     message: string,
     title: string = 'Thông tin',
-    duration: number = 2200,
+    duration: number = 3000,
     icon?: React.ComponentType<{ className?: string }>
   ) => toastManager.show('info', message, title, duration, icon),
   dismiss: (id: string) => toastManager.dismiss(id),
@@ -110,7 +110,7 @@ if (typeof window !== 'undefined') {
 const TYPE_CONFIG = {
   success: {
     icon: CheckCircle2,
-    badgeBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+    badgeBg: 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border-emerald-500/30',
     border: 'border-emerald-500/40 dark:border-emerald-500/30',
     glow: 'shadow-[0_8px_30px_rgb(16,185,129,0.15)]',
     progressBar: 'bg-emerald-500',
@@ -118,7 +118,7 @@ const TYPE_CONFIG = {
   },
   error: {
     icon: AlertCircle,
-    badgeBg: 'bg-rose-500/10 text-rose-400 border-rose-500/30',
+    badgeBg: 'bg-rose-500/10 text-rose-500 dark:text-rose-400 border-rose-500/30',
     border: 'border-rose-500/40 dark:border-rose-500/30',
     glow: 'shadow-[0_8px_30px_rgb(244,63,94,0.15)]',
     progressBar: 'bg-rose-500',
@@ -126,7 +126,7 @@ const TYPE_CONFIG = {
   },
   warning: {
     icon: AlertTriangle,
-    badgeBg: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+    badgeBg: 'bg-amber-500/10 text-amber-500 dark:text-amber-400 border-amber-500/30',
     border: 'border-amber-500/40 dark:border-amber-500/30',
     glow: 'shadow-[0_8px_30px_rgb(245,158,11,0.15)]',
     progressBar: 'bg-amber-500',
@@ -134,7 +134,7 @@ const TYPE_CONFIG = {
   },
   info: {
     icon: Info,
-    badgeBg: 'bg-teal-500/10 text-teal-400 border-teal-500/30',
+    badgeBg: 'bg-teal-500/10 text-teal-500 dark:text-teal-400 border-teal-500/30',
     border: 'border-teal-500/40 dark:border-teal-500/30',
     glow: 'shadow-[0_8px_30px_rgb(20,184,166,0.15)]',
     progressBar: 'bg-teal-500',

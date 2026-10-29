@@ -188,6 +188,7 @@ export default function AdminTeachersPage() {
   const handleCreateTeacher = async (e: React.FormEvent) => {
     e.preventDefault();
     if (Object.keys(createDuplicateErrors).length > 0) {
+      toast.warning('Vui lòng kiểm tra và sửa các thông tin đang bị trùng lặp!');
       setErrorMessage('Vui lòng kiểm tra và sửa các thông tin đang bị trùng lặp!');
       setTimeout(() => setErrorMessage(null), 4000);
       return;
@@ -195,6 +196,7 @@ export default function AdminTeachersPage() {
 
     try {
       await usersService.createTeacher(createFormData);
+      toast.success('Thêm giáo viên mới thành công!');
       setMessage('Thêm giáo viên mới thành công!');
       setShowCreateModal(false);
       setCreateFormData({
@@ -211,7 +213,9 @@ export default function AdminTeachersPage() {
       fetchTeachers();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi tạo giáo viên.');
+      const errMsg = err.response?.data?.message || 'Có lỗi xảy ra khi tạo giáo viên.';
+      toast.error(errMsg);
+      setErrorMessage(errMsg);
       setTimeout(() => setErrorMessage(null), 5000);
     }
   };
@@ -240,12 +244,15 @@ export default function AdminTeachersPage() {
         soDienThoai: editFormData.soDienThoai,
         trangThai: editFormData.trangThai as any,
       });
+      toast.success('Cập nhật thông tin và trạng thái giáo viên thành công!');
       setMessage('Cập nhật thông tin và trạng thái giáo viên thành công!');
       setEditingTeacher(null);
       fetchTeachers();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật giáo viên.');
+      const errMsg = err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật giáo viên.';
+      toast.error(errMsg);
+      setErrorMessage(errMsg);
       setTimeout(() => setErrorMessage(null), 5000);
     }
   };
@@ -287,7 +294,9 @@ export default function AdminTeachersPage() {
       await usersService.updateTeacher(Number(resetPasswordTarget.id), {
         matKhauMoi: finalPass,
       });
-      setMessage(`Đã đặt lại mật khẩu cho giáo viên ${resetPasswordTarget.hoTen} (${resetPasswordTarget.maGiaoVien}) thành công!`);
+      const resetMsg = `Đã đặt lại mật khẩu cho giáo viên ${resetPasswordTarget.hoTen} thành công!`;
+      toast.success(resetMsg);
+      setMessage(resetMsg);
       handleCloseResetModal();
       fetchTeachers();
       setTimeout(() => setMessage(null), 4000);

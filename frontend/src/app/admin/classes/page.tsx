@@ -519,16 +519,20 @@ export default function AdminClassesPage() {
     if (!showAssignTeacher) return;
     const selectedTeacher = teachers.find((t) => Number(t.id) === Number(assignForm.giaoVienId));
     if (selectedTeacher && selectedTeacher.trangThai !== 'DANG_LAM_VIEC') {
+      toast.error('Không thể phân công giáo viên đang tạm nghỉ hoặc đã nghỉ việc.');
       setMessage({ type: 'error', text: 'Không thể phân công giáo viên đang tạm nghỉ hoặc đã nghỉ việc.' });
       return;
     }
     try {
       await classesService.assignTeacher(showAssignTeacher, assignForm);
+      toast.success('Phân công giáo viên thành công (Đã kiểm tra chống trùng giờ dạy)!');
       setMessage({ type: 'success', text: 'Phân công giáo viên thành công (Đã qua kiểm tra chống trùng giờ dạy)!' });
       setShowAssignTeacher(null);
       fetchData();
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Lỗi phân công giáo viên.' });
+      const errAssign = err.response?.data?.message || 'Lỗi phân công giáo viên.';
+      toast.error(errAssign);
+      setMessage({ type: 'error', text: errAssign });
     }
   };
 
@@ -549,7 +553,9 @@ export default function AdminClassesPage() {
       fetchData();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Không thể cập nhật trạng thái lớp.' });
+      const errStatus = err.response?.data?.message || 'Không thể cập nhật trạng thái lớp.';
+      toast.error(errStatus);
+      setMessage({ type: 'error', text: errStatus });
     }
   };
 

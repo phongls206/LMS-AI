@@ -373,7 +373,9 @@ export default function AdminFeesPage() {
       setNote('');
       fetchData();
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Lỗi ghi nhận thanh toán.' });
+      const errPay = err.response?.data?.message || 'Lỗi ghi nhận thanh toán.';
+      toast.error(errPay);
+      setMessage({ type: 'error', text: errPay });
     } finally {
       setSubmittingPayment(false);
     }

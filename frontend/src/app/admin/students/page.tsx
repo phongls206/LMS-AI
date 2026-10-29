@@ -204,6 +204,7 @@ export default function AdminStudentsPage() {
 
     try {
       await usersService.createStudent(createFormData);
+      toast.success('Tiếp nhận học viên mới thành công!');
       setMessage('Tiếp nhận học viên mới thành công!');
       setShowCreateModal(false);
       setCreateFormData({
@@ -223,7 +224,9 @@ export default function AdminStudentsPage() {
       fetchStudents();
       setTimeout(() => setMessage(null), 3000);
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi tạo học viên.');
+      const errMsg = err.response?.data?.message || 'Có lỗi xảy ra khi tạo học viên.';
+      toast.error(errMsg);
+      setErrorMessage(errMsg);
       setTimeout(() => setErrorMessage(null), 4000);
     }
   };
@@ -258,12 +261,15 @@ export default function AdminStudentsPage() {
         nguonDanhGia: editFormData.nguonDanhGia,
         trangThai: editFormData.trangThai,
       });
+      toast.success('Cập nhật hồ sơ học viên thành công!');
       setMessage('Cập nhật hồ sơ học viên thành công!');
       setEditingStudent(null);
       fetchStudents();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật học viên.');
+      const errMsg = err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật học viên.';
+      toast.error(errMsg);
+      setErrorMessage(errMsg);
       setTimeout(() => setErrorMessage(null), 4000);
     }
   };
@@ -305,12 +311,16 @@ export default function AdminStudentsPage() {
       await usersService.updateStudent(resetPasswordTarget.id, {
         matKhauMoi: finalPass,
       });
-      setMessage(`Đã đặt lại mật khẩu cho học viên ${resetPasswordTarget.hoTen} (${resetPasswordTarget.maHocVien}) thành công!`);
+      const resetMsg = `Đã đặt lại mật khẩu cho học viên ${resetPasswordTarget.hoTen} thành công!`;
+      toast.success(resetMsg);
+      setMessage(resetMsg);
       handleCloseResetModal();
       fetchStudents();
       setTimeout(() => setMessage(null), 4000);
     } catch (err: any) {
-      setResetModalError(err.response?.data?.message || 'Có lỗi xảy ra khi đặt lại mật khẩu.');
+      const errReset = err.response?.data?.message || 'Có lỗi xảy ra khi đặt lại mật khẩu.';
+      toast.error(errReset);
+      setResetModalError(errReset);
     } finally {
       setResettingPassword(false);
     }

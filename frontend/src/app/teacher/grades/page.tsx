@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { AppLayout } from '../../../components/AppLayout';
+import { toast } from '../../../components/Toast';
 import { classesService, gradesService, authStorage } from '../../../services/api';
 import { SearchableSelect, SearchableSelectOption } from '../../../components/SearchableSelect';
 import { Save, CheckCircle, Sparkles, BookOpen, AlertCircle, FileSpreadsheet, Download, Award, Lock, X, ShieldAlert } from 'lucide-react';
@@ -170,11 +171,13 @@ export default function TeacherGradesPage() {
       return;
     }
     if (isClassRecruiting) {
+      toast.warning('Lớp học đang mở tuyển sinh, chưa vào học chính thức. Không thể nhập bảng điểm!');
       setErrorMessage('Lớp học đang mở tuyển sinh, chưa vào học chính thức. Không thể nhập bảng điểm!');
       setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
     if (isLockedForTeacher) {
+      toast.warning('Lớp học đã kết thúc. Bảng điểm đã đóng sổ và không thể chỉnh sửa.');
       setErrorMessage('Lớp học đã kết thúc. Bảng điểm đã đóng sổ và không thể chỉnh sửa.');
       setTimeout(() => setErrorMessage(null), 4000);
       return;
@@ -190,10 +193,13 @@ export default function TeacherGradesPage() {
       }));
 
       await gradesService.submitGrades(selectedClassId, payload);
+      toast.success('Lưu bảng điểm & tự động tính điểm tổng kết 20/30/50 thành công!');
       setMessage('Lưu bảng điểm & tự động tính điểm tổng kết 20/30/50 thành công!');
       setTimeout(() => setMessage(null), 3500);
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.message || 'Có lỗi xảy ra khi lưu bảng điểm.');
+      const errGrade = err.response?.data?.message || 'Có lỗi xảy ra khi lưu bảng điểm.';
+      toast.error(errGrade);
+      setErrorMessage(errGrade);
       setTimeout(() => setErrorMessage(null), 4500);
     } finally {
       setSaving(false);
